@@ -11,11 +11,18 @@ qbData = qbs._.data;
 
 // Sets a pixel to the screen
 function pset( screenData, x, y ) {
-	var i, data, c;
+	var c;
 
-	// Clamp x & y
-	x = qbs.util.clamp( x, 0, screenData.width - 1 );
-	y = qbs.util.clamp( y, 0, screenData.height - 1 );
+	// Make sure x and y are integers
+	if( ! Number.isInteger( x ) || ! Number.isInteger( y ) ) {
+		console.error("pset: Argument's x and y must be integers.");
+		return;
+	}
+
+	// Make sure x and y are on the screen
+	if( ! qbs.util.inRange2( x, y, 0, 0, screenData.width, screenData.height ) ) {
+		return;
+	}
 
 	// Set the cursor
 	screenData.x = x;
@@ -25,18 +32,7 @@ function pset( screenData, x, y ) {
 	c = screenData.pal[ screenData.fColor ];
 
 	qbData.commands.getImageData( screenData );
-
-	// Get the image data
-	data = screenData.imageData.data;
-
-	// Calculate the index
-	i = ( ( screenData.width * y ) + x ) * 4;
-
-	data[ i ] = c.r;
-	data[ i + 1 ] = c.g;
-	data[ i + 2 ] = c.b;
-	data[ i + 3 ] = c.a;
-
+	qbData.commands.setPixel( screenData, x, y, c );
 	screenData.dirty = true;
 }
 

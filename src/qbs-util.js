@@ -101,9 +101,14 @@ window.qbs.util = ( function () {
 		return Math.min( Math.max( num, min ), max );
 	}
 
-	function inRange( data, hitBox ) {
-		return 	data.x >= hitBox.x && data.x < hitBox.x + hitBox.width && 
-				data.y >= hitBox.y && data.y < hitBox.y + hitBox.height;
+	function inRange( point, hitBox ) {
+		return 	point.x >= hitBox.x && point.x < hitBox.x + hitBox.width && 
+				point.y >= hitBox.y && point.y < hitBox.y + hitBox.height;
+	}
+
+	function inRange2( x1, y1, x2, y2, width, height ) {
+		return 	x1 >= x2 && x1 < x2 + width && 
+				y1 >= y2 && y1 < y2 + height;
 	}
 
 	function degreesToRadian(deg) {
@@ -159,6 +164,7 @@ window.qbs.util = ( function () {
 		"deleteProperties": deleteProperties,
 		"clamp": clamp,
 		"inRange": inRange,
+		"inRange2": inRange2,
 		"degreesToRadian": degreesToRadian,
 		"sanitizeBool": sanitizeBool,
 		"padL": padL,

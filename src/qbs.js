@@ -9,6 +9,7 @@ window.qbs = ( function () {
 	qbData = {
 		"nextScreenId": 0,
 		"screens": {},
+		"activeScreen": null,
 		"images": {},
 		"fCos": [],
 		"fSin": [],
@@ -24,8 +25,6 @@ window.qbs = ( function () {
 		},
 		"nextFontId": 0,
 		"fonts": {},
-		"isContextMenuEnabled": false,
-		"contextMode": false,
 		"defaultPalette": ["#000000","#0000AA","#00AA00","#00AAAA","#AA0000","#AA00AA","#AA5500","#AAAAAA","#555555",
 			"#5555FF","#55FF55","#55FFFF","#FF5555","#FF55FF","#FFFF55","#FFFFFF","#000000","#141414","#202020","#2D2D2D",
 			"#393939","#454545","#515151","#616161","#717171","#828282","#929292","#A2A2A2","#B6B6B6","#CACACA","#E3E3E3",
@@ -57,14 +56,110 @@ window.qbs = ( function () {
 		"_": {
 			"addCommand": addCommand,
 			"data": qbData
-		}
+		},
+		"print": print,
+		"pset": pset,
+		"canvas": canvas,
+		"setActive": setActive,
+		"removeScreen": removeScreen,
+		"removeAllScreens": removeAllScreens,
+		"bgColor": bgColor,
+		"containerBgColor": containerBgColor,
+		"getScreen": getScreen
 	};
 
 	return api;
 
+	// Add a command to the internal list
 	function addCommand( name, fn ) {
 		qbData.commands[ name ] = fn;
 	}
+
+	// Prints text on the page
+	function print( msg, screenId ) {
+		screenData = getScreenData( screenId, "pset" );
+		if( screenData !== false ) {
+			return qbData.commands.print( screenData, msg );
+		}
+	}
+
+	// Sets a pixel on the screen and set the coordinates of the cursor
+	function pset( x, y, screenId ) {
+		screenData = getScreenData( screenId, "pset" );
+		if( screenData !== false ) {
+			return qbData.commands.pset( screenData, x, y );
+		}
+	}
+
+	// Gets the canvas from the screen
+	function canvas( screenId ) {
+		screenData = getScreenData( screenId );
+		if( screenData !== false ) {
+			return qbData.commands.canvas( screenData );
+		}
+	}
+
+	// Sets the active screen
+	function setActive( screenId ) {
+		screenData = getScreenData( screenId );
+		if( screenData !== false ) {
+			return qbData.commands.setActive( screenData );
+		}
+	}
+
+	// Removes the screen from the page and memory
+	function removeScreen( screenId ) {
+		screenData = getScreenData( screenId );
+		if( screenData !== false ) {
+			return qbData.commands.removeScreen( screenData );
+		}
+	}
+
+	// Removes all screens from page and memory
+	function removeAllScreens() {
+		return qbData.commands.removeAllScreens();
+	}
+
+		// Set the background color of the canvas
+	function bgColor( color, screenId ) {
+		screenData = getScreenData( screenId );
+		if( screenData !== false ) {
+			return qbData.commands.bgColor( screenData, color );
+		}
+	}
+
+	// Set the background color of the container
+	function containerBgColor( color, screenId ) {
+		screenData = getScreenData( screenId );
+		if( screenData !== false ) {
+			return qbData.commands.containerBgColor( screenData, color );
+		}
+	}
+
+	// Returns the screen object based on screen id
+	function getScreen( screenId ) {
+		screenData = getScreenData( screenId );
+		if( screenData !== false ) {
+			return screenData.screenObj;
+		}
+	}
+
+	// Gets the screen data
+	function getScreenData( screenId, commandName ) {
+		if( qbData.activeScreen === null ) {
+			console.error( commandName + ": No screens available for command." );
+			return false;
+		}
+		if( screenId === undefined ) {
+			screenId = qbData.activeScreen.id;
+		}
+		if( Number.isInteger( screenId ) && ! qbData.screens[ screenId ] ) {
+			console.error( commandName + ": Invalid screen id." );
+			return false;
+		}
+		return qbData.screens[ screenId ];
+	}
+
 } )();
 
 if( window.$ === undefined ) {

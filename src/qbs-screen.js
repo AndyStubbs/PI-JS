@@ -14,7 +14,7 @@ qbData = qbs._.data;
 // Creates a new screen object
 window.qbs.screen = function screen( aspect, container, isOffscreen ) {
 
-	var aspectData, api, screenData;
+	var aspectData, screenObj, screenData;
 
 	if( typeof aspect === "string" && aspect !== "" ) {
 		aspect = aspect.toLowerCase();
@@ -31,7 +31,7 @@ window.qbs.screen = function screen( aspect, container, isOffscreen ) {
 		screenData = createScreen( aspectData, container );
 	}
 
-	api = {
+	screenObj = {
 		"print": function( msg ) {
 			qbData.commands.print( screenData, msg );
 		},
@@ -40,10 +40,28 @@ window.qbs.screen = function screen( aspect, container, isOffscreen ) {
 		},
 		"render": function () {
 			qbData.commands.render( screenData );
+		},
+		"canvas": function () {
+			qbData.commands.canvas( screenData );
+		},
+		"setActive": function () {
+			qbData.commands.setActive( screenData );
+		},
+		"remove": function () {
+			qbData.commands.removeScreen( screenData );
+		},
+		"bgColor": function ( color ) {
+			qbData.commands.bgColor( screenData, color );
+		},
+		"containerBgColor": function ( color ) {
+			qbData.commands.containerBgColor( screenData, color );
 		}
 	};
 
-	return api;
+	// Assign a reference to the object
+	screenData.screenObj = screenObj;
+
+	return screenObj;
 };
 
 // Parses the aspect ratio string
@@ -155,6 +173,7 @@ function createScreenData( canvas, bufferCanvas, container, aspectData, isOffscr
 	// Set the screen id
 	screenData.id = qbData.nextScreenId;
 	qbData.nextScreenId += 1;
+	qbData.activeScreen = screenData;
 
 	// Set the screenId on the canvas
 	canvas.dataset.screenId = screenData.id;
@@ -263,6 +282,34 @@ function setCanvasSize( aspectData, canvas, maxWidth, maxHeight ) {
 		canvas.height = canvas.offsetHeight;
 	}
 }
+
+// Resizes all screens
+function resizeScreens() {
+	var i, screenData;
+
+	for( i in qbData.screens ) {
+		screenData = qbData.screens[ i ];
+
+		if( ! screenData.isOffscreen ) {
+			// Draw the canvas to the buffer
+			screenData.bufferContext.clearRect( 0, 0, screenData.width, screenData.height );
+			screenData.bufferContext.drawImage( screenData.canvas, 0, 0 );
+
+			// Update the canvas to the new size
+			setCanvasSize( screenData.aspectData, screenData.canvas, screenData.container.offsetWidth, screenData.container.offsetHeight );
+
+			// Draw the buffer back onto the canvas
+			screenData.context.drawImage( screenData.bufferCanvas, 0, 0, screenData.width, screenData.height );
+
+			// Set the new buffer size
+			screenData.bufferCanvas.width = screenData.canvas.width;
+			screenData.bufferCanvas.height = screenData.canvas.height;
+		}
+	}
+}
+
+// Any time the screen resizes need to resize canvas too
+window.addEventListener( "resize", resizeScreens );
 
 // End of File Encapsulation
 } )();

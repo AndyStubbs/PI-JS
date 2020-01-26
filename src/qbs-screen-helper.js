@@ -11,7 +11,43 @@ function getImageData( screenData ) {
 	}
 }
 
+function setPixel( screenData, x, y, c ) {
+	var data, i;
+
+	// Get the image data
+	data = screenData.imageData.data;
+
+	// Calculate the index
+	i = ( ( screenData.width * y ) + x ) * 4;
+
+	data[ i ] = c.r;
+	data[ i + 1 ] = c.g;
+	data[ i + 2 ] = c.b;
+	data[ i + 3 ] = c.a;
+
+}
+
+function setPixelSafe( screenData, x, y, c ) {
+	var data, i;
+
+	// Get the image data
+	data = screenData.imageData.data;
+
+	// Calculate the index
+	i = ( ( screenData.width * y ) + x ) * 4;
+
+	if( i < data.length && i >= 0 ) {
+		data[ i ] = c.r;
+		data[ i + 1 ] = c.g;
+		data[ i + 2 ] = c.b;
+		data[ i + 3 ] = c.a;
+	}
+
+}
+
 qbs._.addCommand( "getImageData", getImageData );
+qbs._.addCommand( "setPixel", setPixel );
+qbs._.addCommand( "setPixelSafe", setPixelSafe );
 
 // End of File Encapsulation
 } )();
