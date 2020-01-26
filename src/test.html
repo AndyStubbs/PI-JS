@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<!--meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/-->
+		<title>Test App</title>
+		<script src="qbs.js"></script>
+		<script src="qbs-util.js"></script>
+		<script src="qbs-screen.js"></script>
+		<script src="qbs-screen-helper.js"></script>
+		<script src="qbs-screen-print.js"></script>
+		<script src="qbs-screen-pset.js"></script>
+		<script src="qbs-screen-render.js"></script>
+		<script src="qbs-init.js"></script>
+		<style>
+			html, body {
+				width: 100%;
+				height: 100%;
+				margin: 0;
+				/*touch-action: none;*/
+			}
+		</style>
+	</head>
+<body style="overflow: hidden;">
+<script>
+	var screen = $.screen( "100x100" );
+	screen.pset( 5, 5 );
+	screen.pset( 5, 6 );
+	screen.pset( 6, 6 );
+	screen.render();
+</script>
+</body>
+</html>
