@@ -15,12 +15,13 @@ function pset( screenData, x, y ) {
 
 	// Make sure x and y are integers
 	if( ! Number.isInteger( x ) || ! Number.isInteger( y ) ) {
-		console.error("pset: Argument's x and y must be integers.");
+		console.error( "pset: Argument's x and y must be integers." );
 		return;
 	}
 
 	// Make sure x and y are on the screen
 	if( ! qbs.util.inRange2( x, y, 0, 0, screenData.width, screenData.height ) ) {
+		console.error( "pset: Argument's x and y are not on the screen." );
 		return;
 	}
 

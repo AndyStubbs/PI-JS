@@ -65,7 +65,8 @@ window.qbs = ( function () {
 		"removeAllScreens": removeAllScreens,
 		"bgColor": bgColor,
 		"containerBgColor": containerBgColor,
-		"getScreen": getScreen
+		"getScreen": getScreen,
+		"line": line
 	};
 
 	return api;
@@ -133,6 +134,14 @@ window.qbs = ( function () {
 		screenData = getScreenData( screenId );
 		if( screenData !== false ) {
 			return qbData.commands.containerBgColor( screenData, color );
+		}
+	}
+
+	// Draw's a line on the screen
+	function line( x1, y1, x2, y2, screenId ) {
+		screenData = getScreenData( screenId );
+		if( screenData !== false ) {
+			return screenData.screenObj.line( x1, y1, x2, y2 );
 		}
 	}
 

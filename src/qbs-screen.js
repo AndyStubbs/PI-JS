@@ -55,6 +55,9 @@ window.qbs.screen = function screen( aspect, container, isOffscreen ) {
 		},
 		"containerBgColor": function ( color ) {
 			qbData.commands.containerBgColor( screenData, color );
+		},
+		"line": function ( x1, y1, x2, y2 ) {
+			qbData.commands.qbLine( screenData, x1, y1, x2, y2 );
 		}
 	};
 
