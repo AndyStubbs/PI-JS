@@ -14,7 +14,9 @@ qbData = qbs._.data;
 // Creates a new screen object
 window.qbs.screen = function screen( aspect, container, isOffscreen ) {
 
-	var aspectData, screenObj, screenData;
+	var aspectData, screenObj, screenData, commands;
+
+	commands = {};
 
 	if( typeof aspect === "string" && aspect !== "" ) {
 		aspect = aspect.toLowerCase();
@@ -31,33 +33,52 @@ window.qbs.screen = function screen( aspect, container, isOffscreen ) {
 		screenData = createScreen( aspectData, container );
 	}
 
+	// Setup commands
+	commands.print = qbData.commands.print;
+	commands.pset = qbData.commands.pset;
+	commands.render = qbData.commands.render;
+	commands.canvas = qbData.commands.canvas;
+	commands.setActive = qbData.commands.setActive;
+	commands.removeScreen = qbData.commands.removeScreen;
+	commands.bgColor = qbData.commands.bgColor;
+	commands.containerBgColor = qbData.commands.containerBgColor;
+	commands.line = qbData.commands.qbLine;
+	commands.put = qbData.commands.put;
+	commands.setAnitAlias = setAnitAlias;
+
 	screenObj = {
 		"print": function( msg ) {
-			qbData.commands.print( screenData, msg );
+			commands.print( screenData, msg );
 		},
 		"pset": function ( x, y ) {
-			qbData.commands.pset( screenData, x, y );
+			commands.pset( screenData, x, y );
 		},
 		"render": function () {
-			qbData.commands.render( screenData );
+			commands.render( screenData );
 		},
 		"canvas": function () {
-			qbData.commands.canvas( screenData );
+			commands.canvas( screenData );
 		},
 		"setActive": function () {
-			qbData.commands.setActive( screenData );
+			commands.setActive( screenData );
 		},
 		"remove": function () {
-			qbData.commands.removeScreen( screenData );
+			commands.removeScreen( screenData );
 		},
 		"bgColor": function ( color ) {
-			qbData.commands.bgColor( screenData, color );
+			commands.bgColor( screenData, color );
 		},
 		"containerBgColor": function ( color ) {
-			qbData.commands.containerBgColor( screenData, color );
+			commands.containerBgColor( screenData, color );
 		},
 		"line": function ( x1, y1, x2, y2 ) {
-			qbData.commands.qbLine( screenData, x1, y1, x2, y2 );
+			commands.line( screenData, x1, y1, x2, y2 );
+		},
+		"put": function ( data, x, y ) {
+			commands.put( screenData, data, x, y );
+		},
+		"setAnitAlias": function ( isEnabled ) {
+			commands.setAnitAlias( screenData, isEnabled );
 		}
 	};
 
@@ -65,6 +86,16 @@ window.qbs.screen = function screen( aspect, container, isOffscreen ) {
 	screenData.screenObj = screenObj;
 
 	return screenObj;
+
+	function setAnitAlias( screenData, isEnabled ) {
+		if( isEnabled ) {
+			screenData.anitAlias = true;
+			commands.line = qbData.commands.cLine;
+		} else {
+			screenData.anitAlias = false;
+			commands.line = qbData.commands.qbLine;
+		}
+	}
 };
 
 // Parses the aspect ratio string
@@ -220,6 +251,7 @@ function createScreenData( canvas, bufferCanvas, container, aspectData, isOffscr
 	};
 	screenData.contextMode = false;
 	screenData.touches = {};
+	screenData.antiAliasMode = false;
 
 	// Disable anti aliasing
 	screenData.context.imageSmoothingEnabled = false;

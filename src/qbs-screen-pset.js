@@ -1,5 +1,5 @@
 /*
-* File: qbs-pset.js
+* File: qbs-screen-pset.js
 */
 
 // Start of File Encapsulation

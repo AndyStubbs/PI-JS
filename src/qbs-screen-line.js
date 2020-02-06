@@ -81,7 +81,7 @@ function cLine( screenData, x1, y1, x2, y2 ) {
 	if( screenData.dirty ) {
 		qbData.commands.render( screenData );
 	}
-	screenData.context.strokeStyle = screenData.pal[ qbData.screenData.fColor ].s;
+	screenData.context.strokeStyle = screenData.pal[ screenData.fColor ].s;
 	screenData.context.beginPath();
 	screenData.context.moveTo( x1, y1 );
 	screenData.context.lineTo( x2, y2 );

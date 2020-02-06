@@ -66,7 +66,9 @@ window.qbs = ( function () {
 		"bgColor": bgColor,
 		"containerBgColor": containerBgColor,
 		"getScreen": getScreen,
-		"line": line
+		"line": line,
+		"put": put,
+		"setAntiAlias": setAntiAlias
 	};
 
 	return api;
@@ -142,6 +144,22 @@ window.qbs = ( function () {
 		screenData = getScreenData( screenId );
 		if( screenData !== false ) {
 			return screenData.screenObj.line( x1, y1, x2, y2 );
+		}
+	}
+
+	// Puts an array of data on the screen
+	function put( data, x, y, screenId ) {
+		screenData = getScreenData( screenId );
+		if( screenData !== false ) {
+			return screenData.screenObj.put( data, x, y );
+		}
+	}
+
+	// Sets anti alias mode
+	function setAntiAlias( isEnabled, screenId ) {
+		screenData = getScreenData( screenId );
+		if( screenData !== false ) {
+			return screenData.screenObj.setAntiAlias( isEnabled );
 		}
 	}
 

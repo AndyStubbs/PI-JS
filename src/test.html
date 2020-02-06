@@ -10,8 +10,9 @@
 		<script src="qbs-screen-print.js"></script>
 		<script src="qbs-screen-pset.js"></script>
 		<script src="qbs-screen-render.js"></script>
-		<script src="qbs-screen-canvas.js"></script>
 		<script src="qbs-screen-line.js"></script>
+		<script src="qbs-screen-put.js"></script>
+		<script src="qbs-screen-screenCommands.js"></script>
 		<script src="qbs-init.js"></script>
 		<style>
 			html, body {
@@ -25,10 +26,21 @@
 <body style="overflow: hidden;">
 <script>
 	var screen = $.screen( "100x100" );
+	screen.put( [
+		[ 1, 2, 3 ],
+		[ 4, 5, 6 ],
+		[ 7, 8, 9 ]
+	], 20, 5 );
 	screen.pset( 5, 5 );
 	screen.pset( 5, 6 );
 	screen.pset( 6, 6 );
-	screen.line( 10, 10, 15, 25 );
+	screen.line( 10, 10, 90, 90 );
+
+	screen.setAnitAlias( true );
+	screen.line( 90, 10, 10, 65 );
+	screen.pset( 95, 95 );
+	screen.pset( 95, 96 );
+	screen.pset( 96, 96 );
 	screen.render();
 
 </script>
