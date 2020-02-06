@@ -30,18 +30,20 @@ function setPixel( screenData, x, y, c ) {
 function setPixelSafe( screenData, x, y, c ) {
 	var data, i;
 
+	if( x < 0 || x >= screenData.width || y < 0 || y >= screenData.height ) {
+		return;
+	}
+
 	// Get the image data
 	data = screenData.imageData.data;
 
 	// Calculate the index
 	i = ( ( screenData.width * y ) + x ) * 4;
 
-	if( i < data.length && i >= 0 ) {
-		data[ i ] = c.r;
-		data[ i + 1 ] = c.g;
-		data[ i + 2 ] = c.b;
-		data[ i + 3 ] = c.a;
-	}
+	data[ i ] = c.r;
+	data[ i + 1 ] = c.g;
+	data[ i + 2 ] = c.b;
+	data[ i + 3 ] = c.a;
 
 }
 

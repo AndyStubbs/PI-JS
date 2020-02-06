@@ -3,6 +3,8 @@
 */
 
 window.qbs = ( function () {
+	"use strict";
+
 	var qbData, api;
 
 	// Initilize data
@@ -67,6 +69,7 @@ window.qbs = ( function () {
 		"containerBgColor": containerBgColor,
 		"getScreen": getScreen,
 		"line": line,
+		"circle": circle,
 		"put": put,
 		"get": get,
 		"findColor": findColor,
@@ -127,7 +130,7 @@ window.qbs = ( function () {
 
 		// Set the background color of the canvas
 	function bgColor( color, screenId ) {
-		screenData = getScreenData( screenId );
+		var screenData = getScreenData( screenId );
 		if( screenData !== false ) {
 			return qbData.commands.bgColor( screenData, color );
 		}
@@ -135,7 +138,7 @@ window.qbs = ( function () {
 
 	// Set the background color of the container
 	function containerBgColor( color, screenId ) {
-		screenData = getScreenData( screenId );
+		var screenData = getScreenData( screenId );
 		if( screenData !== false ) {
 			return qbData.commands.containerBgColor( screenData, color );
 		}
@@ -143,9 +146,17 @@ window.qbs = ( function () {
 
 	// Draw's a line on the screen
 	function line( x1, y1, x2, y2, screenId ) {
-		screenData = getScreenData( screenId );
+		var screenData = getScreenData( screenId );
 		if( screenData !== false ) {
 			return screenData.screenObj.line( x1, y1, x2, y2 );
+		}
+	}
+
+	// Draw's a line on the screen
+	function circle( cx, cy, r ) {
+		var screenData = getScreenData( screenId );
+		if( screenData !== false ) {
+			return screenData.screenObj.line( screenData, cx, cy, r );
 		}
 	}
 

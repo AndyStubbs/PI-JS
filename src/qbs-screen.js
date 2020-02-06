@@ -5,6 +5,8 @@
 // Start of File Encapsulation
 ( function () {
 
+"use strict";
+
 var qbData;
 
 qbData = qbs._.data;
@@ -46,6 +48,7 @@ window.qbs.screen = function screen( aspect, container, isOffscreen ) {
 	commands.bgColor = qbData.commands.bgColor;
 	commands.containerBgColor = qbData.commands.containerBgColor;
 	commands.line = qbData.commands.qbLine;
+	commands.circle = qbData.commands.circle;
 	commands.put = qbData.commands.put;
 	commands.get = qbData.commands.get;
 	commands.findColor = findColor;
@@ -78,6 +81,9 @@ window.qbs.screen = function screen( aspect, container, isOffscreen ) {
 		},
 		"line": function ( x1, y1, x2, y2 ) {
 			return commands.line( screenData, x1, y1, x2, y2 );
+		},
+		"circle": function ( cx, cy, r ) {
+			return commands.circle( screenData, cx, cy, r );
 		},
 		"put": function ( data, x, y ) {
 			return commands.put( screenData, data, x, y );
