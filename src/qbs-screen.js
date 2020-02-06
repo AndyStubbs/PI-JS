@@ -14,8 +14,11 @@ qbData = qbs._.data;
 // Creates a new screen object
 window.qbs.screen = function screen( aspect, container, isOffscreen ) {
 
-	var aspectData, screenObj, screenData, commands;
+	var aspectData, screenObj, screenData, commands, cache;
 
+	cache = {
+		"findColor": {}
+	};
 	commands = {};
 
 	if( typeof aspect === "string" && aspect !== "" ) {
@@ -25,7 +28,7 @@ window.qbs.screen = function screen( aspect, container, isOffscreen ) {
 
 	if( isOffscreen ) {
 		if( ! aspectData ) {
-			console.error("screen: You must supply an aspect ratio with exact dimensions for offscreen screens.");
+			console.error( "screen: You must supply an aspect ratio with exact dimensions for offscreen screens." );
 			return;
 		}
 		screenData = createOffscreenScreen( aspectData );
@@ -44,41 +47,49 @@ window.qbs.screen = function screen( aspect, container, isOffscreen ) {
 	commands.containerBgColor = qbData.commands.containerBgColor;
 	commands.line = qbData.commands.qbLine;
 	commands.put = qbData.commands.put;
+	commands.get = qbData.commands.get;
+	commands.findColor = findColor;
 	commands.setAnitAlias = setAnitAlias;
 
 	screenObj = {
 		"print": function( msg ) {
-			commands.print( screenData, msg );
+			return commands.print( screenData, msg );
 		},
 		"pset": function ( x, y ) {
-			commands.pset( screenData, x, y );
+			return commands.pset( screenData, x, y );
 		},
 		"render": function () {
-			commands.render( screenData );
+			return commands.render( screenData );
 		},
 		"canvas": function () {
-			commands.canvas( screenData );
+			return commands.canvas( screenData );
 		},
 		"setActive": function () {
-			commands.setActive( screenData );
+			return commands.setActive( screenData );
 		},
 		"remove": function () {
-			commands.removeScreen( screenData );
+			return commands.removeScreen( screenData );
 		},
 		"bgColor": function ( color ) {
-			commands.bgColor( screenData, color );
+			return commands.bgColor( screenData, color );
 		},
 		"containerBgColor": function ( color ) {
-			commands.containerBgColor( screenData, color );
+			return commands.containerBgColor( screenData, color );
 		},
 		"line": function ( x1, y1, x2, y2 ) {
-			commands.line( screenData, x1, y1, x2, y2 );
+			return commands.line( screenData, x1, y1, x2, y2 );
 		},
 		"put": function ( data, x, y ) {
-			commands.put( screenData, data, x, y );
+			return commands.put( screenData, data, x, y );
+		},
+		"get": function ( x1, y1, x2, y2, tolerance ) {
+			return commands.get( screenData, x1, y1, x2, y2, tolerance );
+		},
+		"findColor": function ( c, tolerance ) {
+			return commands.findColor( screenData, c, tolerance );
 		},
 		"setAnitAlias": function ( isEnabled ) {
-			commands.setAnitAlias( screenData, isEnabled );
+			return commands.setAnitAlias( screenData, isEnabled );
 		}
 	};
 
@@ -95,6 +106,38 @@ window.qbs.screen = function screen( aspect, container, isOffscreen ) {
 			screenData.anitAlias = false;
 			commands.line = qbData.commands.qbLine;
 		}
+	}
+
+	function findColor( screenData, c, tolerance) {
+		var i, pal, dr, dg, db, difference;
+		if(tolerance === undefined) {
+			tolerance = 0;
+		}
+	
+		pal = screenData.pal;
+	
+		if( cache[ "findColor" ][ c.s ] ) {
+			return cache[ "findColor" ][ c.s ];
+		}
+		for( i = 1; i < pal.length; i++ ) {
+			if(tolerance === 0 && pal[i].s === c.s) {
+				cache[ "findColor" ][ c.s ] = i;
+				return i;
+			} else {
+				dr = pal[i].r - c.r;
+				dg = pal[i].g - c.g;
+				db = pal[i].b - c.b;
+	
+				difference = dr * dr + dg * dg + db * db;
+				if(difference <= tolerance) {
+					cache[ "findColor" ][ c.s ] = i;
+					return i;
+				}
+			}
+		}
+		pal.push( c );
+		cache[ "findColor" ][ c.s ] = pal.length - 1;
+		return pal.length - 1;
 	}
 };
 

@@ -68,6 +68,8 @@ window.qbs = ( function () {
 		"getScreen": getScreen,
 		"line": line,
 		"put": put,
+		"get": get,
+		"findColor": findColor,
 		"setAntiAlias": setAntiAlias
 	};
 
@@ -152,6 +154,22 @@ window.qbs = ( function () {
 		screenData = getScreenData( screenId );
 		if( screenData !== false ) {
 			return screenData.screenObj.put( data, x, y );
+		}
+	}
+
+	// Gets an array of data on the screen
+	function get( x1, y1, x2, y2, tolerance, screenId ) {
+		screenData = getScreenData( screenId );
+		if( screenData !== false ) {
+			return screenData.screenObj.get( screenData, x1, y1, x2, y2, tolerance );
+		}
+	}
+
+	// Findcolor an array of data on the screen
+	function findColor( c, tolerance, screenId ) {
+		screenData = getScreenData( screenId );
+		if( screenData !== false ) {
+			return screenData.screenObj.findColor( screenData, c, tolerance );
 		}
 	}
 

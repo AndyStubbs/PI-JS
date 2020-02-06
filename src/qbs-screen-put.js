@@ -73,9 +73,56 @@ function put( screenData, data, x, y ) {
 	screenData.dirty = true;
 }
 
+function get( screenData, x1, y1, x2, y2, tolerance ) {
+	var t, width, height, imageData, data, x, y, c, r, g, b, i, row;
+
+	x1 = qbs.util.clamp( x1, 0, screenData.width - 1 );
+	x2 = qbs.util.clamp( x2, 0, screenData.width - 1 );
+	y1 = qbs.util.clamp( y1, 0, screenData.height - 1 );
+	y2 = qbs.util.clamp( y2, 0, screenData.height - 1 );
+	if( x1 > x2 ) {
+		t = x1;
+		x1 = x2;
+		x2 = t;
+	}
+	if( y1 > y2 ) {
+		t = y1;
+		y1 = y2;
+		y2 = t;
+	}
+	width = x2 - x1;
+	height = y2 - y1;
+
+	if( width <= 0 || height <= 0 ) {
+		return [ [] ];
+	}
+
+	qbData.commands.getImageData( screenData );
+
+	imageData = screenData.imageData;
+
+	data = [];
+	row = 0;
+	for( y = y1; y < y2; y++ ) {
+		data.push([]);
+		for( x = x1; x < x2; x++ ) {
+			// Calculate the index of the image data
+			i = ( ( screenData.width * y ) + x ) * 4;
+			r = imageData.data[ i ];
+			g = imageData.data[ i + 1 ];
+			b = imageData.data[ i + 2 ];
+			c = screenData.screenObj.findColor( qbs.util.rgbToColor( r, g, b ), tolerance );
+			data[ row ].push( c );
+		}
+		row += 1;
+	}
+
+	return data;
+}
 
 // Add internal command
 qbs._.addCommand( "put", put );
+qbs._.addCommand( "get", get );
 
 // End of File Encapsulation
 } )();
