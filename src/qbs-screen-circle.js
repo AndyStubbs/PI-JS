@@ -9,9 +9,11 @@ var qbData;
 
 qbData = qbs._.data;
 
-function circle( screenData, cx, cy, r ) {
-	var x, y, p, c;
-
+function circle( screenData, args ) {
+	var cx, cy, r, x, y, p, c;
+	cx = args[ 0 ];
+	cy = args[ 1 ];
+	r = args[ 2 ];
 	qbData.commands.getImageData( screenData );
 
 	// Make sure x and y are integers
@@ -79,8 +81,8 @@ function circle( screenData, cx, cy, r ) {
 	screenData.dirty = true;
 }
 
-// Add internal command
-qbs._.addCommand( "circle", circle );
+// Add command
+qbs._.addCommand( "circle", circle, false, true, "anti", "circle" );
 
 // End of File Encapsulation
 } )();

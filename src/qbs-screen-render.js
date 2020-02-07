@@ -13,7 +13,7 @@ function render( screenData ) {
 }
 
 // Add internal command
-qbs._.addCommand( "render", render );
+qbs._.addCommand( "render", render, false, true, "both", "render" );
 
 // End of File Encapsulation
 } )();

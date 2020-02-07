@@ -10,8 +10,11 @@ var qbData;
 qbData = qbs._.data;
 
 // Sets a pixel to the screen
-function pset( screenData, x, y ) {
-	var c;
+function pset( screenData, args ) {
+	var x, y, c;
+
+	x = args[ 0 ];
+	y = args[ 1 ];
 
 	// Make sure x and y are integers
 	if( ! Number.isInteger( x ) || ! Number.isInteger( y ) ) {
@@ -38,7 +41,7 @@ function pset( screenData, x, y ) {
 }
 
 // Add internal command
-qbs._.addCommand( "pset", pset );
+qbs._.addCommand( "pset", pset, false, true, "both", "pset" );
 
 // End of File Encapsulation
 } )();

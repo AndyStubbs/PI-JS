@@ -9,8 +9,12 @@ var qbData;
 
 qbData = qbs._.data;
 
-function put( screenData, data, x, y ) {
-	var dataX, dataY, startX, startY, width, height, i, c;
+function put( screenData, args ) {
+	var data, x, y, dataX, dataY, startX, startY, width, height, i, c;
+
+	data = args[ 0 ];
+	x = args[ 1 ];
+	y = args[ 2 ];
 
 	// Exit if no data
 	if( ! data || data.length < 1 ) {
@@ -73,8 +77,14 @@ function put( screenData, data, x, y ) {
 	screenData.dirty = true;
 }
 
-function get( screenData, x1, y1, x2, y2, tolerance ) {
-	var t, width, height, imageData, data, x, y, c, r, g, b, i, row;
+function get( screenData, args ) {
+	var x1, y1, x2, y2, tolerance, t, width, height, imageData, data, x, y, c, r, g, b, i, row;
+
+	x1 = args[ 0 ];
+	y1 = args[ 1 ];
+	x2 = args[ 2 ];
+	y2 = args[ 3 ];
+	tolerance = args[ 4 ];
 
 	x1 = qbs.util.clamp( x1, 0, screenData.width - 1 );
 	x2 = qbs.util.clamp( x2, 0, screenData.width - 1 );
@@ -121,8 +131,8 @@ function get( screenData, x1, y1, x2, y2, tolerance ) {
 }
 
 // Add internal command
-qbs._.addCommand( "put", put );
-qbs._.addCommand( "get", get );
+qbs._.addCommand( "put", put, false, true, "both", "put" );
+qbs._.addCommand( "get", get, false, true, "both", "get" );
 
 // End of File Encapsulation
 } )();

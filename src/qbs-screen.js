@@ -16,12 +16,7 @@ qbData = qbs._.data;
 // Creates a new screen object
 window.qbs.screen = function screen( aspect, container, isOffscreen ) {
 
-	var aspectData, screenObj, screenData, commands, cache;
-
-	cache = {
-		"findColor": {}
-	};
-	commands = {};
+	var aspectData, screenObj, screenData, commands, aliasCommands, antiAliasCommands, i, commandData;
 
 	if( typeof aspect === "string" && aspect !== "" ) {
 		aspect = aspect.toLowerCase();
@@ -38,114 +33,51 @@ window.qbs.screen = function screen( aspect, container, isOffscreen ) {
 		screenData = createScreen( aspectData, container );
 	}
 
-	// Setup commands
-	commands.print = qbData.commands.print;
-	commands.pset = qbData.commands.pset;
-	commands.render = qbData.commands.render;
-	commands.canvas = qbData.commands.canvas;
-	commands.setActive = qbData.commands.setActive;
-	commands.removeScreen = qbData.commands.removeScreen;
-	commands.bgColor = qbData.commands.bgColor;
-	commands.containerBgColor = qbData.commands.containerBgColor;
-	commands.line = qbData.commands.qbLine;
-	commands.circle = qbData.commands.circle;
-	commands.put = qbData.commands.put;
-	commands.get = qbData.commands.get;
-	commands.findColor = findColor;
-	commands.setAnitAlias = setAnitAlias;
-
-	screenObj = {
-		"print": function( msg ) {
-			return commands.print( screenData, msg );
-		},
-		"pset": function ( x, y ) {
-			return commands.pset( screenData, x, y );
-		},
-		"render": function () {
-			return commands.render( screenData );
-		},
-		"canvas": function () {
-			return commands.canvas( screenData );
-		},
-		"setActive": function () {
-			return commands.setActive( screenData );
-		},
-		"remove": function () {
-			return commands.removeScreen( screenData );
-		},
-		"bgColor": function ( color ) {
-			return commands.bgColor( screenData, color );
-		},
-		"containerBgColor": function ( color ) {
-			return commands.containerBgColor( screenData, color );
-		},
-		"line": function ( x1, y1, x2, y2 ) {
-			return commands.line( screenData, x1, y1, x2, y2 );
-		},
-		"circle": function ( cx, cy, r ) {
-			return commands.circle( screenData, cx, cy, r );
-		},
-		"put": function ( data, x, y ) {
-			return commands.put( screenData, data, x, y );
-		},
-		"get": function ( x1, y1, x2, y2, tolerance ) {
-			return commands.get( screenData, x1, y1, x2, y2, tolerance );
-		},
-		"findColor": function ( c, tolerance ) {
-			return commands.findColor( screenData, c, tolerance );
-		},
-		"setAnitAlias": function ( isEnabled ) {
-			return commands.setAnitAlias( screenData, isEnabled );
-		}
+	screenData.cache = {
+		"findColor": {}
 	};
+
+	// Setup commands
+	screenObj = {};
+	screenData.commands = {};
+	screenData.aliasCommands = {};
+	screenData.antiAliasCommands = {};
+
+	// Loop through all the screen commands
+	for( i in qbData.screenCommands ) {
+
+		// Get the command data
+		commandData = qbData.screenCommands[ i ];
+
+		if( commandData.aliasMode === "alias" || commandData.aliasMode === "both" ) {
+			screenData.aliasCommands[ commandData.apiName ] = commandData.fn;
+		}
+		
+		if ( commandData.aliasMode === "anti" || commandData.aliasMode === "both" ) {
+			screenData.antiAliasCommands[ commandData.apiName ] = commandData.fn;
+
+			// Default mode is anti alias mode
+			screenData.commands[ commandData.apiName ] = commandData.fn;
+		}
+
+		// Setup the api
+		setupApiCommand( screenObj, commandData.apiName, screenData );
+
+	}
 
 	// Assign a reference to the object
 	screenData.screenObj = screenObj;
 
 	return screenObj;
 
-	function setAnitAlias( screenData, isEnabled ) {
-		if( isEnabled ) {
-			screenData.anitAlias = true;
-			commands.line = qbData.commands.cLine;
-		} else {
-			screenData.anitAlias = false;
-			commands.line = qbData.commands.qbLine;
-		}
-	}
-
-	function findColor( screenData, c, tolerance) {
-		var i, pal, dr, dg, db, difference;
-		if(tolerance === undefined) {
-			tolerance = 0;
-		}
-	
-		pal = screenData.pal;
-	
-		if( cache[ "findColor" ][ c.s ] ) {
-			return cache[ "findColor" ][ c.s ];
-		}
-		for( i = 1; i < pal.length; i++ ) {
-			if(tolerance === 0 && pal[i].s === c.s) {
-				cache[ "findColor" ][ c.s ] = i;
-				return i;
-			} else {
-				dr = pal[i].r - c.r;
-				dg = pal[i].g - c.g;
-				db = pal[i].b - c.b;
-	
-				difference = dr * dr + dg * dg + db * db;
-				if(difference <= tolerance) {
-					cache[ "findColor" ][ c.s ] = i;
-					return i;
-				}
-			}
-		}
-		pal.push( c );
-		cache[ "findColor" ][ c.s ] = pal.length - 1;
-		return pal.length - 1;
-	}
 };
+
+function setupApiCommand( screenObj, name, screenData ) {
+	screenObj[ name ] = function () {
+		var args = [].slice.call( arguments );
+		return screenData.commands[ name ]( screenData, args );
+	};
+}
 
 // Parses the aspect ratio string
 function parseAspect( aspect ) {

@@ -9,8 +9,13 @@ var qbData;
 
 qbData = qbs._.data;
 
-function qbLine( screenData, x1, y1, x2, y2 ) {
-	var c, dx, dy, sx, sy, err, e2;
+function qbLine( screenData, args ) {
+	var x1, y1, x2, y2, c, dx, dy, sx, sy, err, e2;
+
+	x1 = args[ 0 ];
+	y1 = args[ 1 ];
+	x2 = args[ 2 ];
+	y2 = args[ 3 ];
 
 	// Make sure x and y are integers
 	if( ! Number.isInteger( x1 ) || ! Number.isInteger( y1 ) ||
@@ -73,7 +78,14 @@ function qbLine( screenData, x1, y1, x2, y2 ) {
 	screenData.dirty = true;
 }
 
-function cLine( screenData, x1, y1, x2, y2 ) {
+function cLine( screenData, args ) {
+	var x1, y1, x2, y2;
+
+	x1 = args[ 0 ];
+	y1 = args[ 1 ];
+	x2 = args[ 2 ];
+	y2 = args[ 3 ];
+
 	if( isNaN( x1 ) || isNaN( y1 ) || isNaN( x2 ) || isNaN( y2 ) ) {
 		console.error("line: parameters x1, y1, x2, y2 must be numbers.");
 		return;
@@ -89,8 +101,8 @@ function cLine( screenData, x1, y1, x2, y2 ) {
 }
 
 // Add internal command
-qbs._.addCommand( "qbLine", qbLine );
-qbs._.addCommand( "cLine", cLine );
+qbs._.addCommand( "qbLine", qbLine, false, true, "anti", "line" );
+qbs._.addCommand( "cLine", cLine, false, true, "alias", "line" );
 
 // End of File Encapsulation
 } )();

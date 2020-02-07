@@ -47,9 +47,9 @@ function setPixelSafe( screenData, x, y, c ) {
 
 }
 
-qbs._.addCommand( "getImageData", getImageData );
-qbs._.addCommand( "setPixel", setPixel );
-qbs._.addCommand( "setPixelSafe", setPixelSafe );
+qbs._.addCommand( "getImageData", getImageData, true, false );
+qbs._.addCommand( "setPixel", setPixel, true, false );
+qbs._.addCommand( "setPixelSafe", setPixelSafe, true, false );
 
 // End of File Encapsulation
 } )();

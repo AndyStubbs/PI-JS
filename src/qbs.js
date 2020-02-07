@@ -51,7 +51,8 @@ window.qbs = ( function () {
 			"#412D3D","#412D35","#412D31","#412D2D","#41312D","#41352D","#413D2D","#41412D","#3D412D","#35412D","#31412D",
 			"#2D412D","#2D4131","#2D4135","#2D413D","#2D4141","#2D3D41","#2D3541","#2D3141","#000000","#000000","#000000",
 			"#000000","#000000","#000000","#000000"],
-		"commands": {}
+		"commands": {},
+		"screenCommands": {}
 	};
 
 	api = {
@@ -59,7 +60,7 @@ window.qbs = ( function () {
 			"addCommand": addCommand,
 			"data": qbData
 		},
-		"print": print,
+		/*"print": print,
 		"pset": pset,
 		"canvas": canvas,
 		"setActive": setActive,
@@ -73,16 +74,40 @@ window.qbs = ( function () {
 		"put": put,
 		"get": get,
 		"findColor": findColor,
-		"setAntiAlias": setAntiAlias
+		"setAntiAlias": setAntiAlias*/
 	};
 
 	return api;
 
 	// Add a command to the internal list
-	function addCommand( name, fn ) {
+	function addCommand( name, fn, isInternal, isScreen, aliasMode, apiName ) {
 		qbData.commands[ name ] = fn;
+		if( ! isInternal ) {
+			var args = [].slice.call( arguments );
+			if( isScreen ) {
+				qbData.screenCommands[ name ] = {
+					"aliasMode": aliasMode,
+					"fn": fn,
+					"apiName": apiName
+				};
+				api[ name ] = function () {
+					var screenData = getScreenData( screenId, name );
+					if( screenData !== false ) {
+						return screenData.screenObj[ name ]( screenData, args );
+					}
+				};
+			} else {
+				api[ name ] = function () {
+					var screenData = getScreenData( screenId, name );
+					if( screenData !== false ) {
+						return qbData.commands[ name ]( screenData, args );
+					}
+				};
+			}
+		}
 	}
 
+	/*
 	// Prints text on the page
 	function print( msg, screenId ) {
 		screenData = getScreenData( screenId, "pset" );
@@ -199,6 +224,8 @@ window.qbs = ( function () {
 			return screenData.screenObj;
 		}
 	}
+
+	*/
 
 	// Gets the screen data
 	function getScreenData( screenId, commandName ) {
