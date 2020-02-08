@@ -183,6 +183,121 @@ function aaArc( screenData, args ) {
 	screenData.context.stroke();
 }
 
+qbs._.addCommand( "pxEllipse", pxEllipse, false, true, "pixel", "ellipse" );
+function pxEllipse( screenData, args ) {
+	var c, rx, ry, cx, cy, dx, dy, d1, d2, x, y;
+
+	cx = args[ 0 ];
+	cy = args[ 1 ];
+	rx = args[ 2 ];
+	ry = args[ 3 ];
+
+	if( isNaN( cx ) || isNaN( cy ) || isNaN( rx ) || isNaN( ry ) ) {
+		console.error("ellipse: parameters cx, cy, rx, ry must be numbers.");
+		return;
+	}
+
+	qbData.commands.getImageData( screenData );
+
+	// Initialize the color for the circle
+	c = screenData.pal[ screenData.fColor ];
+
+	if( rx === 0 && ry === 0 ) {
+		qbData.commands.setPixel( screenData, cx, cy, c );
+		screenData.dirty = true;
+		return;
+	}
+
+	// Starting points
+	x = 0;
+	y = ry;
+	
+	// Decision parameter of region 1
+	d1 = ( ry * ry ) - ( rx * rx * ry ) + ( 0.25 * rx * rx );
+	
+	dx = 2 * ry * ry * x;
+	dy = 2 * rx * rx * y;
+	
+	// For region 1
+	while( dx < dy ) {
+		
+		// 4-way symmetry
+		qbData.commands.setPixel( screenData, x + cx, y + cy, c );
+		qbData.commands.setPixel( screenData, -x + cx, y + cy, c );
+		qbData.commands.setPixel( screenData, x + cx, -y + cy, c );
+		qbData.commands.setPixel( screenData, -x + cx, -y + cy, c );
+
+		// Checking and updating value of
+		// decision parameter based on algorithm
+		if( d1 < 0 ) {
+			x++;
+			dx = dx + ( 2 * ry * ry );
+			d1 = d1 + dx + ( ry * ry );
+		} else {
+			x++;
+			y--;
+			dx = dx + ( 2 * ry * ry );
+			dy = dy - ( 2 * rx * rx );
+			d1 = d1 + dx - dy + ( ry * ry );
+		}
+	}
+
+	// Decision parameter of region 2
+	d2 = ( ( ry * ry ) * ( ( x + 0.5 ) * ( x + 0.5 ) ) ) +
+		 ( ( rx * rx ) * ( ( y - 1 ) * ( y - 1 ) ) ) -
+		 ( rx * rx * ry * ry );
+	
+	// Plotting points of region 2
+	while( y >= 0 ) {
+
+		// 4-way symmetry
+		qbData.commands.setPixel( screenData, x + cx, y + cy, c );
+		qbData.commands.setPixel( screenData, -x + cx, y + cy, c );
+		qbData.commands.setPixel( screenData, x + cx, -y + cy, c );
+		qbData.commands.setPixel( screenData, -x + cx, -y + cy, c );
+		
+		// Checking and updating parameter 
+		// value based on algorithm 
+		if( d2 > 0 ) { 
+			y--; 
+			dy = dy - ( 2 * rx * rx ); 
+			d2 = d2 + ( rx * rx ) - dy; 
+		} else { 
+			y--; 
+			x++; 
+			dx = dx + ( 2 * ry * ry ); 
+			dy = dy - ( 2 * rx * rx ); 
+			d2 = d2 + dx - dy + ( rx * rx ); 
+		}
+	}
+
+	screenData.dirty = true;
+}
+
+qbs._.addCommand( "aaEllipse", aaEllipse, false, true, "anti-alias", "ellipse" );
+function aaEllipse( screenData, args ) {
+	var cx, cy, rx, ry;
+
+	cx = args[ 0 ];
+	cy = args[ 1 ];
+	rx = args[ 2 ];
+	ry = args[ 3 ];
+
+	if( isNaN( cx ) || isNaN( cy ) || isNaN( rx ) || isNaN( ry ) ) {
+		console.error( "ellipse: parameters cx, cy, rx, ry must be numbers." );
+		return;
+	}
+	if( screenData.dirty ) {
+		screenData.screenObj.render();
+	}
+
+	screenData.context.beginPath();
+	screenData.context.strokeStyle = screenData.pal[ screenData.fColor ].s;
+	screenData.context.moveTo( cx, cy + ry );
+	screenData.context.ellipse( cx, cy, rx, ry, 0, qbs.util.math.deg360, false );
+	screenData.context.stroke();
+}
+
 qbs._.addCommand( "put", put, false, true, "both", "put" );
 function put( screenData, args ) {
 	var data, x, y, dataX, dataY, startX, startY, width, height, i, c;

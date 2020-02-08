@@ -230,9 +230,8 @@ function createScreenData( canvas, bufferCanvas, container, aspectData, isOffscr
 		"y": 0,
 		"buttons": 0
 	};
-	screenData.contextMode = false;
 	screenData.touches = {};
-	screenData.antiAliasMode = false;
+	screenData.pixelMode = true;
 
 	// Disable anti aliasing
 	screenData.context.imageSmoothingEnabled = false;
