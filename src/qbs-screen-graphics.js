@@ -586,6 +586,83 @@ function aaRect( screenData, args ) {
 	screenData.context.stroke();
 }
 
+qbs._.addCommand( "setPalColor", setPalColor, false, true, "both", "setPalColor" );
+function setPalColor( screenData, args ) {
+	var i, c, color;
+
+	i = args[ 0 ];
+	c = args[ 1 ];
+
+	if( ! Number.isInteger( i ) ) {
+		console.error( "setPalColor: parameter i must be an integer value." );
+		return;
+	}
+	color = qbs.util.convertToColor( c );
+	if( color === null ) {
+		console.error( "setPalColor: parameter c is not a valid color format." );
+		return;
+	}
+	screenData.pal[ i ] = color;
+}
+
+qbs._.addCommand( "color", color, false, true, "both", "color" );
+function color( screenData, args ) {
+	var c, color;
+
+	c = args[ 0 ];
+
+	if( Number.isInteger( c ) ) {
+		screenData.fColor = c;
+	} else {
+		color = qbs.util.convertToColor( c );
+		if( color === null ) {
+			console.error( "color: parameter c is not a valid color format." );
+			return;
+		}
+		screenData.fColor = screenData.screenObj.findColor( color );
+	}
+	screenData.context.fillStyle = screenData.pal[ screenData.fColor ].s;
+	screenData.context.strokeStyle = screenData.pal[ screenData.fColor ].s;
+}
+
+qbs._.addCommand( "point", point, false, true, "both", "point" );
+function point( screenData, args ) {
+	var x, y, i, c, data;
+
+	x = args[ 0 ];
+	y = args[ 1 ];
+
+	// Make sure x and y are integers
+	if( ! Number.isInteger( x ) || ! Number.isInteger( y ) ) {
+		console.error("point: Argument's x and y must be integers.");
+		return;
+	}
+
+	qbData.commands.getImageData( screenData );
+	data = screenData.imageData.data;
+
+	// Calculate the index
+	i = ( ( screenData.width * y ) + x ) * 4;
+	c = qbs.util.convertToColor( {
+		r: data[ i ],
+		g: data[ i + 1 ],
+		b: data[ i + 2 ],
+		a: data[ i + 3 ]
+	} );
+	return screenData.screenObj.findColor( c );
+}
+
+qbs._.addCommand( "cls", cls, false, true, "both", "cls" );
+function cls( screenData ) {
+	screenData.context.clearRect(0, 0, screenData.width, screenData.height);
+	screenData.imageData = null;
+	screenData.printCursor.x = 0;
+	screenData.printCursor.y = 0;
+	screenData.x = 0;
+	screenData.y = 0;
+	screenData.dirty = false;
+}
+
 qbs._.addCommand( "render", render, false, true, "both", "render" );
 function render( screenData ) {
 	if( screenData.imageData && screenData.dirty ) {

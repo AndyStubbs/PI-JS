@@ -24,6 +24,9 @@
 <script>
 	var data;
 	var screen = $.screen( "100x100" );
+	screen.bgColor( 34 );
+	screen.containerBgColor( 55 );
+	screen.color( 2 );
 	screen.line( -10, -10, -5, -5 );
 	screen.put( [
 		[ 1, 2, 3 ],
@@ -31,6 +34,8 @@
 		[ 7, 8, 9 ]
 	], 20, 5 );
 
+	var c = screen.point( 20, 5 );
+	console.log( c );
 	screen.pset( 1, 1 );
 	screen.pset( 5, 5 );
 	screen.pset( 5, 6 );

@@ -54,15 +54,20 @@ function bgColor( screenData, args ) {
 	c = args[ 0 ];
 
 	if( Number.isInteger( c ) ) {
-		bc = qbs.util.convertToColor( c ).s;
+		bc = screenData.pal[ c ];
 	} else {
-		bc = c;
+		bc = qbs.util.convertToColor( c );
 	}
-	screenData.canvas.style.backgroundColor = bc;
+	if( bc && typeof bc.s === "string" ) {
+		screenData.canvas.style.backgroundColor = bc.s;
+	} else {
+		console.error( "bgColor: invalid color value for parameter c." );
+		return;
+	}
 }
 
 // Set the background color of the container
-qbs._.addCommand( "containerBgColor", containerBgColor, false, true, "both", "bgColor" );
+qbs._.addCommand( "containerBgColor", containerBgColor, false, true, "both", "containerBgColor" );
 function containerBgColor( screenData, args ) {
 	var c, bc;
 
@@ -70,11 +75,17 @@ function containerBgColor( screenData, args ) {
 
 	if( screenData.container ) {
 		if( Number.isInteger( c ) ) {
-			bc = qbs.util.convertToColor( c ).s;
+			bc = screenData.pal[ c ];
 		} else {
-			bc = c;
+			bc = qbs.util.convertToColor( c );
 		}
-		screenData.container.style.backgroundColor = bc;
+		if( bc && typeof bc.s === "string" ) {
+			screenData.container.style.backgroundColor = bc.s;
+			return;
+		} else {
+			console.error( "containerBgColor: invalid color value for parameter c." );
+			return;
+		}
 	}
 }
 
@@ -99,7 +110,7 @@ function findColor( screenData, args ) {
 	if( screenData.cache[ "findColor" ][ c.s ] ) {
 		return screenData.cache[ "findColor" ][ c.s ];
 	}
-	for( i = 1; i < pal.length; i++ ) {
+	for( i = 0; i < pal.length; i++ ) {
 		if(tolerance === 0 && pal[i].s === c.s) {
 			screenData.cache[ "findColor" ][ c.s ] = i;
 			return i;

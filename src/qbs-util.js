@@ -39,22 +39,22 @@ window.qbs.util = ( function () {
 		return hexToRgb(rgbToHex(r, g, b));
 	}
 
-	function convertToColor(color) {
+	function convertToColor( color ) {
 		var check_hex_color;
 		if( color === undefined ) {
-			return rgbToColor(0, 0, 0);
+			return null;
 		}
-		if(Array.isArray(color) && color.length > 2) {
-			return rgbToColor(color[0], color[1], color[2]); 
+		if( Array.isArray( color ) && color.length > 2 ) {
+			return rgbToColor( color[ 0 ], color[ 1 ], color[ 2 ] ); 
 		}
-		if(Number.isInteger(color.r) && Number.isInteger(color.g) && Number.isInteger(color.b)) {
-			return rgbToColor(color.r, color.g, color.b);
+		if( Number.isInteger( color.r ) && Number.isInteger( color.g ) && Number.isInteger( color.b ) ) {
+			return rgbToColor( color.r, color.g, color.b );
 		}
 		check_hex_color = /(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i;
 		if( check_hex_color.test( color ) ) {
-			return hexToRgb(color);
+			return hexToRgb( color );
 		}
-		return rgbToColor(0, 0, 0);
+		return null;
 	}
 
 	function checkColor(strColor) {
