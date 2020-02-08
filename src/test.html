@@ -23,6 +23,7 @@
 <script>
 	var data;
 	var screen = $.screen( "100x100" );
+	screen.line( -10, -10, -5, -5 );
 	screen.put( [
 		[ 1, 2, 3 ],
 		[ 4, 5, 6 ],
@@ -35,6 +36,7 @@
 	screen.pset( 6, 6 );
 	screen.line( 10, 10, 90, 90 );
 	screen.circle( 10, 80, 20 );
+	screen.rect( 75, 75, 50, 20 );
 	screen.setAntiAlias( true );
 	screen.line( 90, 10, 10, 65 );
 	screen.pset( 95, 95 );
@@ -43,6 +45,7 @@
 	data = screen.get( 1, 1, 30, 30 );
 	screen.put( data, 60, 10 );
 	screen.circle( 80, 15, 20 );
+	screen.rect( 25, 25, 10, 10 );
 	screen.render();
 
 </script>

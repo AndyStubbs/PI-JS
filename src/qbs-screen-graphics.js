@@ -95,7 +95,7 @@ function aaCircle( screenData, args ) {
 		return;
 	}
 	if( screenData.dirty ) {
-		qbs.render();
+		screenData.screenObj.render();
 	}
 	a1 = qbs.util.degreesToRadian( 0 );
 	a2 = qbs.util.degreesToRadian( 360 );
@@ -279,10 +279,10 @@ function pxLine( screenData, args ) {
 	// Initialize the color for the line
 	c = screenData.pal[ screenData.fColor ];
 
-	x1 = qbs.util.clamp( x1, 0, screenData.width - 1 );
-	x2 = qbs.util.clamp( x2, 0, screenData.width - 1 );
-	y1 = qbs.util.clamp( y1, 0, screenData.height - 1 );
-	y2 = qbs.util.clamp( y2, 0, screenData.height - 1 );
+	//x1 = qbs.util.clamp( x1, 0, screenData.width - 1 );
+	//x2 = qbs.util.clamp( x2, 0, screenData.width - 1 );
+	//y1 = qbs.util.clamp( y1, 0, screenData.height - 1 );
+	//y2 = qbs.util.clamp( y2, 0, screenData.height - 1 );
 	dx = Math.abs( x2 - x1 );
 	dy = Math.abs( y2 - y1 );
 
@@ -307,7 +307,7 @@ function pxLine( screenData, args ) {
 	qbData.commands.getImageData( screenData );
 
 	// Set the first pixel
-	qbData.commands.setPixel( screenData, x1, y1, c );
+	qbData.commands.setPixelSafe( screenData, x1, y1, c );
 
 	// Loop until the end of the line
 	while ( ! ( ( x1 === x2 ) && ( y1 === y2 ) ) ) {
@@ -324,7 +324,7 @@ function pxLine( screenData, args ) {
 		}
 
 		// Set the next pixel
-		qbData.commands.setPixel( screenData, x1, y1, c );
+		qbData.commands.setPixelSafe( screenData, x1, y1, c );
 	}
 
 	screenData.dirty = true;
@@ -344,12 +344,53 @@ function aaLine( screenData, args ) {
 		return;
 	}
 	if( screenData.dirty ) {
-		qbData.commands.render( screenData );
+		screenData.screenObj.render();
 	}
 	screenData.context.strokeStyle = screenData.pal[ screenData.fColor ].s;
 	screenData.context.beginPath();
 	screenData.context.moveTo( x1, y1 );
 	screenData.context.lineTo( x2, y2 );
+	screenData.context.stroke();
+}
+
+qbs._.addCommand( "pxRect", pxRect, false, true, "pixel", "rect" );
+function pxRect( screenData, args ) {
+	var x1, y1, width, height, x2, y2;
+
+	x1 = args[ 0 ];
+	y1 = args[ 1 ];
+	width = args[ 2 ];
+	height = args[ 3 ];
+
+	x2 = x1 + width;
+	y2 = y1 + height;
+
+	screenData.screenObj.line( x1, y1, x2, y1 );
+	screenData.screenObj.line( x2, y1, x2, y2 );
+	screenData.screenObj.line( x2, y2, x1, y2 );
+	screenData.screenObj.line( x1, y2, x1, y1 );
+
+}
+
+qbs._.addCommand( "aaRect", aaRect, false, true, "anti-alias", "rect" );
+function aaRect( screenData, args ) {
+	var x, y, width, height;
+
+	x = args[ 0 ];
+	y = args[ 1 ];
+	width = args[ 2 ];
+	height = args[ 3 ];
+
+	if( isNaN(x) || isNaN(y) || isNaN(width) || isNaN(height) ) {
+		console.error("rect: parameters x, y, width, height must be numbers.");
+		return;
+	}
+	if( screenData.dirty ) {
+		screenData.screenObj.render();
+	}
+	screenData.context.beginPath();
+	screenData.context.strokeStyle = screenData.pal[ screenData.fColor ].s;
+	screenData.context.rect( x, y, width, height );
 	screenData.context.stroke();
 }
 
