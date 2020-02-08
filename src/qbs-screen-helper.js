@@ -5,12 +5,14 @@
 // Start of File Encapsulation
 ( function () {
 
+qbs._.addCommand( "getImageData", getImageData, true, false );
 function getImageData( screenData ) {
 	if( screenData.dirty === false ) {
 		screenData.imageData = screenData.context.getImageData( 0, 0, screenData.width, screenData.height );
 	}
 }
 
+qbs._.addCommand( "setPixel", setPixel, true, false );
 function setPixel( screenData, x, y, c ) {
 	var data, i;
 
@@ -27,6 +29,7 @@ function setPixel( screenData, x, y, c ) {
 
 }
 
+qbs._.addCommand( "setPixelSafe", setPixelSafe, true, false );
 function setPixelSafe( screenData, x, y, c ) {
 	var data, i;
 
@@ -46,10 +49,6 @@ function setPixelSafe( screenData, x, y, c ) {
 	data[ i + 3 ] = c.a;
 
 }
-
-qbs._.addCommand( "getImageData", getImageData, true, false );
-qbs._.addCommand( "setPixel", setPixel, true, false );
-qbs._.addCommand( "setPixelSafe", setPixelSafe, true, false );
 
 // End of File Encapsulation
 } )();
