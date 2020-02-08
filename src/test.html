@@ -37,13 +37,15 @@
 	screen.line( 10, 10, 90, 90 );
 	screen.circle( 10, 80, 20 );
 	screen.rect( 75, 75, 50, 20 );
+	screen.arc( 50, 50, 20, 0, 90 );
 	screen.setAntiAlias( true );
+	screen.arc( 50, 50, 20, -90, 0 );
 	screen.line( 90, 10, 10, 65 );
 	screen.pset( 95, 95 );
 	screen.pset( 95, 96 );
 	screen.pset( 96, 96 );
 	data = screen.get( 1, 1, 30, 30 );
-	screen.put( data, 60, 10 );
+	screen.put( data, 70, 10 );
 	screen.circle( 80, 15, 20 );
 	screen.rect( 25, 25, 10, 10 );
 	screen.render();

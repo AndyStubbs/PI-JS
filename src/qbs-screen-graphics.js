@@ -106,6 +106,83 @@ function aaCircle( screenData, args ) {
 	screenData.context.stroke();
 }
 
+qbs._.addCommand( "pxArc", pxArc, false, true, "pixel", "arc" );
+function pxArc( screenData, args ) {
+	var cx, cy, r, a1, a2, c, temp, a, da, lx, ly, nx, ny;
+
+	cx = args[ 0 ];
+	cy = args[ 1 ];
+	r = args[ 2 ];
+	a1 = args[ 3 ];
+	a2 = args[ 4 ];
+
+	qbData.commands.getImageData( screenData );
+
+	// Initialize the color for the circle
+	c = screenData.pal[ screenData.fColor ];
+
+	if( a1 > a2 ) {
+		temp = a1;
+		a1 = a2;
+		a2 = temp;
+	}
+
+	// Convert degrees to radians
+	a1 = a1 * Math.PI / 180;
+	a2 = a2 * Math.PI / 180;
+
+	if(r === 0) {
+		qbData.commands.setPixel( screenData, cx, cy, c );
+		screenData.dirty = true;
+		return;
+	}
+
+	da = Math.abs(1 / r);
+	a = a1;
+	lx = false;
+	ly = false;
+	while( a < a2 ) {
+		a += da;
+		nx = Math.round( Math.cos( a ) * r + cx );
+		ny = Math.round( Math.sin( a ) * r + cy );
+		if( lx ) {
+			screenData.screenObj.line( lx, ly, nx, ny );
+		} else {
+			qbData.commands.setPixel( screenData, nx, ny, c );
+		}
+		lx = nx;
+		ly = ny;
+	}
+
+	screenData.dirty = true;
+}
+
+qbs._.addCommand( "aaArc", aaArc, false, true, "anti-alias", "arc" );
+function aaArc( screenData, args ) {
+	var cx, cy, r, a1, a2;
+
+	cx = args[ 0 ];
+	cy = args[ 1 ];
+	r = args[ 2 ];
+	a1 = args[ 3 ];
+	a2 = args[ 4 ];
+
+	if( isNaN(cx) || isNaN(cy) || isNaN(r) || isNaN(a1) || isNaN(a2) ) {
+		console.error("arc: parameters cx, cy, r, a1, a2 must be numbers.");
+		return;
+	}
+	if( screenData.dirty ) {
+		screenData.screenObj.render();
+	}
+	a1 = qbs.util.degreesToRadian( a1 );
+	a2 = qbs.util.degreesToRadian( a2 );
+	screenData.context.beginPath();
+	screenData.context.strokeStyle = screenData.pal[ screenData.fColor ].s;
+	screenData.context.moveTo( cx + Math.cos(a1) * r, cy + Math.sin(a1) * r );
+	screenData.context.arc( cx, cy, r, a1, a2 );
+	screenData.context.stroke();
+}
+
 qbs._.addCommand( "put", put, false, true, "both", "put" );
 function put( screenData, args ) {
 	var data, x, y, dataX, dataY, startX, startY, width, height, i, c;
@@ -404,4 +481,3 @@ function render( screenData ) {
 
 // End of File Encapsulation
 } )();
-	
