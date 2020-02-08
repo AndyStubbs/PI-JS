@@ -139,11 +139,13 @@ function setPixelMode( screenData, args ) {
 	isEnabled = args[ 0 ];
 
 	if( isEnabled ) {
+		screenData.context.imageSmoothingEnabled = true;
 		screenData.pixelMode = true;
 		for( i in screenData.pixelCommands ) {
 			screenData.commands[ i ] = screenData.pixelCommands[ i ];
 		}
 	} else {
+		screenData.context.imageSmoothingEnabled = false;
 		screenData.pixelMode = false;
 		for( i in screenData.antiAliasCommands ) {
 			screenData.commands[ i ] = screenData.antiAliasCommands[ i ];
