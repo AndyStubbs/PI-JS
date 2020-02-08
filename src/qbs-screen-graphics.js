@@ -9,8 +9,8 @@ var qbData;
 
 qbData = qbs._.data;
 
-qbs._.addCommand( "qbCircle", qbCircle, false, true, "alias", "circle" );
-function qbCircle( screenData, args ) {
+qbs._.addCommand( "pxCircle", pxCircle, false, true, "pixel", "circle" );
+function pxCircle( screenData, args ) {
 	var cx, cy, r, x, y, p, c;
 	cx = args[ 0 ];
 	cy = args[ 1 ];
@@ -82,8 +82,8 @@ function qbCircle( screenData, args ) {
 	screenData.dirty = true;
 }
 
-qbs._.addCommand( "cCircle", cCircle, false, true, "anti", "circle" );
-function cCircle( screenData, args ) {
+qbs._.addCommand( "aaCircle", aaCircle, false, true, "anti-alias", "circle" );
+function aaCircle( screenData, args ) {
 	var cx, cy, r, a1, a2;
 
 	cx = args[ 0 ];
@@ -260,8 +260,8 @@ function pset( screenData, args ) {
 	screenData.dirty = true;
 }
 
-qbs._.addCommand( "qbLine", qbLine, false, true, "anti", "line" );
-function qbLine( screenData, args ) {
+qbs._.addCommand( "pxLine", pxLine, false, true, "pixel", "line" );
+function pxLine( screenData, args ) {
 	var x1, y1, x2, y2, c, dx, dy, sx, sy, err, e2;
 
 	x1 = args[ 0 ];
@@ -330,8 +330,8 @@ function qbLine( screenData, args ) {
 	screenData.dirty = true;
 }
 
-qbs._.addCommand( "cLine", cLine, false, true, "alias", "line" );
-function cLine( screenData, args ) {
+qbs._.addCommand( "aaLine", aaLine, false, true, "anti-alias", "line" );
+function aaLine( screenData, args ) {
 	var x1, y1, x2, y2;
 
 	x1 = args[ 0 ];

@@ -59,41 +59,26 @@ window.qbs = ( function () {
 		"_": {
 			"addCommand": addCommand,
 			"data": qbData
-		},
-		/*"print": print,
-		"pset": pset,
-		"canvas": canvas,
-		"setActive": setActive,
-		"removeScreen": removeScreen,
-		"removeAllScreens": removeAllScreens,
-		"bgColor": bgColor,
-		"containerBgColor": containerBgColor,
-		"getScreen": getScreen,
-		"line": line,
-		"circle": circle,
-		"put": put,
-		"get": get,
-		"findColor": findColor,
-		"setAntiAlias": setAntiAlias*/
+		}
 	};
 
 	return api;
 
 	// Add a command to the internal list
-	function addCommand( name, fn, isInternal, isScreen, aliasMode, apiName ) {
+	function addCommand( name, fn, isInternal, isScreen, mode, apiName ) {
 		qbData.commands[ name ] = fn;
 		if( ! isInternal ) {
 			var args = [].slice.call( arguments );
 			if( isScreen ) {
 				qbData.screenCommands[ name ] = {
-					"aliasMode": aliasMode,
+					"mode": mode,
 					"fn": fn,
 					"apiName": apiName
 				};
-				api[ name ] = function () {
-					var screenData = getScreenData( undefined, name );
+				api[ apiName ] = function () {
+					var screenData = getScreenData( undefined, apiName );
 					if( screenData !== false ) {
-						return screenData.screenObj[ name ]( screenData, args );
+						return screenData.screenObj[ apiName ]( screenData, args );
 					}
 				};
 			} else {
@@ -106,126 +91,6 @@ window.qbs = ( function () {
 			}
 		}
 	}
-
-	/*
-	// Prints text on the page
-	function print( msg, screenId ) {
-		screenData = getScreenData( screenId, "pset" );
-		if( screenData !== false ) {
-			return qbData.commands.print( screenData, msg );
-		}
-	}
-
-	// Sets a pixel on the screen and set the coordinates of the cursor
-	function pset( x, y, screenId ) {
-		screenData = getScreenData( screenId, "pset" );
-		if( screenData !== false ) {
-			return qbData.commands.pset( screenData, x, y );
-		}
-	}
-
-	// Gets the canvas from the screen
-	function canvas( screenId ) {
-		screenData = getScreenData( screenId );
-		if( screenData !== false ) {
-			return qbData.commands.canvas( screenData );
-		}
-	}
-
-	// Sets the active screen
-	function setActive( screenId ) {
-		screenData = getScreenData( screenId );
-		if( screenData !== false ) {
-			return qbData.commands.setActive( screenData );
-		}
-	}
-
-	// Removes the screen from the page and memory
-	function removeScreen( screenId ) {
-		screenData = getScreenData( screenId );
-		if( screenData !== false ) {
-			return qbData.commands.removeScreen( screenData );
-		}
-	}
-
-	// Removes all screens from page and memory
-	function removeAllScreens() {
-		return qbData.commands.removeAllScreens();
-	}
-
-		// Set the background color of the canvas
-	function bgColor( color, screenId ) {
-		var screenData = getScreenData( screenId );
-		if( screenData !== false ) {
-			return qbData.commands.bgColor( screenData, color );
-		}
-	}
-
-	// Set the background color of the container
-	function containerBgColor( color, screenId ) {
-		var screenData = getScreenData( screenId );
-		if( screenData !== false ) {
-			return qbData.commands.containerBgColor( screenData, color );
-		}
-	}
-
-	// Draw's a line on the screen
-	function line( x1, y1, x2, y2, screenId ) {
-		var screenData = getScreenData( screenId );
-		if( screenData !== false ) {
-			return screenData.screenObj.line( x1, y1, x2, y2 );
-		}
-	}
-
-	// Draw's a line on the screen
-	function circle( cx, cy, r ) {
-		var screenData = getScreenData( screenId );
-		if( screenData !== false ) {
-			return screenData.screenObj.line( screenData, cx, cy, r );
-		}
-	}
-
-	// Puts an array of data on the screen
-	function put( data, x, y, screenId ) {
-		screenData = getScreenData( screenId );
-		if( screenData !== false ) {
-			return screenData.screenObj.put( data, x, y );
-		}
-	}
-
-	// Gets an array of data on the screen
-	function get( x1, y1, x2, y2, tolerance, screenId ) {
-		screenData = getScreenData( screenId );
-		if( screenData !== false ) {
-			return screenData.screenObj.get( screenData, x1, y1, x2, y2, tolerance );
-		}
-	}
-
-	// Findcolor an array of data on the screen
-	function findColor( c, tolerance, screenId ) {
-		screenData = getScreenData( screenId );
-		if( screenData !== false ) {
-			return screenData.screenObj.findColor( screenData, c, tolerance );
-		}
-	}
-
-	// Sets anti alias mode
-	function setAntiAlias( isEnabled, screenId ) {
-		screenData = getScreenData( screenId );
-		if( screenData !== false ) {
-			return screenData.screenObj.setAntiAlias( isEnabled );
-		}
-	}
-
-	// Returns the screen object based on screen id
-	function getScreen( screenId ) {
-		screenData = getScreenData( screenId );
-		if( screenData !== false ) {
-			return screenData.screenObj;
-		}
-	}
-
-	*/
 
 	// Gets the screen data
 	function getScreenData( screenId, commandName ) {
