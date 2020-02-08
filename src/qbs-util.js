@@ -4,26 +4,44 @@
 window.qbs.util = ( function () {
 	"use strict";
 
-	function isFunction(functionToCheck) {
-		return functionToCheck && {}.toString.call(functionToCheck) === '[object Function]';
+	function isFunction( functionToCheck ) {
+		return functionToCheck && {}.toString.call( functionToCheck ) === '[object Function]';
 	}
 
-	function isDomElement(el) {
+	function isDomElement( el ) {
 		return el instanceof Element;
 	}
 
 	function hexToRgb( hex ) {
-		var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec( hex );
-		return result ? {
-			r: parseInt( result[ 1 ], 16 ),
-			g: parseInt( result[ 2 ], 16 ),
-			b: parseInt( result[ 3 ], 16 ),
-			a: 255,
-			s: hex
-		} : null;
+		var r, g, b, a;
+		if( hex.length === 4 ) {
+			r = parseInt( hex.slice( 1, 2 ), 16 ) * 16 - 1;
+			g = parseInt( hex.slice( 2, 3 ), 16 ) * 16 - 1;
+			b = parseInt( hex.slice( 3, 4 ), 16 ) * 16 - 1;
+		} else {
+			r = parseInt( hex.slice( 1, 3 ), 16 );
+			g = parseInt( hex.slice( 3, 5 ), 16 );
+			b = parseInt( hex.slice( 5, 7 ), 16 );
+		}
+		if( hex.length === 9 ) {
+			a = parseInt( hex.slice( 7, 9 ), 16 );
+		} else {
+			a = 255;
+		}
+
+		return {
+			"r": r,
+			"g": g,
+			"b": b,
+			"a": a,
+			"s": "rgba(" + r + "," + g + "," + b + "," + a + ")"
+		};
 	}
 
 	function cToHex( c ) {
+		if( ! Number.isInteger( c ) ) {
+			c = 255;
+		}
 		var hex = Number( c ).toString( 16 );
 		if ( hex.length < 2 ) {
 			hex = "0" + hex;
@@ -31,12 +49,12 @@ window.qbs.util = ( function () {
 		return hex.toUpperCase();
 	}
 
-	function rgbToHex( r, g, b ) {
-		return "#" + cToHex( r ) + cToHex( g ) + cToHex( b );
+	function rgbToHex( r, g, b, a ) {
+		return "#" + cToHex( r ) + cToHex( g ) + cToHex( b ) + cToHex( a );
 	}
 
-	function rgbToColor(r, g, b) {
-		return hexToRgb(rgbToHex(r, g, b));
+	function rgbToColor( r, g, b, a ) {
+		return hexToRgb( rgbToHex( r, g, b, a ) );
 	}
 
 	function convertToColor( color ) {
@@ -45,26 +63,26 @@ window.qbs.util = ( function () {
 			return null;
 		}
 		if( Array.isArray( color ) && color.length > 2 ) {
-			return rgbToColor( color[ 0 ], color[ 1 ], color[ 2 ] ); 
+			return rgbToColor( color[ 0 ], color[ 1 ], color[ 2 ], color[ 3 ] ); 
 		}
 		if( Number.isInteger( color.r ) && Number.isInteger( color.g ) && Number.isInteger( color.b ) ) {
-			return rgbToColor( color.r, color.g, color.b );
+			return rgbToColor( color.r, color.g, color.b, color.a );
 		}
-		check_hex_color = /(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i;
+		check_hex_color = /(^#[0-9A-F]{8}$)|(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i;
 		if( check_hex_color.test( color ) ) {
 			return hexToRgb( color );
 		}
 		return null;
 	}
 
-	function checkColor(strColor) {
+	function checkColor( strColor ) {
 		var s = new Option().style;
 		s.color = strColor;
 		return s.color !== '';
 	}
 
 	function compareColors( color_1, color_2 ) {
-		return color_1.r === color_2.r && color_1.g === color_2.g && color_1.b === color_2.b;
+		return color_1.r === color_2.r && color_1.g === color_2.g && color_1.b === color_2.b && color_1.a === color_2.a;
 	}
 
 	// Copies properties from one object to another

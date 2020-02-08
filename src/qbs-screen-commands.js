@@ -96,7 +96,7 @@ function canvas( screenData ) {
 
 qbs._.addCommand( "findColor", findColor, false, true, "both", "findColor" );
 function findColor( screenData, args ) {
-	var c, tolerance, i, pal, dr, dg, db, difference;
+	var c, tolerance, i, pal, dr, dg, db, da, difference;
 
 	c = args[ 0 ];
 	tolerance = args[ 1 ];
@@ -111,15 +111,16 @@ function findColor( screenData, args ) {
 		return screenData.cache[ "findColor" ][ c.s ];
 	}
 	for( i = 0; i < pal.length; i++ ) {
-		if(tolerance === 0 && pal[i].s === c.s) {
+		if(tolerance === 0 && pal[ i ].s === c.s) {
 			screenData.cache[ "findColor" ][ c.s ] = i;
 			return i;
 		} else {
-			dr = pal[i].r - c.r;
-			dg = pal[i].g - c.g;
-			db = pal[i].b - c.b;
+			dr = pal[ i ].r - c.r;
+			dg = pal[ i ].g - c.g;
+			db = pal[ i ].b - c.b;
+			da = pal[ i ].a - c.a;
 
-			difference = dr * dr + dg * dg + db * db;
+			difference = dr * dr + dg * dg + db * db + da * da;
 			if(difference <= tolerance) {
 				screenData.cache[ "findColor" ][ c.s ] = i;
 				return i;

@@ -412,7 +412,8 @@ function get( screenData, args ) {
 			r = imageData.data[ i ];
 			g = imageData.data[ i + 1 ];
 			b = imageData.data[ i + 2 ];
-			c = screenData.screenObj.findColor( qbs.util.rgbToColor( r, g, b ), tolerance );
+			a = imageData.data[ i + 3 ];
+			c = screenData.screenObj.findColor( qbs.util.rgbToColor( r, g, b, a ), tolerance );
 			data[ row ].push( c );
 		}
 		row += 1;
