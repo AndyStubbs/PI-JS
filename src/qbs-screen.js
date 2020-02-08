@@ -16,7 +16,7 @@ qbData = qbs._.data;
 // Creates a new screen object
 window.qbs.screen = function screen( aspect, container, isOffscreen ) {
 
-	var aspectData, screenObj, screenData, commands, aliasCommands, antiAliasCommands, i, commandData;
+	var aspectData, screenObj, screenData, i, commandData;
 
 	if( typeof aspect === "string" && aspect !== "" ) {
 		aspect = aspect.toLowerCase();

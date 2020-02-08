@@ -120,21 +120,21 @@ function findColor( screenData, args ) {
 	return pal.length - 1;
 }
 
-qbs._.addCommand( "setAntiAlias", setAntiAlias, false, true, "both", "setAntiAlias" );
-function setAntiAlias( screenData, args ) {
+qbs._.addCommand( "setPixelMode", setPixelMode, false, true, "both", "setPixelMode" );
+function setPixelMode( screenData, args ) {
 	var isEnabled;
 
 	isEnabled = args[ 0 ];
 
 	if( isEnabled ) {
-		screenData.anitAlias = true;
-		for( i in screenData.antiAliasCommands ) {
-			screenData.commands[ i ] = screenData.antiAliasCommands[ i ];
+		screenData.pixelMode = true;
+		for( i in screenData.pixelCommands ) {
+			screenData.commands[ i ] = screenData.pixelCommands[ i ];
 		}
 	} else {
-		screenData.anitAlias = false;
-		for( i in screenData.aliasCommands ) {
-			screenData.commands[ i ] = screenData.aliasCommands[ i ];
+		screenData.pixelMode = false;
+		for( i in screenData.antiAliasCommands ) {
+			screenData.commands[ i ] = screenData.antiAliasCommands[ i ];
 		}
 	}
 }
