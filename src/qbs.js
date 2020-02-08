@@ -91,14 +91,14 @@ window.qbs = ( function () {
 					"apiName": apiName
 				};
 				api[ name ] = function () {
-					var screenData = getScreenData( screenId, name );
+					var screenData = getScreenData( undefined, name );
 					if( screenData !== false ) {
 						return screenData.screenObj[ name ]( screenData, args );
 					}
 				};
 			} else {
 				api[ name ] = function () {
-					var screenData = getScreenData( screenId, name );
+					var screenData = getScreenData( undefined, name );
 					if( screenData !== false ) {
 						return qbData.commands[ name ]( screenData, args );
 					}

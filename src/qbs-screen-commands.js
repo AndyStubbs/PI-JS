@@ -10,11 +10,13 @@ var qbData;
 qbData = qbs._.data;
 
 // Set the active screen on qbs
+qbs._.addCommand( "setActive", setActive, false, true, "both", "setActive" );
 function setActive( screenData ) {
 	qbData.activeScreen = qbData.screens[ screenData.id ];
 }
 
 // Remove the screen from the page and memory
+qbs._.addCommand( "removeScreen", removeScreen, false, "both", "removeScreen" );
 function removeScreen( screenData ) {
 	var i;
 
@@ -35,6 +37,7 @@ function removeScreen( screenData ) {
 }
 
 // Remove all screens from the page and memory
+qbs._.addCommand( "removeAllScreens", removeAllScreens, false, true, "both", "removeAllScreens" );
 function removeAllScreens() {
 	var i, screenData;
 	for( i in qbData.screens ) {
@@ -44,6 +47,7 @@ function removeAllScreens() {
 }
 
 // Set the background color of the canvas
+qbs._.addCommand( "bgColor", bgColor, false, true, "both", "bgColor" );
 function bgColor( screenData, args ) {
 	var c, bc;
 
@@ -58,6 +62,7 @@ function bgColor( screenData, args ) {
 }
 
 // Set the background color of the container
+qbs._.addCommand( "containerBgColor", containerBgColor, false, true, "both", "bgColor" );
 function containerBgColor( screenData, args ) {
 	var c, bc;
 
@@ -73,10 +78,12 @@ function containerBgColor( screenData, args ) {
 	}
 }
 
+qbs._.addCommand( "canvas", canvas, false, true, "both", "canvas" );
 function canvas( screenData ) {
 	return screenData.canvas;
 }
 
+qbs._.addCommand( "findColor", findColor, false, true, "both", "findColor" );
 function findColor( screenData, args ) {
 	var c, tolerance, i, pal, dr, dg, db, difference;
 
@@ -113,6 +120,7 @@ function findColor( screenData, args ) {
 	return pal.length - 1;
 }
 
+qbs._.addCommand( "setAntiAlias", setAntiAlias, false, true, "both", "setAntiAlias" );
 function setAntiAlias( screenData, args ) {
 	var isEnabled;
 
@@ -131,16 +139,5 @@ function setAntiAlias( screenData, args ) {
 	}
 }
 
-// Add commands
-qbs._.addCommand( "setActive", setActive, false, true, "both", "setActive" );
-qbs._.addCommand( "removeScreen", removeScreen, false, "both", "removeScreen" );
-qbs._.addCommand( "removeAllScreens", removeAllScreens, false, true, "both", "removeAllScreens" );
-qbs._.addCommand( "bgColor", bgColor, false, true, "both", "bgColor" );
-qbs._.addCommand( "containerBgColor", containerBgColor, false, true, "both", "bgColor" );
-qbs._.addCommand( "canvas", canvas, false, true, "both", "canvas" );
-qbs._.addCommand( "setAntiAlias", setAntiAlias, false, true, "both", "setAntiAlias" );
-qbs._.addCommand( "findColor", findColor, false, true, "both", "findColor" );
-
 // End of File Encapsulation
 } )();
-	
