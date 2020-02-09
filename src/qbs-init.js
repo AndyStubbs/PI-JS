@@ -20,7 +20,7 @@ qbData.defaultPalette[ 0 ] = {
 
 // Initialize the default palette
 for( i = 1; i < qbData.defaultPalette.length; i++ ) {
-	qbData.defaultPalette[ i ] = qbs.util.hexToRgb( qbData.defaultPalette[ i] );
+	qbData.defaultPalette[ i ] = qbs.util.hexToRgb( qbData.defaultPalette[ i ] );
 }
 
 if(window.$ === undefined) {
