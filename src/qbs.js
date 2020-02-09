@@ -5,7 +5,11 @@
 window.qbs = ( function () {
 	"use strict";
 
-	var qbData, api;
+	var qbData, api, waiting, waitCount, readyList;
+
+	waitCount = 0;
+	waiting = false;
+	readyList = [];
 
 	// Initilize data
 	qbData = {
@@ -13,6 +17,7 @@ window.qbs = ( function () {
 		"screens": {},
 		"activeScreen": null,
 		"images": {},
+		"imageCount": 0,
 		"fCos": [],
 		"fSin": [],
 		"defaultPrompt": 219,
@@ -58,8 +63,11 @@ window.qbs = ( function () {
 	api = {
 		"_": {
 			"addCommand": addCommand,
-			"data": qbData
-		}
+			"data": qbData,
+			"resume": resume,
+			"wait": wait
+		},
+		"ready": ready
 	};
 
 	return api;
@@ -68,7 +76,6 @@ window.qbs = ( function () {
 	function addCommand( name, fn, isInternal, isScreen, mode, apiName ) {
 		qbData.commands[ name ] = fn;
 		if( ! isInternal ) {
-			var args = [].slice.call( arguments );
 			if( isScreen ) {
 				qbData.screenCommands[ name ] = {
 					"mode": mode,
@@ -76,6 +83,7 @@ window.qbs = ( function () {
 					"apiName": apiName
 				};
 				api[ apiName ] = function () {
+					var args = [].slice.call( arguments );
 					var screenData = getScreenData( undefined, apiName );
 					if( screenData !== false ) {
 						return screenData.screenObj[ apiName ]( screenData, args );
@@ -83,10 +91,8 @@ window.qbs = ( function () {
 				};
 			} else {
 				api[ name ] = function () {
-					var screenData = getScreenData( undefined, name );
-					if( screenData !== false ) {
-						return qbData.commands[ name ]( screenData, args );
-					}
+					var args = [].slice.call( arguments );
+					return qbData.commands[ name ]( args );
 				};
 			}
 		}
@@ -106,6 +112,34 @@ window.qbs = ( function () {
 			return false;
 		}
 		return qbData.screens[ screenId ];
+	}
+
+	function resume() {
+		var i, temp;
+		waitCount--;
+		if( waitCount === 0 ) {
+			waiting = false;
+			temp = readyList.slice();
+			readyList = [];
+			for( i = 0; i < temp.length; i++ ) {
+				temp[ i ]();
+			}
+		}
+	}
+
+	function wait() {
+		waitCount++;
+		waiting = true;
+	}
+
+	function ready( fn ) {
+		if( qbs.util.isFunction( fn ) ) {
+			if( waiting ) {
+				readyList.push( fn );
+			} else {
+				fn();
+			}
+		}
 	}
 
 } )();

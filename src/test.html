@@ -9,6 +9,7 @@
 		<script src="qbs-screen-helper.js"></script>
 		<script src="qbs-screen-graphics.js"></script>
 		<script src="qbs-screen-graphics-paint.js"></script>
+		<script src="qbs-screen-graphics-images.js"></script>
 		<script src="qbs-screen-commands.js"></script>
 		<script src="qbs-init.js"></script>
 		<style>
@@ -59,6 +60,10 @@
 	screen.rect( 25, 25, 10, 10 );
 	screen.render();
 
+	var ship = $.loadImage( "spaceship_0.png" );
+	$.ready( function () {
+		screen.drawImage( ship, 1, 1 );
+	});
 </script>
 </body>
 </html>
