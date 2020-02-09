@@ -10,6 +10,7 @@
 		<script src="qbs-screen-graphics.js"></script>
 		<script src="qbs-screen-graphics-paint.js"></script>
 		<script src="qbs-screen-graphics-images.js"></script>
+		<script src="qbs-screen-graphics-draw.js"></script>
 		<script src="qbs-screen-commands.js"></script>
 		<script src="qbs-init.js"></script>
 		<style>
@@ -63,6 +64,33 @@
 	var ship = $.loadImage( "spaceship_0.png" );
 	$.ready( function () {
 		screen.drawImage( ship, 1, 1 );
+		screen.cls();
+		screen.setPixelMode( true );
+		screen.pset( 50, 50 );
+		screen.draw( "BH10" );
+		screen.draw( "C15 U20 R40 D40 L40 U20 BR10 P2,15" );
+		screen.draw( "BD12 BL5" );
+		screen.draw( "C9 U2 G2 L C15 NU4 BR3 C9 U2 R D2 R U2 D C10 R D L R D R U R U L" );
+		screen.draw( "BU2 BL2 C6 L U L R3 L UC0 L BD6 BL C9 D2 R C8 U2 C9 R D2" );
+		screen.draw( "BU12 BR7" );
+		screen.draw( "C9 U2 G2 L C15 NU4 BR3 C9 U2 R D2 R U2 D C10 R D L R D R U R U L" );
+		screen.draw( "BU2 BL2 C6 L U L R3 L UC0 L BD6 BL C9 D2 R C8 U2 C9 R D2" );
+		screen.draw( "BU12 BL7" );
+		screen.draw( "C9 U2 G2 L C15 NU4 BR3 C9 U2 R D2 R U2 D C10 R D L R D R U R U L" );
+		screen.draw( "BU2 BL2 C6 L U L R3 L UC0 L BD6 BL C9 D2 R C8 U2 C9 R D2" );
+		screen.draw( "BU10 BR8" );
+		screen.draw( "C9 U2 G2 L C15 NU4 BR3 C9 U2 R D2 R U2 D C10 R D L R D R U R U L" );
+		screen.draw( "BU2 BL2 C6 L U L R3 L UC0 L BD6 BL C9 D2 R C8 U2 C9 R D2" );
+		screen.draw( "BD10 BR7" );
+		screen.draw( "C9 U2 G2 L C15 NU4 BR3 C9 U2 R D2 R U2 D C10 R D L R D R U R U L" );
+		screen.draw( "BU2 BL2 C6 L U L R3 L UC0 L BD6 BL C9 D2 R C8 U2 C9 R D2" );
+		screen.draw( "BD12 BR" );
+		screen.draw( "C9 U2 G2 L C15 NU4 BR3 C9 U2 R D2 R U2 D C10 R D L R D R U R U L" );
+		screen.draw( "BU2 BL2 C6 L U L R3 L UC0 L BD6 BL C9 D2 R C8 U2 C9 R D2" );
+		screen.draw( "BU5 BL17" );
+		screen.draw( "C9 U2 G2 L C15 NU4 BR3 C9 U2 R D2 R U2 D C10 R D L R D R U R U L" );
+		screen.draw( "BU2 BL2 C6 L U L R3 L UC0 L BD6 BL C9 D2 R C8 U2 C9 R D2" );
+		screen.render();
 	});
 </script>
 </body>
