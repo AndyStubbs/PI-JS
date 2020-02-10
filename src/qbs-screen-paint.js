@@ -1,5 +1,5 @@
 /*
-* File: qbs-screen-graphics-paint.js
+* File: qbs-screen-paint.js
 */
 
 // Start of File Encapsulation
