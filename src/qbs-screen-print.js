@@ -41,7 +41,7 @@ function startPrint( screenData, msg, inLine ) {
 	printCursor = screenData.printCursor;
 
 	//Adjust if the text is too wide for the screen
-	width = printCursor.calcWidth( msg );
+	width = printCursor.calcWidth( screenData, msg );
 	if( width + printCursor.x > screenData.width && ! inLine && msg.length > 1 ) {
 		overlap = ( width + printCursor.x ) - screenData.width;
 		onScreen = width - overlap;
@@ -83,7 +83,7 @@ function startPrint( screenData, msg, inLine ) {
 		printCursor.y -= printCursor.charHeight;
 	}
 
-	printCursor.printFunction( msg, printCursor.x, printCursor.y );
+	printCursor.printFunction( screenData, msg, printCursor.x, printCursor.y );
 
 	//If it's not in_line print the advance to next line
 	if( ! inLine ) {
@@ -98,12 +98,12 @@ function startPrint( screenData, msg, inLine ) {
 	}
 }
 
-function qbsCalcWidth( msg ) {
-	return qbData.screenData.printCursor.charWidth * msg.length;
+function qbsCalcWidth( screenData, msg ) {
+	return screenData.printCursor.charWidth * msg.length;
 }
 
-function contextCalcWidth( msg ) {
-	return qbData.screenData.context.measureText( msg ).width;
+function contextCalcWidth( screenData, msg ) {
+	return screenData.context.measureText( msg ).width;
 }
 
 qbs._.addCommand( "setWordBreak", setWordBreak, false, true, "both", "setWordBreak" );
@@ -120,27 +120,27 @@ function setWordBreak( screenData, args ) {
 }
 
 // Print to the screen by using qbs_fonts
-function qbsPrint( msg, x, y ) {
+function qbsPrint( screenData, msg, x, y ) {
 	var i, printCursor, defaultPal;
 
 	// Get reference to printCursor data
-	printCursor = qbData.screenData.printCursor;
+	printCursor = screenData.printCursor;
 
 	// Setup a temporary pallette with the fore color and back color
-	defaultPal = qbData.screenData.pal;
-	qbData.screenData.pal = [ defaultPal[0], defaultPal[qbData.screenData.fColor] ];
+	defaultPal = screenData.pal;
+	screenData.pal = [ defaultPal[ 0 ], defaultPal[ screenData.fColor ] ];
 
 	//Loop through each character in the message and put it on the screen
 	for( i = 0; i < msg.length; i++ ) {
-		qbs.put( printCursor.font[ msg.charCodeAt(i) ], x + printCursor.charWidth * i, y );
+		screenData.screenObj.put( printCursor.font[ msg.charCodeAt( i ) ], x + printCursor.charWidth * i, y );
 	}
 
 	// Reset the palette to the default
-	qbData.screenData.pal = defaultPal;
+	screenData.pal = defaultPal;
 }
 
-function contextPrint( msg, x, y ) {
-	qbData.screenData.context.fillText( msg, x, y );
+function contextPrint( screenData, msg, x, y ) {
+	screenData.context.fillText( msg, x, y );
 }
 
 qbs._.addCommand( "locate", locate, false, true, "both", "locate" );

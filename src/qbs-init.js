@@ -5,7 +5,7 @@
 // Start of File Encapsulation
 (function () {
 
-var i, qbData;
+var i, qbData, font;
 
 qbData = qbs._.data;
 
@@ -21,6 +21,14 @@ qbData.defaultPalette[ 0 ] = {
 // Initialize the default palette
 for( i = 1; i < qbData.defaultPalette.length; i++ ) {
 	qbData.defaultPalette[ i ] = qbs.util.hexToRgb( qbData.defaultPalette[ i ] );
+}
+
+// Set the default font
+if( qbData.fonts[ 0 ] ) {
+	font = qbData.fonts[ 0 ];
+	qbData.defaultFont.width = font.width;
+	qbData.defaultFont.height = font.height;
+	qbData.defaultFont.data = font.data;
 }
 
 if(window.$ === undefined) {
