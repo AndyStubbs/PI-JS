@@ -6,7 +6,7 @@
 ( function () {
 
 "use strict";
-var qbData, qbWait, qbResume, qbGetImageData;
+var qbData, qbWait, qbResume;
 
 qbData = qbs._.data;
 qbWait = qbs._.wait;
@@ -65,7 +65,7 @@ function startPrint( screenData, msg, inLine ) {
 	if( printCursor.y + printCursor.charHeight > screenData.height ) {
 
 		//Draw the canvas
-		qbs.render();
+		screenData.screenObj.render();
 
 		//Draw the image on the buffer
 		screenData.bufferContext.clearRect( 0, 0, screenData.width, screenData.height );

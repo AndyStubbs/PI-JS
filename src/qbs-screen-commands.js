@@ -16,7 +16,7 @@ function setActive( screenData ) {
 }
 
 // Remove the screen from the page and memory
-qbs._.addCommand( "removeScreen", removeScreen, false, "both", "removeScreen" );
+qbs._.addCommand( "removeScreen", removeScreen, false, true, "both", "removeScreen" );
 function removeScreen( screenData ) {
 	var i;
 
