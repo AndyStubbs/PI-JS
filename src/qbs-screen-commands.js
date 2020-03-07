@@ -153,5 +153,51 @@ function setPixelMode( screenData, args ) {
 	}
 }
 
+qbs._.addCommand( "triggerEventListerners", triggerEventListeners, true, true, "both", "triggerEventListerners" );
+function triggerEventListeners( screenData, args ) {
+	var mode, data, listenerArr, temp, pos, i, j, newData;
+
+	mode = args[ 0 ];
+	data = args[ 1 ];
+	listenerArr = args[ 2 ];
+
+	if( listenerArr[ mode ] ) {
+		// Make a temp copy so we don't get infinite loop if new event listener added here
+		temp = listenerArr[ mode ].slice();
+
+		// Loop through all the event listeners
+		for( i = 0; i < temp.length; i++ ) {
+
+			// If there is a hitbox then need to check if we are in range
+			if( temp[ i ].hitBox ) {
+
+				// Get the coordinates of the event
+				pos = data.screens[ temp[ i ].hitBox.screen ];
+				if( pos.touches ) {
+					newData = {
+						"touches": []
+					};
+					for( j in pos.touches ) {
+						if( qbs.util.inRange( pos.touches[ j ], temp[ i ].hitBox ) ) {
+							newData.touches.push( pos.touches[ j ] );
+						}
+					}
+					if( newData.touches.length > 0 ) {
+						temp[ i ].fn( newData );
+					}
+				} else {
+					// Check if the event is in the hitBox
+					if( qbs.util.inRange( pos, temp[ i ].hitBox ) ) {
+						temp[ i ].fn( data );
+					}
+				}
+			} else {
+				// if no hit box then just trigger the event
+				temp[ i ].fn( data );
+			}
+		}
+	}
+}
+
 // End of File Encapsulation
 } )();
