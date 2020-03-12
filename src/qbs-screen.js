@@ -40,28 +40,15 @@ window.qbs.screen = function screen( aspect, container, isOffscreen ) {
 	// Setup commands
 	screenObj = {};
 	screenData.commands = {};
-	screenData.antiAliasCommands = {};
-	screenData.pixelCommands = {};
 
 	// Loop through all the screen commands
 	for( i in qbData.screenCommands ) {
 
-		// Get the command data
 		commandData = qbData.screenCommands[ i ];
-
-		if( commandData.mode === "anti-alias" || commandData.mode === "both" ) {
-			screenData.antiAliasCommands[ commandData.apiName ] = commandData.fn;
-		}
-		
-		if ( commandData.mode === "pixel" || commandData.mode === "both" ) {
-			screenData.pixelCommands[ commandData.apiName ] = commandData.fn;
-
-			// Default mode is pixel mode
-			screenData.commands[ commandData.apiName ] = commandData.fn;
-		}
+		screenData.commands[ i ] = commandData.fn;
 
 		// Setup the api
-		setupApiCommand( screenObj, commandData.apiName, screenData );
+		setupApiCommand( screenObj, i, screenData );
 
 	}
 

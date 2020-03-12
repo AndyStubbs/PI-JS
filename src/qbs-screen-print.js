@@ -12,7 +12,8 @@ qbData = qbs._.data;
 qbWait = qbs._.wait;
 qbResume = qbs._.resume;
 
-qbs._.addCommand( "print", print, false, true, "both", "print" );
+// Print Command
+qbs._.addCommand( "print", print, false, true );
 function print( screenData, args ) {
 	var msg, inLine, parts, i;
 
@@ -106,7 +107,8 @@ function contextCalcWidth( screenData, msg ) {
 	return screenData.context.measureText( msg ).width;
 }
 
-qbs._.addCommand( "setWordBreak", setWordBreak, false, true, "both", "setWordBreak" );
+// Set Word Break Command
+qbs._.addCommand( "setWordBreak", setWordBreak, false, true );
 function setWordBreak( screenData, args ) {
 	var enabled;
 
@@ -143,7 +145,8 @@ function contextPrint( screenData, msg, x, y ) {
 	screenData.context.fillText( msg, x, y );
 }
 
-qbs._.addCommand( "locate", locate, false, true, "both", "locate" );
+// Locate Command
+qbs._.addCommand( "locate", locate, false, true );
 function locate( screenData, args ) {
 	var col, row, x, y;
 
@@ -169,7 +172,8 @@ function locate( screenData, args ) {
 	}
 }
 
-qbs._.addCommand( "locatePx", locatePx, false, true, "both", "locatePx" );
+// Locate Px Command
+qbs._.addCommand( "locatePx", locatePx, false, true );
 function locatePx( screenData, args, x, y ) {
 	var x, y;
 
@@ -184,7 +188,8 @@ function locatePx( screenData, args, x, y ) {
 	}
 }
 
-qbs._.addCommand( "pos", pos, false, true, "both", "pos" );
+// Pos Command
+qbs._.addCommand( "pos", pos, false, true );
 function pos( screenData ) {
 	return {
 		col: Math.floor( screenData.printCursor.x / screenData.printCursor.charWidth ),
@@ -192,7 +197,8 @@ function pos( screenData ) {
 	};
 }
 
-qbs._.addCommand( "posPx", posPx, false, true, "both", "posPx" );
+// Pos Px Command
+qbs._.addCommand( "posPx", posPx, false, true );
 function posPx( screenData ) {
 	return {
 		x: screenData.printCursor.x,
@@ -280,7 +286,8 @@ function loadFont( args ) {
 	return font.id;
 }
 
-qbs._.addCommand( "setFont", setFont, false, true, "both", "setFont" );
+// Set Font Command
+qbs._.addCommand( "setFont", setFont, false, true );
 function setFont( screenData, args ) {
 	var fontId, font, size;
 

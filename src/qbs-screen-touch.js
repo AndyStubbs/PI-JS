@@ -104,45 +104,6 @@ function offevent( mode, fn, mode1, mode2, mode3, name, listenerArr ) {
 	}
 }
 
-function onevent( mode, fn, once, hitBox, mode1, mode2, mode3, name, offevent, listenerArr ) {
-
-	// Prevent event from being triggered in case event is called in an event
-	setTimeout( function () {
-		var tempFn;
-
-		// Validate parameters
-		if( mode !== mode1 && mode !== mode2 && mode !== mode3 ) {
-			console.error( name + ": mode needs to be either up, down, or move.");
-			return;
-		}
-		if( ! qbs.util.isFunction( fn ) ) {
-			console.error( name + ": fn is not a valid function." );
-			return;
-		}
-
-		// If it's a one time function
-		if( once ) {
-			tempFn = fn;
-			fn = function ( data ) {
-				offevent( mode, fn );
-				tempFn( data );
-			};
-		}
-
-		if( ( hitBox && isNaN( hitBox.screen ) ) || ( hitBox && ! qbData.screens[ hitBox.screen ] ) ) {
-			hitBox.screen = qbData.screenData.id;
-		}
-		if( ! listenerArr[ mode ] ) {
-			listenerArr[ mode ] = [];
-		}
-		listenerArr[ mode ].push( {
-			"fn": fn,
-			"hitBox": hitBox
-		} );
-
-	}, 1);
-}
-
 function setPinchZoom( isEnabled ) {
 	if( isEnabled ) {
 		document.body.style.touchAction = "";

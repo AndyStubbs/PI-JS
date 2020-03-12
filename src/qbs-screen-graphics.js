@@ -9,7 +9,8 @@ var qbData;
 
 qbData = qbs._.data;
 
-qbs._.addCommand( "pxCircle", pxCircle, false, true, "pixel", "circle" );
+// Circle command
+qbs._.addCommands( "circle", pxCircle, aaCircle );
 function pxCircle( screenData, args ) {
 	var cx, cy, r, x, y, p, c;
 	cx = args[ 0 ];
@@ -82,7 +83,6 @@ function pxCircle( screenData, args ) {
 	screenData.dirty = true;
 }
 
-qbs._.addCommand( "aaCircle", aaCircle, false, true, "anti-alias", "circle" );
 function aaCircle( screenData, args ) {
 	var cx, cy, r, a1, a2;
 
@@ -106,7 +106,8 @@ function aaCircle( screenData, args ) {
 	screenData.context.stroke();
 }
 
-qbs._.addCommand( "pxArc", pxArc, false, true, "pixel", "arc" );
+// Arc command
+qbs._.addCommands( "arc", pxArc, aaArc );
 function pxArc( screenData, args ) {
 	var cx, cy, r, a1, a2, c, temp, a, da, lx, ly, nx, ny;
 
@@ -157,7 +158,6 @@ function pxArc( screenData, args ) {
 	screenData.dirty = true;
 }
 
-qbs._.addCommand( "aaArc", aaArc, false, true, "anti-alias", "arc" );
 function aaArc( screenData, args ) {
 	var cx, cy, r, a1, a2;
 
@@ -183,7 +183,8 @@ function aaArc( screenData, args ) {
 	screenData.context.stroke();
 }
 
-qbs._.addCommand( "pxEllipse", pxEllipse, false, true, "pixel", "ellipse" );
+// Ellipse command
+qbs._.addCommands( "ellipse", pxEllipse, aaEllipse );
 function pxEllipse( screenData, args ) {
 	var c, rx, ry, cx, cy, dx, dy, d1, d2, x, y;
 
@@ -274,7 +275,6 @@ function pxEllipse( screenData, args ) {
 	screenData.dirty = true;
 }
 
-qbs._.addCommand( "aaEllipse", aaEllipse, false, true, "anti-alias", "ellipse" );
 function aaEllipse( screenData, args ) {
 	var cx, cy, rx, ry;
 
@@ -298,7 +298,8 @@ function aaEllipse( screenData, args ) {
 	screenData.context.stroke();
 }
 
-qbs._.addCommand( "put", put, false, true, "both", "put" );
+// Put command
+qbs._.addCommand( "put", put, false, true );
 function put( screenData, args ) {
 	var data, x, y, dataX, dataY, startX, startY, width, height, i, c;
 
@@ -367,7 +368,8 @@ function put( screenData, args ) {
 	screenData.dirty = true;
 }
 
-qbs._.addCommand( "get", get, false, true, "both", "get" );
+// Get command
+qbs._.addCommand( "get", get, false, true );
 function get( screenData, args ) {
 	var x1, y1, x2, y2, tolerance, t, width, height, imageData, data, x, y, c, r, g, b, i, row;
 
@@ -422,7 +424,8 @@ function get( screenData, args ) {
 	return data;
 }
 
-qbs._.addCommand( "pset", pset, false, true, "both", "pset" );
+// PSET command
+qbs._.addCommand( "pset", pset, false, true );
 function pset( screenData, args ) {
 	var x, y, c;
 
@@ -453,7 +456,8 @@ function pset( screenData, args ) {
 	screenData.dirty = true;
 }
 
-qbs._.addCommand( "pxLine", pxLine, false, true, "pixel", "line" );
+// Line command
+qbs._.addCommands( "line", pxLine, aaLine );
 function pxLine( screenData, args ) {
 	var x1, y1, x2, y2, c, dx, dy, sx, sy, err, e2;
 
@@ -523,7 +527,6 @@ function pxLine( screenData, args ) {
 	screenData.dirty = true;
 }
 
-qbs._.addCommand( "aaLine", aaLine, false, true, "anti-alias", "line" );
 function aaLine( screenData, args ) {
 	var x1, y1, x2, y2;
 
@@ -546,7 +549,8 @@ function aaLine( screenData, args ) {
 	screenData.context.stroke();
 }
 
-qbs._.addCommand( "pxRect", pxRect, false, true, "pixel", "rect" );
+// Rect command
+qbs._.addCommands( "rect", pxRect, aaRect );
 function pxRect( screenData, args ) {
 	var x1, y1, width, height, x2, y2;
 
@@ -587,7 +591,8 @@ function aaRect( screenData, args ) {
 	screenData.context.stroke();
 }
 
-qbs._.addCommand( "setPalColor", setPalColor, false, true, "both", "setPalColor" );
+// Set Pal Color command
+qbs._.addCommand( "setPalColor", setPalColor, false, true );
 function setPalColor( screenData, args ) {
 	var i, c, color;
 
@@ -606,7 +611,8 @@ function setPalColor( screenData, args ) {
 	screenData.pal[ i ] = color;
 }
 
-qbs._.addCommand( "color", color, false, true, "both", "color" );
+// Color command
+qbs._.addCommand( "color", color, false, true );
 function color( screenData, args ) {
 	var c, color;
 
@@ -626,7 +632,8 @@ function color( screenData, args ) {
 	screenData.context.strokeStyle = screenData.pal[ screenData.fColor ].s;
 }
 
-qbs._.addCommand( "point", point, false, true, "both", "point" );
+// Point command
+qbs._.addCommand( "point", point, false, true );
 function point( screenData, args ) {
 	var x, y, i, c, data;
 
@@ -653,7 +660,8 @@ function point( screenData, args ) {
 	return screenData.screenObj.findColor( c );
 }
 
-qbs._.addCommand( "cls", cls, false, true, "both", "cls" );
+// CLS command
+qbs._.addCommand( "cls", cls, false, true );
 function cls( screenData ) {
 	screenData.context.clearRect(0, 0, screenData.width, screenData.height);
 	screenData.imageData = null;
@@ -664,7 +672,8 @@ function cls( screenData ) {
 	screenData.dirty = false;
 }
 
-qbs._.addCommand( "render", render, false, true, "both", "render" );
+// Render command
+qbs._.addCommand( "render", render, false, true );
 function render( screenData ) {
 	if( screenData.imageData && screenData.dirty ) {
 		screenData.context.putImageData( screenData.imageData, 0, 0 );

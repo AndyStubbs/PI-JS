@@ -10,7 +10,7 @@ var qbData;
 
 qbData = qbs._.data;
 
-qbs._.addCommand( "draw", draw, false, true, "both", "draw" );
+qbs._.addCommand( "draw", draw, false, true );
 function draw( screenData, inArgs ) {
 
 	var drawCommands, tempColors, i, reg, parts, isReturn, lastCursor,

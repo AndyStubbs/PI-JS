@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<!--meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/-->
+		<title>Test App</title>
+		<script src="qbs.js"></script>
+		<script src="qbs-util.js"></script>
+		<script src="qbs-screen.js"></script>
+		<script src="qbs-screen-commands.js"></script>
+		<script src="qbs-screen-helper.js"></script>
+		<script src="qbs-screen-graphics.js"></script>
+		<script src="qbs-screen-paint.js"></script>
+		<script src="qbs-screen-images.js"></script>
+		<script src="qbs-screen-draw.js"></script>
+		<script src="qbs-screen-print.js"></script>
+		<script src="qbs-sound.js"></script>
+		<script src="fonts/font-6x6.js"></script>
+		<script src="fonts/font-6x8.js"></script>
+		<script src="fonts/font-8x8.js"></script>
+		<script src="fonts/font-8x14.js"></script>
+		<script src="fonts/font-8x16.js"></script>
+		<script src="qbs-init.js"></script>
+	</head>
+<body>
+<script>
+	var data;
+	var screen = $.screen( "10x10" );
+	$.ready( function () {
+		//screen.circle( 5, 5, 100, 100 );
+		$.circle( 5, 5, 3 );
+		$.render();
+	});
+</script>
+</body>
+</html>

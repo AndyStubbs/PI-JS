@@ -154,12 +154,8 @@ function setPixelMode( screenData, args ) {
 }
 
 qbs._.addCommand( "triggerEventListerners", triggerEventListeners, true, true, "both", "triggerEventListerners" );
-function triggerEventListeners( screenData, args ) {
-	var mode, data, listenerArr, temp, pos, i, j, newData;
-
-	mode = args[ 0 ];
-	data = args[ 1 ];
-	listenerArr = args[ 2 ];
+function triggerEventListeners( mode, data, listenerArr ) {
+	var temp, pos, i, j, newData;
 
 	if( listenerArr[ mode ] ) {
 		// Make a temp copy so we don't get infinite loop if new event listener added here
@@ -197,6 +193,46 @@ function triggerEventListeners( screenData, args ) {
 			}
 		}
 	}
+}
+
+qbs._.addCommand( "onevent", onevent, true, true, "both", "onevent" );
+function onevent( mode, fn, once, hitBox, mode1, mode2, mode3, name, offevent, listenerArr ) {
+
+	// Prevent event from being triggered in case event is called in an event
+	setTimeout( function () {
+		var tempFn;
+
+		// Validate parameters
+		if( mode !== mode1 && mode !== mode2 && mode !== mode3 ) {
+			console.error( name + ": mode needs to be either up, down, or move.");
+			return;
+		}
+		if( ! qbs.util.isFunction( fn ) ) {
+			console.error( name + ": fn is not a valid function." );
+			return;
+		}
+
+		// If it's a one time function
+		if( once ) {
+			tempFn = fn;
+			fn = function ( data ) {
+				offevent( mode, fn );
+				tempFn( data );
+			};
+		}
+
+		if( ( hitBox && isNaN( hitBox.screen ) ) || ( hitBox && ! qbData.screens[ hitBox.screen ] ) ) {
+			hitBox.screen = qbData.screenData.id;
+		}
+		if( ! listenerArr[ mode ] ) {
+			listenerArr[ mode ] = [];
+		}
+		listenerArr[ mode ].push( {
+			"fn": fn,
+			"hitBox": hitBox
+		} );
+
+	}, 1);
 }
 
 // End of File Encapsulation

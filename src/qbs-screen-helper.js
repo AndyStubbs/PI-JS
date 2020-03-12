@@ -21,7 +21,7 @@ function setPixel( screenData, x, y, c ) {
 	var data, i;
 
 	// Get the image data
-	data = screenData.imageData.data;
+	data = screenData.imageData.data
 
 	// Calculate the index
 	i = ( ( screenData.width * y ) + x ) * 4;
@@ -54,6 +54,7 @@ function setPixelSafe( screenData, x, y, c ) {
 	data[ i + 2 ] = c.b;
 	data[ i + 3 ] = c.a;
 
+	screenData.dirty = true;
 }
 
 qbs._.addCommand( "getPixel", getPixel, true, false );

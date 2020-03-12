@@ -31,7 +31,7 @@ function loadImage( args ) {
 	return name;
 }
 
-qbs._.addCommand( "drawImage", drawImage, false, true, "both", "drawImage" );
+qbs._.addCommand( "drawImage", drawImage, false, true );
 function drawImage( screenData, args ) {
 	var imgName, x, y, angle, anchorX, anchorY, img;
 
@@ -51,7 +51,7 @@ function drawImage( screenData, args ) {
 	drawItem( screenData, img, x, y, angle, anchorX, anchorY );
 }
 
-qbs._.addCommand( "drawScreen", drawScreen, false, true, "both", "drawScreen" );
+qbs._.addCommand( "drawScreen", drawScreen, false, true );
 function drawScreen( screenData, args ) {
 	var screenTarget, x, y, angle, anchorX, anchorY;
 

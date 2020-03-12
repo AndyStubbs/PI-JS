@@ -63,6 +63,7 @@ window.qbs = ( function () {
 	api = {
 		"_": {
 			"addCommand": addCommand,
+			"addCommands": addCommands,
 			"data": qbData,
 			"resume": resume,
 			"wait": wait
@@ -73,20 +74,19 @@ window.qbs = ( function () {
 	return api;
 
 	// Add a command to the internal list
-	function addCommand( name, fn, isInternal, isScreen, mode, apiName ) {
+	function addCommand( name, fn, isInternal, isScreen ) {
+
 		qbData.commands[ name ] = fn;
 		if( ! isInternal ) {
 			if( isScreen ) {
 				qbData.screenCommands[ name ] = {
-					"mode": mode,
-					"fn": fn,
-					"apiName": apiName
+					"fn": fn
 				};
-				api[ apiName ] = function () {
+				api[ name ] = function () {
 					var args = [].slice.call( arguments );
-					var screenData = getScreenData( undefined, apiName );
+					var screenData = getScreenData( undefined, name );
 					if( screenData !== false ) {
-						return screenData.screenObj[ apiName ]( screenData, args );
+						return qbData.commands[ name ]( screenData, args );
 					}
 				};
 			} else {
@@ -96,6 +96,16 @@ window.qbs = ( function () {
 				};
 			}
 		}
+	}
+
+	function addCommands( name, fnPx, fnAa ) {
+		addCommand( name, function ( screenData, args ) {
+			if( screenData.pixelMode ) {
+				fnPx( screenData, args );
+			} else {
+				fnAa( screenData, args );
+			}
+		}, false, true );
 	}
 
 	// Gets the screen data

@@ -9,7 +9,8 @@ var qbData;
 
 qbData = qbs._.data;
 
-qbs._.addCommand( "paint", paint, false, true, "both", "paint" );
+// Paint Command
+qbs._.addCommand( "paint", paint, false, true );
 function paint( screenData, args ) {
 	var x, y, fc, fills, pixel, bc;
 
