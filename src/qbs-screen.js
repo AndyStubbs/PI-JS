@@ -179,7 +179,6 @@ function createScreenData( canvas, bufferCanvas, container, aspectData, isOffscr
 
 	// Set the screenId on the canvas
 	canvas.dataset.screenId = screenData.id;
-	canvas.dataset.screenData = screenData;
 
 	// Set the screen default data
 	screenData.canvas = canvas;

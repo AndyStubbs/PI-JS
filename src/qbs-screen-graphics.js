@@ -569,7 +569,6 @@ function pxRect( screenData, args ) {
 
 }
 
-qbs._.addCommand( "aaRect", aaRect, false, true, "anti-alias", "rect" );
 function aaRect( screenData, args ) {
 	var x, y, width, height;
 

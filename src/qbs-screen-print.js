@@ -398,4 +398,4 @@ qbData.defaultFont.printFunction = qbsPrint;
 qbData.defaultFont.calcWidth = qbsCalcWidth;
 
 // End of File Encapsulation
-} )();
+} )(); 

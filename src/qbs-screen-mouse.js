@@ -5,6 +5,10 @@
 // Start of File Encapsulation
 ( function () {
 
+var qbData;
+
+qbData = qbs._.data;
+
 qbs._.addCommand( "startMouse", startMouse, false, true, "both", "startMouse" );
 function startMouse( screenData ) {
 	screenData.canvas.addEventListener( "mousemove", mouseMove );
@@ -27,7 +31,7 @@ function mouseMove( e ) {
 	screenData = e.target.dataset.screenData;
 
 	updateMouse( screenData, e );
-	triggerEventListeners( "move", inmouse(), onMouseEventListeners );
+	qbData.commands.triggerEventListeners( "move", inmouse(), screenData.onMouseEventListeners );
 }
 
 function mouseDown( e ) {
@@ -36,7 +40,7 @@ function mouseDown( e ) {
 	screenData = e.target.dataset.screenData;
 
 	updateMouse( screenData, e );
-	triggerEventListeners( "down", inmouse(), onMouseEventListeners );
+	qbData.commands.triggerEventListeners( "down", inmouse(), onMouseEventListeners );
 }
 
 function mouseUp( e ) {
@@ -45,7 +49,7 @@ function mouseUp( e ) {
 	screenData = e.target.dataset.screenData;
 
 	updateMouse( screenData, e );
-	triggerEventListeners( "up", inmouse(), onMouseEventListeners );
+	qbData.commands.triggerEventListeners( "up", inmouse(), onMouseEventListeners );
 
 }
 
@@ -85,13 +89,13 @@ function inmouse( screenData ) {
 // Adds an event trigger for a mouse event
 qbs._.addCommand( "onmouse", onmouse, true );
 function onmouse( mode, fn, once, hitBox ) {
-	onevent( mode, fn, once, hitBox, "down", "up", "move", "onmouse", offmouse, onMouseEventListeners );
+	qbData.commands.onevent( mode, fn, once, hitBox, "down", "up", "move", "onmouse", offmouse, onMouseEventListeners );
 }
 
 // Removes an event trigger for a mouse event
 qbs._.addCommand( "offmouse", offmouse, false );
 function offmouse( mode, fn) {
-	offevent( mode, fn, "down", "up", "move", "offmouse", onMouseEventListeners );
+	qbData.commands.offevent( mode, fn, "down", "up", "move", "offmouse", onMouseEventListeners );
 }
 
 qbs._.addCommand( "enableContextMenu", enableContextMenu, false );
@@ -103,3 +107,4 @@ function enableContextMenu( isEnabled ) {
 
 // End of File Encapsulation
 } )();
+ 

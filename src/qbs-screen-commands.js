@@ -10,13 +10,13 @@ var qbData;
 qbData = qbs._.data;
 
 // Set the active screen on qbs
-qbs._.addCommand( "setActive", setActive, false, true, "both", "setActive" );
+qbs._.addCommand( "setActive", setActive, false, true );
 function setActive( screenData ) {
 	qbData.activeScreen = qbData.screens[ screenData.id ];
 }
 
 // Remove the screen from the page and memory
-qbs._.addCommand( "removeScreen", removeScreen, false, true, "both", "removeScreen" );
+qbs._.addCommand( "removeScreen", removeScreen, false, true );
 function removeScreen( screenData ) {
 	var i;
 
@@ -37,7 +37,7 @@ function removeScreen( screenData ) {
 }
 
 // Remove all screens from the page and memory
-qbs._.addCommand( "removeAllScreens", removeAllScreens, false, true, "both", "removeAllScreens" );
+qbs._.addCommand( "removeAllScreens", removeAllScreens, false, true );
 function removeAllScreens() {
 	var i, screenData;
 	for( i in qbData.screens ) {
@@ -47,7 +47,7 @@ function removeAllScreens() {
 }
 
 // Set the background color of the canvas
-qbs._.addCommand( "bgColor", bgColor, false, true, "both", "bgColor" );
+qbs._.addCommand( "bgColor", bgColor, false, true );
 function bgColor( screenData, args ) {
 	var c, bc;
 
@@ -67,7 +67,7 @@ function bgColor( screenData, args ) {
 }
 
 // Set the background color of the container
-qbs._.addCommand( "containerBgColor", containerBgColor, false, true, "both", "containerBgColor" );
+qbs._.addCommand( "containerBgColor", containerBgColor, false, true );
 function containerBgColor( screenData, args ) {
 	var c, bc;
 
@@ -89,12 +89,12 @@ function containerBgColor( screenData, args ) {
 	}
 }
 
-qbs._.addCommand( "canvas", canvas, false, true, "both", "canvas" );
+qbs._.addCommand( "canvas", canvas, false, true );
 function canvas( screenData ) {
 	return screenData.canvas;
 }
 
-qbs._.addCommand( "findColor", findColor, false, true, "both", "findColor" );
+qbs._.addCommand( "findColor", findColor, false, true );
 function findColor( screenData, args ) {
 	var c, tolerance, i, pal, dr, dg, db, da, difference;
 
@@ -132,7 +132,7 @@ function findColor( screenData, args ) {
 	return pal.length - 1;
 }
 
-qbs._.addCommand( "setPixelMode", setPixelMode, false, true, "both", "setPixelMode" );
+qbs._.addCommand( "setPixelMode", setPixelMode, false, true );
 function setPixelMode( screenData, args ) {
 	var isEnabled;
 
@@ -153,7 +153,7 @@ function setPixelMode( screenData, args ) {
 	}
 }
 
-qbs._.addCommand( "triggerEventListerners", triggerEventListeners, true, true, "both", "triggerEventListerners" );
+qbs._.addCommand( "triggerEventListerners", triggerEventListeners, true, true );
 function triggerEventListeners( mode, data, listenerArr ) {
 	var temp, pos, i, j, newData;
 
@@ -195,7 +195,7 @@ function triggerEventListeners( mode, data, listenerArr ) {
 	}
 }
 
-qbs._.addCommand( "onevent", onevent, true, true, "both", "onevent" );
+qbs._.addCommand( "onevent", onevent, true, true );
 function onevent( mode, fn, once, hitBox, mode1, mode2, mode3, name, offevent, listenerArr ) {
 
 	// Prevent event from being triggered in case event is called in an event
