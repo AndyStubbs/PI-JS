@@ -55,6 +55,9 @@ window.qbs.screen = function screen( aspect, container, isOffscreen ) {
 	// Assign a reference to the object
 	screenData.screenObj = screenObj;
 
+	// Assign the id of the screen
+	screenObj.id = screenData.id;
+
 	return screenObj;
 
 };

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Pos & PosPx 01</title>
+		<script type="text/toml">
+			[[TOML_START]]
+			test = "screenshot.js"
+			file = "pos_01"
+			name = "pos & posPx 01"
+			width = 200
+			height = 200
+			delay = 0
+			[[TOML_END]]
+		</script>
+		<script src="../../build/qbs.min.js"></script>
+		<style>
+			html, body {
+				background-color: grey;
+			}
+		</style>
+	</head>
+<body>
+<script>
+	$.ready(function () {
+		$.screen( "200x200" );
+		$.setFont(0);
+		$.color(15);
+		$.locate(0, 0);
+		for(var i = 0; i < 25; i++) {
+			$.print(i);
+		}
+		$.locate(1, 0);
+		for(var i = 1; i < 33; i++) {
+			$.print(i % 10, true);
+		}
+		$.color(2);
+		$.locate(1, 2);
+		$.print($.pos().col + ", " + $.pos().row);
+
+		$.color(3);
+		$.locate(6, 5);
+		$.print($.pos().col + ", " + $.pos().row);
+
+		$.color(4);
+		$.locate(28, 1);
+		$.print($.pos().col + ", " + $.pos().row);
+
+		$.color(5);
+		$.locate(27, 22);
+		$.print($.pos().col + ", " + $.pos().row);
+
+		$.color(6);
+		$.locate(15, 15);
+		$.print($.pos().col + ", " + $.pos().row);
+
+		$.color(9);
+		$.locate(15, 16);
+		$.print($.posPx().x + ", " + $.posPx().y);
+		$.render();
+	});
+</script>
+</body>
+</html>

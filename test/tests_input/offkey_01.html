@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Offkey 01</title>
+		<script type="text/toml">
+			[[TOML_START]]
+			test = "screenshot.js"
+			file = "offkey_01"
+			name = "offkey 01"
+			width = 300
+			height = 200
+			delay = 0
+			[[TOML_END]]
+		</script>
+		<script src="../../build/qbs.min.js"></script>
+		<style>
+			html, body {
+				background-color: grey;
+			}
+		</style>
+	</head>
+<body>
+<script>
+	$.ready(function () {
+		$.screen("300x200");
+		$.print("Press key A.");
+		$.render();
+		$.onkey("KeyA", press);
+	});
+	function press(e) {
+		$.print("You pressed " + e.key + ".");
+		$.print("Now press the key B.");
+		$.offkey("KeyA", press);
+		$.onkey("KeyB", press2);
+		$.render();
+	}
+	function press2(e) {
+		$.print("You pressed " + e.key + ".");
+		$.print("Now press any key.");
+		$.offkey("KeyB", press2);
+		$.onkey("any", press3);
+		$.render();
+	}
+	function press3(e) {
+		$.print("You pressed " + e.key + ".");
+		$.print("We are done sir, thank you for a lot of fun sir.");
+		$.render();
+	}
+</script>
+</body>
+</html>

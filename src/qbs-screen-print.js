@@ -175,7 +175,6 @@ function locate( screenData, args ) {
 // Locate Px Command
 qbs._.addCommand( "locatePx", locatePx, false, true );
 function locatePx( screenData, args, x, y ) {
-	var x, y;
 
 	x = args[ 0 ];
 	y = args[ 1 ];

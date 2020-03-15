@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Ontouch 01</title>
+		<script type="text/toml">
+			[[TOML_START]]
+			test = "screenshot.js"
+			file = "ontouch_01"
+			name = "ontouch 01"
+			width = 320
+			height = 200
+			delay = 0
+			[[TOML_END]]
+		</script>
+		<script src="../../build/qbs.min.js"></script>
+		<style>
+			html, body {
+				background-color: grey;
+			}
+		</style>
+	</head>
+<body>
+<script>
+	$.ready( function () {
+		var last = {x: 0, y: 0};
+		var isDrawing = false;
+		var touches = {};
+		$.screen( "320x200" );
+		$.setPinchZoom( false );
+
+		var corner = $.get(0, 0, 8, 14);
+		$.ontouch( "start", function ( t ) {
+			var i, touch;
+			for( i = 0; i < t.touches.length; i++ ) {
+				touch = t.touches[ i ];
+				touches[ touch.id ] = { x: touch.x, y: touch.y };
+				$.pset( touch.x, touch.y );
+			}
+			$.render();
+		} );
+		$.ontouch( "move", function ( t ) {
+			var i, touch;
+			for( i = 0; i < t.touches.length; i++ ) {
+				touch = t.touches[ i ];
+				if( touches[ touch.id ] ) {
+					$.line( touch.x, touch.y, touches[ touch.id ].x, touches[ touch.id ].y );
+				}
+				touches[ touch.id ] = { x: touch.x, y: touch.y };
+			}
+			$.render();
+		});
+		$.ontouch( "end", function ( t ) {
+			var i, touch;
+			for( i = 0; i < t.touches.length; i++ ) {
+				touch = t.touches[ i ];
+				if( touches[ touch.id ] ) {
+					$.line( touch.x, touch.y, touches[ touch.id ].x, touches[ touch.id ].y );
+				}
+				delete touches[ touch.id ];;
+			}
+			$.render();
+		});
+	} );
+</script>
+</body>
+</html>

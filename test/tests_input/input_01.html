@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Inkey 01</title>
+		<script type="text/toml">
+			[[TOML_START]]
+			test = "screenshot.js"
+			file = "inkey_01"
+			name = "inkey 01"
+			width = 200
+			height = 200
+			delay = 0
+			[[TOML_END]]
+		</script>
+		<script src="../../build/qbs.min.js"></script>
+		<style>
+			html, body {
+				background-color: grey;
+			}
+		</style>
+	</head>
+<body>
+<script>
+	$.ready(function () {
+		$.screen("300x200");
+		$.cbgColor("#000000");
+		$.paint(1, 1, 1);
+		$.color(15);
+		$.render();
+		$.input("First name: ", "first");
+		$.input("Last name: ", "last");
+		$.input("Money: ", "money", true);
+		$.inputReady(function (data) {
+			$.print(data.first + " " + data.last + " has $" + data.money + ".");
+			$.render();
+			gotoInput2();
+		});
+	});
+
+	function gotoInput2() {
+		var pickAnumber = $.input("Pick a number between 1 and 10: ", "num", true, 1, 10, true);
+		pickAnumber.ready(function (val) {
+			$.print("Your number is " + val + ".");
+			$.render();
+			$.input("What is x? ", "x");
+		});
+		$.inputReady(function (data) {
+			$.print(data.num + " is a good number.");
+			$.print(data.x + " is x.");
+			$.render();
+			$.input("What is y? ", "y");
+			$.inputReady(function(data) {
+				$.print("y is " + data.y);
+				$.render();
+			});
+		});
+	}
+</script>
+</body>
+</html>

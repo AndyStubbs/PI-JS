@@ -61,9 +61,10 @@ function pxCircle( screenData, args ) {
 		}
 		
 		// All the perimeter points have already been printed
-		if( x < y ) {
-			break;
-		}
+		//if( x < y ) {
+		// ???Unreachable code???
+		//	break;
+		//}
 		
 		// Set pixels around point and reflection in other octants
 		qbData.commands.setPixelSafe( screenData, x + cx, y + cy, c );

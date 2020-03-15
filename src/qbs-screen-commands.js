@@ -9,12 +9,6 @@ var qbData;
 
 qbData = qbs._.data;
 
-// Set the active screen on qbs
-qbs._.addCommand( "setActive", setActive, false, true );
-function setActive( screenData ) {
-	qbData.activeScreen = qbData.screens[ screenData.id ];
-}
-
 // Remove the screen from the page and memory
 qbs._.addCommand( "removeScreen", removeScreen, false, true );
 function removeScreen( screenData ) {
@@ -34,16 +28,6 @@ function removeScreen( screenData ) {
 	// Delete the screen from the screens container
 	delete qbData.screens[ screenId ];
 
-}
-
-// Remove all screens from the page and memory
-qbs._.addCommand( "removeAllScreens", removeAllScreens, false, true );
-function removeAllScreens() {
-	var i, screenData;
-	for( i in qbData.screens ) {
-		screenData = qbData.screens[ i ];
-		removeScreen( screenData );
-	}
 }
 
 // Set the background color of the canvas

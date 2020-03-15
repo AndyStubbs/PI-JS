@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>QBS Test Results</title>
+	<style>
+		img {
+			max-width: calc(50% - 25px);
+		}
+		span {
+			font-weight: bold;
+			background-color: black;
+			font-size: larger;
+			padding: 5px;
+		}
+		.error {
+			color: red;
+		}
+		.good {
+			color: green;
+		}
+		.neutral {
+			color: gold;
+		}
+		.link {
+			margin-bottom: 15px;
+    		font-size: large;
+		}
+	</style>
+</head>
+<body>
+	<h1>Test Results</h1>
+	<div id="test_stats">
+			<span class='error'>Discrepancies Found</span>
+			<span class='error'>10 mismatched images.</span>
+		</div>
+	<hr />
+	<div id="unit_tests"></div>
+	<div id="web_tests">
+		<h2>arc 01</h2>
+		<div class='link'><a href='http://localhost:8080/test/tests/arc_01.html'>http://localhost:8080/test/tests/arc_01.html</a></div>
+		<span class='good'>MATCHED</span><br />
+		<img src='tests/screenshots/arc_01.png' />
+		<img src='tests/screenshots/arc_01_new.png' />
+		<h2>arc 02</h2>
+		<div class='link'><a href='http://localhost:8080/test/tests/arc_02.html'>http://localhost:8080/test/tests/arc_02.html</a></div>
+		<span class='good'>MATCHED</span><br />
+		<img src='tests/screenshots/arc_02.png' />
+		<img src='tests/screenshots/arc_02_new.png' />
+		<h2>Arc 03</h2>
+		<div class='link'><a href='http://localhost:8080/test/tests/arc_03.html'>http://localhost:8080/test/tests/arc_03.html</a></div>
+		<span class='good'>MATCHED</span><br />
+		<img src='tests/screenshots/arc_03.png' />
+		<img src='tests/screenshots/arc_03_new.png' />
+		<h2>canvas 01</h2>
+		<div class='link'><a href='http://localhost:8080/test/tests/canvas_01.html'>http://localhost:8080/test/tests/canvas_01.html</a></div>
+		<span class='good'>MATCHED</span><br />
+		<img src='tests/screenshots/canvas_01.png' />
+		<img src='tests/screenshots/canvas_01_new.png' />
+		<h2>circle 01</h2>
+		<div class='link'><a href='http://localhost:8080/test/tests/circle_01.html'>http://localhost:8080/test/tests/circle_01.html</a></div>
+		<span class='good'>MATCHED</span><br />
+		<img src='tests/screenshots/circle_01.png' />
+		<img src='tests/screenshots/circle_01_new.png' />
+		<h2>circle 02</h2>
+		<div class='link'><a href='http://localhost:8080/test/tests/circle_02.html'>http://localhost:8080/test/tests/circle_02.html</a></div>
+		<span class='good'>MATCHED</span><br />
+		<img src='tests/screenshots/circle_02.png' />
+		<img src='tests/screenshots/circle_02_new.png' />
+		<h2>cls 01</h2>
+		<div class='link'><a href='http://localhost:8080/test/tests/cls_01.html'>http://localhost:8080/test/tests/cls_01.html</a></div>
+		<span class='good'>MATCHED</span><br />
+		<img src='tests/screenshots/cls_01.png' />
+		<img src='tests/screenshots/cls_01_new.png' />
+		<h2>contextMode 01</h2>
+		<div class='link'><a href='http://localhost:8080/test/tests/contextMode_01.html'>http://localhost:8080/test/tests/contextMode_01.html</a></div>
+		<span class='good'>MATCHED</span><br />
+		<img src='tests/screenshots/contextMode_01.png' />
+		<img src='tests/screenshots/contextMode_01_new.png' />
+		<h2>drawImage 01</h2>
+		<div class='link'><a href='http://localhost:8080/test/tests/drawImage_01.html'>http://localhost:8080/test/tests/drawImage_01.html</a></div>
+		<span class='good'>MATCHED</span><br />
+		<img src='tests/screenshots/drawImage_01.png' />
+		<img src='tests/screenshots/drawImage_01_new.png' />
+		<h2>draw 01</h2>
+		<div class='link'><a href='http://localhost:8080/test/tests/draw_01.html'>http://localhost:8080/test/tests/draw_01.html</a></div>
+		<span class='good'>MATCHED</span><br />
+		<img src='tests/screenshots/draw_01.png' />
+		<img src='tests/screenshots/draw_01_new.png' />
+		<h2>draw 02</h2>
+		<div class='link'><a href='http://localhost:8080/test/tests/draw_02.html'>http://localhost:8080/test/tests/draw_02.html</a></div>
+		<span class='error'>NOT MATCHED - Difference: 479.11</span><br />
+		<img src='tests/screenshots/draw_02.png' />
+		<img src='tests/screenshots/draw_02_new.png' />
+		<h2>ellipse 01</h2>
+		<div class='link'><a href='http://localhost:8080/test/tests/ellipse_01.html'>http://localhost:8080/test/tests/ellipse_01.html</a></div>
+		<span class='error'>NOT MATCHED - Difference: 4072.91</span><br />
+		<img src='tests/screenshots/ellipse_01.png' />
+		<img src='tests/screenshots/ellipse_01_new.png' />
+		<h2>Ellipse 02</h2>
+		<div class='link'><a href='http://localhost:8080/test/tests/ellipse_02.html'>http://localhost:8080/test/tests/ellipse_02.html</a></div>
+		<span class='error'>NOT MATCHED - Difference: 645.89</span><br />
+		<img src='tests/screenshots/ellipse_02.png' />
+		<img src='tests/screenshots/ellipse_02_new.png' />
+		<h2>errors 01</h2>
+		<div class='link'><a href='http://localhost:8080/test/tests/errors_01.html'>http://localhost:8080/test/tests/errors_01.html</a></div>
+		<span class='error'>NOT MATCHED - Difference: 19894.96</span><br />
+		<img src='tests/screenshots/errors_01.png' />
+		<img src='tests/screenshots/errors_01_new.png' />
+		<h2>get 01</h2>
+		<div class='link'><a href='http://localhost:8080/test/tests/get_01.html'>http://localhost:8080/test/tests/get_01.html</a></div>
+		<span class='good'>MATCHED</span><br />
+		<img src='tests/screenshots/get_01.png' />
+		<img src='tests/screenshots/get_01_new.png' />
+		<h2>layers 01</h2>
+		<div class='link'><a href='http://localhost:8080/test/tests/layers_01.html'>http://localhost:8080/test/tests/layers_01.html</a></div>
+		<span class='error'>NOT MATCHED - Difference: 26218.14</span><br />
+		<img src='tests/screenshots/layers_01.png' />
+		<img src='tests/screenshots/layers_01_new.png' />
+		<h2>Line 01</h2>
+		<div class='link'><a href='http://localhost:8080/test/tests/line_01.html'>http://localhost:8080/test/tests/line_01.html</a></div>
+		<span class='good'>MATCHED</span><br />
+		<img src='tests/screenshots/line_01.png' />
+		<img src='tests/screenshots/line_01_new.png' />
+		<h2>Line 02</h2>
+		<div class='link'><a href='http://localhost:8080/test/tests/line_02.html'>http://localhost:8080/test/tests/line_02.html</a></div>
+		<span class='good'>MATCHED</span><br />
+		<img src='tests/screenshots/line_02.png' />
+		<img src='tests/screenshots/line_02_new.png' />
+		<h2>locate 01</h2>
+		<div class='link'><a href='http://localhost:8080/test/tests/locate_01.html'>http://localhost:8080/test/tests/locate_01.html</a></div>
+		<span class='good'>MATCHED</span><br />
+		<img src='tests/screenshots/locate_01.png' />
+		<img src='tests/screenshots/locate_01_new.png' />
+		<h2>offscreen 01</h2>
+		<div class='link'><a href='http://localhost:8080/test/tests/offscreen_01.html'>http://localhost:8080/test/tests/offscreen_01.html</a></div>
+		<span class='error'>NOT MATCHED - Difference: 145.78</span><br />
+		<img src='tests/screenshots/offscreen_01.png' />
+		<img src='tests/screenshots/offscreen_01_new.png' />
+		<h2>padL_padR_01</h2>
+		<div class='link'><a href='http://localhost:8080/test/tests/padL_padR_01.html'>http://localhost:8080/test/tests/padL_padR_01.html</a></div>
+		<span class='error'>NOT MATCHED - Difference: 358.67</span><br />
+		<img src='tests/screenshots/padL_padR_01.png' />
+		<img src='tests/screenshots/padL_padR_01_new.png' />
+		<h2>paint 01</h2>
+		<div class='link'><a href='http://localhost:8080/test/tests/paint_01.html'>http://localhost:8080/test/tests/paint_01.html</a></div>
+		<span class='good'>MATCHED</span><br />
+		<img src='tests/screenshots/paint_01.png' />
+		<img src='tests/screenshots/paint_01_new.png' />
+		<h2>palette 01</h2>
+		<div class='link'><a href='http://localhost:8080/test/tests/palette_01.html'>http://localhost:8080/test/tests/palette_01.html</a></div>
+		<span class='error'>NOT MATCHED - Difference: 89.99</span><br />
+		<img src='tests/screenshots/palette_01.png' />
+		<img src='tests/screenshots/palette_01_new.png' />
+		<h2>point 01</h2>
+		<div class='link'><a href='http://localhost:8080/test/tests/point_01.html'>http://localhost:8080/test/tests/point_01.html</a></div>
+		<span class='good'>MATCHED</span><br />
+		<img src='tests/screenshots/point_01.png' />
+		<img src='tests/screenshots/point_01_new.png' />
+		<h2>pos & posPx 01</h2>
+		<div class='link'><a href='http://localhost:8080/test/tests/pos_01.html'>http://localhost:8080/test/tests/pos_01.html</a></div>
+		<span class='error'>NOT MATCHED - Difference: 1242.11</span><br />
+		<img src='tests/screenshots/pos_01.png' />
+		<img src='tests/screenshots/pos_01_new.png' />
+		<h2>Print 01</h2>
+		<div class='link'><a href='http://localhost:8080/test/tests/print_01.html'>http://localhost:8080/test/tests/print_01.html</a></div>
+		<span class='good'>MATCHED</span><br />
+		<img src='tests/screenshots/print_01.png' />
+		<img src='tests/screenshots/print_01_new.png' />
+		<h2>Print 02</h2>
+		<div class='link'><a href='http://localhost:8080/test/tests/print_02.html'>http://localhost:8080/test/tests/print_02.html</a></div>
+		<span class='good'>MATCHED</span><br />
+		<img src='tests/screenshots/print_02.png' />
+		<img src='tests/screenshots/print_02_new.png' />
+		<h2>Print 03</h2>
+		<div class='link'><a href='http://localhost:8080/test/tests/print_03.html'>http://localhost:8080/test/tests/print_03.html</a></div>
+		<span class='good'>MATCHED</span><br />
+		<img src='tests/screenshots/print_03.png' />
+		<img src='tests/screenshots/print_03_new.png' />
+		<h2>Print 04</h2>
+		<div class='link'><a href='http://localhost:8080/test/tests/print_04.html'>http://localhost:8080/test/tests/print_04.html</a></div>
+		<span class='good'>MATCHED</span><br />
+		<img src='tests/screenshots/print_04.png' />
+		<img src='tests/screenshots/print_04_new.png' />
+		<h2>Print 05</h2>
+		<div class='link'><a href='http://localhost:8080/test/tests/print_05.html'>http://localhost:8080/test/tests/print_05.html</a></div>
+		<span class='good'>MATCHED</span><br />
+		<img src='tests/screenshots/print_05.png' />
+		<img src='tests/screenshots/print_05_new.png' />
+		<h2>Print 06</h2>
+		<div class='link'><a href='http://localhost:8080/test/tests/print_06.html'>http://localhost:8080/test/tests/print_06.html</a></div>
+		<span class='good'>MATCHED</span><br />
+		<img src='tests/screenshots/print_06.png' />
+		<img src='tests/screenshots/print_06_new.png' />
+		<h2>Print 07</h2>
+		<div class='link'><a href='http://localhost:8080/test/tests/print_07.html'>http://localhost:8080/test/tests/print_07.html</a></div>
+		<span class='good'>MATCHED</span><br />
+		<img src='tests/screenshots/print_07.png' />
+		<img src='tests/screenshots/print_07_new.png' />
+		<h2>Pset 01</h2>
+		<div class='link'><a href='http://localhost:8080/test/tests/pset_01.html'>http://localhost:8080/test/tests/pset_01.html</a></div>
+		<span class='good'>MATCHED</span><br />
+		<img src='tests/screenshots/pset_01.png' />
+		<img src='tests/screenshots/pset_01_new.png' />
+		<h2>Put 01</h2>
+		<div class='link'><a href='http://localhost:8080/test/tests/put_01.html'>http://localhost:8080/test/tests/put_01.html</a></div>
+		<span class='good'>MATCHED</span><br />
+		<img src='tests/screenshots/put_01.png' />
+		<img src='tests/screenshots/put_01_new.png' />
+		<h2>rect 01</h2>
+		<div class='link'><a href='http://localhost:8080/test/tests/rect_01.html'>http://localhost:8080/test/tests/rect_01.html</a></div>
+		<span class='good'>MATCHED</span><br />
+		<img src='tests/screenshots/rect_01.png' />
+		<img src='tests/screenshots/rect_01_new.png' />
+		<h2>rect 02</h2>
+		<div class='link'><a href='http://localhost:8080/test/tests/rect_02.html'>http://localhost:8080/test/tests/rect_02.html</a></div>
+		<span class='good'>MATCHED</span><br />
+		<img src='tests/screenshots/rect_02.png' />
+		<img src='tests/screenshots/rect_02_new.png' />
+		<h2>resize 01</h2>
+		<div class='link'><a href='http://localhost:8080/test/tests/resize_01.html'>http://localhost:8080/test/tests/resize_01.html</a></div>
+		<span class='good'>MATCHED</span><br />
+		<img src='tests/screenshots/resize_01.png' />
+		<img src='tests/screenshots/resize_01_new.png' />
+		<h2>Fullscreen Canvas - Fullsize</h2>
+		<div class='link'><a href='http://localhost:8080/test/tests/screen_01.html'>http://localhost:8080/test/tests/screen_01.html</a></div>
+		<span class='good'>MATCHED</span><br />
+		<img src='tests/screenshots/screen_01.png' />
+		<img src='tests/screenshots/screen_01_new.png' />
+		<h2>Fullscreen Canvas - 8:2</h2>
+		<div class='link'><a href='http://localhost:8080/test/tests/screen_02.html'>http://localhost:8080/test/tests/screen_02.html</a></div>
+		<span class='good'>MATCHED</span><br />
+		<img src='tests/screenshots/screen_02.png' />
+		<img src='tests/screenshots/screen_02_new.png' />
+		<h2>Fullscreen Canvas - 8:2 - 2:8</h2>
+		<div class='link'><a href='http://localhost:8080/test/tests/screen_03.html'>http://localhost:8080/test/tests/screen_03.html</a></div>
+		<span class='good'>MATCHED</span><br />
+		<img src='tests/screenshots/screen_03.png' />
+		<img src='tests/screenshots/screen_03_new.png' />
+		<h2>Divs - 320x200 - 640x480</h2>
+		<div class='link'><a href='http://localhost:8080/test/tests/screen_04.html'>http://localhost:8080/test/tests/screen_04.html</a></div>
+		<span class='good'>MATCHED</span><br />
+		<img src='tests/screenshots/screen_04.png' />
+		<img src='tests/screenshots/screen_04_new.png' />
+		<h2>view 01</h2>
+		<div class='link'><a href='http://localhost:8080/test/tests/view_01.html'>http://localhost:8080/test/tests/view_01.html</a></div>
+		<span class='error'>NOT MATCHED - Difference: 5145.33</span><br />
+		<img src='tests/screenshots/view_01.png' />
+		<img src='tests/screenshots/view_01_new.png' />
+	</div>
+	<div id="performance_tests"></div>
+</body>
+</html>

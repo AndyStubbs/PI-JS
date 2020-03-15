@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Ellipse 01</title>
+		<script type="text/toml">
+			[[TOML_START]]
+			test = "screenshot.js"
+			file = "ellipse_01"
+			name = "ellipse 01"
+			width = 300
+			height = 200
+			delay = 0
+			[[TOML_END]]
+		</script>
+		<script src="../../build/qbs.min.js"></script>
+		<style>
+			html, body {
+				background-color: grey;
+			}
+		</style>
+	</head>
+<body>
+<script>
+	$.ready(function () {
+		$.screen( "300x200" );
+		$.color(57);
+		$.ellipse(267, 166, 79, 118);
+		$.color(55);
+		$.ellipse(165, 13, 157, 176);
+		$.color(86);
+		$.ellipse(244, 52, 247, 65);
+		$.color(96);
+		$.ellipse(149, 128, 173, 72);
+		$.color(81);
+		$.ellipse(113, 118, 41, 187);
+		$.color(78);
+		$.ellipse(195, 1, 33, 151);
+		$.color(17);
+		$.ellipse(168, 87, 63, 119);
+		$.color(53);
+		$.ellipse(56, 95, 44, 165);
+		$.color(34);
+		$.ellipse(190, 68, 227, 43);
+		$.color(40);
+		$.ellipse(242, 58, 155, 35);
+		$.render();
+	});
+</script>
+</body>
+</html>

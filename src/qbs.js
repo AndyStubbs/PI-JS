@@ -60,6 +60,7 @@ window.qbs = ( function () {
 		"screenCommands": {}
 	};
 
+	// QBS api
 	api = {
 		"_": {
 			"addCommand": addCommand,
@@ -70,8 +71,6 @@ window.qbs = ( function () {
 		},
 		"ready": ready
 	};
-
-	return api;
 
 	// Add a command to the internal list
 	function addCommand( name, fn, isInternal, isScreen ) {
@@ -152,8 +151,26 @@ window.qbs = ( function () {
 		}
 	}
 
+	// Set the active screen on qbs
+	addCommand( "setScreen", setScreen, false, false );
+	function setScreen( args ) {
+		var screenData;
+
+		screenData = args[ 0 ];
+		qbData.activeScreen = qbData.screens[ screenData.id ];
+	}
+
+	// Remove all screens from the page and memory
+	addCommand( "removeAllScreens", removeAllScreens, false, false );
+	function removeAllScreens() {
+		var i, screenData;
+		for( i in qbData.screens ) {
+			screenData = qbData.screens[ i ];
+			screenData.screenObj.removeScreen();
+		}
+	}
+
+	return api;
+
 } )();
 
-if( window.$ === undefined ) {
-	window.$ = window.qbs;
-}

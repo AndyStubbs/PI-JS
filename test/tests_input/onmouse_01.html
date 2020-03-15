@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Onmouse 01</title>
+		<script type="text/toml">
+			[[TOML_START]]
+			test = "screenshot.js"
+			file = "onmouse_01"
+			name = "onmouse 01"
+			width = 160
+			height = 100
+			delay = 0
+			[[TOML_END]]
+		</script>
+		<script src="../../build/qbs.min.js"></script>
+		<style>
+			html, body {
+				background-color: grey;
+			}
+		</style>
+	</head>
+<body>
+<script>
+	$.ready( function () {
+		var i;
+		var last = { x: 0, y: 0 };
+		var isDrawing = false;
+		var corner;
+		$.screen( "160x100" );
+		corner = $.get(0, 0, 8, 14);
+		$.print( 0 );
+		$.render();
+		$.onmouse( "down", mouseDown );
+		$.onmouse( "move", mouseMove );
+		$.onmouse( "up", mouseUp );
+		$.onkey( "any", anyKey );
+
+		function anyKey( key ) {
+			var digit;
+			if( key.code.indexOf( "Digit" ) > -1 ) {
+				digit = parseInt( key.code.substr( key.code.length - 1 ) );
+				$.color( digit );
+				$.put( corner, 0, 0 );
+				$.locate( 0, 0 );
+				$.print( digit );
+				$.render();
+			} else {
+				if( key.code === "Escape" ) {
+					// Clear all event listeners
+					$.offkey( "any", anyKey );
+					$.offmouse( "down", mouseDown );
+					$.offmouse( "move", mouseMove );
+					$.offmouse( "up", mouseUp );
+					$.put( corner, 0, 0 );
+					$.locate( 0, 0 );
+					$.print( "All input has been terminated." );
+					$.render();
+				}
+			}
+		}
+
+		function mouseDown( mouse ) {
+			isDrawing = true;
+			draw( mouse );
+		}
+
+		function mouseMove( mouse ) {
+			if( isDrawing ) {
+				draw( mouse );
+			}
+			last.x = mouse.x;
+			last.y = mouse.y;
+		}
+
+		function mouseUp( mouse ) {
+			isDrawing = false;
+		}
+
+		function draw( mouse ) {
+
+			if( last.x !== mouse.x || last.y !== mouse.y ) {
+				$.line( last.x, last.y, mouse.x, mouse.y );
+			} else {
+				$.pset( mouse.x, mouse.y );
+			}
+			$.render();
+
+		}
+	} );
+</script>
+</body>
+</html>
