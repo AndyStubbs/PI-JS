@@ -235,5 +235,37 @@ function onevent( mode, fn, once, hitBox, mode1, mode2, mode3, name, offevent, l
 	}, 1);
 }
 
+qbs._.addCommand( "onevent", offevent, true, true );
+function offevent( mode, fn, mode1, mode2, mode3, name, listenerArr ) {
+	var isClear, i;
+
+	// Validate parameters
+	if( mode !== mode1 && mode !== mode2 && mode !== mode3 ) {
+		console.error( name + ": mode needs to be either up, down, or move.");
+		return;
+	}
+	if( ! qbs.util.isFunction( fn ) ) {
+		console.error( name + ": fn is not a valid function." );
+		return;
+	}
+
+	isClear = false;
+	if( ! qbs.util.isFunction( fn ) ) {
+		isClear = true;
+	}
+
+	if( listenerArr[ mode ] ) {
+		if( isClear ) {
+			listenerArr[ mode ] = [];
+		} else {
+			for( i = listenerArr[ mode ].length - 1; i >= 0; i-- ) {
+				if( listenerArr[ mode ][ i ] === fn ) {
+					listenerArr[ mode ].splice( i, 1 );
+				}
+			}
+		}
+	}
+}
+
 // End of File Encapsulation
 } )();

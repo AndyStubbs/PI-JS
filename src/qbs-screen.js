@@ -223,6 +223,9 @@ function createScreenData( canvas, bufferCanvas, container, aspectData, isOffscr
 	// Disable anti aliasing
 	screenData.context.imageSmoothingEnabled = false;
 
+	screenData.onMouseEventListeners = {};
+	screenData.onTouchEventListeners = {};
+
 	// Set this to the active screen
 	qbData.screens[ screenData.id ] = screenData;
 

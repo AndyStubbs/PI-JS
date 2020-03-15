@@ -5,6 +5,10 @@
 // Start of File Encapsulation
 ( function () {
 
+var qbData;
+
+qbData = qbs._.data;
+
 function intouch() {
 	var touchData, i;
 	touchData = {};
@@ -22,17 +26,17 @@ function intouch() {
 
 function touchStart( e ) {
 	updateTouch( e );
-	triggerEventListeners( "start", intouch(), onTouchEventListeners );
+	qbData.commands.triggerEventListeners( "start", intouch(), onTouchEventListeners );
 }
 
 function touchMove( e ) {
 	updateTouch( e );
-	triggerEventListeners( "move", intouch(), onTouchEventListeners );
+	qbData.commands.triggerEventListeners( "move", intouch(), onTouchEventListeners );
 }
 
 function touchEnd( e ) {
 	updateTouch( e );
-	triggerEventListeners( "end", intouch(), onTouchEventListeners );
+	qbData.commands.triggerEventListeners( "end", intouch(), onTouchEventListeners );
 }
 
 function updateTouch( e ) {
@@ -65,43 +69,12 @@ function updateTouch( e ) {
 
 // Adds an event trigger for a mouse event
 function ontouch( mode, fn, once, hitBox ) {
-	onevent( mode, fn, once, hitBox, "start", "end", "move", "ontouch", offtouch, onTouchEventListeners );
+	qbData.commands.onevent( mode, fn, once, hitBox, "start", "end", "move", "ontouch", offtouch, onTouchEventListeners );
 }
 
 // Removes an event trigger for a touch event
 function offtouch( mode, fn ) {
 	offevent( mode, fn, "start", "end", "move", "offtouch", onTouchEventListeners );
-}
-
-function offevent( mode, fn, mode1, mode2, mode3, name, listenerArr ) {
-	var isClear, i;
-
-	// Validate parameters
-	if( mode !== mode1 && mode !== mode2 && mode !== mode3 ) {
-		console.error( name + ": mode needs to be either up, down, or move.");
-		return;
-	}
-	if( ! qbs.util.isFunction( fn ) ) {
-		console.error( name + ": fn is not a valid function." );
-		return;
-	}
-
-	isClear = false;
-	if( ! qbs.util.isFunction( fn ) ) {
-		isClear = true;
-	}
-
-	if( listenerArr[ mode ] ) {
-		if( isClear ) {
-			listenerArr[ mode ] = [];
-		} else {
-			for( i = listenerArr[ mode ].length - 1; i >= 0; i-- ) {
-				if( listenerArr[ mode ][ i ] === fn ) {
-					listenerArr[ mode ].splice( i, 1 );
-				}
-			}
-		}
-	}
 }
 
 function setPinchZoom( isEnabled ) {
