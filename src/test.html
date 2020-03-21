@@ -31,31 +31,44 @@
 </head>
 <body>
 <script>
-$.ready(function () {
-	$.screen("200x200");
-	$.disableDefaultKey(17);
-	$.disableDefaultKey("KeyS");
-	setInterval(function () {
-		var keys, key;
-		keys = $.inkey();
-		$.cls();
-		$.print("Press any key");
-		key = $.inkey(17);
-		if(key) {
-			$.print("Control key is pressed.");
-		} else {
-			$.print("Control key is not pressed.");
-		}
-		for(key in keys) {
-			$.print("--------------------------");
-			$.print("key:      " + keys[key].key);
-			$.print("location: " + keys[key].location);
-			$.print("code:     " + keys[key].code);
-			$.print("keyCode:  " + keys[key].keyCode);
-		}
-		$.render();
-	}, 60);
-});
+	$.ready( function () {
+		var last = {x: 0, y: 0};
+		var isDrawing = false;
+		$.screen("160x100");
+		$.startMouse();
+		$.color( 16 );
+		$.rect( 0, 0, 8, 14 );
+		$.paint( 1, 1, 16 );
+		$.color( 7 );
+		var corner = $.get(0, 0, 8, 14);
+		setInterval( function () {
+			var mouse = $.inmouse();
+			$.put( corner, 0, 0 );
+			$.locate(0, 0);
+			$.print( mouse.buttons );
+			if( mouse.buttons > 0 ) {
+				if( ! isDrawing ) {
+					$.pset( mouse.x, mouse.y );
+				} else if( mouse.x !== last.x || mouse.y !== last.y ) {
+					$.line( last.x, last.y, mouse.x, mouse.y);
+				}
+				last.x = mouse.x;
+				last.y = mouse.y;
+				isDrawing = true;
+			} else {
+				isDrawing = false;
+			}
+			$.render();
+
+			var keys = $.inkey();
+			for( i = 0; i < 10; i++) {
+				if( keys[ "Digit" + i ] ) {
+					$.color( i );
+				}
+			}
+
+		}, 60 );
+	} );
 </script>
 </body>
 </html>

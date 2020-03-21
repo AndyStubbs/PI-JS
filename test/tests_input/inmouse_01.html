@@ -25,6 +25,11 @@
 		var last = {x: 0, y: 0};
 		var isDrawing = false;
 		$.screen("160x100");
+		$.startMouse();
+		$.color( 16 );
+		$.rect( 0, 0, 8, 14 );
+		$.paint( 1, 1, 16 );
+		$.color( 15 );
 		var corner = $.get(0, 0, 8, 14);
 		setInterval( function () {
 			var mouse = $.inmouse();

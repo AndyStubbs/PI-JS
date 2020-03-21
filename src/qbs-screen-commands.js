@@ -139,7 +139,7 @@ function setPixelMode( screenData, args ) {
 	}
 }
 
-qbs._.addCommand( "triggerEventListerners", triggerEventListeners, true, true );
+qbs._.addCommand( "triggerEventListeners", triggerEventListeners, true, true );
 function triggerEventListeners( mode, data, listenerArr ) {
 	var temp, pos, i, j, newData;
 
