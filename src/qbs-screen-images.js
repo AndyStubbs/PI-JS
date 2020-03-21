@@ -56,18 +56,17 @@ function drawScreen( screenData, args ) {
 	var screenTarget, x, y, angle, anchorX, anchorY;
 
 	screenTarget = args[ 0 ];
-	x = args[ 0 ];
-	y = args[ 0 ];
-	angle = args[ 0 ];
-	anchorX = args[ 0 ];
-	anchorY = args[ 0 ];
-	screenTarget = args[ 0 ];
+	x = args[ 1 ];
+	y = args[ 2 ];
+	angle = args[ 3 ];
+	anchorX = args[ 4 ];
+	anchorY = args[ 5 ];
 
 	if( ! screenTarget || ! screenTarget.canvas ) {
 		console.error( "drawScreen: invalid screenTarget" );
 		return;
 	}
-	canvas = screenTarget.canvas;
+	canvas = screenTarget.canvas();
 	drawItem( screenData, canvas, x, y, angle, anchorX, anchorY );
 }
 

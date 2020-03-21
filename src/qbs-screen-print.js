@@ -92,7 +92,7 @@ function startPrint( screenData, msg, inLine ) {
 		printCursor.x = 0;
 	} else {
 		printCursor.x += printCursor.charWidth * msg.length;
-		if( printCursor.x > qbData.screenData.width - printCursor.charWidth ) {
+		if( printCursor.x > screenData.width - printCursor.charWidth ) {
 			printCursor.x = 0;
 			printCursor.y += printCursor.charHeight;
 		}
