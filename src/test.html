@@ -29,235 +29,29 @@
 <body>
 <script>
 $.ready(function () {
-	$.screen("300x320");
-	qbs.pset( 0, 0 );
+	var screen1, screen2;
 
-	// ----------- START DRAWING -------------
-	qbs.draw( "C15 D319 R299 U319 L299" );
-	$.render();
-	qbs.draw( "D180 NR300 R40 BU20 P1,15 BD40 P2,15 BU20 C10 L39 R298" );
-	$.render();
-	qbs.draw( "L80 H5 L120 G5 R10 BU P10,10 R40 D20 G30 L60 G5 L43 D10 R43 E5" );
-	$.render();
-	qbs.draw( "R60 E40 U18 L5 BD2 P10,10 U8 L50 U C8 U25 R20 D5 R2 U2 R2 D2 R2" );
-	$.render();
-	qbs.draw( "U2 R2 D2 R2 U2 R2 D2 R2 U2 R2 D2 R2 U2 R2 D2 R2 U10 R2 D2 R2 U2 R2" );
-	$.render();
-	qbs.draw( "D2 R2 U2" );
-	$.render();
-	qbs.draw( "R2 D2 R2 U2 R2 D2 R2 U2 R2 D10 R2 U2 R2 D2 R2 U2 R2 D2 R2 U2 R2 D2 R2" );
-	$.render();
-	qbs.draw( "U2 R2 D2 R2 U2 R2 D2 R2 U5 R20 D25 L102" );
-	$.render();
-	qbs.draw( "U25 L5 U7 R2 D2 R2 U2 R2" );
-	$.render();
-	qbs.draw( "D2 R2 U2 R2 D2 R2 U2 R2 D2 R2 U2 R2 D2 R2 U2 R2 D2 R2 U2 R2" );
-	$.render();
-	qbs.draw( "D2 R2 D5 L2" );
+	// Draw Screen 1
+	screen1 = $.screen( "300x200" );
+	$.color("#000000");
+	$.bgColor("rgba(0, 0, 0, 0)");
+	$.print("Screen # " + screen1.id );
+	$.color(1);
+	$.circle(150, 100, 50);
+	$.paint(150, 100, 2);
 	$.render();
 
-	qbs.draw( "BR5 BD5 U25 L5 U7 R2 D2 R2 U2 R2" );
+	// Draw Screen 2
+	screen2 = $.screen( "300x200" );
+	 $.bgColor("rgba(0, 0, 0, 0)");
+	$.print("");
+	$.print("Screen # " + screen2.id );
+	$.color(4);
+	$.line(50, 50, 250, 125);
+	$.line(250, 125, 75, 100);
+	$.line(75, 100, 50, 50);
+	$.paint(55, 55, 5);
 	$.render();
-	qbs.draw( "D2 R2 U2 R2 D2 R2 U2 R2 D2 R2 U2 R2 D2 R2 U2 R2 D2 R2 U2 R2" );
-	$.render();
-	qbs.draw( "D2 R2 D5 L5 D15" );
-	$.render();
-
-	qbs.draw( "BR14 U15 L5 U7 R2 D2 R2 U2 R2" );
-	$.render();
-	qbs.draw( "D2 R2 U2 R2 D2 R2 U2 R2 D2 R2 U2 R2 D2 R2 U2 R2 D2 R2 U2 R2" );
-	$.render();
-	qbs.draw( "D2 R2 D5 L5 D25" );
-	$.render();
-
-	qbs.draw( "BR8 BD10 U15 L5 U7 R2 D2 R2 U2 R2" );
-	$.render();
-	qbs.draw( "D2 R2 U2 R2 D2 R2 U2 R2 D2 R2 U2 R2 D2 R2 U2 R2 D2 R2 U2 R2" );
-	$.render();
-	qbs.draw( "D2 R2 D5 L5 BD15 BL16 P8,8 BU18 P8,8 BL80 P8,8 BR22 P7,8 BR40" );
-	$.render();
-	qbs.draw( "P7,8 BU23 U10 R5 D3 L5 U BR2 P4,7 BL C0 BD59 BL13 U8 H2 L8 G2 D8 R12 U BL" );
-	$.render();
-	qbs.draw( "P0,0" );
-	$.render();
-
-	qbs.draw( "BU10 BL35 L2 ND2 L2 NU2 L2 NL2 D2 L2 ND2 L2" );
-	$.render();
-	qbs.draw( "BU10 BR5 L2 ND2 L2 NU2 L2 NL2 D2 L2 ND2 L2" );
-	$.render();
-	qbs.draw( "BU5 BR50 L2 ND2 L2 NU2 L2 NL2 D2 L2 ND2 L2" );
-	$.render();
-	qbs.draw( "BD10 BR50 L2 ND2 L2 NU2 L2 NL2 D2 L2 ND2 L2" );
-	$.render();
-	qbs.draw( "BL15 L2 ND2 L2 NU2 L2 NL2 D2 L2 ND2 L2" );
-	$.render();
-	qbs.draw( "BU30 BL20 C8 L2 ND2 L2 NU2 L2 NL2 D2 L2 ND2 L2" );
-	$.render();
-
-	qbs.draw( "BD32 BR8" );
-	$.render();
-	qbs.draw( "C9 U2 G2 L C15 NU4 BR3 C9 U2 R D2 R U2 D C10 R D L R D R U R U L" );
-	$.render();
-	qbs.draw( "BU2 BL2 C6 L U L R3 L UC0 L BD6 BL C9 D2 R C8 U2 R D2 C9 R U" );
-	$.render();
-
-	qbs.draw( "BU2 BR17" );
-	$.render();
-	qbs.draw( "C9 U2 G2 L C15 NU4 BR3 C9 U2 R D2 R U2 D C10 R D L R D R U R U L" );
-	$.render();
-	qbs.draw( "BU2 BL2 C6 L U L R3 L UC0 L BD6 BL C9 D2 R C8 U2 R D2 C9 R U" );
-	$.render();
-
-	qbs.draw( "BR20 BD80" );
-	$.render();
-
-	qbs.draw( "BU50 BL40" );
-	$.render();
-
-	qbs.draw( "C6 U2 E2 R G2 D2 R U2 E2 G R2 BR BL3 D U BR3 BU BL2" );
-	$.render();
-
-	qbs.draw( "C4 BU L R2 U L U C0 R L2 D BD2 BL2 C7 L D L2 D L R2 D L U2 R U R6" );
-	$.render();
-
-	qbs.draw( "BL40 BD40" );
-	$.render();
-
-	qbs.draw( "C6 U2 E2 R G2 D2 R U2 E2 G R2 BR BL3 D U BR3 BU BL2" );
-	$.render();
-
-	qbs.draw( "C4 BU L R2 U L U C0 R L2 D BD2 BL2 C7 L D L2 D L R2 D L U2 R U R6" );
-	$.render();
-
-	qbs.draw( "BL40" );
-	$.render();
-
-	qbs.draw( "C6 U2 E2 R G2 D2 R U2 E2 G R2 BR BL3 D U BR3 BU BL2" );
-	$.render();
-	qbs.draw( "C4 BU L R2 U L U C0 R L2 D BD2 BL2 C7 L D L2 D L R2 D L U2 R U R6" );
-	$.render();
-	qbs.draw( "BU5 BR40" );
-	$.render();
-	qbs.draw( "C6 U2 E2 R G2 D2 R U2 E2 G R2 BR BL3 D U BR3 BU BL2" );
-	$.render();
-	qbs.draw( "C4 BU L R2 U L U C0 R L2 D BD2 BL2 C7 L D L2 D L R2 D L U2 R U R6" );
-	$.render();
-
-	qbs.draw( "BD30 BR10" );
-	$.render();
-	qbs.draw( "C4 R90 D L90 D R90 D L90 BD5 C14 BU7 BR5 NU3 NH2 BR8 NH2 BR5 NU3 BR8" );
-	$.render();
-	qbs.draw( "NU3 NE2 BR8 NE2 BR12 NU4 BR4 NE2 BR15 NU3 BR8 NH3 BR8 NH2 NE3 BD7 BL81" );
-	$.render();
-	qbs.draw( "C4 R90 D L90 D R90 D L90 BD5 C14 BU7 BR5 NU3 NH2 BR8 NH2 BR5 NU3 BR8" );
-	$.render();
-	qbs.draw( "NU3 NE2 BR8 NE2 BR12 NU4 BR4 NE2 BR15 NU3 BR8 NH3 BR8 NH2 NE3 BD7 BL81" );
-	$.render();
-	qbs.draw( "C4 R90 D L90 D R90 D L90 BD5 C14 BU7 BR5 NU3 NH2 BR8 NH2 BR5 NU3 BR8" );
-	$.render();
-	qbs.draw( "NU3 NE2 BR8 NE2 BR12 NU4 BR4 NE2 BR15 NU3 BR8 NH3 BR8 NH2 NE3 BD7 BL81" );
-	$.render();
-	qbs.draw( "C4 R90 D L90 D R90 D L90 BD5 C14 BU7 BR5 NU3 NH2 BR8 NH2 BR5 NU3 BR8" );
-	$.render();
-	qbs.draw( "NU3 NE2 BR8 NE2 BR12 NU4 BR4 NE2 BR15 NU3 BR8 NH3 BR8 NH2 NE3 BD7 BL81" );
-	$.render();
-
-	qbs.draw( "BU32 BR80" );
-	$.render();
-	qbs.draw( "C4 R90 D L90 D R90 D L90 BD5 C14 BU7 BR5 NU3 NH2 BR8 NH2 BR5 NU3 BR8" );
-	$.render();
-	qbs.draw( "NU3 NE2 BR8 NE2 BR12 NU4 BR4 NE2 BR15 NU3 BR8 NH3 BR8 NH2 NE3 BD7 BL81" );
-	$.render();
-	qbs.draw( "C4 R90 D L90 D R90 D L90 BD5 C14 BU7 BR5 NU3 NH2 BR8 NH2 BR5 NU3 BR8" );
-	$.render();
-	qbs.draw( "NU3 NE2 BR8 NE2 BR12 NU4 BR4 NE2 BR15 NU3 BR8 NH3 BR8 NH2 NE3 BD7 BL81" );
-	$.render();
-	qbs.draw( "C4 R90 D L90 D R90 D L90 BD5 C14 BU7 BR5 NU3 NH2 BR8 NH2 BR5 NU3 BR8" );
-	$.render();
-	qbs.draw( "NU3 NE2 BR8 NE2 BR12 NU4 BR4 NE2 BR15 NU3 BR8 NH3 BR8 NH2 NE3 BD7 BL81" );
-	$.render();
-	qbs.draw( "C4 R90 D L90 D R90 D L90 BD5 C14 BU7 BR5 NU3 NH2 BR8 NH2 BR5 NU3 BR8" );
-	$.render();
-	qbs.draw( "NU3 NE2 BR8 NE2 BR12 NU4 BR4 NE2 BR15 NU3 BR8 NH3 BR8 NH2 NE3 BD7 BL81" );
-	$.render();
-
-	qbs.draw( "C4 R90 D L90 D R90 D L90 BD5 C14 BU7 BR5 NU3 NH2 BR8 NH2 BR5 NU3 BR8" );
-	$.render();
-	qbs.draw( "NU3 NE2 BR8 NE2 BR12 NU4 BR4 NE2 BR15 NU3 BR8 NH3 BR8 NH2 NE3 BD7 BL81" );
-	$.render();
-	qbs.draw( "C4 R90 D L90 D R90 D L90 BD5 C14 BU7 BR5 NU3 NH2 BR8 NH2 BR5 NU3 BR8" );
-	$.render();
-	qbs.draw( "NU3 NE2 BR8 NE2 BR12 NU4 BR4 NE2 BR15 NU3 BR8 NH3 BR8 NH2 NE3 BD7 BL81" );
-	$.render();
-	qbs.draw( "C4 R90 D L90 D R90 D L90 BD5 C14 BU7 BR5 NU3 NH2 BR8 NH2 BR5 NU3 BR8" );
-	$.render();
-	qbs.draw( "NU3 NE2 BR8 NE2 BR12 NU4 BR4 NE2 BR15 NU3 BR8 NH3 BR8 NH2 NE3 BD7 BL81" );
-	$.render();
-	qbs.draw( "C4 R90 D L90 D R90 D L90 BD5 C14 BU7 BR5 NU3 NH2 BR8 NH2 BR5 NU3 BR8" );
-	$.render();
-	qbs.draw( "NU3 NE2 BR8 NE2 BR12 NU4 BR4 NE2 BR15 NU3 BR8 NH3 BR8 NH2 NE3 BD7 BL81" );
-	$.render();
-
-	qbs.draw( "BU32 BL80" );
-	$.render();
-	qbs.draw( "C4 R90 D L90 D R90 D L90 BD5 C14 BU7 BR5 NU3 NH2 BR8 NH2 BR5 NU3 BR8" );
-	$.render();
-	qbs.draw( "NU3 NE2 BR8 NE2 BR12 NU4 BR4 NE2 BR15 NU3 BR8 NH3 BR8 NH2 NE3 BD7 BL81" );
-	$.render();
-	qbs.draw( "C4 R90 D L90 D R90 D L90 BD5 C14 BU7 BR5 NU3 NH2 BR8 NH2 BR5 NU3 BR8" );
-	$.render();
-	qbs.draw( "NU3 NE2 BR8 NE2 BR12 NU4 BR4 NE2 BR15 NU3 BR8 NH3 BR8 NH2 NE3 BD7 BL81" );
-	$.render();
-	qbs.draw( "C4 R90 D L90 D R90 D L90 BD5 C14 BU7 BR5 NU3 NH2 BR8 NH2 BR5 NU3 BR8" );
-	$.render();
-	qbs.draw( "NU3 NE2 BR8 NE2 BR12 NU4 BR4 NE2 BR15 NU3 BR8 NH3 BR8 NH2 NE3 BD7 BL81" );
-	$.render();
-	qbs.draw( "C4 R90 D L90 D R90 D L90 BD5 C14 BU7 BR5 NU3 NH2 BR8 NH2 BR5 NU3 BR8" );
-	$.render();
-	qbs.draw( "NU3 NE2 BR8 NE2 BR12 NU4 BR4 NE2 BR15 NU3 BR8 NH3 BR8 NH2 NE3 BD7 BL81" );
-	$.render();
-	qbs.draw( "BU48" );
-	$.render();
-	qbs.draw( "C6 U2 E2 R G2 D2 R U2 E2 G R3 C4 R3 C15 F D BU4 BL6 C4 L R U R D" );
-	$.render();
-	qbs.draw( "U2 C0 L2 D BD3 C6 D" );
-	$.render();
-	qbs.draw( "BR48" );
-	$.render();
-	qbs.draw( "C6 U2 E2 R G2 D2 R U2 E2 G R3 C4 R3 C15 F D BU4 BL6 C4 L R U R D" );
-	$.render();
-	qbs.draw( "U2 C0 L2 D BD3 C6 D" );
-	$.render();
-	qbs.draw( "BR20 BD20" );
-	$.render();
-	qbs.draw( "C6 U2 E2 R G2 D2 R U2 E2 G R3 C4 R3 C15 F D BU4 BL6 C4 L R U R D" );
-	$.render();
-	qbs.draw( "U2 C0 L2 D BD3 C6 D" );
-	$.render();
-	qbs.draw( "BU20" );
-	$.render();
-	qbs.draw( "C6 U2 E2 R G2 D2 R U2 E2 G R3 C4 R3 C15 F D BU4 BL6 C4 L R U R D" );
-	$.render();
-	qbs.draw( "U2 C0 L2 D BD3 C6 D" );
-	$.render();
-	qbs.draw( "BL10 BU200" );
-	$.render();
-	qbs.draw( "C15 E7 R5 F7 R5 E7 R5 F7 R5 E7 R5 F7" );
-	$.render();
-	qbs.draw( "D15 G7 L5 H7 L5 G7 L5 H7 L5 G7 L5 H7 U15" );
-	$.render();
-	qbs.draw( "BR5 BD15 P7,15" );
-	$.render();
-
-	qbs.draw( "BL180" );
-	$.render();
-	qbs.draw( "C15 E7 R5 F7 R5 E7 R5 F7 R5 E7 R5 F7" );
-	$.render();
-	qbs.draw( "D15 G7 L5 H7 L5 G7 L5 H7 L5 G7 L5 H7 U15" );
-	$.render();
-	qbs.draw( "BR5 BD15 P7,15" );
-	$.render();
-
 });
 </script>
 </body>

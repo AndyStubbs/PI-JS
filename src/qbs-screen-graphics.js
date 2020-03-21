@@ -205,7 +205,7 @@ function pxEllipse( screenData, args ) {
 	c = screenData.pal[ screenData.fColor ];
 
 	if( rx === 0 && ry === 0 ) {
-		qbData.commands.setPixel( screenData, cx, cy, c );
+		qbData.commands.setPixelSafe( screenData, cx, cy, c );
 		screenData.dirty = true;
 		return;
 	}
@@ -224,10 +224,10 @@ function pxEllipse( screenData, args ) {
 	while( dx < dy ) {
 		
 		// 4-way symmetry
-		qbData.commands.setPixel( screenData, x + cx, y + cy, c );
-		qbData.commands.setPixel( screenData, -x + cx, y + cy, c );
-		qbData.commands.setPixel( screenData, x + cx, -y + cy, c );
-		qbData.commands.setPixel( screenData, -x + cx, -y + cy, c );
+		qbData.commands.setPixelSafe( screenData, x + cx, y + cy, c );
+		qbData.commands.setPixelSafe( screenData, -x + cx, y + cy, c );
+		qbData.commands.setPixelSafe( screenData, x + cx, -y + cy, c );
+		qbData.commands.setPixelSafe( screenData, -x + cx, -y + cy, c );
 
 		// Checking and updating value of
 		// decision parameter based on algorithm
@@ -253,10 +253,10 @@ function pxEllipse( screenData, args ) {
 	while( y >= 0 ) {
 
 		// 4-way symmetry
-		qbData.commands.setPixel( screenData, x + cx, y + cy, c );
-		qbData.commands.setPixel( screenData, -x + cx, y + cy, c );
-		qbData.commands.setPixel( screenData, x + cx, -y + cy, c );
-		qbData.commands.setPixel( screenData, -x + cx, -y + cy, c );
+		qbData.commands.setPixelSafe( screenData, x + cx, y + cy, c );
+		qbData.commands.setPixelSafe( screenData, -x + cx, y + cy, c );
+		qbData.commands.setPixelSafe( screenData, x + cx, -y + cy, c );
+		qbData.commands.setPixelSafe( screenData, -x + cx, -y + cy, c );
 		
 		// Checking and updating parameter 
 		// value based on algorithm 
@@ -294,7 +294,7 @@ function aaEllipse( screenData, args ) {
 
 	screenData.context.beginPath();
 	screenData.context.strokeStyle = screenData.pal[ screenData.fColor ].s;
-	screenData.context.moveTo( cx, cy + ry );
+	screenData.context.moveTo( cx + rx, cy );
 	screenData.context.ellipse( cx, cy, rx, ry, 0, qbs.util.math.deg360, false );
 	screenData.context.stroke();
 }

@@ -12,7 +12,9 @@ qbData = qbs._.data;
 // Remove the screen from the page and memory
 qbs._.addCommand( "removeScreen", removeScreen, false, true );
 function removeScreen( screenData ) {
-	var i;
+	var i, screenId;
+
+	screenId = screenData.id;
 
 	// Remove all commands from screen object
 	for( i in screenData.screenObj ) {

@@ -28,7 +28,7 @@
 		screen1 = $.screen( "300x200" );
 		$.color("#000000");
 		$.bgColor("rgba(0, 0, 0, 0)");
-		$.print("Screen # " + screen1);
+		$.print("Screen # " + screen1.id );
 		$.color(1);
 		$.circle(150, 100, 50);
 		$.paint(150, 100, 2);
@@ -38,7 +38,7 @@
 		screen2 = $.screen( "300x200" );
 		$.bgColor("rgba(0, 0, 0, 0)");
 		$.print("");
-		$.print("Screen # " + screen2);
+		$.print("Screen # " + screen2.id );
 		$.color(4);
 		$.line(50, 50, 250, 125);
 		$.line(250, 125, 75, 100);

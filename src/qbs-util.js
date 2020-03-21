@@ -72,7 +72,25 @@ window.qbs.util = ( function () {
 		if( check_hex_color.test( color ) ) {
 			return hexToRgb( color );
 		}
+		if( color.indexOf( "rgb" ) === 0 ) {
+			color = splitRgb( color );
+			if( color.length < 3 ) {
+				return null;
+			}
+			return rgbToColor( color[ 0 ], color[ 1 ], color[ 2 ], color[ 3 ] ); 
+		}
 		return null;
+	}
+
+	function splitRgb( s ) {
+		var parts, i, colors;
+		s = s.slice( s.indexOf( "(" ) + 1, s.indexOf( ")" ) );
+		parts = s.split( "," );
+		colors = [];
+		for( i = 0; i < parts.length; i++ ) {
+			colors.push( parseInt( parts[ i ] ) );
+		}
+		return colors;
 	}
 
 	function checkColor( strColor ) {
