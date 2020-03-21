@@ -5,7 +5,10 @@
 	<title>Test App</title>
 	<script src="qbs.js"></script>
 	<script src="qbs-util.js"></script>
+	<script src="qbs-keyboard.js"></script>
 	<script src="qbs-screen.js"></script>
+	<script src="qbs-screen-mouse.js"></script>
+	<script src="qbs-screen-touch.js"></script>
 	<script src="qbs-screen-commands.js"></script>
 	<script src="qbs-screen-helper.js"></script>
 	<script src="qbs-screen-graphics.js"></script>
@@ -29,19 +32,29 @@
 <body>
 <script>
 $.ready(function () {
-	var screen0 = $.screen("150x100");
-	$.containerBgColor("#000000");
-	$.paint(1, 1, 1);
-	$.render();
-	var screen1 = $.screen("120x70", null, true);
-	$.setWordBreak(false);
-	$.color(15);
-	$.paint(1, 1, 8);
-	$.print("This is an excellent time to be alive; don't you think so? I like chocolate ice-cream!");
-	$.print("The quick brown fox jumped over the lazy dog.");
-	$.render();
-	$.setScreen(screen0);
-	$.drawScreen(screen1, 15, 15);
+	$.screen("200x200");
+	$.disableDefaultKey(17);
+	$.disableDefaultKey("KeyS");
+	setInterval(function () {
+		var keys, key;
+		keys = $.inkey();
+		$.cls();
+		$.print("Press any key");
+		key = $.inkey(17);
+		if(key) {
+			$.print("Control key is pressed.");
+		} else {
+			$.print("Control key is not pressed.");
+		}
+		for(key in keys) {
+			$.print("--------------------------");
+			$.print("key:      " + keys[key].key);
+			$.print("location: " + keys[key].location);
+			$.print("code:     " + keys[key].code);
+			$.print("keyCode:  " + keys[key].keyCode);
+		}
+		$.render();
+	}, 60);
 });
 </script>
 </body>

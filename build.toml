@@ -9,7 +9,10 @@ name = "qbs"
 files = [
 	"src/qbs.js",
 	"src/qbs-util.js",
+	"src/qbs-keyboard.js",
 	"src/qbs-screen.js",
+	"src/qbs-screen-mouse.js",
+	"src/qbs-screen-touch.js",
 	"src/qbs-screen-commands.js",
 	"src/qbs-screen-helper.js",
 	"src/qbs-screen-graphics.js",
