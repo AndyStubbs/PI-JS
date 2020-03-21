@@ -31,44 +31,40 @@
 </head>
 <body>
 <script>
-	$.ready( function () {
-		var last = {x: 0, y: 0};
-		var isDrawing = false;
-		$.screen("160x100");
-		$.startMouse();
-		$.color( 16 );
-		$.rect( 0, 0, 8, 14 );
-		$.paint( 1, 1, 16 );
-		$.color( 7 );
-		var corner = $.get(0, 0, 8, 14);
-		setInterval( function () {
-			var mouse = $.inmouse();
-			$.put( corner, 0, 0 );
-			$.locate(0, 0);
-			$.print( mouse.buttons );
-			if( mouse.buttons > 0 ) {
-				if( ! isDrawing ) {
-					$.pset( mouse.x, mouse.y );
-				} else if( mouse.x !== last.x || mouse.y !== last.y ) {
-					$.line( last.x, last.y, mouse.x, mouse.y);
-				}
-				last.x = mouse.x;
-				last.y = mouse.y;
-				isDrawing = true;
-			} else {
-				isDrawing = false;
-			}
+$.ready(function () {
+	$.screen("300x200");
+	$.containerBgColor("#000000");
+	$.paint(1, 1, 1);
+	$.color(15);
+	$.render();
+	$.input("First name: ", "first");
+	$.input("Last name: ", "last");
+	$.input("Money: ", "money", true);
+	$.inputReady(function (data) {
+		$.print(data.first + " " + data.last + " has $" + data.money + ".");
+		$.render();
+		gotoInput2();
+	});
+});
+
+function gotoInput2() {
+	var pickAnumber = $.input("Pick a number between 1 and 10: ", "num", true, 1, 10, true);
+	pickAnumber.ready(function (val) {
+		$.print("Your number is " + val + ".");
+		$.render();
+		$.input("What is x? ", "x");
+	});
+	$.inputReady(function (data) {
+		$.print(data.num + " is a good number.");
+		$.print(data.x + " is x.");
+		$.render();
+		$.input("What is y? ", "y");
+		$.inputReady(function(data) {
+			$.print("y is " + data.y);
 			$.render();
-
-			var keys = $.inkey();
-			for( i = 0; i < 10; i++) {
-				if( keys[ "Digit" + i ] ) {
-					$.color( i );
-				}
-			}
-
-		}, 60 );
-	} );
+		});
+	});
+}
 </script>
 </body>
 </html>

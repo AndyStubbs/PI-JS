@@ -216,6 +216,7 @@ function keydown( e ) {
 		removeLastChar = false;
 		input = inputs[ inputIndex ];
 		if( e.keyCode === 13 ) {
+			
 			// The enter key was pressed
 			showPrompt( true );
 			$.print( "" );
@@ -448,28 +449,32 @@ function enableDefaultKey( key ) {
 
 // Shows the prompt for the input command
 function showPrompt( hideCursor ) {
-	var msg, pos, dt, posPx, width, height, input;
+	var msg, pos, dt, posPx, width, height, input, screenData;
 
 	// If we are collecting any inputs
 	if( inputs.length > 0 && inputIndex < inputs.length ) {
 		input = inputs[ inputIndex ];
 		msg = input.prompt + input.val;
+		screenData = qbData.commands.getScreenData( null, "input" );
+		if( ! screenData ) {
+			return null;
+		}
 
 		// Blink cursor every half second
 		dt = ( new Date() ).getTime() - t;
 		if( dt > 500 ) {
-			blink = !blink;
+			blink = ! blink;
 			t = ( new Date() ).getTime();
 		}
 
 		if( blink && ! hideCursor ) {
-			msg += String.fromCharCode( qbData.screenData.printCursor.prompt );
+			msg += String.fromCharCode( screenData.printCursor.prompt );
 		}
 
 		// Get the background pixels
 		posPx = $.posPx();
-		width = ( msg.length + 1 ) * qbData.screenData.printCursor.charWidth;
-		height = qbData.screenData.printCursor.charHeight;
+		width = ( msg.length + 1 ) * screenData.printCursor.charWidth;
+		height = screenData.printCursor.charHeight;
 
 		// If there is no background
 		if( ! promptBackground ) {

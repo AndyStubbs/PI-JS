@@ -108,12 +108,13 @@ window.qbs = ( function () {
 	}
 
 	// Gets the screen data
+	addCommand( "getScreenData", getScreenData, true, false );
 	function getScreenData( screenId, commandName ) {
 		if( qbData.activeScreen === null ) {
 			console.error( commandName + ": No screens available for command." );
 			return false;
 		}
-		if( screenId === undefined ) {
+		if( ! screenId ) {
 			screenId = qbData.activeScreen.id;
 		}
 		if( Number.isInteger( screenId ) && ! qbData.screens[ screenId ] ) {
