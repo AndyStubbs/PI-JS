@@ -27,7 +27,6 @@ function stopTouch( screenData ) {
 
 function touchStart( e ) {
 	var screenData;
-
 	screenData = qbData.screens[ e.target.dataset.screenId ];
 
 	updateTouch( screenData, e );
@@ -36,7 +35,6 @@ function touchStart( e ) {
 
 function touchMove( e ) {
 	var screenData;
-
 	screenData = qbData.screens[ e.target.dataset.screenId ];
 
 	updateTouch( screenData, e );
@@ -45,7 +43,6 @@ function touchMove( e ) {
 
 function touchEnd( e ) {
 	var screenData;
-
 	screenData = qbData.screens[ e.target.dataset.screenId ];
 
 	updateTouch( screenData, e );
@@ -79,22 +76,47 @@ function updateTouch( screenData, e ) {
 
 qbs._.addCommand( "intouch", intouch, false, true );
 function intouch( screenData ) {
-	var touches;
+	var touchArr, i, touch, touchData;
 
-	touches = qbs.util.convertToArray( screenData.touches );
+	touchArr = [];
 
-	return touches;
+	// Make a local copy of touch Object
+	for( i in screenData.touches ) {
+		touch = screenData.touches[ i ];
+		touchData = {
+			"x": touch.x,
+			"y": touch.y,
+			"id": touch.id,
+			"lastX": touch.lastX,
+			"lastY": touch.lastY
+		};
+		touchArr.push( touchData );
+	}
+
+	return touchArr;
 }
 
 // Adds an event trigger for a mouse event
 qbs._.addCommand( "ontouch", ontouch, false, true );
-function ontouch( mode, fn, once, hitBox ) {
-	qbData.commands.onevent( mode, fn, once, hitBox, "start", "end", "move", "ontouch", offtouch, onTouchEventListeners );
+function ontouch( screenData, args ) {
+	var mode, fn, once, hitBox;
+
+	mode = args[ 0 ];
+	fn = args[ 1 ];
+	once = args[ 2 ];
+	hitBox = args[ 3 ];
+
+	qbData.commands.onevent( mode, fn, once, hitBox, "start", "end", "move", "ontouch", offtouch, screenData.onTouchEventListeners );
 }
 
 // Removes an event trigger for a touch event
-function offtouch( mode, fn ) {
-	offevent( mode, fn, "start", "end", "move", "offtouch", onTouchEventListeners );
+function offtouch( screenData, args ) {
+	var mode, fn;
+
+	mode = args[ 0 ];
+	fn = args[ 1 ];
+
+	qbData.commands.offevent( mode, fn, "start", "end", "move", "offtouch", screenData.onTouchEventListeners );
 }
 
 qbs._.addCommand( "setPinchZoom", setPinchZoom, false, true );

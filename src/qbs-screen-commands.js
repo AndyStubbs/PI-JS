@@ -141,8 +141,8 @@ function setPixelMode( screenData, args ) {
 
 qbs._.addCommand( "triggerEventListeners", triggerEventListeners, true, true );
 function triggerEventListeners( mode, data, listenerArr ) {
-	var temp, pos, i, j, newData;
-
+	var temp, i;
+	// var pos, j, newData;
 	if( listenerArr[ mode ] ) {
 		// Make a temp copy so we don't get infinite loop if new event listener added here
 		temp = listenerArr[ mode ].slice();
@@ -154,25 +154,25 @@ function triggerEventListeners( mode, data, listenerArr ) {
 			if( temp[ i ].hitBox ) {
 
 				// Get the coordinates of the event
-				pos = data.screens[ temp[ i ].hitBox.screen ];
-				if( pos.touches ) {
-					newData = {
-						"touches": []
-					};
-					for( j in pos.touches ) {
-						if( qbs.util.inRange( pos.touches[ j ], temp[ i ].hitBox ) ) {
-							newData.touches.push( pos.touches[ j ] );
-						}
-					}
-					if( newData.touches.length > 0 ) {
-						temp[ i ].fn( newData );
-					}
-				} else {
-					// Check if the event is in the hitBox
-					if( qbs.util.inRange( pos, temp[ i ].hitBox ) ) {
-						temp[ i ].fn( data );
-					}
-				}
+				// pos = data.screens[ temp[ i ].hitBox.screen ];
+				// if( pos.touches ) {
+				// 	newData = {
+				// 		"touches": []
+				// 	};
+				// 	for( j in pos.touches ) {
+				// 		if( qbs.util.inRange( pos.touches[ j ], temp[ i ].hitBox ) ) {
+				// 			newData.touches.push( pos.touches[ j ] );
+				// 		}
+				// 	}
+				// 	if( newData.touches.length > 0 ) {
+				// 		temp[ i ].fn( newData );
+				// 	}
+				// } else {
+				// 	// Check if the event is in the hitBox
+				// 	if( qbs.util.inRange( pos, temp[ i ].hitBox ) ) {
+				// 		temp[ i ].fn( data );
+				// 	}
+				// }
 			} else {
 				// if no hit box then just trigger the event
 				temp[ i ].fn( data );
@@ -221,7 +221,7 @@ function onevent( mode, fn, once, hitBox, mode1, mode2, mode3, name, offevent, l
 	}, 1);
 }
 
-qbs._.addCommand( "onevent", offevent, true, true );
+qbs._.addCommand( "offevent", offevent, true, true );
 function offevent( mode, fn, mode1, mode2, mode3, name, listenerArr ) {
 	var isClear, i;
 

@@ -21,46 +21,52 @@
 	</head>
 <body>
 <script>
-	$.ready( function () {
-		var last = {x: 0, y: 0};
-		var isDrawing = false;
-		var touches = {};
-		$.screen( "320x200" );
-		$.setPinchZoom( false );
+$.ready( function () {
+	var last = {x: 0, y: 0};
+	var isDrawing = false;
+	$.screen( "320x200" );
+	$.startTouch();
+	$.setPinchZoom( false );
 
-		var corner = $.get(0, 0, 8, 14);
-		$.ontouch( "start", function ( t ) {
-			var i, touch;
-			for( i = 0; i < t.touches.length; i++ ) {
-				touch = t.touches[ i ];
-				touches[ touch.id ] = { x: touch.x, y: touch.y };
-				$.pset( touch.x, touch.y );
+	var corner = $.get(0, 0, 8, 14);
+	$.ontouch( "start", function ( touches ) {
+		var i, touch;
+		for( i = 0; i < touches.length; i++ ) {
+			touch = touches[ i ];
+			if( touch === undefined ) {
+				debugger;
 			}
-			$.render();
-		} );
-		$.ontouch( "move", function ( t ) {
-			var i, touch;
-			for( i = 0; i < t.touches.length; i++ ) {
-				touch = t.touches[ i ];
-				if( touches[ touch.id ] ) {
-					$.line( touch.x, touch.y, touches[ touch.id ].x, touches[ touch.id ].y );
-				}
-				touches[ touch.id ] = { x: touch.x, y: touch.y };
-			}
-			$.render();
-		});
-		$.ontouch( "end", function ( t ) {
-			var i, touch;
-			for( i = 0; i < t.touches.length; i++ ) {
-				touch = t.touches[ i ];
-				if( touches[ touch.id ] ) {
-					$.line( touch.x, touch.y, touches[ touch.id ].x, touches[ touch.id ].y );
-				}
-				delete touches[ touch.id ];;
-			}
-			$.render();
-		});
+			$.pset( touch.x, touch.y );
+		}
+		$.render();
 	} );
+	$.ontouch( "move", function ( touches ) {
+		var i, touch;
+		for( i = 0; i < touches.length; i++ ) {
+			touch = touches[ i ];
+			if( touch === undefined ) {
+				debugger;
+			}
+			if( touches[ touch.id ] ) {
+				$.line( touch.x, touch.y, touches[ touch.id ].x, touches[ touch.id ].y );
+			}
+		}
+		$.render();
+	});
+	$.ontouch( "end", function ( touches ) {
+		var i, touch;
+		for( i = 0; i < touches.length; i++ ) {
+			touch = touches[ i ];
+			if( touch === undefined ) {
+				debugger;
+			}
+			if( touches[ touch.id ] ) {
+				$.line( touch.x, touch.y, touches[ touch.id ].x, touches[ touch.id ].y );
+			}
+		}
+		$.render();
+	} );
+} );
 </script>
 </body>
 </html>

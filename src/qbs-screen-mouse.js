@@ -89,18 +89,34 @@ function inmouse( screenData ) {
 
 // Adds an event trigger for a mouse event
 qbs._.addCommand( "onmouse", onmouse, false, true );
-function onmouse( mode, fn, once, hitBox ) {
+function onmouse( screenData, args ) {
+	var mode, fn, once, hitBox;
+
+	mode = args[ 0 ];
+	fn = args[ 1 ];
+	once = args[ 2 ];
+	hitBox = args[ 3 ];
+
 	qbData.commands.onevent( mode, fn, once, hitBox, "down", "up", "move", "onmouse", offmouse, screenData.onMouseEventListeners );
 }
 
 // Removes an event trigger for a mouse event
 qbs._.addCommand( "offmouse", offmouse, false, true );
-function offmouse( mode, fn) {
+function offmouse( screenData, args ) {
+	var mode, fn;
+
+	mode = args[ 0 ];
+	fn = args[ 1 ];
+
 	qbData.commands.offevent( mode, fn, "down", "up", "move", "offmouse", screenData.onMouseEventListeners );
 }
 
 qbs._.addCommand( "enableContextMenu", enableContextMenu, false, true );
-function enableContextMenu( isEnabled ) {
+function enableContextMenu( screenData, args ) {
+	var isEnabled;
+
+	isEnabled = args[ 0 ];
+
 	qbData.isContextMenuEnabled = qbs.util.sanitizeBool( isEnabled );
 }
 
