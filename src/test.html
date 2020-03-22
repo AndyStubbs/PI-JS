@@ -31,40 +31,48 @@
 </head>
 <body>
 <script>
-$.ready(function () {
-	$.screen("300x200");
-	$.containerBgColor("#000000");
-	$.paint(1, 1, 1);
-	$.color(15);
-	$.render();
-	$.input("First name: ", "first");
-	$.input("Last name: ", "last");
-	$.input("Money: ", "money", true);
-	$.inputReady(function (data) {
-		$.print(data.first + " " + data.last + " has $" + data.money + ".");
+$.ready( function () {
+	var last = {x: 0, y: 0};
+	var isDrawing = false;
+	$.screen( "320x200" );
+	$.startTouch();
+	$.setPinchZoom( false );
+	$.color( 16 );
+	$.rect( 0, 0, 8, 14 );
+	$.paint( 1, 1, 16 );
+	$.color( 15 );
+	var corner = $.get(0, 0, 8, 14);
+	setInterval( function () {
+		var touches = $.intouch();
+		$.put( corner, 0, 0 );
+		$.locate(0, 0);
+		$.print( touches.length );
+		if( touches.length > 0 ) {
+			for( var i = 0; i < touches.length; i++ ) {
+				var touchData = touches[ i ];
+				if( ! isDrawing ) {
+					$.pset( touchData.x, touchData.y );
+				} else if( touchData.x !== last.x || touchData.y !== last.y ) {
+					$.line( last.x, last.y, touchData.x, touchData.y);
+				}
+				last.x = touchData.x;
+				last.y = touchData.y;
+				isDrawing = true;
+			}
+		} else {
+			isDrawing = false;
+		}
 		$.render();
-		gotoInput2();
-	});
-});
 
-function gotoInput2() {
-	var pickAnumber = $.input("Pick a number between 1 and 10: ", "num", true, 1, 10, true);
-	pickAnumber.ready(function (val) {
-		$.print("Your number is " + val + ".");
-		$.render();
-		$.input("What is x? ", "x");
-	});
-	$.inputReady(function (data) {
-		$.print(data.num + " is a good number.");
-		$.print(data.x + " is x.");
-		$.render();
-		$.input("What is y? ", "y");
-		$.inputReady(function(data) {
-			$.print("y is " + data.y);
-			$.render();
-		});
-	});
-}
+		var keys = $.inkey();
+		for( i = 0; i < 10; i++) {
+			if( keys[ "Digit" + i ] ) {
+				$.color( i );
+			}
+		}
+
+	}, 60 );
+} );
 </script>
 </body>
 </html>

@@ -6,8 +6,7 @@
 ( function () {
 
 var qbData, keys, keyLookup, keyCodes, preventKeys, inputs, inputIndex, t, promptInterval, blink,
-promptBackground, promptBackgroundWidth, inputReadyList, onKeyEventListeners, anyKeyEventListeners, 
-onTouchEventListeners, onMouseEventListeners;
+promptBackground, promptBackgroundWidth, inputReadyList, onKeyEventListeners, anyKeyEventListeners;
 
 qbData = qbs._.data;
 
@@ -184,8 +183,6 @@ inputIndex = 0;
 inputReadyList = [];
 onKeyEventListeners = {};
 anyKeyEventListeners = [];
-onMouseEventListeners = {};
-onTouchEventListeners = {};
 
 // Key up event - document event
 document.addEventListener( "keyup", keyup );
