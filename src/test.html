@@ -37,42 +37,28 @@ $.ready( function () {
 		x: 25, y: 25, width: 100, height: 100
 	};
 	$.screen( "320x200" );
-	$.startTouch();
+	$.startMouse();
 	$.setPinchZoom( false );
 	$.rect( hitbox.x, hitbox.y, hitbox.width, hitbox.height );
 	$.render();
 	$.color( 2 );
 	
-	$.ontouch( "start", function ( touches ) {
-		var i, touch;
-		for( i = 0; i < touches.length; i++ ) {
-			touch = touches[ i ];
-			$.pset( touch.x, touch.y );
-		}
+	$.onmouse( "down", function ( data ) {
+		$.pset( data.x, data.y );
 		$.render();
+		isDrawing = true;
 	}, false, hitbox );
-	$.ontouch( "move", function ( touches ) {
-		var i, touch;
-		for( i = 0; i < touches.length; i++ ) {
-			touch = touches[ i ];
-			touch.lastX = qbs.util.clamp( touch.lastX, hitbox.x, hitbox.x + hitbox.width );
-			touch.lastY = qbs.util.clamp( touch.lastY, hitbox.y, hitbox.y + hitbox.height );
-			if( touch.lastX ) {
-				$.line( touch.x, touch.y, touch.lastX, touch.lastY );
-			}
+	$.onmouse( "move", function ( data ) {
+		if( isDrawing ) {
+			data.lastX = qbs.util.clamp( data.lastX, hitbox.x, hitbox.x + hitbox.width );
+			data.lastY = qbs.util.clamp( data.lastY, hitbox.y, hitbox.y + hitbox.height );
+			$.line( data.x, data.y, data.lastX, data.lastY );
+			$.render();
 		}
-		$.render();
 	}, false, hitbox );
-	$.ontouch( "end", function ( touches ) {
-		var i, touch;
-		for( i = 0; i < touches.length; i++ ) {
-			touch = touches[ i ];
-			if( touch.lastX ) {
-				$.line( touch.x, touch.y, touch.lastX, touch.lastY );
-			}
-		}
-		$.render();
-	}, false, hitbox );
+	$.onmouse( "up", function ( data ) {
+		isDrawing = false;
+	}, false );
 } );
 </script>
 </body>

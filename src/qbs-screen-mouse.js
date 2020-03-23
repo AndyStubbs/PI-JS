@@ -65,12 +65,30 @@ function onContextMenu( e ) {
 }
 
 function updateMouse( screenData, e ) {
-	var rect;
+	var rect, x, y, lastX, lastY;
 
 	rect = screenData.clientRect;
+	x = Math.floor( ( e.clientX - rect.left ) / rect.width * screenData.width );
+	y = Math.floor( ( e.clientY - rect.top ) / rect.height * screenData.height );
+
+	if( screenData.mouse ) {
+		if( screenData.mouse.x ) {
+			lastX = screenData.mouse.x;
+		} else {
+			lastX = x;
+		}
+		if( screenData.mouse.y ) {
+			lastY = screenData.mouse.y;
+		} else {
+			lastY = y;
+		}
+	}
+
 	screenData.mouse = {
-		"x": Math.floor( ( e.clientX - rect.left ) / rect.width * screenData.width ),
-		"y": Math.floor( ( e.clientY - rect.top ) / rect.height * screenData.height ),
+		"x": x,
+		"y": y,
+		"lastX": lastX,
+		"lastY": lastY,
 		"buttons": e.buttons
 	};
 }
@@ -82,6 +100,8 @@ function inmouse( screenData ) {
 	mouse = {};
 	mouse.x = screenData.mouse.x;
 	mouse.y = screenData.mouse.y;
+	mouse.lastX = screenData.mouse.lastX;
+	mouse.lastY = screenData.mouse.lastY;
 	mouse.buttons = screenData.mouse.buttons;
 
 	return mouse;
