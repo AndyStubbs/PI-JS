@@ -141,9 +141,10 @@ function setPixelMode( screenData, args ) {
 
 qbs._.addCommand( "triggerEventListeners", triggerEventListeners, true, true );
 function triggerEventListeners( mode, data, listenerArr ) {
-	var temp, i;
-	// var pos, j, newData;
+	var temp, i, j, pos, newData;
+
 	if( listenerArr[ mode ] ) {
+
 		// Make a temp copy so we don't get infinite loop if new event listener added here
 		temp = listenerArr[ mode ].slice();
 
@@ -153,26 +154,24 @@ function triggerEventListeners( mode, data, listenerArr ) {
 			// If there is a hitbox then need to check if we are in range
 			if( temp[ i ].hitBox ) {
 
-				// Get the coordinates of the event
-				// pos = data.screens[ temp[ i ].hitBox.screen ];
-				// if( pos.touches ) {
-				// 	newData = {
-				// 		"touches": []
-				// 	};
-				// 	for( j in pos.touches ) {
-				// 		if( qbs.util.inRange( pos.touches[ j ], temp[ i ].hitBox ) ) {
-				// 			newData.touches.push( pos.touches[ j ] );
-				// 		}
-				// 	}
-				// 	if( newData.touches.length > 0 ) {
-				// 		temp[ i ].fn( newData );
-				// 	}
-				// } else {
-				// 	// Check if the event is in the hitBox
-				// 	if( qbs.util.inRange( pos, temp[ i ].hitBox ) ) {
-				// 		temp[ i ].fn( data );
-				// 	}
-				// }
+				// If it's an array loop
+				if( Array.isArray ( data ) ) {
+					newData = [];
+					for( j = 0; j < data.length; j++ ) {
+						pos = data[ j ];
+						if( qbs.util.inRange( pos, temp[ i ].hitBox ) ) {
+							newData.push( pos );
+						}
+					}
+					if( newData.length > 0 ) {
+						temp[ i ].fn( newData );
+					}
+				} else {
+					// If it's not an array
+					if( qbs.util.inRange( data, temp[ i ].hitBox ) ) {
+						temp[ i ].fn( data );
+					}
+				}
 			} else {
 				// if no hit box then just trigger the event
 				temp[ i ].fn( data );
@@ -207,9 +206,9 @@ function onevent( mode, fn, once, hitBox, mode1, mode2, mode3, name, offevent, l
 			};
 		}
 
-		if( ( hitBox && isNaN( hitBox.screen ) ) || ( hitBox && ! qbData.screens[ hitBox.screen ] ) ) {
-			hitBox.screen = qbData.screenData.id;
-		}
+		//if( ( hitBox && isNaN( hitBox.screen ) ) || ( hitBox && ! qbData.screens[ hitBox.screen ] ) ) {
+		//	hitBox.screen = qbData.screenData.id;
+		//}
 		if( ! listenerArr[ mode ] ) {
 			listenerArr[ mode ] = [];
 		}

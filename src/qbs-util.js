@@ -235,3 +235,9 @@ return typeof value === 'number' &&
 	isFinite(value) && 
 	Math.floor(value) === value;
 };
+
+if (!Array.isArray) {
+	Array.isArray = function(arg) {
+		return Object.prototype.toString.call(arg) === '[object Array]';
+	};
+}

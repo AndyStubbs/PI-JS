@@ -32,50 +32,47 @@
 <body>
 <script>
 $.ready( function () {
-	var last = {x: 0, y: 0};
 	var isDrawing = false;
+	var hitbox = {
+		x: 25, y: 25, width: 100, height: 100
+	};
 	$.screen( "320x200" );
 	$.startTouch();
 	$.setPinchZoom( false );
-
-	var corner = $.get(0, 0, 8, 14);
+	$.rect( hitbox.x, hitbox.y, hitbox.width, hitbox.height );
+	$.render();
+	$.color( 2 );
+	
 	$.ontouch( "start", function ( touches ) {
 		var i, touch;
 		for( i = 0; i < touches.length; i++ ) {
 			touch = touches[ i ];
-			if( touch === undefined ) {
-				debugger;
-			}
 			$.pset( touch.x, touch.y );
 		}
 		$.render();
-	} );
+	}, false, hitbox );
 	$.ontouch( "move", function ( touches ) {
 		var i, touch;
 		for( i = 0; i < touches.length; i++ ) {
 			touch = touches[ i ];
-			if( touch === undefined ) {
-				debugger;
-			}
-			if( touches[ touch.id ] ) {
-				$.line( touch.x, touch.y, touches[ touch.id ].x, touches[ touch.id ].y );
+			touch.lastX = qbs.util.clamp( touch.lastX, hitbox.x, hitbox.x + hitbox.width );
+			touch.lastY = qbs.util.clamp( touch.lastY, hitbox.y, hitbox.y + hitbox.height );
+			if( touch.lastX ) {
+				$.line( touch.x, touch.y, touch.lastX, touch.lastY );
 			}
 		}
 		$.render();
-	});
+	}, false, hitbox );
 	$.ontouch( "end", function ( touches ) {
 		var i, touch;
 		for( i = 0; i < touches.length; i++ ) {
 			touch = touches[ i ];
-			if( touch === undefined ) {
-				debugger;
-			}
-			if( touches[ touch.id ] ) {
-				$.line( touch.x, touch.y, touches[ touch.id ].x, touches[ touch.id ].y );
+			if( touch.lastX ) {
+				$.line( touch.x, touch.y, touch.lastX, touch.lastY );
 			}
 		}
 		$.render();
-	} );
+	}, false, hitbox );
 } );
 </script>
 </body>

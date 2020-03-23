@@ -24,31 +24,32 @@
 	$.ready( function () {
 		var isDrawing = false;
 		$.screen( "320x200" );
+		$.startTouch();
 		$.setPinchZoom( false );
 
 		var corner = $.get(0, 0, 8, 14);
-		$.ontouch( "start", function ( t ) {
+		$.ontouch( "start", function ( touches ) {
 			var i, touch;
-			for( i = 0; i < t.touches.length; i++ ) {
-				touch = t.touches[ i ];
+			for( i = 0; i < touches.length; i++ ) {
+				touch = touches[ i ];
 				$.pset( touch.x, touch.y );
 			}
 			$.render();
 		} );
-		$.ontouch( "move", function ( t ) {
+		$.ontouch( "move", function ( touches ) {
 			var i, touch;
-			for( i = 0; i < t.touches.length; i++ ) {
-				touch = t.touches[ i ];
+			for( i = 0; i < touches.length; i++ ) {
+				touch = touches[ i ];
 				if( touch.lastX ) {
 					$.line( touch.x, touch.y, touch.lastX, touch.lastY );
 				}
 			}
 			$.render();
 		} );
-		$.ontouch( "end", function ( t ) {
+		$.ontouch( "end", function ( touches ) {
 			var i, touch;
-			for( i = 0; i < t.touches.length; i++ ) {
-				touch = t.touches[ i ];
+			for( i = 0; i < touches.length; i++ ) {
+				touch = touches[ i ];
 				if( touch.lastX ) {
 					$.line( touch.x, touch.y, touch.lastX, touch.lastY );
 				}
