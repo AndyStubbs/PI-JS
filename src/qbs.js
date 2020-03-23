@@ -143,7 +143,7 @@ window.qbs = ( function () {
 			console.error( commandName + ": No screens available for command." );
 			return false;
 		}
-		if( ! screenId ) {
+		if( screenId === undefined || screenId === null ) {
 			screenId = qbData.activeScreen.id;
 		}
 		if( Number.isInteger( screenId ) && ! qbData.screens[ screenId ] ) {
@@ -204,6 +204,15 @@ window.qbs = ( function () {
 			screenData = qbData.screens[ i ];
 			screenData.screenObj.removeScreen();
 		}
+	}
+
+	addCommand( "getScreen", getScreen, false, false );
+	function getScreen( args ) {
+		var screenId, screen;
+
+		screenId = args[ 0 ];
+		screen = getScreenData( screenId, "getScreen" );
+		return screen.screenObj;
 	}
 
 	return api;

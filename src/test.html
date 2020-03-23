@@ -30,35 +30,18 @@
 	</style>
 </head>
 <body>
+	<div id="div0" style="height: 200px;"></div>
+	<div id="div1" style="height: 200px;"></div>
 <script>
 $.ready( function () {
-	var isDrawing = false;
-	var hitbox = {
-		x: 25, y: 25, width: 100, height: 100
-	};
-	$.screen( "320x200" );
-	$.startMouse();
-	$.setPinchZoom( false );
-	$.rect( hitbox.x, hitbox.y, hitbox.width, hitbox.height );
+	var screen0, screen1;
+	screen0 = $.screen( "50x20", document.getElementById( "div0" ) );
+	screen1 = $.screen( "50x20", document.getElementById( "div1" ) );
+	$.getScreen( 0 ).print( "Screen 0" );
+	$.getScreen( 0 ).render();
+	$.getScreen( 1 ).print( "Screen 1" );
+	$.getScreen( 1 ).render();
 	$.render();
-	$.color( 2 );
-	
-	$.onmouse( "down", function ( data ) {
-		$.pset( data.x, data.y );
-		$.render();
-		isDrawing = true;
-	}, false, hitbox );
-	$.onmouse( "move", function ( data ) {
-		if( isDrawing ) {
-			data.lastX = qbs.util.clamp( data.lastX, hitbox.x, hitbox.x + hitbox.width );
-			data.lastY = qbs.util.clamp( data.lastY, hitbox.y, hitbox.y + hitbox.height );
-			$.line( data.x, data.y, data.lastX, data.lastY );
-			$.render();
-		}
-	}, false, hitbox );
-	$.onmouse( "up", function ( data ) {
-		isDrawing = false;
-	}, false );
 } );
 </script>
 </body>

@@ -29,7 +29,7 @@ $.ready( function () {
 	$.screen( "320x200" );
 	$.startMouse();
 	$.setPinchZoom( false );
-	$.rect( hitbox.x, hitbox.y, hitbox.width, hitbox.height );
+	$.rect( hitbox.x - 1, hitbox.y - 1, hitbox.width, hitbox.height );
 	$.render();
 	$.color( 2 );
 	
@@ -40,8 +40,10 @@ $.ready( function () {
 	}, false, hitbox );
 	$.onmouse( "move", function ( data ) {
 		if( isDrawing ) {
-			data.lastX = qbs.util.clamp( data.lastX, hitbox.x, hitbox.x + hitbox.width );
-			data.lastY = qbs.util.clamp( data.lastY, hitbox.y, hitbox.y + hitbox.height );
+			data.x = qbs.util.clamp( data.x, hitbox.x, hitbox.x + hitbox.width - 2 );
+			data.y = qbs.util.clamp( data.y, hitbox.y, hitbox.y + hitbox.height - 2 );
+			data.lastX = qbs.util.clamp( data.lastX, hitbox.x, hitbox.x + hitbox.width - 2 );
+			data.lastY = qbs.util.clamp( data.lastY, hitbox.y, hitbox.y + hitbox.height - 2 );
 			$.line( data.x, data.y, data.lastX, data.lastY );
 			$.render();
 		}
