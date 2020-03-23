@@ -5,11 +5,12 @@
 window.qbs = ( function () {
 	"use strict";
 
-	var qbData, api, waiting, waitCount, readyList;
+	var qbData, api, waiting, waitCount, readyList, commandList;
 
 	waitCount = 0;
 	waiting = false;
 	readyList = [];
+	commandList = [];
 
 	// Initilize data
 	qbData = {
@@ -65,36 +66,22 @@ window.qbs = ( function () {
 		"_": {
 			"addCommand": addCommand,
 			"addCommands": addCommands,
+			"processCommands": processCommands,
 			"data": qbData,
 			"resume": resume,
 			"wait": wait
-		},
-		"ready": ready
+		}
 	};
 
 	// Add a command to the internal list
 	function addCommand( name, fn, isInternal, isScreen ) {
-
 		qbData.commands[ name ] = fn;
-		if( ! isInternal ) {
-			if( isScreen ) {
-				qbData.screenCommands[ name ] = {
-					"fn": fn
-				};
-				api[ name ] = function () {
-					var args = [].slice.call( arguments );
-					var screenData = getScreenData( undefined, name );
-					if( screenData !== false ) {
-						return qbData.commands[ name ]( screenData, args );
-					}
-				};
-			} else {
-				api[ name ] = function () {
-					var args = [].slice.call( arguments );
-					return qbData.commands[ name ]( args );
-				};
-			}
-		}
+		commandList.push( {
+			"name": name,
+			"fn": fn,
+			"isInternal": isInternal,
+			"isScreen": isScreen
+		} );
 	}
 
 	function addCommands( name, fnPx, fnAa ) {
@@ -105,6 +92,48 @@ window.qbs = ( function () {
 				fnAa( screenData, args );
 			}
 		}, false, true );
+	}
+
+	function processCommands() {
+		var i, cmd;
+		commandList = commandList.sort( function( a, b ) {
+			var nameA = a.name.toUpperCase();
+			var nameB = b.name.toUpperCase();
+			if( nameA < nameB ) {
+				return -1;
+			}
+			if( nameA > nameB ) {
+				return 1;
+			}
+			return 0;
+		} );
+
+		for( i = 0; i < commandList.length; i++ ) {
+			cmd = commandList[ i ];
+			processCommand( cmd );
+		}
+	}
+
+	function processCommand( cmd ) {
+		if( ! cmd.isInternal ) {
+			if( cmd.isScreen ) {
+				qbData.screenCommands[ cmd.name ] = {
+					"fn": cmd.fn
+				};
+				api[ cmd.name ] = function () {
+					var args = [].slice.call( arguments );
+					var screenData = getScreenData( undefined, cmd.name );
+					if( screenData !== false ) {
+						return qbData.commands[ cmd.name ]( screenData, args );
+					}
+				};
+			} else {
+				api[ cmd.name ] = function () {
+					var args = [].slice.call( arguments );
+					return qbData.commands[ cmd.name ]( args );
+				};
+			}
+		}
 	}
 
 	// Gets the screen data
@@ -142,7 +171,13 @@ window.qbs = ( function () {
 		waiting = true;
 	}
 
-	function ready( fn ) {
+	// This trigger a function once QBS is completely loaded
+	addCommand( "ready", ready, false, false );
+	function ready( args ) {
+		var fn;
+
+		fn = args[ 0 ];
+
 		if( qbs.util.isFunction( fn ) ) {
 			if( waiting ) {
 				readyList.push( fn );

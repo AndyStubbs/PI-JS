@@ -14,9 +14,15 @@ qbData = qbs._.data;
 // QBS Core API
 // State Function
 // Creates a new screen object
-window.qbs.screen = function screen( aspect, container, isOffscreen ) {
+qbs._.addCommand( "screen", screen, false, false );
+function screen( args ) {
 
-	var aspectData, screenObj, screenData, i, commandData;
+	var aspect, container, isOffscreen, aspectData, screenObj, screenData, i, commandData;
+
+	// Input from args
+	aspect = args[ 0 ];
+	container = args[ 1 ];
+	isOffscreen = args[ 2 ];
 
 	if( typeof aspect === "string" && aspect !== "" ) {
 		aspect = aspect.toLowerCase();

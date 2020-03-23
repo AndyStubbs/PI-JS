@@ -31,6 +31,9 @@ if( qbData.fonts[ 0 ] ) {
 	qbData.defaultFont.data = font.data;
 }
 
+// Create the API
+qbs._.processCommands();
+
 if(window.$ === undefined) {
 	window.$ = window.qbs;
 }
