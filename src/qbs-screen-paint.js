@@ -18,6 +18,10 @@ function paint( screenData, args ) {
 	y = args[ 1 ];
 	fc = args[ 2 ];
 
+	if( ! Number.isInteger( x ) || ! Number.isInteger( y ) ) {
+		console.error( "paint: Argument's x and y must be integers." );
+		return;
+	}
 	fills = [ {
 		"x": x,
 		"y": y
@@ -26,7 +30,7 @@ function paint( screenData, args ) {
 	qbData.commands.getImageData( screenData );
 
 	// If the color is a number then get it from the pal
-	if( ! isNaN( fc ) ) {
+	if( Number.isInteger( fc ) ) {
 		fc = screenData.pal[ fc ];
 	} else if( ! fc || isNaN( fc.r ) || isNaN( fc.g ) || isNaN( fc.b ) ) {
 		fc = screenData.pal[ screenData.fColor ];
