@@ -154,9 +154,16 @@ window.qbs = ( function () {
 	}
 
 	function resume() {
-		var i, temp;
 		waitCount--;
 		if( waitCount === 0 ) {
+			startReadyList();
+		}
+	}
+
+	document.addEventListener( "DOMContentLoaded", startReadyList );
+	function startReadyList() {
+		var i, temp;
+		if( document.readyState !== "loading" ) {
 			waiting = false;
 			temp = readyList.slice();
 			readyList = [];
@@ -179,7 +186,7 @@ window.qbs = ( function () {
 		fn = args[ 0 ];
 
 		if( qbs.util.isFunction( fn ) ) {
-			if( waiting ) {
+			if( waiting || document.readyState === "loading" ) {
 				readyList.push( fn );
 			} else {
 				fn();
