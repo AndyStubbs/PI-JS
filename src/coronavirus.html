@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<!--meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/-->
+	<title>Test App</title>
+	<script src="qbs.js"></script>
+	<script src="qbs-util.js"></script>
+	<script src="qbs-keyboard.js"></script>
+	<script src="qbs-screen.js"></script>
+	<script src="qbs-screen-mouse.js"></script>
+	<script src="qbs-screen-touch.js"></script>
+	<script src="qbs-screen-commands.js"></script>
+	<script src="qbs-screen-helper.js"></script>
+	<script src="qbs-screen-graphics.js"></script>
+	<script src="qbs-screen-paint.js"></script>
+	<script src="qbs-screen-images.js"></script>
+	<script src="qbs-screen-draw.js"></script>
+	<script src="qbs-screen-print.js"></script>
+	<script src="qbs-sound.js"></script>
+	<script src="fonts/font-6x8.js"></script>
+	<script src="fonts/font-6x6.js"></script>
+	<script src="fonts/font-8x8.js"></script>
+	<script src="fonts/font-8x14.js"></script>
+	<script src="fonts/font-8x16.js"></script>
+	<script src="qbs-init.js"></script>
+	<style>
+		html, body {
+			background-color: grey;
+		}
+	</style>
+</head>
+<body>
+<script>
+	$.screen( "640x480" );
+	$.setFont( 4 );
+	$.print( "Coronavirus Simulator" );
+	$.render();
+	window.requestAnimationFrame( run );
+
+	var population, sampleCount, samples, i, width, height, radius, speed, color, hColor, sColor, dColor, rColor;
+	//population = 331002651;
+	population = 100;
+	speed = 1.15;
+	width = 640;
+	height = 480;
+	radius = 2;
+	sampleCount = 100;
+	samples = [];
+	sColor = 4;
+	hColor = 2;
+	dColor = 8;
+	rColor = 9;
+	color = sColor;
+	for( i = 0; i < sampleCount; i++ ) {
+		var a, dx, dy;
+		a = Math.random() * Math.PI * 2;
+		dx = Math.cos( a ) * speed;
+		dy = Math.sin( a ) * speed;
+		if( Math.random() > 0.5 ) {
+			dx = 0;
+			dy = 0;
+		}
+		samples.push( {
+			"x": qbs.util.clamp( Math.floor( Math.random() * width ), radius + 1, width - radius - 1 ),
+			"y": qbs.util.clamp( Math.floor( Math.random() * height ), radius + 1, height - radius - 1 ),
+			"color": color,
+			"dx": dx,
+			"dy": dy,
+			"count": 300
+		} );
+		color = hColor;
+	}
+	function run() {
+		var s, x, y, c, sickCount, recoverCount, deathCount;
+		sickCount = 0;
+		recoverCount = 0;
+		deathCount = 0;
+		$.cls();
+		for( i = 0; i < samples.length; i++ ) {
+			s = samples[ i ];
+			x = Math.round( s.x );
+			y = Math.round( s.y );
+
+			// Detect spread
+			c = $.point( x, y );
+			if( c === sColor && s.color === hColor ) {
+				s.color = sColor;
+			}
+
+			if( s.color === sColor ) {
+				s.count -= 1;
+				if( s.count === 0 ) {
+					if( Math.random() < 0.02 ) {
+						s.color = dColor;
+						s.dx = 0;
+						s.dy = 0;
+					} else {
+						s.color = rColor;
+					}
+				} else {
+					sickCount += 1;
+				}
+			}
+
+			if( s.color === rColor ) {
+				recoverCount += 1;
+			} else if( s.color === dColor ) {
+				deathCount += 1;
+			}
+
+			$.color( s.color );
+			$.circle( Math.round( s.x ), Math.round( s.y ), radius );
+			$.pset( Math.round( s.x ), Math.round( s.y ) );
+			s.x += s.dx;
+			s.y += s.dy;
+
+			// Calculate bounce off walls
+			if( s.x <= radius || s.x >= width - radius ) {
+				s.dx *= -1;
+			}
+			
+			if( s.y <= radius || s.y >= height - radius ) {
+				s.dy *= -1;
+			}
+		}
+
+		samples.sort( function( a, b ) {
+			return Math.random() * 2 - 1;
+		} );
+
+		$.color( 15 );
+		$.print( "Population: " + population );
+		$.print( "Healthy:    " + qbs.util.padL( Math.round( ( sampleCount - sickCount ) / sampleCount * population ), 12 ) );
+		$.print( "Sick:       " + qbs.util.padL( Math.round( sickCount / sampleCount * population ), 12 ) );
+		$.print( "Recovered:  " + qbs.util.padL( Math.round( recoverCount / sampleCount * population ), 12 ) );
+		$.print( "Dead:       " + qbs.util.padL( Math.round( deathCount / sampleCount * population ), 12 ) );
+		$.render();
+		window.requestAnimationFrame( run );
+	}
+</script>
+</body>
+</html>
