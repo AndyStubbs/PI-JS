@@ -9,7 +9,8 @@
   "scripts": {
     "test": "node test/run-tests.js",
     "server": "start node server.js",
-    "build": "node build.js"
+    "build": "node build.js",
+    "build2": "node build2.js"
   },
   "repository": {
     "type": "git",

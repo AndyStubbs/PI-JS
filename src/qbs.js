@@ -160,7 +160,6 @@ window.qbs = ( function () {
 		}
 	}
 
-	document.addEventListener( "DOMContentLoaded", startReadyList );
 	function startReadyList() {
 		var i, temp;
 		if( document.readyState !== "loading" ) {
@@ -170,6 +169,8 @@ window.qbs = ( function () {
 			for( i = 0; i < temp.length; i++ ) {
 				temp[ i ]();
 			}
+		} else {
+			setTimeout( startReadyList, 10 );
 		}
 	}
 
@@ -186,8 +187,11 @@ window.qbs = ( function () {
 		fn = args[ 0 ];
 
 		if( qbs.util.isFunction( fn ) ) {
-			if( waiting || document.readyState === "loading" ) {
+			if( waiting ) {
 				readyList.push( fn );
+			} else if ( document.readyState === "loading" ) {
+				readyList.push( fn );
+				setTimeout( startReadyList, 10 );
 			} else {
 				fn();
 			}
