@@ -650,6 +650,59 @@ function color( screenData, args ) {
 	screenData.context.strokeStyle = screenData.pal[ screenData.fColor ].s;
 }
 
+qbs._.addCommand( "swapColor", swapColor, false, true );
+function swapColor( screenData, args ) {
+	var oldColor, newColor, index, x, y, i;
+
+	oldColor = args[ 0 ];
+	newColor = args[ 1 ];
+
+	// Validate oldColor
+	if( ! Number.isInteger( oldColor ) ) {
+		console.error( "swapColor: parameter oldColor must be an integer." );
+		return;
+	} else if( oldColor < 0 || oldColor > screenData.pal.length ) {
+		console.error( "swapColor: parameter oldColor is an invalid integer." );
+		return;
+	}
+
+	index = oldColor;
+	oldColor = screenData.pal[ index ];
+
+	// Validate newColor
+	newColor = qbs.util.convertToColor( newColor );
+	if( newColor === null ) {
+		console.error( "swapColor: parameter newColor is not a valid color format." );
+		return;
+	}
+
+	qbData.commands.getImageData( screenData );
+	data = screenData.imageData.data;
+
+	// Swap's all colors
+	for( y = 0; y < screenData.height; y++ ) {
+		for( x = 0; x < screenData.width; x++ ) {
+			i = ( ( screenData.width * y ) + x ) * 4;
+			if( 
+				data[ i ] === oldColor.r && 
+				data[ i + 1 ] === oldColor.g && 
+				data[ i + 2 ] === oldColor.b && 
+				data[ i + 3 ] === oldColor.a ) {
+					data[ i ] = newColor.r;
+					data[ i + 1 ] = newColor.g;
+					data[ i + 2 ] = newColor.b;
+					data[ i + 3] = newColor.a;
+			}
+		}
+	}
+
+	screenData.dirty = true;
+
+	// Update the pal data
+	screenData.pal[ index ] = newColor;
+
+}
+
 // Point command
 qbs._.addCommand( "point", point, false, true );
 function point( screenData, args ) {
