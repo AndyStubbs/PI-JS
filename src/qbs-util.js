@@ -13,7 +13,8 @@ window.qbs.util = ( function () {
 	}
 
 	function hexToRgb( hex ) {
-		var r, g, b, a;
+		var r, g, b, a, s2;
+		s2 = hex;
 		if( hex.length === 4 ) {
 			r = parseInt( hex.slice( 1, 2 ), 16 ) * 16 - 1;
 			g = parseInt( hex.slice( 2, 3 ), 16 ) * 16 - 1;
@@ -24,6 +25,7 @@ window.qbs.util = ( function () {
 			b = parseInt( hex.slice( 5, 7 ), 16 );
 		}
 		if( hex.length === 9 ) {
+			s2 = hex.slice( 0, 7 );
 			a = parseInt( hex.slice( 7, 9 ), 16 );
 		} else {
 			a = 255;
@@ -34,7 +36,8 @@ window.qbs.util = ( function () {
 			"g": g,
 			"b": b,
 			"a": a,
-			"s": "rgba(" + r + "," + g + "," + b + "," + a + ")"
+			"s": "rgba(" + r + "," + g + "," + b + "," + a + ")",
+			"s2": s2
 		};
 	}
 

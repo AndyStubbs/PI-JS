@@ -611,6 +611,24 @@ function setPalColor( screenData, args ) {
 	screenData.pal[ i ] = color;
 }
 
+// Get pal command
+qbs._.addCommand( "getPal", getPal, false, true );
+function getPal( screenData, args ) {
+	var i, color, colors;
+	colors = [];
+	for( i = 0; i < screenData.pal.length; i++ ) {
+		color = {
+			"r": screenData.pal[ i ].r,
+			"g": screenData.pal[ i ].g,
+			"b": screenData.pal[ i ].b,
+			"a": screenData.pal[ i ].a,
+			"s": screenData.pal[ i ].s
+		};
+		colors.push( screenData.pal[ i ] );
+	}
+	return colors;
+}
+
 // Color command
 qbs._.addCommand( "color", color, false, true );
 function color( screenData, args ) {
