@@ -305,12 +305,16 @@ function resizeScreens() {
 		screenData = qbData.screens[ i ];
 
 		if( ! screenData.isOffscreen ) {
+
 			// Draw the canvas to the buffer
 			screenData.bufferContext.clearRect( 0, 0, screenData.width, screenData.height );
 			screenData.bufferContext.drawImage( screenData.canvas, 0, 0 );
 
 			// Update the canvas to the new size
 			setCanvasSize( screenData.aspectData, screenData.canvas, screenData.container.offsetWidth, screenData.container.offsetHeight );
+
+			// Resize the client rectangle
+			screenData.clientRect = screenData.canvas.getBoundingClientRect();
 
 			// Draw the buffer back onto the canvas
 			screenData.context.drawImage( screenData.bufferCanvas, 0, 0, screenData.width, screenData.height );
