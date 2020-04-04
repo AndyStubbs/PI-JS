@@ -193,7 +193,7 @@ function next_test( i ) {
 
 		if( err ) {
 			console.log( "error", err );
-			return;
+			//return;
 		}
 		if( data ) {
 			console.log( data );
