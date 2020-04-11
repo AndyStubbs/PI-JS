@@ -15,7 +15,8 @@ qbData.defaultPalette[ 0 ] = {
 	g: 0,
 	b: 0,
 	a: 0,
-	s: "#00000000"
+	s: "#00000000",
+	s2: "#000000"
 };
 
 // Initialize the default palette

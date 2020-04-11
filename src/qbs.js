@@ -226,6 +226,31 @@ window.qbs = ( function () {
 		return screen.screenObj;
 	}
 
+	// Set the default palette
+	addCommand( "setDefaultPal", setDefaultPal, false, false );
+	function setDefaultPal( args ) {
+		var pal, i, c;
+
+		pal = args[ 0 ];
+		if( ! Array.isArray( pal ) ) {
+			console.error( "setDefaultPal: parameter pal is not an array." );
+			return;
+		}
+
+		qbData.defaultPalette = [];
+
+		for( i = 0; i < pal.length; i++ ) {
+			c = qbs.util.convertToColor( pal[ i ] );
+			if( c === null ) {
+				console.error( "setDefaultPal: invalid color value inside array pal." );
+				qbData.defaultPalette.push( qbs.util.convertToColor( "#000000" ) );
+			} else {
+				qbData.defaultPalette.push( qbs.util.convertToColor( pal[ i ] ) );
+			}
+		}
+		qbData.defaultPalette[ 0 ].a = 0;
+	}
+
 	return api;
 
 } )();

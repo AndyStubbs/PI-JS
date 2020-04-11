@@ -134,6 +134,7 @@ function createScreen( aspectData, container ) {
 	canvas.style.backgroundColor = "black";
 	canvas.style.position = "absolute";
 	canvas.style.imageRendering = "pixelated";
+	canvas.style.imageRendering = "crisp-edges";
 
 	// If no container applied then use document body.
 	if( ! qbs.util.isDomElement( container ) ) {
@@ -145,6 +146,7 @@ function createScreen( aspectData, container ) {
 		container = document.body;
 		canvas.style.left = "0";
 		canvas.style.top = "0";
+		//canvas.style.imageRendering = "crisp-edges";
 	}
 
 	// Make sure the container is not blank
