@@ -33,27 +33,27 @@ function loadImage( args ) {
 
 qbs._.addCommand( "drawImage", drawImage, false, true );
 function drawImage( screenData, args ) {
-	var target, x, y, angle, anchorX, anchorY, img;
+	var source, x, y, angle, anchorX, anchorY, img;
 
-	target = args[ 0 ];
+	source = args[ 0 ];
 	x = args[ 1 ];
 	y = args[ 2 ];
 	angle = args[ 3 ];
 	anchorX = args[ 4 ];
 	anchorY = args[ 5 ];
 
-	if( typeof target === "string" ) {
-		if( ! qbData.images[ target ] ) {
+	if( typeof source === "string" ) {
+		if( ! qbData.images[ source ] ) {
 			console.error( "drawImage: invalid image name" );
 			return;
 		}
-		img = qbData.images[ target ];
+		img = qbData.images[ source ];
 	} else {
-		if( ! target || ! target.canvas ) {
-			console.error( "drawScreen: invalid screenTarget" );
+		if( ! source || ! source.canvas ) {
+			console.error( "drawImage: image source object type. Must be an image already loaded by the loadImage command or a screen." );
 			return;
 		}
-		img = target.canvas();
+		img = source.canvas();
 	}
 
 	drawItem( screenData, img, x, y, angle, anchorX, anchorY );
