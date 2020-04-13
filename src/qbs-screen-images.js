@@ -33,41 +33,30 @@ function loadImage( args ) {
 
 qbs._.addCommand( "drawImage", drawImage, false, true );
 function drawImage( screenData, args ) {
-	var imgName, x, y, angle, anchorX, anchorY, img;
+	var target, x, y, angle, anchorX, anchorY, img;
 
-	imgName = args[ 0 ];
+	target = args[ 0 ];
 	x = args[ 1 ];
 	y = args[ 2 ];
 	angle = args[ 3 ];
 	anchorX = args[ 4 ];
 	anchorY = args[ 5 ];
 
-	if( typeof imgName !== "string" || ! qbData.images[ imgName ] ) {
-		console.error( "drawImage: invalid image name" );
-		return;
+	if( typeof target === "string" ) {
+		if( ! qbData.images[ target ] ) {
+			console.error( "drawImage: invalid image name" );
+			return;
+		}
+		img = qbData.images[ target ];
+	} else {
+		if( ! target || ! target.canvas ) {
+			console.error( "drawScreen: invalid screenTarget" );
+			return;
+		}
+		img = target.canvas();
 	}
-	img = qbData.images[ imgName ];
 
 	drawItem( screenData, img, x, y, angle, anchorX, anchorY );
-}
-
-qbs._.addCommand( "drawScreen", drawScreen, false, true );
-function drawScreen( screenData, args ) {
-	var screenTarget, x, y, angle, anchorX, anchorY;
-
-	screenTarget = args[ 0 ];
-	x = args[ 1 ];
-	y = args[ 2 ];
-	angle = args[ 3 ];
-	anchorX = args[ 4 ];
-	anchorY = args[ 5 ];
-
-	if( ! screenTarget || ! screenTarget.canvas ) {
-		console.error( "drawScreen: invalid screenTarget" );
-		return;
-	}
-	canvas = screenTarget.canvas();
-	drawItem( screenData, canvas, x, y, angle, anchorX, anchorY );
 }
 
 function drawItem( screenData, img, x, y, angle, anchorX, anchorY ) {
