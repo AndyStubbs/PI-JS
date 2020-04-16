@@ -33,7 +33,7 @@ function loadImage( args ) {
 
 qbs._.addCommand( "drawImage", drawImage, false, true );
 function drawImage( screenData, args ) {
-	var source, x, y, angle, anchorX, anchorY, img;
+	var source, x, y, angle, anchorX, anchorY, img, alpha;
 
 	source = args[ 0 ];
 	x = args[ 1 ];
@@ -41,6 +41,7 @@ function drawImage( screenData, args ) {
 	angle = args[ 3 ];
 	anchorX = args[ 4 ];
 	anchorY = args[ 5 ];
+	alpha = args[ 6 ];
 
 	if( typeof source === "string" ) {
 		if( ! qbData.images[ source ] ) {
@@ -59,8 +60,8 @@ function drawImage( screenData, args ) {
 	drawItem( screenData, img, x, y, angle, anchorX, anchorY );
 }
 
-function drawItem( screenData, img, x, y, angle, anchorX, anchorY ) {
-	var context;
+function drawItem( screenData, img, x, y, angle, anchorX, anchorY, alpha ) {
+	var context, oldAlpha;
 
 	if( ! angle ) {
 		angle = 0;
@@ -75,10 +76,17 @@ function drawItem( screenData, img, x, y, angle, anchorX, anchorY ) {
 	if( ! anchorY ) {
 		anchorY = 0;
 	}
+
+	if( ! alpha && alpha !== 0 ) {
+		alpha = 1;
+	}
+
 	anchorX = Math.round( img.width * anchorX );
 	anchorY = Math.round( img.height * anchorY );
 	context = screenData.context;
 
+	oldAlpha = context.globalAlpha;
+	context.globalAlpha = alpha;
 	if( screenData.dirty ) {
 		screenData.screenObj.render();
 	}
@@ -87,6 +95,7 @@ function drawItem( screenData, img, x, y, angle, anchorX, anchorY ) {
 	context.drawImage( img, -anchorX, -anchorY );
 	context.rotate( -angle );
 	context.translate( -x, -y );
+	context.globalAlpha = oldAlpha;
 }
 
 // End of File Encapsulation
