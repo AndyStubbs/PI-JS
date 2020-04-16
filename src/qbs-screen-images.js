@@ -57,7 +57,7 @@ function drawImage( screenData, args ) {
 		img = source.canvas();
 	}
 
-	drawItem( screenData, img, x, y, angle, anchorX, anchorY );
+	drawItem( screenData, img, x, y, angle, anchorX, anchorY, alpha );
 }
 
 function drawItem( screenData, img, x, y, angle, anchorX, anchorY, alpha ) {
