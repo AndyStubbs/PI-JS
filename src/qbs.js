@@ -251,6 +251,24 @@ window.qbs = ( function () {
 		qbData.defaultPalette[ 0 ].a = 0;
 	}
 
+	// Get default pal command
+	addCommand( "getDefaultPal", getDefaultPal, false, false );
+	function getDefaultPal( args ) {
+		var i, color, colors;
+		colors = [];
+		for( i = 0; i < qbData.defaultPalette.length; i++ ) {
+			color = {
+				"r": qbData.defaultPalette[ i ].r,
+				"g": qbData.defaultPalette[ i ].g,
+				"b": qbData.defaultPalette[ i ].b,
+				"a": qbData.defaultPalette[ i ].a,
+				"s": qbData.defaultPalette[ i ].s
+			};
+			colors.push( qbData.defaultPalette[ i ] );
+		}
+		return colors;
+	}
+
 	return api;
 
 } )();
