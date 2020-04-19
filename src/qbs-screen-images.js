@@ -78,7 +78,7 @@ function drawItem( screenData, img, x, y, angle, anchorX, anchorY, alpha ) {
 	}
 
 	if( ! alpha && alpha !== 0 ) {
-		alpha = 1;
+		alpha = 255;
 	}
 
 	anchorX = Math.round( img.width * anchorX );
@@ -86,7 +86,7 @@ function drawItem( screenData, img, x, y, angle, anchorX, anchorY, alpha ) {
 	context = screenData.context;
 
 	oldAlpha = context.globalAlpha;
-	context.globalAlpha = alpha;
+	context.globalAlpha = ( alpha / 255 );
 	if( screenData.dirty ) {
 		screenData.screenObj.render();
 	}
