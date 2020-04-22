@@ -5,6 +5,8 @@
 // Start of File Encapsulation
 ( function () {
 
+"use strict";
+
 var qbData;
 
 qbData = qbs._.data;
@@ -27,25 +29,32 @@ function pxCircle( screenData, args ) {
 	// Initialize the color for the circle
 	c = screenData.pal[ screenData.fColor ];
 
+	r -= 1;
 	x = r;
 	y = 0;
 
 	// Set the first pixel at 90 degrees
-	qbData.commands.setPixelSafe( screenData, x + cx, y + cy, c );
+	//qbData.commands.setPixelSafe( screenData, x + cx, y + cy, c );
 	
 	// Only print inital points if r > 0
-	if( r >= 2 ) {
+	if( r > 1 ) {
+		qbData.commands.setPixelSafe( screenData, x + cx, y + cy, c );
 		qbData.commands.setPixelSafe( screenData, -x + cx, y + cy, c );
 		qbData.commands.setPixelSafe( screenData, cx, x + cy, c );
 		qbData.commands.setPixelSafe( screenData, cx, -x + cy, c );
 	} else if( r === 1 ) {
-		qbData.commands.setPixelSafe( screenData, -x + cx, y + cy, c );
-		qbData.commands.setPixelSafe( screenData, cx, x + cy, c );
-		qbData.commands.setPixelSafe( screenData, cx, -x + cy, c );
+		qbData.commands.setPixelSafe( screenData, cx + 1, cy, c );
+		qbData.commands.setPixelSafe( screenData, cx - 1, cy, c );
+		qbData.commands.setPixelSafe( screenData, cx, cy + 1, c );
+		qbData.commands.setPixelSafe( screenData, cx, cy - 1, c );
+		screenData.dirty = true;
+		return;
+	} else if( r === 0 ) {
+		qbData.commands.setPixelSafe( screenData, cx, cy, c );
 		screenData.dirty = true;
 		return;
 	}
-	
+
 	// Initialize p
 	p = 1 - r;
 	while( x > y ) {
@@ -87,11 +96,11 @@ function pxCircle( screenData, args ) {
 function aaCircle( screenData, args ) {
 	var cx, cy, r, a1, a2;
 
-	cx = args[ 0 ];
-	cy = args[ 1 ];
-	r = args[ 2 ];
+	cx = args[ 0 ] + 0.5;
+	cy = args[ 1 ] + 0.5;
+	r = args[ 2 ] - 0.9;
 
-	if( isNaN(cx) || isNaN(cy) || isNaN(r) ) {
+	if( isNaN( cx ) || isNaN( cy ) || isNaN( r ) ) {
 		console.error("circle: parameters cx, cy, r must be numbers.");
 		return;
 	}
@@ -110,53 +119,106 @@ function aaCircle( screenData, args ) {
 // Arc command
 qbs._.addCommands( "arc", pxArc, aaArc );
 function pxArc( screenData, args ) {
-	var cx, cy, r, a1, a2, c, temp, a, da, lx, ly, nx, ny;
+	var cx, cy, r, a1, a2, c, x, y, p, winding;
+
+	function set( x, y ) {
+		var a;
+		a = ( qbs.util.radiansToDegrees( Math.atan2( y - cy, x - cx ) ) );
+		a = ( a + 360 ) % 360;
+		if( winding ) {
+			if( a >= a1 || a <= a2 ) {
+				qbData.commands.setPixelSafe( screenData, x, y, c );
+			}
+		} else if( a >= a1 && a <= a2 ) {
+			qbData.commands.setPixelSafe( screenData, x, y, c );
+		}
+	}
 
 	cx = args[ 0 ];
 	cy = args[ 1 ];
 	r = args[ 2 ];
 	a1 = args[ 3 ];
 	a2 = args[ 4 ];
-
+	a1 = ( a1 + 360 ) % 360;
+	a2 = ( a2 + 360 ) % 360;
+	winding = false;
+	if( a1 > a2 ) {
+		winding = true;
+	//	temp = a1;
+	//	a1 = a2;
+	//	a2 = temp;
+	}
 	qbData.commands.getImageData( screenData );
+
+	// Make sure x and y are integers
+	if( isNaN( cx ) || isNaN( cy ) || isNaN( r ) ) {
+		console.error( "circle: Argument's cx, cy, r must be numbers." );
+		return;
+	}
 
 	// Initialize the color for the circle
 	c = screenData.pal[ screenData.fColor ];
 
-	if( a1 > a2 ) {
-		temp = a1;
-		a1 = a2;
-		a2 = temp;
+	r -= 1;
+	if( r < 0 ) {
+		r = 0;
 	}
+	x = r;
+	y = 0;
 
-	// Convert degrees to radians
-	a1 = a1 * Math.PI / 180;
-	a2 = a2 * Math.PI / 180;
-
-	if(r === 0) {
-		qbData.commands.setPixel( screenData, cx, cy, c );
+	// Set the first pixel at 90 degrees
+	//qbData.commands.setPixelSafe( screenData, x + cx, y + cy, c );
+	
+	// Only print inital points if r > 0
+	if( r > 1 ) {
+		set( x + cx, y + cy, c );
+		set( -x + cx, y + cy, c );
+		set( cx, x + cy, c );
+		set( cx, -x + cy, c );
+	} else if( r === 1 ) {
+		set( cx + 1, cy, c );
+		set( cx - 1, cy, c );
+		set( cx, cy + 1, c );
+		set( cx, cy - 1, c );
+		screenData.dirty = true;
+		return;
+	} else if( r === 0 ) {
+		qbData.commands.setPixelSafe( screenData, cx, cy, c );
 		screenData.dirty = true;
 		return;
 	}
 
-	da = Math.abs(1 / r);
-	a = a1;
-	lx = false;
-	ly = false;
-	while( a < a2 ) {
-		a += da;
-		nx = Math.round( Math.cos( a ) * r + cx );
-		ny = Math.round( Math.sin( a ) * r + cy );
-		if( lx ) {
-			screenData.screenObj.line( lx, ly, nx, ny );
+	// Initialize p
+	p = 1 - r;
+	while( x > y ) {
+		y += 1;
+
+		if( p <= 0 ) {
+			// Mid-point is inside or on the perimeter
+			p = p + 2 * y + 1;
 		} else {
-			qbData.commands.setPixel( screenData, nx, ny, c );
+			// Mid point is outside the perimeter
+			x -= 1;
+			p = p + 2 * y - 2 * x + 1;
 		}
-		lx = nx;
-		ly = ny;
+
+		// Set pixels around point and reflection in other octants
+		set( x + cx, y + cy, c );
+		set( -x + cx, y + cy, c );
+		set( x + cx, -y + cy, c );
+		set( -x + cx, -y + cy, c );
+		
+		// Set pixels on the perimeter points if not on x = y
+		if( x != y ) {
+			set( y + cx, x + cy, c );
+			set( -y + cx, x + cy, c );
+			set( y + cx, -x + cy, c );
+			set( -y + cx, -x + cy, c );
+		}
 	}
 
 	screenData.dirty = true;
+
 }
 
 function aaArc( screenData, args ) {
@@ -171,6 +233,13 @@ function aaArc( screenData, args ) {
 	if( isNaN(cx) || isNaN(cy) || isNaN(r) || isNaN(a1) || isNaN(a2) ) {
 		console.error("arc: parameters cx, cy, r, a1, a2 must be numbers.");
 		return;
+	}
+
+	cx = cx + 0.5;
+	cy = cy + 0.5;
+	r = r - 0.9;
+	if( r < 0 ) {
+		r = 0;
 	}
 	if( screenData.dirty ) {
 		screenData.screenObj.render();
@@ -372,7 +441,7 @@ function put( screenData, args ) {
 // Get command
 qbs._.addCommand( "get", get, false, true );
 function get( screenData, args ) {
-	var x1, y1, x2, y2, tolerance, t, width, height, imageData, data, x, y, c, r, g, b, i, row;
+	var x1, y1, x2, y2, tolerance, t, width, height, imageData, data, x, y, c, r, g, b, i, row, a;
 
 	x1 = args[ 0 ];
 	y1 = args[ 1 ];
@@ -453,7 +522,7 @@ function pset( screenData, args ) {
 	c = screenData.pal[ screenData.fColor ];
 
 	qbData.commands.getImageData( screenData );
-	qbData.commands.setPixel( screenData, x, y, c );
+	screenData.pen.draw( screenData, x, y, c );
 	screenData.dirty = true;
 }
 
@@ -750,6 +819,31 @@ function render( screenData ) {
 		screenData.context.putImageData( screenData.imageData, 0, 0 );
 	}
 	screenData.dirty = false;
+}
+
+// Set pen command
+qbs._.addCommand( "setPen", setPen, false, true );
+function setPen( screenData, args ) {
+	var pen, size;
+
+	pen = args[ 0 ];
+	size = args[ 1 ];
+
+	if( ! qbData.pens[ pen ] ) {
+		console.error( "setPen: Argument pen is not a valid pen. Valid pens: " + qbData.penList.join(", " ) );
+		return;
+	}
+	if( ! Number.isInteger( size ) ) {
+		console.error( "setPen: Argument size is not a valid number." );
+		return;
+	}
+
+	if( size === 1 ) {
+		screenData.pen.draw = qbData.pens.pixel;
+	} else {
+		screenData.pen.draw = qbData.pens[ pen ];
+	}
+	screenData.pen.size = size;
 }
 
 // End of File Encapsulation

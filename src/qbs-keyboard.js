@@ -5,6 +5,8 @@
 // Start of File Encapsulation
 ( function () {
 
+"use strict";
+
 var qbData, keys, keyLookup, keyCodes, preventKeys, inputs, inputIndex, t, promptInterval, blink,
 promptBackground, promptBackgroundWidth, inputReadyList, onKeyEventListeners, anyKeyEventListeners;
 

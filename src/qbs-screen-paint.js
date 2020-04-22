@@ -5,6 +5,8 @@
 // Start of File Encapsulation
 ( function () {
 
+"use strict";
+
 var qbData;
 
 qbData = qbs._.data;

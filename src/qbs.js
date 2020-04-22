@@ -33,7 +33,7 @@ window.qbs = ( function () {
 		},
 		"nextFontId": 0,
 		"fonts": {},
-		"defaultPalette": ["#000000","#0000AA","#00AA00","#00AAAA","#AA0000","#AA00AA","#AA5500","#AAAAAA","#555555",
+		"defaultPalette": [ "#000000","#0000AA","#00AA00","#00AAAA","#AA0000","#AA00AA","#AA5500","#AAAAAA","#555555",
 			"#5555FF","#55FF55","#55FFFF","#FF5555","#FF55FF","#FFFF55","#FFFFFF","#000000","#141414","#202020","#2D2D2D",
 			"#393939","#454545","#515151","#616161","#717171","#828282","#929292","#A2A2A2","#B6B6B6","#CACACA","#E3E3E3",
 			"#FFFFFF","#0000FF","#4100FF","#7D00FF","#BE00FF","#FF00FF","#FF00BE","#FF007D","#FF0041","#FF0000","#FF4100",
@@ -56,9 +56,12 @@ window.qbs = ( function () {
 			"#204131","#204139","#204141","#203941","#203141","#202841","#2D2D41","#312D41","#352D41","#3D2D41","#412D41",
 			"#412D3D","#412D35","#412D31","#412D2D","#41312D","#41352D","#413D2D","#41412D","#3D412D","#35412D","#31412D",
 			"#2D412D","#2D4131","#2D4135","#2D413D","#2D4141","#2D3D41","#2D3541","#2D3141","#000000","#000000","#000000",
-			"#000000","#000000","#000000","#000000"],
+			"#000000","#000000","#000000","#000000" ],
 		"commands": {},
-		"screenCommands": {}
+		"screenCommands": {},
+		"defaultPenDraw": null,
+		"pens": {},
+		"penList": []
 	};
 
 	// QBS api
@@ -67,6 +70,7 @@ window.qbs = ( function () {
 			"addCommand": addCommand,
 			"addCommands": addCommands,
 			"processCommands": processCommands,
+			"addPen": addPen,
 			"data": qbData,
 			"resume": resume,
 			"wait": wait
@@ -134,6 +138,12 @@ window.qbs = ( function () {
 				};
 			}
 		}
+	}
+
+	// Add a pen to the internal list
+	function addPen( name, fn ) {
+		qbData.penList.push( name );
+		qbData.pens[ name ] = fn;
 	}
 
 	// Gets the screen data

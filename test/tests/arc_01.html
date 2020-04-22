@@ -22,8 +22,12 @@
 <body>
 <script>
 	$.ready(function () {
-		$.screen("100x100");
-		$.arc(50, 50, 45, 45, 90);
+		$.screen( "100x100" );
+		$.setPixelMode( false );
+		$.arc( 50, 50, 45, 45, 90 );
+		$.setPixelMode( true );
+		$.color( 15 );
+		$.arc( 50, 50, 45, 45, 90 );
 		$.render();
 	});
 </script>

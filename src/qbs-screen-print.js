@@ -6,6 +6,7 @@
 ( function () {
 
 "use strict";
+
 var qbData, qbWait, qbResume;
 
 qbData = qbs._.data;

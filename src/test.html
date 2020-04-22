@@ -30,20 +30,23 @@
 	</style>
 </head>
 <body>
-	<div id="div0" style="height: 200px;"></div>
-	<div id="div1" style="height: 200px;"></div>
+
 <script>
-$.ready( function () {
-	var screen0, screen1;
-	screen0 = $.screen( "50x20", document.getElementById( "div0" ) );
-	screen1 = $.screen( "50x20", document.getElementById( "div1" ) );
-	$.getScreen( 0 ).print( "Screen 0" );
-	$.getScreen( 0 ).render();
-	$.getScreen( 1 ).print( "Screen 1" );
-	$.getScreen( 1 ).render();
-	$.render();
-	$.getPal();
-} );
+	$.ready(function () {
+		$.screen( "200x200" );
+		$.setFont(0);
+		$.color(0);
+		$.pset( 80, 90 );
+		$.draw( "C#FD8483 A35,145,306 BR40 A35,235,395 BR28 BD20 TA135 R68 TA0 TA226 R74 TA0 BR15 S4" );
+		$.color(15);
+		$.locate( 8, 11 );
+		$.print( "Happy Mothers Day" );
+		$.locate(0, 0);
+		for(var i = 0; i < 25; i++) {
+			$.print(i);
+		}
+		$.render();
+	});
 </script>
 </body>
 </html>

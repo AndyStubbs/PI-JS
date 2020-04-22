@@ -150,8 +150,12 @@ window.qbs.util = ( function () {
 				y1 >= y2 && y1 < y2 + height;
 	}
 
-	function degreesToRadian(deg) {
-		return deg * Math.PI / 180;
+	function degreesToRadian( deg ) {
+		return deg * ( Math.PI / 180 );
+	}
+
+	function radiansToDegrees( rad ) {
+		return rad * ( 180 / Math.PI );
 	}
 
 	function sanitizeBool(b) {
@@ -205,6 +209,7 @@ window.qbs.util = ( function () {
 		"inRange": inRange,
 		"inRange2": inRange2,
 		"degreesToRadian": degreesToRadian,
+		"radiansToDegrees": radiansToDegrees,
 		"sanitizeBool": sanitizeBool,
 		"padL": padL,
 		"padR": padR,

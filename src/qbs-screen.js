@@ -230,6 +230,10 @@ function createScreenData( canvas, bufferCanvas, container, aspectData, isOffscr
 	};
 	screenData.touches = {};
 	screenData.pixelMode = true;
+	screenData.pen = {
+		"draw": qbData.defaultPenDraw,
+		"size": 1
+	};
 
 	// Disable anti aliasing
 	screenData.context.imageSmoothingEnabled = false;

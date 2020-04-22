@@ -4,6 +4,7 @@
 
 // Start of File Encapsulation
 ( function () {
+
 "use strict";
 
 var qbData;
