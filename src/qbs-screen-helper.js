@@ -64,8 +64,13 @@ qbs._.addPen( "square", drawSquarePen );
 function drawSquarePen( screenData, x, y, c ) {
 	var size, x2, y2, offset;
 
+	// Size must always be an odd number
 	size = screenData.pen.size * 2 - 1;
+
+	// Compute the center offset of the square
 	offset = Math.round( size / 2 ) - 1;
+
+	// Draw the square
 	for( y2 = 0; y2 < size; y2++ ) {
 		for( x2 = 0; x2 < size; x2++ ) {
 			qbData.commands.setPixelSafe( screenData, x2 + x - offset, y2 + y - offset, c );
@@ -80,6 +85,7 @@ qbs._.addPen( "circle", drawCirclePen );
 function drawCirclePen( screenData, x, y, c ) {
 	var size, half, x2, y2, x3, y3, offset, r;
 
+	// Special case for pen size 2
 	if( screenData.pen.size === 2 ) {
 		qbData.commands.setPixelSafe( screenData, x, y, c );
 		qbData.commands.setPixelSafe( screenData, x + 1, y, c );
@@ -90,14 +96,27 @@ function drawCirclePen( screenData, x, y, c ) {
 		return;
 	}
 
+	// Double size to get the size of the outer box
 	size = screenData.pen.size * 2;
-	half = size / 2;
-	offset = Math.round( size / 2 ) - 1;
+
+	// Half is size of radius
+	half = screenData.pen.size;
+
+	// Calculate the center of circle
+	offset = half - 1;
+
+	// Loop through the square boundary outside of the circle
 	for( y2 = 0; y2 < size; y2++ ) {
 		for( x2 = 0; x2 < size; x2++ ) {
+
+			// Compute the coordinates
 			x3 = x2 - offset;
 			y3 = y2 - offset;
+
+			// Compute the radius of point - round to make pixel perfect
 			r = Math.round( Math.sqrt( x3 * x3 + y3 * y3 ) );
+
+			// Only draw the pixel if it is inside the circle
 			if( r < half ) {
 				qbData.commands.setPixelSafe( screenData, x3 + x, y3 + y, c );
 			}
