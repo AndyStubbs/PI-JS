@@ -838,17 +838,24 @@ function setPen( screenData, args ) {
 		return;
 	}
 
+	// Handle special case of size of one
 	if( size === 1 ) {
+
+		// Size is one so only draw one pixel
 		screenData.pen.draw = qbData.pens.pixel.cmd;
-	} else {
-		screenData.pen.draw = qbData.pens[ pen ].cmd;
-	}
-	screenData.pen.size = size;
-	if( size === 1 ) {
+
+		// Set the line width for context draw
 		screenData.context.lineWidth = 1;
 	} else {
+
+		// Set the draw mode for pixel draw
+		screenData.pen.draw = qbData.pens[ pen ].cmd;
+
+		// Set the line width for context draw
 		screenData.context.lineWidth = size * 2 - 1;
 	}
+
+	screenData.pen.size = size;
 	screenData.context.lineCap = qbData.pens[ pen ].cap;
 }
 
