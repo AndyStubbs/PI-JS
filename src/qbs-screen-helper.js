@@ -35,7 +35,7 @@ function setPixel( screenData, x, y, c ) {
 }
 
 qbs._.addCommand( "setPixelSafe", setPixelSafe, true, false );
-qbs._.addPen( "pixel", setPixelSafe );
+qbs._.addPen( "pixel", setPixelSafe, "square" );
 function setPixelSafe( screenData, x, y, c ) {
 	var data, i;
 
@@ -60,7 +60,7 @@ function setPixelSafe( screenData, x, y, c ) {
 }
 
 qbs._.addCommand( "drawSquarePen", drawSquarePen, true, false );
-qbs._.addPen( "square", drawSquarePen );
+qbs._.addPen( "square", drawSquarePen, "square" );
 function drawSquarePen( screenData, x, y, c ) {
 	var size, x2, y2, offset;
 
@@ -81,7 +81,7 @@ function drawSquarePen( screenData, x, y, c ) {
 }
 
 qbs._.addCommand( "drawCirclePen", drawCirclePen, true, false );
-qbs._.addPen( "circle", drawCirclePen );
+qbs._.addPen( "circle", drawCirclePen, "round" );
 function drawCirclePen( screenData, x, y, c ) {
 	var size, half, x2, y2, x3, y3, offset, r;
 

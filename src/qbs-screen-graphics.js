@@ -34,23 +34,23 @@ function pxCircle( screenData, args ) {
 	y = 0;
 
 	// Set the first pixel at 90 degrees
-	//qbData.commands.setPixelSafe( screenData, x + cx, y + cy, c );
+	//screenData.pen.draw( screenData, x + cx, y + cy, c );
 	
 	// Only print inital points if r > 0
 	if( r > 1 ) {
-		qbData.commands.setPixelSafe( screenData, x + cx, y + cy, c );
-		qbData.commands.setPixelSafe( screenData, -x + cx, y + cy, c );
-		qbData.commands.setPixelSafe( screenData, cx, x + cy, c );
-		qbData.commands.setPixelSafe( screenData, cx, -x + cy, c );
+		screenData.pen.draw( screenData, x + cx, y + cy, c );
+		screenData.pen.draw( screenData, -x + cx, y + cy, c );
+		screenData.pen.draw( screenData, cx, x + cy, c );
+		screenData.pen.draw( screenData, cx, -x + cy, c );
 	} else if( r === 1 ) {
-		qbData.commands.setPixelSafe( screenData, cx + 1, cy, c );
-		qbData.commands.setPixelSafe( screenData, cx - 1, cy, c );
-		qbData.commands.setPixelSafe( screenData, cx, cy + 1, c );
-		qbData.commands.setPixelSafe( screenData, cx, cy - 1, c );
+		screenData.pen.draw( screenData, cx + 1, cy, c );
+		screenData.pen.draw( screenData, cx - 1, cy, c );
+		screenData.pen.draw( screenData, cx, cy + 1, c );
+		screenData.pen.draw( screenData, cx, cy - 1, c );
 		screenData.dirty = true;
 		return;
 	} else if( r === 0 ) {
-		qbData.commands.setPixelSafe( screenData, cx, cy, c );
+		screenData.pen.draw( screenData, cx, cy, c );
 		screenData.dirty = true;
 		return;
 	}
@@ -76,17 +76,17 @@ function pxCircle( screenData, args ) {
 		//}
 		
 		// Set pixels around point and reflection in other octants
-		qbData.commands.setPixelSafe( screenData, x + cx, y + cy, c );
-		qbData.commands.setPixelSafe( screenData, -x + cx, y + cy, c );
-		qbData.commands.setPixelSafe( screenData, x + cx, -y + cy, c );
-		qbData.commands.setPixelSafe( screenData, -x + cx, -y + cy, c );
+		screenData.pen.draw( screenData, x + cx, y + cy, c );
+		screenData.pen.draw( screenData, -x + cx, y + cy, c );
+		screenData.pen.draw( screenData, x + cx, -y + cy, c );
+		screenData.pen.draw( screenData, -x + cx, -y + cy, c );
 		
 		// Set pixels on the perimeter points if not on x = y
 		if( x != y ) {
-			qbData.commands.setPixelSafe( screenData, y + cx, x + cy, c );
-			qbData.commands.setPixelSafe( screenData, -y + cx, x + cy, c );
-			qbData.commands.setPixelSafe( screenData, y + cx, -x + cy, c );
-			qbData.commands.setPixelSafe( screenData, -y + cx, -x + cy, c );
+			screenData.pen.draw( screenData, y + cx, x + cy, c );
+			screenData.pen.draw( screenData, -y + cx, x + cy, c );
+			screenData.pen.draw( screenData, y + cx, -x + cy, c );
+			screenData.pen.draw( screenData, -y + cx, -x + cy, c );
 		}
 	}
 
@@ -127,10 +127,10 @@ function pxArc( screenData, args ) {
 		a = ( a + 360 ) % 360;
 		if( winding ) {
 			if( a >= a1 || a <= a2 ) {
-				qbData.commands.setPixelSafe( screenData, x, y, c );
+				screenData.pen.draw( screenData, x, y, c );
 			}
 		} else if( a >= a1 && a <= a2 ) {
-			qbData.commands.setPixelSafe( screenData, x, y, c );
+			screenData.pen.draw( screenData, x, y, c );
 		}
 	}
 
@@ -167,7 +167,7 @@ function pxArc( screenData, args ) {
 	y = 0;
 
 	// Set the first pixel at 90 degrees
-	//qbData.commands.setPixelSafe( screenData, x + cx, y + cy, c );
+	//screenData.pen.draw( screenData, x + cx, y + cy, c );
 	
 	// Only print inital points if r > 0
 	if( r > 1 ) {
@@ -183,7 +183,7 @@ function pxArc( screenData, args ) {
 		screenData.dirty = true;
 		return;
 	} else if( r === 0 ) {
-		qbData.commands.setPixelSafe( screenData, cx, cy, c );
+		screenData.pen.draw( screenData, cx, cy, c );
 		screenData.dirty = true;
 		return;
 	}
@@ -274,7 +274,7 @@ function pxEllipse( screenData, args ) {
 	c = screenData.pal[ screenData.fColor ];
 
 	if( rx === 0 && ry === 0 ) {
-		qbData.commands.setPixelSafe( screenData, cx, cy, c );
+		screenData.pen.draw( screenData, cx, cy, c );
 		screenData.dirty = true;
 		return;
 	}
@@ -293,10 +293,10 @@ function pxEllipse( screenData, args ) {
 	while( dx < dy ) {
 		
 		// 4-way symmetry
-		qbData.commands.setPixelSafe( screenData, x + cx, y + cy, c );
-		qbData.commands.setPixelSafe( screenData, -x + cx, y + cy, c );
-		qbData.commands.setPixelSafe( screenData, x + cx, -y + cy, c );
-		qbData.commands.setPixelSafe( screenData, -x + cx, -y + cy, c );
+		screenData.pen.draw( screenData, x + cx, y + cy, c );
+		screenData.pen.draw( screenData, -x + cx, y + cy, c );
+		screenData.pen.draw( screenData, x + cx, -y + cy, c );
+		screenData.pen.draw( screenData, -x + cx, -y + cy, c );
 
 		// Checking and updating value of
 		// decision parameter based on algorithm
@@ -322,10 +322,10 @@ function pxEllipse( screenData, args ) {
 	while( y >= 0 ) {
 
 		// 4-way symmetry
-		qbData.commands.setPixelSafe( screenData, x + cx, y + cy, c );
-		qbData.commands.setPixelSafe( screenData, -x + cx, y + cy, c );
-		qbData.commands.setPixelSafe( screenData, x + cx, -y + cy, c );
-		qbData.commands.setPixelSafe( screenData, -x + cx, -y + cy, c );
+		screenData.pen.draw( screenData, x + cx, y + cy, c );
+		screenData.pen.draw( screenData, -x + cx, y + cy, c );
+		screenData.pen.draw( screenData, x + cx, -y + cy, c );
+		screenData.pen.draw( screenData, -x + cx, -y + cy, c );
 		
 		// Checking and updating parameter 
 		// value based on algorithm 
@@ -574,7 +574,7 @@ function pxLine( screenData, args ) {
 	qbData.commands.getImageData( screenData );
 
 	// Set the first pixel
-	qbData.commands.setPixelSafe( screenData, x1, y1, c );
+	screenData.pen.draw( screenData, x1, y1, c );
 
 	// Loop until the end of the line
 	while ( ! ( ( x1 === x2 ) && ( y1 === y2 ) ) ) {
@@ -591,7 +591,7 @@ function pxLine( screenData, args ) {
 		}
 
 		// Set the next pixel
-		qbData.commands.setPixelSafe( screenData, x1, y1, c );
+		screenData.pen.draw( screenData, x1, y1, c );
 	}
 
 	screenData.dirty = true;
@@ -839,11 +839,17 @@ function setPen( screenData, args ) {
 	}
 
 	if( size === 1 ) {
-		screenData.pen.draw = qbData.pens.pixel;
+		screenData.pen.draw = qbData.pens.pixel.cmd;
 	} else {
-		screenData.pen.draw = qbData.pens[ pen ];
+		screenData.pen.draw = qbData.pens[ pen ].cmd;
 	}
 	screenData.pen.size = size;
+	if( size === 1 ) {
+		screenData.context.lineWidth = 1;
+	} else {
+		screenData.context.lineWidth = size * 2 - 1;
+	}
+	screenData.context.lineCap = qbData.pens[ pen ].cap;
 }
 
 // End of File Encapsulation

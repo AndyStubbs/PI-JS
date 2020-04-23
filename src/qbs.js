@@ -141,9 +141,12 @@ window.qbs = ( function () {
 	}
 
 	// Add a pen to the internal list
-	function addPen( name, fn ) {
+	function addPen( name, fn, cap ) {
 		qbData.penList.push( name );
-		qbData.pens[ name ] = fn;
+		qbData.pens[ name ] = {
+			"cmd": fn,
+			"cap": cap
+		};
 	}
 
 	// Gets the screen data
