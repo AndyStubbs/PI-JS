@@ -150,6 +150,10 @@ window.qbs.util = ( function () {
 				y1 >= y2 && y1 < y2 + height;
 	}
 
+	function rndRange( min, max ) {
+		return Math.random() * ( max - min ) + min;
+	}
+
 	function degreesToRadian( deg ) {
 		return deg * ( Math.PI / 180 );
 	}
@@ -158,15 +162,15 @@ window.qbs.util = ( function () {
 		return rad * ( 180 / Math.PI );
 	}
 
-	function sanitizeBool(b) {
-		if(b) {
+	function sanitizeBool( b ) {
+		if( b ) {
 			return true;
 		} else {
 			return false;
 		}
 	}
 
-	function padL(str, len, c) {
+	function padL( str, len, c ) {
 		var i, pad;
 		if(typeof c !== "string") {
 			c = " ";
@@ -208,6 +212,7 @@ window.qbs.util = ( function () {
 		"clamp": clamp,
 		"inRange": inRange,
 		"inRange2": inRange2,
+		"rndRange": rndRange,
 		"degreesToRadian": degreesToRadian,
 		"radiansToDegrees": radiansToDegrees,
 		"sanitizeBool": sanitizeBool,

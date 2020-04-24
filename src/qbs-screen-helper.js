@@ -51,12 +51,37 @@ function setPixelSafe( screenData, x, y, c ) {
 	// Calculate the index
 	i = ( ( screenData.width * y ) + x ) * 4;
 
+	c = getPixelColor( screenData, c );
+
 	data[ i ] = c.r;
 	data[ i + 1 ] = c.g;
 	data[ i + 2 ] = c.b;
 	data[ i + 3 ] = c.a;
 
 	screenData.dirty = true;
+}
+
+function getPixelColor( screenData, c ) {
+	var noise, change, half, c2;
+
+	noise = screenData.pen.noise;
+	if( ! noise ) {
+		return c;
+	}
+	c2 = { "r": c.r, "g": c.g, "b": c.b, "a": c.a };
+	half = noise / 2;
+	if( Array.isArray( noise ) ) {
+		c2.r = qbs.util.clamp( Math.round( c2.r + qbs.util.rndRange( -noise[ 0 ], noise[ 0 ] ) ), 0, 255 );
+		c2.g = qbs.util.clamp( Math.round( c2.g + qbs.util.rndRange( -noise[ 1 ], noise[ 1 ] ) ), 0, 255 );
+		c2.b = qbs.util.clamp( Math.round( c2.b + qbs.util.rndRange( -noise[ 2 ], noise[ 2 ] ) ), 0, 255 );
+		c2.a = qbs.util.clamp( c2.a + qbs.util.rndRange( -noise[ 3 ], noise[ 3 ] ), 0, 255 );
+	} else {
+		change = Math.round( Math.random() * noise - half );
+		c2.r = qbs.util.clamp( c2.r + change, 0, 255 );
+		c2.g = qbs.util.clamp( c2.g + change, 0, 255 );
+		c2.b = qbs.util.clamp( c2.b + change, 0, 255 );
+	}
+	return c2;
 }
 
 qbs._.addCommand( "drawSquarePen", drawSquarePen, true, false );

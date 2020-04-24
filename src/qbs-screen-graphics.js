@@ -824,10 +824,11 @@ function render( screenData ) {
 // Set pen command
 qbs._.addCommand( "setPen", setPen, false, true );
 function setPen( screenData, args ) {
-	var pen, size;
+	var pen, size, noise, i;
 
 	pen = args[ 0 ];
 	size = args[ 1 ];
+	noise = args[ 2 ];
 
 	if( ! qbData.pens[ pen ] ) {
 		console.error( "setPen: Argument pen is not a valid pen. Valid pens: " + qbData.penList.join(", " ) );
@@ -836,6 +837,23 @@ function setPen( screenData, args ) {
 	if( ! Number.isInteger( size ) ) {
 		console.error( "setPen: Argument size is not a valid number." );
 		return;
+	}
+	if( noise && ( ! Array.isArray( noise ) && Number.isNaN( noise ) ) ) {
+		console.error( "setPen: Argument noise is not an array or number." );
+		return;
+	}
+	if( Array.isArray( noise ) ) {
+		noise = noise.slice();
+		for( i = 0; i < noise.length; i++ ) {
+			if( Number.isNaN( noise[ i ] ) ) {
+				console.error( "setPen: Argument noise array contains an invalid value." );
+				return;
+			}
+		}
+		// Make sure that noise array contains at least 4 values
+		for(; i < 4; i++ ) {
+			noise.push( 0 );
+		}
 	}
 
 	// Handle special case of size of one
@@ -855,6 +873,7 @@ function setPen( screenData, args ) {
 		screenData.context.lineWidth = size * 2 - 1;
 	}
 
+	screenData.pen.noise = noise;
 	screenData.pen.size = size;
 	screenData.context.lineCap = qbData.pens[ pen ].cap;
 }
