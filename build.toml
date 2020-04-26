@@ -17,6 +17,7 @@ files = [
 	"src/qbs-screen-helper.js",
 	"src/qbs-screen-graphics.js",
 	"src/qbs-screen-paint.js",
+	"src/qbs-screen-bezier.js",
 	"src/qbs-screen-images.js",
 	"src/qbs-screen-print.js",
 	"src/qbs-screen-draw.js",

@@ -111,7 +111,7 @@ function aaCircle( screenData, args ) {
 	a2 = qbs.util.degreesToRadian( 360 );
 	screenData.context.beginPath();
 	screenData.context.strokeStyle = screenData.pal[ screenData.fColor ].s;
-	screenData.context.moveTo( cx + Math.cos(a1) * r, cy + Math.sin(a1) * r );
+	screenData.context.moveTo( cx + Math.cos( a1 ) * r, cy + Math.sin( a1 ) * r );
 	screenData.context.arc( cx, cy, r, a1, a2 );
 	screenData.context.stroke();
 }
@@ -539,17 +539,13 @@ function pxLine( screenData, args ) {
 	// Make sure x and y are integers
 	if( ! Number.isInteger( x1 ) || ! Number.isInteger( y1 ) ||
 		! Number.isInteger( x2 ) || ! Number.isInteger( y2 ) ) {
-		console.error("pset: Argument's x1, y1, x2, and y2 must be integers.");
+		console.error( "line: Argument's x1, y1, x2, and y2 must be integers." );
 		return;
 	}
 
 	// Initialize the color for the line
 	c = screenData.pal[ screenData.fColor ];
 
-	//x1 = qbs.util.clamp( x1, 0, screenData.width - 1 );
-	//x2 = qbs.util.clamp( x2, 0, screenData.width - 1 );
-	//y1 = qbs.util.clamp( y1, 0, screenData.height - 1 );
-	//y2 = qbs.util.clamp( y2, 0, screenData.height - 1 );
 	dx = Math.abs( x2 - x1 );
 	dy = Math.abs( y2 - y1 );
 
@@ -858,6 +854,11 @@ function setPen( screenData, args ) {
 		for(; i < 4; i++ ) {
 			noise.push( 0 );
 		}
+	}
+
+	// Set the minimum pen size to 1;
+	if( size < 1 ) {
+		size = 1;
 	}
 
 	// Handle special case of size of one
