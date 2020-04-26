@@ -706,6 +706,10 @@ function color( screenData, args ) {
 	c = args[ 0 ];
 
 	if( Number.isInteger( c ) ) {
+		if( c > screenData.pal.length ) {
+			console.error( "color: parameter c is not a color in the palette." );
+			return;
+		}
 		screenData.fColor = c;
 	} else {
 		color = qbs.util.convertToColor( c );

@@ -35,56 +35,17 @@
 <script>
 Math.seedrandom('constant');
 $.ready( function () {
-	var x, y, i;
-	function draw( x, y ) {
-		$.color( 15 );
-		$.pset( x, y );
-		y += 20;
-		$.color( 1 );
-		$.circle( x, y, 10 );
-		y += 20;
-		$.color( 2 );
-		$.arc( x, y, 10, 90, 180 );
-		y += 20;
-		$.color( 3 );
-		$.line( x - 5, y, x + 5, y + 10 );
-		y += 30;
-		$.color( 4 );
-		$.ellipse( x, y, 10, 7 );
-		y += 20;
+	var color = [ 0, 255, 0 ];
+	var color2 = [ 0, 87, 225 ];
+	$.screen( "256x256" );
+	$.color( 15 );
+	$.setPen( "pixel", 1, 35 );
+	for( i = 0; i < 128; i++ ) {
+		color[ 1 ] -= 2;
+		$.color( color );
+		$.rect( i, i, 255 - i * 2, 255 - i * 2 );
 	}
-
-	$.screen( "250x250" );
-
-	// First row squares
-	x = 15;
-	y = 15
-	for( i = 1; i < 5; i++ ) {
-		y = 15;
-
-		$.setPixelMode( true );
-		$.setPen( "square", i , [ 100, 200, 100, 1 ] );
-		draw( x, y );
-		$.setPixelMode( false );
-		draw( x + 30, y );
-		y += 120;
-
-		$.setPixelMode( true );
-		$.setPen( "circle", i, 100 );
-		draw( x, y );
-		$.setPixelMode( false );
-		draw( x + 30, y );
-
-		x += 60;
-	}
-
-	$.setPixelMode( true );
-	$.setPen( "circle", 3 );
-	$.color( 9 );
-	$.line( 10, 243, 240, 243 );
-	$.setPen( "circle", 3, 100 );
-	$.line( 10, 6, 240, 6 );
-
+	$.paint( 127, 127, color2, 0.8 );
 	$.render();
 } );
 </script>

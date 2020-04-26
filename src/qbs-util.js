@@ -45,6 +45,7 @@ window.qbs.util = ( function () {
 		if( ! Number.isInteger( c ) ) {
 			c = 255;
 		}
+		c = clamp( c, 0, 255 );
 		var hex = Number( c ).toString( 16 );
 		if ( hex.length < 2 ) {
 			hex = "0" + hex;

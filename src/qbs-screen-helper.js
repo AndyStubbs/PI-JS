@@ -61,6 +61,7 @@ function setPixelSafe( screenData, x, y, c ) {
 	screenData.dirty = true;
 }
 
+qbs._.addCommand( "getPixelColor", getPixelColor, true, false );
 function getPixelColor( screenData, c ) {
 	var noise, change, half, c2;
 
