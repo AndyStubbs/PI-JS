@@ -11,7 +11,7 @@ var qbData;
 
 qbData = qbs._.data;
 
-qbs._.addCommand( "startTouch", startTouch, false, true );
+qbs._.addCommand( "startTouch", startTouch, false, true, [] );
 function startTouch( screenData ) {
 	screenData.canvas.addEventListener( "touchstart", touchStart );
 	screenData.canvas.addEventListener( "touchmove", touchMove );
@@ -19,7 +19,7 @@ function startTouch( screenData ) {
 	screenData.canvas.addEventListener( "touchcancel", touchEnd );
 }
 
-qbs._.addCommand( "stopTouch", stopTouch, false, true );
+qbs._.addCommand( "stopTouch", stopTouch, false, true, [] );
 function stopTouch( screenData ) {
 	screenData.canvas.removeEventListener( "touchstart", touchStart );
 	screenData.canvas.removeEventListener( "touchmove", touchMove );
@@ -76,7 +76,7 @@ function updateTouch( screenData, e ) {
 	}
 }
 
-qbs._.addCommand( "intouch", intouch, false, true );
+qbs._.addCommand( "intouch", intouch, false, true, [] );
 function intouch( screenData ) {
 	var touchArr, i, touch, touchData;
 
@@ -99,7 +99,7 @@ function intouch( screenData ) {
 }
 
 // Adds an event trigger for a mouse event
-qbs._.addCommand( "ontouch", ontouch, false, true );
+qbs._.addCommand( "ontouch", ontouch, false, true, [ "mode", "fn", "once", "hitBox" ] );
 function ontouch( screenData, args ) {
 	var mode, fn, once, hitBox;
 
@@ -121,7 +121,7 @@ function offtouch( screenData, args ) {
 	qbData.commands.offevent( mode, fn, "start", "end", "move", "offtouch", screenData.onTouchEventListeners );
 }
 
-qbs._.addCommand( "setPinchZoom", setPinchZoom, false, true );
+qbs._.addCommand( "setPinchZoom", setPinchZoom, false, true, [ "isEnabled" ] );
 function setPinchZoom( screenData, args ) {
 	var isEnabled;
 

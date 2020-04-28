@@ -12,61 +12,61 @@ var qbData;
 qbData = qbs._.data;
 
 // Circle command
-qbs._.addCommands( "circle", pxCircle, aaCircle );
+qbs._.addCommands( "circle", pxCircle, aaCircle, [ "x", "y", "radius" ] );
 function pxCircle( screenData, args ) {
-	var cx, cy, r, x, y, p, c;
-	cx = args[ 0 ];
-	cy = args[ 1 ];
-	r = args[ 2 ];
+	var x, y, radius, x2, y2, midPoint, color;
+	x = args[ 0 ];
+	y = args[ 1 ];
+	radius = args[ 2 ];
 	qbData.commands.getImageData( screenData );
 
 	// Make sure x and y are integers
-	if( isNaN( cx ) || isNaN( cy ) || isNaN( r ) ) {
+	if( isNaN( x ) || isNaN( y ) || isNaN( radius ) ) {
 		console.error( "circle: Argument's cx, cy, r must be numbers." );
 		return;
 	}
 
 	// Initialize the color for the circle
-	c = screenData.pal[ screenData.fColor ];
+	color = screenData.pal[ screenData.fColor ];
 
-	r -= 1;
-	x = r;
-	y = 0;
+	radius -= 1;
+	x2 = radius;
+	y2 = 0;
 
 	// Set the first pixel at 90 degrees
 	//screenData.pen.draw( screenData, x + cx, y + cy, c );
 	
 	// Only print inital points if r > 0
-	if( r > 1 ) {
-		screenData.pen.draw( screenData, x + cx, y + cy, c );
-		screenData.pen.draw( screenData, -x + cx, y + cy, c );
-		screenData.pen.draw( screenData, cx, x + cy, c );
-		screenData.pen.draw( screenData, cx, -x + cy, c );
-	} else if( r === 1 ) {
-		screenData.pen.draw( screenData, cx + 1, cy, c );
-		screenData.pen.draw( screenData, cx - 1, cy, c );
-		screenData.pen.draw( screenData, cx, cy + 1, c );
-		screenData.pen.draw( screenData, cx, cy - 1, c );
+	if( radius > 1 ) {
+		screenData.pen.draw( screenData, x2 + x, y2 + y, color );
+		screenData.pen.draw( screenData, -x2 + x, y2 + y, color );
+		screenData.pen.draw( screenData, x, x2 + y, color );
+		screenData.pen.draw( screenData, x, -x2 + y, color );
+	} else if( radius === 1 ) {
+		screenData.pen.draw( screenData, x + 1, y, color );
+		screenData.pen.draw( screenData, x - 1, y, color );
+		screenData.pen.draw( screenData, x, y + 1, color );
+		screenData.pen.draw( screenData, x, y - 1, color );
 		screenData.dirty = true;
 		return;
-	} else if( r === 0 ) {
-		screenData.pen.draw( screenData, cx, cy, c );
+	} else if( radius === 0 ) {
+		screenData.pen.draw( screenData, x, y, color );
 		screenData.dirty = true;
 		return;
 	}
 
 	// Initialize p
-	p = 1 - r;
-	while( x > y ) {
-		y += 1;
+	midPoint = 1 - radius;
+	while( x2 > y2 ) {
+		y2 += 1;
 		
-		if( p <= 0 ) {
+		if( midPoint <= 0 ) {
 			// Mid-point is inside or on the perimeter
-			p = p + 2 * y + 1;
+			midPoint = midPoint + 2 * y2 + 1;
 		} else {
 			// Mid point is outside the perimeter
-			x -= 1;
-			p = p + 2 * y - 2 * x + 1;
+			x2 -= 1;
+			midPoint = midPoint + 2 * y2 - 2 * x2 + 1;
 		}
 		
 		// All the perimeter points have already been printed
@@ -76,17 +76,17 @@ function pxCircle( screenData, args ) {
 		//}
 		
 		// Set pixels around point and reflection in other octants
-		screenData.pen.draw( screenData, x + cx, y + cy, c );
-		screenData.pen.draw( screenData, -x + cx, y + cy, c );
-		screenData.pen.draw( screenData, x + cx, -y + cy, c );
-		screenData.pen.draw( screenData, -x + cx, -y + cy, c );
+		screenData.pen.draw( screenData, x2 + x, y2 + y, color );
+		screenData.pen.draw( screenData, -x2 + x, y2 + y, color );
+		screenData.pen.draw( screenData, x2 + x, -y2 + y, color );
+		screenData.pen.draw( screenData, -x2 + x, -y2 + y, color );
 		
 		// Set pixels on the perimeter points if not on x = y
-		if( x != y ) {
-			screenData.pen.draw( screenData, y + cx, x + cy, c );
-			screenData.pen.draw( screenData, -y + cx, x + cy, c );
-			screenData.pen.draw( screenData, y + cx, -x + cy, c );
-			screenData.pen.draw( screenData, -y + cx, -x + cy, c );
+		if( x2 != y2 ) {
+			screenData.pen.draw( screenData, y2 + x, x2 + y, color );
+			screenData.pen.draw( screenData, -y2 + x, x2 + y, color );
+			screenData.pen.draw( screenData, y2 + x, -x2 + y, color );
+			screenData.pen.draw( screenData, -y2 + x, -x2 + y, color );
 		}
 	}
 
@@ -94,55 +94,55 @@ function pxCircle( screenData, args ) {
 }
 
 function aaCircle( screenData, args ) {
-	var cx, cy, r, a1, a2;
+	var x, y, r, angle1, angle2;
 
-	cx = args[ 0 ] + 0.5;
-	cy = args[ 1 ] + 0.5;
+	x = args[ 0 ] + 0.5;
+	y = args[ 1 ] + 0.5;
 	r = args[ 2 ] - 0.9;
 
-	if( isNaN( cx ) || isNaN( cy ) || isNaN( r ) ) {
+	if( isNaN( x ) || isNaN( y ) || isNaN( r ) ) {
 		console.error("circle: parameters cx, cy, r must be numbers.");
 		return;
 	}
 	if( screenData.dirty ) {
 		screenData.screenObj.render();
 	}
-	a1 = qbs.util.degreesToRadian( 0 );
-	a2 = qbs.util.degreesToRadian( 360 );
+	angle1 = qbs.util.degreesToRadian( 0 );
+	angle2 = qbs.util.degreesToRadian( 360 );
 	screenData.context.beginPath();
 	screenData.context.strokeStyle = screenData.pal[ screenData.fColor ].s;
-	screenData.context.moveTo( cx + Math.cos( a1 ) * r, cy + Math.sin( a1 ) * r );
-	screenData.context.arc( cx, cy, r, a1, a2 );
+	screenData.context.moveTo( x + Math.cos( angle1 ) * r, y + Math.sin( angle1 ) * r );
+	screenData.context.arc( x, y, r, angle1, angle2 );
 	screenData.context.stroke();
 }
 
 // Arc command
-qbs._.addCommands( "arc", pxArc, aaArc );
+qbs._.addCommands( "arc", pxArc, aaArc, [ "x", "y", "radius", "angle1", "angle2" ] );
 function pxArc( screenData, args ) {
-	var cx, cy, r, a1, a2, c, x, y, p, winding;
+	var x, y, radius, angle1, angle2, color, x2, y2, midPoint, winding;
 
-	function set( x, y ) {
+	function set( x2, y2 ) {
 		var a;
-		a = ( qbs.util.radiansToDegrees( Math.atan2( y - cy, x - cx ) ) );
+		a = ( qbs.util.radiansToDegrees( Math.atan2( y2 - y, x2 - x ) ) );
 		a = ( a + 360 ) % 360;
 		if( winding ) {
-			if( a >= a1 || a <= a2 ) {
-				screenData.pen.draw( screenData, x, y, c );
+			if( a >= angle1 || a <= angle2 ) {
+				screenData.pen.draw( screenData, x2, y2, color );
 			}
-		} else if( a >= a1 && a <= a2 ) {
-			screenData.pen.draw( screenData, x, y, c );
+		} else if( a >= angle1 && a <= angle2 ) {
+			screenData.pen.draw( screenData, x2, y2, color );
 		}
 	}
 
-	cx = args[ 0 ];
-	cy = args[ 1 ];
-	r = args[ 2 ];
-	a1 = args[ 3 ];
-	a2 = args[ 4 ];
-	a1 = ( a1 + 360 ) % 360;
-	a2 = ( a2 + 360 ) % 360;
+	x = args[ 0 ];
+	y = args[ 1 ];
+	radius = args[ 2 ];
+	angle1 = args[ 3 ];
+	angle2 = args[ 4 ];
+	angle1 = ( angle1 + 360 ) % 360;
+	angle2 = ( angle2 + 360 ) % 360;
 	winding = false;
-	if( a1 > a2 ) {
+	if( angle1 > angle2 ) {
 		winding = true;
 	//	temp = a1;
 	//	a1 = a2;
@@ -151,69 +151,69 @@ function pxArc( screenData, args ) {
 	qbData.commands.getImageData( screenData );
 
 	// Make sure x and y are integers
-	if( isNaN( cx ) || isNaN( cy ) || isNaN( r ) ) {
+	if( isNaN( x ) || isNaN( y ) || isNaN( radius ) ) {
 		console.error( "circle: Argument's cx, cy, r must be numbers." );
 		return;
 	}
 
 	// Initialize the color for the circle
-	c = screenData.pal[ screenData.fColor ];
+	color = screenData.pal[ screenData.fColor ];
 
-	r -= 1;
-	if( r < 0 ) {
-		r = 0;
+	radius -= 1;
+	if( radius < 0 ) {
+		radius = 0;
 	}
-	x = r;
-	y = 0;
+	x2 = radius;
+	y2 = 0;
 
 	// Set the first pixel at 90 degrees
 	//screenData.pen.draw( screenData, x + cx, y + cy, c );
 	
 	// Only print inital points if r > 0
-	if( r > 1 ) {
-		set( x + cx, y + cy, c );
-		set( -x + cx, y + cy, c );
-		set( cx, x + cy, c );
-		set( cx, -x + cy, c );
-	} else if( r === 1 ) {
-		set( cx + 1, cy, c );
-		set( cx - 1, cy, c );
-		set( cx, cy + 1, c );
-		set( cx, cy - 1, c );
+	if( radius > 1 ) {
+		set( x2 + x, y2 + y, color );
+		set( -x2 + x, y2 + y, color );
+		set( x, x2 + y, color );
+		set( x, -x2 + y, color );
+	} else if( radius === 1 ) {
+		set( x + 1, y, color );
+		set( x - 1, y, color );
+		set( x, y + 1, color );
+		set( x, y - 1, color );
 		screenData.dirty = true;
 		return;
-	} else if( r === 0 ) {
-		screenData.pen.draw( screenData, cx, cy, c );
+	} else if( radius === 0 ) {
+		screenData.pen.draw( screenData, x, y, color );
 		screenData.dirty = true;
 		return;
 	}
 
 	// Initialize p
-	p = 1 - r;
-	while( x > y ) {
-		y += 1;
+	midPoint = 1 - radius;
+	while( x2 > y2 ) {
+		y2 += 1;
 
-		if( p <= 0 ) {
+		if( midPoint <= 0 ) {
 			// Mid-point is inside or on the perimeter
-			p = p + 2 * y + 1;
+			midPoint = midPoint + 2 * y2 + 1;
 		} else {
 			// Mid point is outside the perimeter
-			x -= 1;
-			p = p + 2 * y - 2 * x + 1;
+			x2 -= 1;
+			midPoint = midPoint + 2 * y2 - 2 * x2 + 1;
 		}
 
 		// Set pixels around point and reflection in other octants
-		set( x + cx, y + cy, c );
-		set( -x + cx, y + cy, c );
-		set( x + cx, -y + cy, c );
-		set( -x + cx, -y + cy, c );
+		set( x2 + x, y2 + y, color );
+		set( -x2 + x, y2 + y, color );
+		set( x2 + x, -y2 + y, color );
+		set( -x2 + x, -y2 + y, color );
 		
 		// Set pixels on the perimeter points if not on x = y
-		if( x != y ) {
-			set( y + cx, x + cy, c );
-			set( -y + cx, x + cy, c );
-			set( y + cx, -x + cy, c );
-			set( -y + cx, -x + cy, c );
+		if( x2 != y2 ) {
+			set( y2 + x, x2 + y, color );
+			set( -y2 + x, x2 + y, color );
+			set( y2 + x, -x2 + y, color );
+			set( -y2 + x, -x2 + y, color );
 		}
 	}
 
@@ -222,48 +222,48 @@ function pxArc( screenData, args ) {
 }
 
 function aaArc( screenData, args ) {
-	var cx, cy, r, a1, a2;
+	var x, y, radius, angle1, angle2;
 
-	cx = args[ 0 ];
-	cy = args[ 1 ];
-	r = args[ 2 ];
-	a1 = args[ 3 ];
-	a2 = args[ 4 ];
+	x = args[ 0 ];
+	y = args[ 1 ];
+	radius = args[ 2 ];
+	angle1 = args[ 3 ];
+	angle2 = args[ 4 ];
 
-	if( isNaN(cx) || isNaN(cy) || isNaN(r) || isNaN(a1) || isNaN(a2) ) {
-		console.error("arc: parameters cx, cy, r, a1, a2 must be numbers.");
+	if( isNaN( x ) || isNaN( y ) || isNaN( radius ) || isNaN( angle1 ) || isNaN( angle2 ) ) {
+		console.error( "arc: parameters cx, cy, r, a1, a2 must be numbers." );
 		return;
 	}
 
-	cx = cx + 0.5;
-	cy = cy + 0.5;
-	r = r - 0.9;
-	if( r < 0 ) {
-		r = 0;
+	x = x + 0.5;
+	y = y + 0.5;
+	radius = radius - 0.9;
+	if( radius < 0 ) {
+		radius = 0;
 	}
 	if( screenData.dirty ) {
 		screenData.screenObj.render();
 	}
-	a1 = qbs.util.degreesToRadian( a1 );
-	a2 = qbs.util.degreesToRadian( a2 );
+	angle1 = qbs.util.degreesToRadian( angle1 );
+	angle2 = qbs.util.degreesToRadian( angle2 );
 	screenData.context.beginPath();
 	screenData.context.strokeStyle = screenData.pal[ screenData.fColor ].s;
-	screenData.context.moveTo( cx + Math.cos(a1) * r, cy + Math.sin(a1) * r );
-	screenData.context.arc( cx, cy, r, a1, a2 );
+	screenData.context.moveTo( x + Math.cos(angle1) * radius, y + Math.sin(angle1) * radius );
+	screenData.context.arc( x, y, radius, angle1, angle2 );
 	screenData.context.stroke();
 }
 
 // Ellipse command
-qbs._.addCommands( "ellipse", pxEllipse, aaEllipse );
+qbs._.addCommands( "ellipse", pxEllipse, aaEllipse, [ "x", "y", "radiusX", "radiusY" ] );
 function pxEllipse( screenData, args ) {
-	var c, rx, ry, cx, cy, dx, dy, d1, d2, x, y;
+	var x, y, radiusX, radiusY, color, dx, dy, d1, d2, x2, y2;
 
-	cx = args[ 0 ];
-	cy = args[ 1 ];
-	rx = args[ 2 ];
-	ry = args[ 3 ];
+	x = args[ 0 ];
+	y = args[ 1 ];
+	radiusX = args[ 2 ];
+	radiusY = args[ 3 ];
 
-	if( isNaN( cx ) || isNaN( cy ) || isNaN( rx ) || isNaN( ry ) ) {
+	if( isNaN( x ) || isNaN( y ) || isNaN( radiusX ) || isNaN( radiusY ) ) {
 		console.error("ellipse: parameters cx, cy, rx, ry must be numbers.");
 		return;
 	}
@@ -271,74 +271,74 @@ function pxEllipse( screenData, args ) {
 	qbData.commands.getImageData( screenData );
 
 	// Initialize the color for the circle
-	c = screenData.pal[ screenData.fColor ];
+	color = screenData.pal[ screenData.fColor ];
 
-	if( rx === 0 && ry === 0 ) {
-		screenData.pen.draw( screenData, cx, cy, c );
+	if( radiusX === 0 && radiusY === 0 ) {
+		screenData.pen.draw( screenData, x, y, color );
 		screenData.dirty = true;
 		return;
 	}
 
 	// Starting points
-	x = 0;
-	y = ry;
+	x2 = 0;
+	y2 = radiusY;
 	
 	// Decision parameter of region 1
-	d1 = ( ry * ry ) - ( rx * rx * ry ) + ( 0.25 * rx * rx );
+	d1 = ( radiusY * radiusY ) - ( radiusX * radiusX * radiusY ) + ( 0.25 * radiusX * radiusX );
 	
-	dx = 2 * ry * ry * x;
-	dy = 2 * rx * rx * y;
+	dx = 2 * radiusY * radiusY * x2;
+	dy = 2 * radiusX * radiusX * y2;
 	
 	// For region 1
 	while( dx < dy ) {
 		
 		// 4-way symmetry
-		screenData.pen.draw( screenData, x + cx, y + cy, c );
-		screenData.pen.draw( screenData, -x + cx, y + cy, c );
-		screenData.pen.draw( screenData, x + cx, -y + cy, c );
-		screenData.pen.draw( screenData, -x + cx, -y + cy, c );
+		screenData.pen.draw( screenData, x2 + x, y2 + y, color );
+		screenData.pen.draw( screenData, -x2 + x, y2 + y, color );
+		screenData.pen.draw( screenData, x2 + x, -y2 + y, color );
+		screenData.pen.draw( screenData, -x2 + x, -y2 + y, color );
 
 		// Checking and updating value of
 		// decision parameter based on algorithm
 		if( d1 < 0 ) {
-			x++;
-			dx = dx + ( 2 * ry * ry );
-			d1 = d1 + dx + ( ry * ry );
+			x2++;
+			dx = dx + ( 2 * radiusY * radiusY );
+			d1 = d1 + dx + ( radiusY * radiusY );
 		} else {
-			x++;
-			y--;
-			dx = dx + ( 2 * ry * ry );
-			dy = dy - ( 2 * rx * rx );
-			d1 = d1 + dx - dy + ( ry * ry );
+			x2++;
+			y2--;
+			dx = dx + ( 2 * radiusY * radiusY );
+			dy = dy - ( 2 * radiusX * radiusX );
+			d1 = d1 + dx - dy + ( radiusY * radiusY );
 		}
 	}
 
 	// Decision parameter of region 2
-	d2 = ( ( ry * ry ) * ( ( x + 0.5 ) * ( x + 0.5 ) ) ) +
-		 ( ( rx * rx ) * ( ( y - 1 ) * ( y - 1 ) ) ) -
-		 ( rx * rx * ry * ry );
+	d2 = ( ( radiusY * radiusY ) * ( ( x2 + 0.5 ) * ( x2 + 0.5 ) ) ) +
+		 ( ( radiusX * radiusX ) * ( ( y2 - 1 ) * ( y2 - 1 ) ) ) -
+		 ( radiusX * radiusX * radiusY * radiusY );
 	
 	// Plotting points of region 2
-	while( y >= 0 ) {
+	while( y2 >= 0 ) {
 
 		// 4-way symmetry
-		screenData.pen.draw( screenData, x + cx, y + cy, c );
-		screenData.pen.draw( screenData, -x + cx, y + cy, c );
-		screenData.pen.draw( screenData, x + cx, -y + cy, c );
-		screenData.pen.draw( screenData, -x + cx, -y + cy, c );
+		screenData.pen.draw( screenData, x2 + x, y2 + y, color );
+		screenData.pen.draw( screenData, -x2 + x, y2 + y, color );
+		screenData.pen.draw( screenData, x2 + x, -y2 + y, color );
+		screenData.pen.draw( screenData, -x2 + x, -y2 + y, color );
 		
 		// Checking and updating parameter 
 		// value based on algorithm 
 		if( d2 > 0 ) { 
-			y--; 
-			dy = dy - ( 2 * rx * rx ); 
-			d2 = d2 + ( rx * rx ) - dy; 
+			y2--; 
+			dy = dy - ( 2 * radiusX * radiusX ); 
+			d2 = d2 + ( radiusX * radiusX ) - dy; 
 		} else { 
-			y--; 
-			x++; 
-			dx = dx + ( 2 * ry * ry ); 
-			dy = dy - ( 2 * rx * rx ); 
-			d2 = d2 + dx - dy + ( rx * rx ); 
+			y2--; 
+			x2++; 
+			dx = dx + ( 2 * radiusY * radiusY ); 
+			dy = dy - ( 2 * radiusX * radiusX ); 
+			d2 = d2 + dx - dy + ( radiusX * radiusX ); 
 		}
 	}
 
@@ -369,7 +369,7 @@ function aaEllipse( screenData, args ) {
 }
 
 // Put command
-qbs._.addCommand( "put", put, false, true );
+qbs._.addCommand( "put", put, false, true, [ "data", "x", "y" ] );
 function put( screenData, args ) {
 	var data, x, y, dataX, dataY, startX, startY, width, height, i, c;
 
@@ -439,7 +439,7 @@ function put( screenData, args ) {
 }
 
 // Get command
-qbs._.addCommand( "get", get, false, true );
+qbs._.addCommand( "get", get, false, true, [ "x1", "y1", "x2", "y2", "tolerance" ] );
 function get( screenData, args ) {
 	var x1, y1, x2, y2, tolerance, t, width, height, imageData, data, x, y, c, r, g, b, i, row, a;
 
@@ -495,9 +495,9 @@ function get( screenData, args ) {
 }
 
 // PSET command
-qbs._.addCommand( "pset", pset, false, true );
+qbs._.addCommand( "pset", pset, false, true, [ "x", "y" ] );
 function pset( screenData, args ) {
-	var x, y, c;
+	var x, y, color;
 
 	x = args[ 0 ];
 	y = args[ 1 ];
@@ -519,15 +519,15 @@ function pset( screenData, args ) {
 	screenData.y = y;
 
 	// Get the fore color
-	c = screenData.pal[ screenData.fColor ];
+	color = screenData.pal[ screenData.fColor ];
 
 	qbData.commands.getImageData( screenData );
-	screenData.pen.draw( screenData, x, y, c );
+	screenData.pen.draw( screenData, x, y, color );
 	screenData.dirty = true;
 }
 
 // Line command
-qbs._.addCommands( "line", pxLine, aaLine );
+qbs._.addCommands( "line", pxLine, aaLine, [ "x1", "y1", "x2", "y2" ] );
 function pxLine( screenData, args ) {
 	var x1, y1, x2, y2, c, dx, dy, sx, sy, err, e2;
 
@@ -616,7 +616,7 @@ function aaLine( screenData, args ) {
 }
 
 // Rect command
-qbs._.addCommands( "rect", pxRect, aaRect );
+qbs._.addCommands( "rect", pxRect, aaRect, [ "x1", "y1", "width", "height" ] );
 function pxRect( screenData, args ) {
 	var x1, y1, width, height, x2, y2;
 
@@ -657,27 +657,27 @@ function aaRect( screenData, args ) {
 }
 
 // Set Pal Color command
-qbs._.addCommand( "setPalColor", setPalColor, false, true );
+qbs._.addCommand( "setPalColor", setPalColor, false, true, [ "index", "color" ] );
 function setPalColor( screenData, args ) {
-	var i, c, color;
+	var index, color, colorValue;
 
-	i = args[ 0 ];
-	c = args[ 1 ];
+	index = args[ 0 ];
+	color = args[ 1 ];
 
-	if( ! Number.isInteger( i ) ) {
+	if( ! Number.isInteger( index ) ) {
 		console.error( "setPalColor: parameter i must be an integer value." );
 		return;
 	}
-	color = qbs.util.convertToColor( c );
-	if( color === null ) {
+	colorValue = qbs.util.convertToColor( color );
+	if( colorValue === null ) {
 		console.error( "setPalColor: parameter c is not a valid color format." );
 		return;
 	}
-	screenData.pal[ i ] = color;
+	screenData.pal[ index ] = colorValue;
 }
 
 // Get pal command
-qbs._.addCommand( "getPal", getPal, false, true );
+qbs._.addCommand( "getPal", getPal, false, true, [] );
 function getPal( screenData, args ) {
 	var i, color, colors;
 	colors = [];
@@ -695,31 +695,31 @@ function getPal( screenData, args ) {
 }
 
 // Color command
-qbs._.addCommand( "color", color, false, true );
+qbs._.addCommand( "color", color, false, true, [ "color" ] );
 function color( screenData, args ) {
-	var c, color;
+	var color, colorValue;
 
-	c = args[ 0 ];
+	color = args[ 0 ];
 
-	if( Number.isInteger( c ) ) {
-		if( c > screenData.pal.length ) {
+	if( Number.isInteger( color ) ) {
+		if( color > screenData.pal.length ) {
 			console.error( "color: parameter c is not a color in the palette." );
 			return;
 		}
-		screenData.fColor = c;
+		screenData.fColor = color;
 	} else {
-		color = qbs.util.convertToColor( c );
-		if( color === null ) {
+		colorValue = qbs.util.convertToColor( color );
+		if( colorValue === null ) {
 			console.error( "color: parameter c is not a valid color format." );
 			return;
 		}
-		screenData.fColor = screenData.screenObj.findColor( color );
+		screenData.fColor = screenData.screenObj.findColor( colorValue );
 	}
 	screenData.context.fillStyle = screenData.pal[ screenData.fColor ].s;
 	screenData.context.strokeStyle = screenData.pal[ screenData.fColor ].s;
 }
 
-qbs._.addCommand( "swapColor", swapColor, false, true );
+qbs._.addCommand( "swapColor", swapColor, false, true, [ "oldColor", "newColor" ] );
 function swapColor( screenData, args ) {
 	var oldColor, newColor, index, x, y, i;
 
@@ -773,7 +773,7 @@ function swapColor( screenData, args ) {
 }
 
 // Point command
-qbs._.addCommand( "point", point, false, true );
+qbs._.addCommand( "point", point, false, true, [ "x", "y" ] );
 function point( screenData, args ) {
 	var x, y, i, c, data;
 
@@ -801,7 +801,7 @@ function point( screenData, args ) {
 }
 
 // CLS command
-qbs._.addCommand( "cls", cls, false, true );
+qbs._.addCommand( "cls", cls, false, true, [] );
 function cls( screenData ) {
 	screenData.context.clearRect(0, 0, screenData.width, screenData.height);
 	screenData.imageData = null;
@@ -813,7 +813,7 @@ function cls( screenData ) {
 }
 
 // Render command
-qbs._.addCommand( "render", render, false, true );
+qbs._.addCommand( "render", render, false, true, [] );
 function render( screenData ) {
 	if( screenData.imageData && screenData.dirty ) {
 		screenData.context.putImageData( screenData.imageData, 0, 0 );
@@ -822,7 +822,7 @@ function render( screenData ) {
 }
 
 // Set pen command
-qbs._.addCommand( "setPen", setPen, false, true );
+qbs._.addCommand( "setPen", setPen, false, true, [ "pen", "size", "noise" ] );
 function setPen( screenData, args ) {
 	var pen, size, noise, i;
 

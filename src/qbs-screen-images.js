@@ -13,9 +13,10 @@ qbData = qbs._.data;
 qbWait = qbs._.wait;
 qbResume = qbs._.resume;
 
-qbs._.addCommand( "loadImage", loadImage, false, false );
+qbs._.addCommand( "loadImage", loadImage, false, false, [ "src", "name" ] );
 function loadImage( args ) {
 	var src, name, image;
+
 	src = args[ 0 ];
 	name = args[ 1 ];
 
@@ -33,11 +34,11 @@ function loadImage( args ) {
 	return name;
 }
 
-qbs._.addCommand( "drawImage", drawImage, false, true );
+qbs._.addCommand( "drawImage", drawImage, false, true, [ "name", "x", "y", "angle", "anchorX", "anchorY", "img", "alpha" ] );
 function drawImage( screenData, args ) {
-	var source, x, y, angle, anchorX, anchorY, img, alpha;
+	var name, x, y, angle, anchorX, anchorY, img, alpha;
 
-	source = args[ 0 ];
+	name = args[ 0 ];
 	x = args[ 1 ];
 	y = args[ 2 ];
 	angle = args[ 3 ];
@@ -45,18 +46,18 @@ function drawImage( screenData, args ) {
 	anchorY = args[ 5 ];
 	alpha = args[ 6 ];
 
-	if( typeof source === "string" ) {
-		if( ! qbData.images[ source ] ) {
+	if( typeof name === "string" ) {
+		if( ! qbData.images[ name ] ) {
 			console.error( "drawImage: invalid image name" );
 			return;
 		}
-		img = qbData.images[ source ];
+		img = qbData.images[ name ];
 	} else {
-		if( ! source || ! source.canvas ) {
+		if( ! name || ! name.canvas ) {
 			console.error( "drawImage: image source object type. Must be an image already loaded by the loadImage command or a screen." );
 			return;
 		}
-		img = source.canvas();
+		img = name.canvas();
 	}
 
 	drawItem( screenData, img, x, y, angle, anchorX, anchorY, alpha );

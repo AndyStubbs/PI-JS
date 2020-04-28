@@ -78,28 +78,34 @@ window.qbs = ( function () {
 	};
 
 	// Add a command to the internal list
-	function addCommand( name, fn, isInternal, isScreen ) {
+	function addCommand( name, fn, isInternal, isScreen, parameters ) {
+		if( parameters === undefined ) {
+			console.error( "Missing parameters: " + name );
+		}
 		qbData.commands[ name ] = fn;
 		commandList.push( {
 			"name": name,
 			"fn": fn,
 			"isInternal": isInternal,
-			"isScreen": isScreen
+			"isScreen": isScreen,
+			"parameters": parameters
 		} );
 	}
 
-	function addCommands( name, fnPx, fnAa ) {
+	function addCommands( name, fnPx, fnAa, parameters ) {
 		addCommand( name, function ( screenData, args ) {
 			if( screenData.pixelMode ) {
 				fnPx( screenData, args );
 			} else {
 				fnAa( screenData, args );
 			}
-		}, false, true );
+		}, false, true, parameters );
 	}
 
 	function processCommands() {
 		var i, cmd;
+
+		// Alphabetize commands
 		commandList = commandList.sort( function( a, b ) {
 			var nameA = a.name.toUpperCase();
 			var nameB = b.name.toUpperCase();
@@ -125,19 +131,43 @@ window.qbs = ( function () {
 					"fn": cmd.fn
 				};
 				api[ cmd.name ] = function () {
-					var args = [].slice.call( arguments );
-					var screenData = getScreenData( undefined, cmd.name );
+					var args, screenData;
+					args = parseOptions( cmd, [].slice.call( arguments ) );
+					screenData = getScreenData( undefined, cmd.name );
 					if( screenData !== false ) {
 						return qbData.commands[ cmd.name ]( screenData, args );
 					}
 				};
 			} else {
 				api[ cmd.name ] = function () {
-					var args = [].slice.call( arguments );
+					var args;
+					args = parseOptions( cmd, [].slice.call( arguments ) );
 					return qbData.commands[ cmd.name ]( args );
 				};
 			}
 		}
+	}
+
+	// Convert named arguments to array
+	function parseOptions( cmd, args ) {
+		var i, options, args2;
+
+		// if the first argument is an object then use named parameters
+		if(	args.length > 0 && typeof args[ 0 ] === "object" && args[ 0 ] !== null && ! args[ 0 ].hasOwnProperty( "screen" ) && ! Array.isArray( args[ 0 ] ) ) {
+			options = args[ 0 ];
+			args2 = [];
+			for( i = 0; i < cmd.parameters.length; i++ ) {
+
+				// Check if option has parameter
+				if( options.hasOwnProperty( cmd.parameters[ i ] ) ) {
+					args2.push( options[ cmd.parameters[ i ] ] );
+				} else {
+					args2.push( null );
+				}
+			}
+			return args2;
+		}
+		return args;
 	}
 
 	// Add a pen to the internal list
@@ -150,7 +180,7 @@ window.qbs = ( function () {
 	}
 
 	// Gets the screen data
-	addCommand( "getScreenData", getScreenData, true, false );
+	addCommand( "getScreenData", getScreenData, true, false, [] );
 	function getScreenData( screenId, commandName ) {
 		if( qbData.activeScreen === null ) {
 			console.error( commandName + ": No screens available for command." );
@@ -193,7 +223,7 @@ window.qbs = ( function () {
 	}
 
 	// This trigger a function once QBS is completely loaded
-	addCommand( "ready", ready, false, false );
+	addCommand( "ready", ready, false, false, [ "fn" ] );
 	function ready( args ) {
 		var fn;
 
@@ -212,7 +242,7 @@ window.qbs = ( function () {
 	}
 
 	// Set the active screen on qbs
-	addCommand( "setScreen", setScreen, false, false );
+	addCommand( "setScreen", setScreen, false, false, [ "screen" ] );
 	function setScreen( args ) {
 		var screenData;
 
@@ -221,7 +251,7 @@ window.qbs = ( function () {
 	}
 
 	// Remove all screens from the page and memory
-	addCommand( "removeAllScreens", removeAllScreens, false, false );
+	addCommand( "removeAllScreens", removeAllScreens, false, false, [] );
 	function removeAllScreens() {
 		var i, screenData;
 		for( i in qbData.screens ) {
@@ -230,7 +260,7 @@ window.qbs = ( function () {
 		}
 	}
 
-	addCommand( "getScreen", getScreen, false, false );
+	addCommand( "getScreen", getScreen, false, false, [ "screenId" ] );
 	function getScreen( args ) {
 		var screenId, screen;
 
@@ -240,7 +270,7 @@ window.qbs = ( function () {
 	}
 
 	// Set the default palette
-	addCommand( "setDefaultPal", setDefaultPal, false, false );
+	addCommand( "setDefaultPal", setDefaultPal, false, false, [ "pal" ] );
 	function setDefaultPal( args ) {
 		var pal, i, c;
 
@@ -265,7 +295,7 @@ window.qbs = ( function () {
 	}
 
 	// Get default pal command
-	addCommand( "getDefaultPal", getDefaultPal, false, false );
+	addCommand( "getDefaultPal", getDefaultPal, false, false, [] );
 	function getDefaultPal( args ) {
 		var i, color, colors;
 		colors = [];

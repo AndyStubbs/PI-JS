@@ -11,31 +11,31 @@ var qbData;
 
 qbData = qbs._.data;
 
-qbs._.addCommand( "draw", draw, false, true );
-function draw( screenData, inArgs ) {
+qbs._.addCommand( "draw", draw, false, true, [ "drawString" ] );
+function draw( screenData, args ) {
 
-	var drawCommands, tempColors, i, reg, parts, isReturn, lastCursor,
-		isBlind, isArc, args, color, len, angle, color1, radius, angle1,
+	var drawString, tempColors, i, reg, parts, isReturn, lastCursor,
+		isBlind, isArc, drawArgs, color, len, angle, color1, radius, angle1,
 		angle2;
 
-	drawCommands = inArgs[ 0 ];
+	drawString = args[ 0 ];
 
 	//Conver to uppercase
-	drawCommands = drawCommands.toUpperCase();
+	drawString = drawString.toUpperCase();
 
 	//Get colors
-	tempColors = drawCommands.match( /(#[A-Z0-9]+)/g );
+	tempColors = drawString.match( /(#[A-Z0-9]+)/g );
 	if( tempColors ) {
 		for( i = 0; i < tempColors.length; i++ ) {
-			drawCommands = drawCommands.replace( "C" + tempColors[ i ], "O" + i );
+			drawString = drawString.replace( "C" + tempColors[ i ], "O" + i );
 		}
 	}
 
 	//Convert TA to T
-	drawCommands = drawCommands.replace( /(TA)/gi, "T" );
+	drawString = drawString.replace( /(TA)/gi, "T" );
 
 	//Convert the commands to uppercase and remove spaces
-	drawCommands = drawCommands.split( /\s+/ ).join( "" );
+	drawString = drawString.split( /\s+/ ).join( "" );
 
 	//Regular expression for the draw commands
 	reg = /(?=C|C#|R|B|F|G|L|A|T|D|G|H|U|E|N|M|P|S)/;
@@ -43,7 +43,7 @@ function draw( screenData, inArgs ) {
 	//var reg = /(?=C\d+|R\d+|B+|F\d+|G\d+|L\d+|A\d+|TA\d+|D\d+|G\d+|H\d+|U\d+|E\d+|N+|M\d+,\d+|P\d+,\d+)/;
 
 	//Run the regular expression and split into seperate commands
-	parts = drawCommands.split( reg );
+	parts = drawString.split( reg );
 
 	//Start drawing
 	//qbsg.start_path( true );
@@ -60,27 +60,27 @@ function draw( screenData, inArgs ) {
 	isArc = false;
 
 	for( i = 0; i < parts.length; i++ ) {
-		args = parts[ i ].split( /(\d+)/ );
+		drawArgs = parts[ i ].split( /(\d+)/ );
 
-		switch( args[ 0 ] ) {
+		switch( drawArgs[ 0 ] ) {
 
 			//C - Change Color
 			case "C":
-				color = Number( args[ 1 ] );
+				color = Number( drawArgs[ 1 ] );
 
 				screenData.screenObj.color( color );
 				isBlind = true;
 				break;
 
 			case "O":
-				color = tempColors[ args[ 1 ] ];
+				color = tempColors[ drawArgs[ 1 ] ];
 				screenData.screenObj.color( color );
 				isBlind = true;
 				break;
 
 			//D - Down
 			case "D":
-				len = getInt( args[ 1 ], 1 );
+				len = getInt( drawArgs[ 1 ], 1 );
 				angle = qbs.util.degreesToRadian( 90 ) + screenData.angle;
 				screenData.x += Math.round( Math.cos( angle ) * len );
 				screenData.y += Math.round( Math.sin( angle ) * len );
@@ -88,7 +88,7 @@ function draw( screenData, inArgs ) {
 
 			//E - Up and Right
 			case "E":
-				len = getInt( args[ 1 ], 1 );
+				len = getInt( drawArgs[ 1 ], 1 );
 				len = Math.sqrt( len * len + len * len );
 				angle = qbs.util.degreesToRadian( 315 ) + screenData.angle;
 				screenData.x += Math.round( Math.cos( angle ) * len );
@@ -97,7 +97,7 @@ function draw( screenData, inArgs ) {
 
 			//F - Down and Right
 			case "F":
-				len = getInt(  args[ 1 ], 1 );
+				len = getInt(  drawArgs[ 1 ], 1 );
 				len = Math.sqrt( len * len + len * len );
 				angle = qbs.util.degreesToRadian( 45 ) + screenData.angle;
 				screenData.x += Math.round( Math.cos( angle ) * len );
@@ -106,7 +106,7 @@ function draw( screenData, inArgs ) {
 
 			//G - Down and Left
 			case "G":
-				len = getInt( args[ 1 ], 1 );
+				len = getInt( drawArgs[ 1 ], 1 );
 				len = Math.sqrt( len * len + len * len );
 				angle = qbs.util.degreesToRadian( 135 ) + screenData.angle;
 				screenData.x += Math.round( Math.cos( angle ) * len );
@@ -115,7 +115,7 @@ function draw( screenData, inArgs ) {
 
 			//H - Up and Left
 			case "H":
-				len = getInt( args[ 1 ], 1 );
+				len = getInt( drawArgs[ 1 ], 1 );
 				len = Math.sqrt( len * len + len * len );
 				angle = qbs.util.degreesToRadian( 225 ) + screenData.angle;
 				screenData.x += Math.round( Math.cos( angle ) * len );
@@ -124,7 +124,7 @@ function draw( screenData, inArgs ) {
 
 			//L - Left
 			case "L":
-				len = getInt( args[ 1 ], 1 );
+				len = getInt( drawArgs[ 1 ], 1 );
 				angle = qbs.util.degreesToRadian( 180 ) + screenData.angle;
 				screenData.x += Math.round( Math.cos( angle ) * len );
 				screenData.y += Math.round( Math.sin( angle ) * len );
@@ -132,7 +132,7 @@ function draw( screenData, inArgs ) {
 
 			//R - Right
 			case "R":
-				len = getInt( args[ 1 ], 1 );
+				len = getInt( drawArgs[ 1 ], 1 );
 				angle = qbs.util.degreesToRadian( 0 ) + screenData.angle;
 				screenData.x += Math.round( Math.cos( angle ) * len );
 				screenData.y += Math.round( Math.sin( angle ) * len );
@@ -140,7 +140,7 @@ function draw( screenData, inArgs ) {
 
 			//U - Up
 			case "U":
-				len = getInt( args[ 1 ], 1 );
+				len = getInt( drawArgs[ 1 ], 1 );
 				angle = qbs.util.degreesToRadian( 270 ) + screenData.angle;
 				screenData.x += Math.round( Math.cos( angle ) * len );
 				screenData.y += Math.round( Math.sin( angle ) * len );
@@ -149,30 +149,30 @@ function draw( screenData, inArgs ) {
 			//P - Paint
 			case "P":
 			case "S":
-				color1 = getInt( args[ 1 ], 0 );
+				color1 = getInt( drawArgs[ 1 ], 0 );
 
-				screenData.screenObj.paint( screenData.x, screenData.y, color1, args[ 0 ] === "S" );
+				screenData.screenObj.paint( screenData.x, screenData.y, color1, drawArgs[ 0 ] === "S" );
 				isBlind = true;
 				break;
 
 			//A - Arc Line
 			case "A":
-				radius = getInt( args[ 1 ], 1 );
-				angle1 = getInt( args[ 3 ], 1 );
-				angle2 = getInt( args[ 5 ], 1 );
+				radius = getInt( drawArgs[ 1 ], 1 );
+				angle1 = getInt( drawArgs[ 3 ], 1 );
+				angle2 = getInt( drawArgs[ 5 ], 1 );
 				isArc = true;
 				break;
 
 			//TA - T - Turn Angle
 			case "T":
-				screenData.angle = qbs.util.degreesToRadian( getInt( args[ 1 ], 1 ) );
+				screenData.angle = qbs.util.degreesToRadian( getInt( drawArgs[ 1 ], 1 ) );
 				isBlind = true;
 				break;
 
 			//M - Move
 			case "M":
-				screenData.x = getInt( args[ 1 ], 1 );
-				screenData.y = getInt( args[ 3 ], 1 );
+				screenData.x = getInt( drawArgs[ 1 ], 1 );
+				screenData.y = getInt( drawArgs[ 3 ], 1 );
 				isBlind = true;
 				break;
 
@@ -194,13 +194,13 @@ function draw( screenData, inArgs ) {
 			screenData.y = lastCursor.y;
 			screenData.angle = lastCursor.angle;
 		}
-		if( args[ 0 ] === "N" ) {
+		if( drawArgs[ 0 ] === "N" ) {
 			isReturn = true;
 		} else {
 			lastCursor = { x: screenData.x, y: screenData.y, angle: screenData.angle };
 		}
 
-		if( args[ 0 ] === "B" ) {
+		if( drawArgs[ 0 ] === "B" ) {
 			isBlind = true;
 		}
 	}

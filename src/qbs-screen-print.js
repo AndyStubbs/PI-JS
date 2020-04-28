@@ -14,7 +14,7 @@ qbWait = qbs._.wait;
 qbResume = qbs._.resume;
 
 // Print Command
-qbs._.addCommand( "print", print, false, true );
+qbs._.addCommand( "print", print, false, true, [ "msg", "inLine" ] );
 function print( screenData, args ) {
 	var msg, inLine, parts, i;
 
@@ -109,13 +109,13 @@ function contextCalcWidth( screenData, msg ) {
 }
 
 // Set Word Break Command
-qbs._.addCommand( "setWordBreak", setWordBreak, false, true );
+qbs._.addCommand( "setWordBreak", setWordBreak, false, true, [ "isEnabled" ] );
 function setWordBreak( screenData, args ) {
-	var enabled;
+	var isEnabled;
 
-	enabled = args[ 0 ];
+	isEnabled = args[ 0 ];
 
-	if( enabled ) {
+	if( isEnabled ) {
 		screenData.printCursor.breakWord = true;
 	} else {
 		screenData.printCursor.breakWord = false;
@@ -147,7 +147,7 @@ function contextPrint( screenData, msg, x, y ) {
 }
 
 // Locate Command
-qbs._.addCommand( "locate", locate, false, true );
+qbs._.addCommand( "locate", locate, false, true, [ "col", "row" ] );
 function locate( screenData, args ) {
 	var col, row, x, y;
 
@@ -174,7 +174,7 @@ function locate( screenData, args ) {
 }
 
 // Locate Px Command
-qbs._.addCommand( "locatePx", locatePx, false, true );
+qbs._.addCommand( "locatePx", locatePx, false, true, [ "x", "y" ] );
 function locatePx( screenData, args, x, y ) {
 
 	x = args[ 0 ];
@@ -189,7 +189,7 @@ function locatePx( screenData, args, x, y ) {
 }
 
 // Pos Command
-qbs._.addCommand( "pos", pos, false, true );
+qbs._.addCommand( "pos", pos, false, true, [] );
 function pos( screenData ) {
 	return {
 		col: Math.floor( screenData.printCursor.x / screenData.printCursor.charWidth ),
@@ -198,7 +198,7 @@ function pos( screenData ) {
 }
 
 // Pos Px Command
-qbs._.addCommand( "posPx", posPx, false, true );
+qbs._.addCommand( "posPx", posPx, false, true, [] );
 function posPx( screenData ) {
 	return {
 		x: screenData.printCursor.x,
@@ -207,7 +207,7 @@ function posPx( screenData ) {
 }
 
 // Loads a font into memory
-qbs._.addCommand( "loadFont", loadFont, false, false );
+qbs._.addCommand( "loadFont", loadFont, false, false, [ "fontSrc", "width", "height" ] );
 function loadFont( args ) {
 	var fontSrc, width, height, img, font;
 
@@ -287,7 +287,7 @@ function loadFont( args ) {
 }
 
 // Set Font Command
-qbs._.addCommand( "setFont", setFont, false, true );
+qbs._.addCommand( "setFont", setFont, false, true, [ "fontId" ] );
 function setFont( screenData, args ) {
 	var fontId, font, size;
 

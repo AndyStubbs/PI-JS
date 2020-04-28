@@ -13,25 +13,31 @@ qbData = qbs._.data;
 
 
 // Bezier curve
-qbs._.addCommands( "bezier", pxBezier, aaBezier );
+qbs._.addCommands( "bezier", pxBezier, aaBezier, [ "xStart", "yStart",
+	"xControlPoint1", "yControlPoint1", "xControlPoint2", "yControlPoint2",
+	"xEnd", "yEnd" ] );
 function pxBezier( screenData, args ) {
-	var x1, y1, x2, y2, x3, y3, x4, y4, c, points, t, dt, point, lastPoint, distance, minDistance;
+	var xStart, yStart, xControlPoint1, yControlPoint1, xControlPoint2,
+		yControlPoint2, xEnd, yEnd, c, points, t, dt, point, lastPoint,
+		distance, minDistance;
 
-	x1 = args[ 0 ];
-	y1 = args[ 1 ];
-	x2 = args[ 2 ];
-	y2 = args[ 3 ];
-	x3 = args[ 4 ];
-	y3 = args[ 5 ];
-	x4 = args[ 6 ];
-	y4 = args[ 7 ];
+	xStart = parseInt( args[ 0 ] );
+	yStart = parseInt( args[ 1 ] );
+	xControlPoint1 = parseInt( args[ 2 ] );
+	yControlPoint1 = parseInt( args[ 3 ] );
+	xControlPoint2 = parseInt( args[ 4 ] );
+	yControlPoint2 = parseInt( args[ 5 ] );
+	xEnd = parseInt( args[ 6 ] );
+	yEnd = parseInt( args[ 7 ] );
 
 	// Make sure x and y are integers
-	if( isNaN( x1 ) || isNaN( y1 ) ||
-		isNaN( x2 ) || isNaN( y2 ) || 
-		isNaN( x3 ) || isNaN( y3 ) ||
-		isNaN( x4 ) || isNaN( y4 ) ) {
-		console.error("pset: Argument's x1, y1, x2, y2, x3, y3, x4 and y4 must be numbers.");
+	if( isNaN( xStart ) || isNaN( yStart ) ||
+		isNaN( xControlPoint1 ) || isNaN( yControlPoint1 ) ||
+		isNaN( xControlPoint2 ) || isNaN( yControlPoint2 ) ||
+		isNaN( xEnd ) || isNaN( yEnd ) ) {
+		console.error( "pset: Argument's xStart, yStart, xControlPoint1," +
+			"yControlPoint1, xControlPoint2, yControlPoint2, xEnd, and yEnd" +
+			" must be numbers." );
 		return;
 	}
 
@@ -41,10 +47,10 @@ function pxBezier( screenData, args ) {
 	qbData.commands.getImageData( screenData );
 	minDistance = screenData.pen.size;
 	points = [
-		{ "x": x1, "y": y1 },
-		{ "x": x2, "y": y2 },
-		{ "x": x3, "y": y3 },
-		{ "x": x4, "y": y4 }
+		{ "x": xStart, "y": yStart },
+		{ "x": xControlPoint1, "y": yControlPoint1 },
+		{ "x": xControlPoint2, "y": yControlPoint2 },
+		{ "x": xEnd, "y": yEnd }
 	];
 
 	lastPoint = calcStep( 0, points );
@@ -133,7 +139,5 @@ function aaBezier( screenData, args ) {
 	screenData.context.stroke();
 }
 
-
 // End of File Encapsulation
 } )();
-

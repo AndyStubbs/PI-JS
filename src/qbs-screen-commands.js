@@ -12,7 +12,7 @@ var qbData;
 qbData = qbs._.data;
 
 // Remove the screen from the page and memory
-qbs._.addCommand( "removeScreen", removeScreen, false, true );
+qbs._.addCommand( "removeScreen", removeScreen, false, true, [] );
 function removeScreen( screenData ) {
 	var i, screenId;
 
@@ -35,16 +35,16 @@ function removeScreen( screenData ) {
 }
 
 // Set the background color of the canvas
-qbs._.addCommand( "bgColor", bgColor, false, true );
+qbs._.addCommand( "bgColor", bgColor, false, true, [ "color" ] );
 function bgColor( screenData, args ) {
-	var c, bc;
+	var color, bc;
 
-	c = args[ 0 ];
+	color = args[ 0 ];
 
-	if( Number.isInteger( c ) ) {
-		bc = screenData.pal[ c ];
+	if( Number.isInteger( color ) ) {
+		bc = screenData.pal[ color ];
 	} else {
-		bc = qbs.util.convertToColor( c );
+		bc = qbs.util.convertToColor( color );
 	}
 	if( bc && typeof bc.s === "string" ) {
 		screenData.canvas.style.backgroundColor = bc.s;
@@ -55,17 +55,17 @@ function bgColor( screenData, args ) {
 }
 
 // Set the background color of the container
-qbs._.addCommand( "containerBgColor", containerBgColor, false, true );
+qbs._.addCommand( "containerBgColor", containerBgColor, false, true, [ "color" ] );
 function containerBgColor( screenData, args ) {
-	var c, bc;
+	var color, bc;
 
-	c = args[ 0 ];
+	color = args[ 0 ];
 
 	if( screenData.container ) {
-		if( Number.isInteger( c ) ) {
-			bc = screenData.pal[ c ];
+		if( Number.isInteger( color ) ) {
+			bc = screenData.pal[ color ];
 		} else {
-			bc = qbs.util.convertToColor( c );
+			bc = qbs.util.convertToColor( color );
 		}
 		if( bc && typeof bc.s === "string" ) {
 			screenData.container.style.backgroundColor = bc.s;
@@ -77,16 +77,16 @@ function containerBgColor( screenData, args ) {
 	}
 }
 
-qbs._.addCommand( "canvas", canvas, false, true );
+qbs._.addCommand( "canvas", canvas, false, true, [] );
 function canvas( screenData ) {
 	return screenData.canvas;
 }
 
-qbs._.addCommand( "findColor", findColor, false, true );
+qbs._.addCommand( "findColor", findColor, false, true, [ "color", "tolerance" ] );
 function findColor( screenData, args ) {
-	var c, tolerance, i, pal, dr, dg, db, da, difference;
+	var color, tolerance, i, pal, dr, dg, db, da, difference;
 
-	c = args[ 0 ];
+	color = args[ 0 ];
 	tolerance = args[ 1 ];
 
 	if(tolerance === undefined) {
@@ -95,32 +95,32 @@ function findColor( screenData, args ) {
 
 	pal = screenData.pal;
 
-	if( screenData.cache[ "findColor" ][ c.s ] ) {
-		return screenData.cache[ "findColor" ][ c.s ];
+	if( screenData.cache[ "findColor" ][ color.s ] ) {
+		return screenData.cache[ "findColor" ][ color.s ];
 	}
 	for( i = 0; i < pal.length; i++ ) {
-		if(tolerance === 0 && pal[ i ].s === c.s) {
-			screenData.cache[ "findColor" ][ c.s ] = i;
+		if(tolerance === 0 && pal[ i ].s === color.s) {
+			screenData.cache[ "findColor" ][ color.s ] = i;
 			return i;
 		} else {
-			dr = pal[ i ].r - c.r;
-			dg = pal[ i ].g - c.g;
-			db = pal[ i ].b - c.b;
-			da = pal[ i ].a - c.a;
+			dr = pal[ i ].r - color.r;
+			dg = pal[ i ].g - color.g;
+			db = pal[ i ].b - color.b;
+			da = pal[ i ].a - color.a;
 
 			difference = dr * dr + dg * dg + db * db + da * da;
 			if(difference <= tolerance) {
-				screenData.cache[ "findColor" ][ c.s ] = i;
+				screenData.cache[ "findColor" ][ color.s ] = i;
 				return i;
 			}
 		}
 	}
-	pal.push( c );
-	screenData.cache[ "findColor" ][ c.s ] = pal.length - 1;
+	pal.push( color );
+	screenData.cache[ "findColor" ][ color.s ] = pal.length - 1;
 	return pal.length - 1;
 }
 
-qbs._.addCommand( "setPixelMode", setPixelMode, false, true );
+qbs._.addCommand( "setPixelMode", setPixelMode, false, true, [ "isEnabled" ] );
 function setPixelMode( screenData, args ) {
 	var isEnabled;
 
@@ -141,7 +141,7 @@ function setPixelMode( screenData, args ) {
 	}
 }
 
-qbs._.addCommand( "triggerEventListeners", triggerEventListeners, true, true );
+qbs._.addCommand( "triggerEventListeners", triggerEventListeners, true, true, [] );
 function triggerEventListeners( mode, data, listenerArr ) {
 	var temp, i, j, pos, newData;
 
@@ -182,7 +182,7 @@ function triggerEventListeners( mode, data, listenerArr ) {
 	}
 }
 
-qbs._.addCommand( "onevent", onevent, true, true );
+qbs._.addCommand( "onevent", onevent, true, true, [] );
 function onevent( mode, fn, once, hitBox, mode1, mode2, mode3, name, offevent, listenerArr ) {
 
 	// Prevent event from being triggered in case event is called in an event
@@ -222,7 +222,7 @@ function onevent( mode, fn, once, hitBox, mode1, mode2, mode3, name, offevent, l
 	}, 1);
 }
 
-qbs._.addCommand( "offevent", offevent, true, true );
+qbs._.addCommand( "offevent", offevent, true, true, [] );
 function offevent( mode, fn, mode1, mode2, mode3, name, listenerArr ) {
 	var isClear, i;
 
