@@ -300,7 +300,7 @@ function clearKeys() {
 }
 
 // Gets the status of a specific key or all keys currently pressed
-qbs._.addCommand( "inkey", inkey, false, false );
+qbs._.addCommand( "inkey", inkey, false, false, [ "key" ] );
 function inkey( args ) {
 	var key, keysReturn, i, keys2;
 
@@ -329,7 +329,7 @@ function inkey( args ) {
 }
 
 // Adds an event trigger for a keypress
-qbs._.addCommand( "onkey", onkey, false, false );
+qbs._.addCommand( "onkey", onkey, false, false, [ "key", "fn", "once" ] );
 function onkey( args ) {
 	var key, fn, once;
 
@@ -373,7 +373,7 @@ function onkey( args ) {
 }
 
 // Removes an event trigger for a keypress
-qbs._.addCommand( "offkey", offkey, false, false );
+qbs._.addCommand( "offkey", offkey, false, false, [ "key", "fn" ] );
 function offkey( args ) {
 	var key, fn, isClear, i;
 
@@ -422,7 +422,7 @@ function offkey( args ) {
 
 // Disables the default behavior for a key
 // TODO: rename this command
-qbs._.addCommand( "disableDefaultKey", disableDefaultKey, false, false );
+qbs._.addCommand( "disableDefaultKey", disableDefaultKey, false, false, [ "key" ] );
 function disableDefaultKey( args ) {
 	var key;
 
@@ -437,8 +437,12 @@ function disableDefaultKey( args ) {
 
 // Enables the default behavior for a key
 // TODO: rename this command
-qbs._.addCommand( "enableDefaultKey", enableDefaultKey, false, false );
-function enableDefaultKey( key ) {
+qbs._.addCommand( "enableDefaultKey", enableDefaultKey, false, false, [ "key" ] );
+function enableDefaultKey( args ) {
+	var key;
+
+	key = args[ 0 ];
+
 	if( typeof key !== "string" && isNaN( key ) ) {
 		console.error( "disableDefaultKey: invalid key parameter." );
 		return;
@@ -504,7 +508,7 @@ function showPrompt( hideCursor ) {
 }
 
 // Prompts the user to enter input through the keyboard.
-qbs._.addCommand( "input", input, false, false );
+qbs._.addCommand( "input", input, false, false, [ "prompt", "name", "isNumber", "min", "max", "isInteger", "ready", "readyList" ] );
 function input( args ) {
 	var prompt, name, isNumber, min, max, isInteger, ready, readyList;
 	//prompt, name, isNumber, min, max, isInteger
@@ -621,7 +625,7 @@ function closeInputs() {
 }
 
 // Register function for when input is ready
-qbs._.addCommand( "inputReady", inputReady, false, false );
+qbs._.addCommand( "inputReady", inputReady, false, false, [ "fn" ] );
 function inputReady( args ) {
 	var fn;
 
@@ -633,16 +637,16 @@ function inputReady( args ) {
 }
 
 // Set the charcode for the input prompt
-qbs._.addCommand( "setInputCursor", setInputCursor, false, false );
+qbs._.addCommand( "setInputCursor", setInputCursor, false, false, [ "cursor" ] );
 function setInputCursor( args ) {
-	var c;
+	var cursor;
 
-	c = args[ 0 ];
+	cursor = args[ 0 ];
 
-	if( ! isNaN( c ) ) {
-		qbData.screenData.printCursor.prompt = c;
-	} else if( typeof c === "string" ) {
-		qbData.screenData.printCursor.prompt = c.charCodeAt( 0 );
+	if( ! isNaN( cursor ) ) {
+		qbData.screenData.printCursor.prompt = cursor;
+	} else if( typeof cursor === "string" ) {
+		qbData.screenData.printCursor.prompt = cursor.charCodeAt( 0 );
 	}
 }
 

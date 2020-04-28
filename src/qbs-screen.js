@@ -14,7 +14,7 @@ qbData = qbs._.data;
 // QBS Core API
 // State Function
 // Creates a new screen object
-qbs._.addCommand( "screen", screen, false, false );
+qbs._.addCommand( "screen", screen, false, false, [ "aspect", "container", "isOffscreen" ] );
 function screen( args ) {
 
 	var aspect, container, isOffscreen, aspectData, screenObj, screenData, i, commandData;
@@ -63,6 +63,7 @@ function screen( args ) {
 
 	// Assign the id of the screen
 	screenObj.id = screenData.id;
+	screenObj.screen = true;
 
 	return screenObj;
 

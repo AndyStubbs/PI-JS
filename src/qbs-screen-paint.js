@@ -13,7 +13,7 @@ qbData = qbs._.data;
 maxDifference = 195075;		// 255^2 * 3
 
 // Paint Command
-qbs._.addCommand( "paint", paint, false, true );
+qbs._.addCommand( "paint", paint, false, true, [ "x", "y", "fillColor", "tolerance" ] );
 function paint( screenData, args ) {
 	var x, y, fillColor, tolerance, fills, pixel, backgroundColor;
 

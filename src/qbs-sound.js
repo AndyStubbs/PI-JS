@@ -13,20 +13,20 @@ audioPools = {};
 nextAudioId = 0;
 
 // Loads a sound
-qbs._.addCommand( "loadSound", loadSound, false, false );
+qbs._.addCommand( "loadSound", loadSound, false, false, [ "src", "poolSize" ] );
 function loadSound( args ) {
-	var src, poolsize, i, audioItem;
+	var src, poolSize, i, audioItem;
 
 	src = args[ 0 ];
-	poolsize = args[ 1 ];
+	poolSize = args[ 1 ];
 
 	// Validate parameters
 	if( ! src ) {
 		console.error( "loadSound: No sound source provided." );
 		return;
 	}
-	if( poolsize === undefined || isNaN( poolsize ) ) {
-		poolsize = 1;
+	if( poolSize === undefined || isNaN( poolSize ) ) {
+		poolSize = 1;
 	}
 
 	// Create the audio item
@@ -36,7 +36,7 @@ function loadSound( args ) {
 	};
 
 	// Create the audio pool
-	for( i = 0; i < poolsize; i++ ) {
+	for( i = 0; i < poolSize; i++ ) {
 		audioItem.pool.push( new Audio( src ) );
 	}
 
@@ -51,7 +51,7 @@ function loadSound( args ) {
 }
 
 // Delete's the audio pool
-qbs._.addCommand( "deleteSound", deleteSound, false, false );
+qbs._.addCommand( "deleteSound", deleteSound, false, false, [ "audioId" ] );
 function deleteSound( args ) {
 	var audioId, i;
 
@@ -73,7 +73,7 @@ function deleteSound( args ) {
 }
 
 // Plays a sound from an audio id
-qbs._.addCommand( "play", play, false, false );
+qbs._.addCommand( "play", play, false, false, [ "audioId" ] );
 function play( args ) {
 	var audioId, audioItem;
 

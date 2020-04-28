@@ -11,7 +11,7 @@ var qbData;
 
 qbData = qbs._.data;
 
-qbs._.addCommand( "startMouse", startMouse, false, true );
+qbs._.addCommand( "startMouse", startMouse, false, true, [] );
 function startMouse( screenData ) {
 	screenData.canvas.addEventListener( "mousemove", mouseMove );
 	screenData.canvas.addEventListener( "mousedown", mouseDown );
@@ -19,7 +19,7 @@ function startMouse( screenData ) {
 	screenData.canvas.addEventListener( "contextmenu", onContextMenu );
 }
 
-qbs._.addCommand( "stopMouse", stopMouse, false, true );
+qbs._.addCommand( "stopMouse", stopMouse, false, true, [] );
 function stopMouse( screenData ) {
 	screenData.canvas.removeEventListener( "mousemove", mouseMove );
 	screenData.canvas.removeEventListener( "mousedown", mouseDown );
@@ -95,7 +95,7 @@ function updateMouse( screenData, e ) {
 	};
 }
 
-qbs._.addCommand( "inmouse", inmouse, false, true );
+qbs._.addCommand( "inmouse", inmouse, false, true, [] );
 function inmouse( screenData ) {
 	var mouse;
 
@@ -110,7 +110,7 @@ function inmouse( screenData ) {
 }
 
 // Adds an event trigger for a mouse event
-qbs._.addCommand( "onmouse", onmouse, false, true );
+qbs._.addCommand( "onmouse", onmouse, false, true, [ "mode", "fn", "once", "hitBox" ] );
 function onmouse( screenData, args ) {
 	var mode, fn, once, hitBox;
 
@@ -123,17 +123,17 @@ function onmouse( screenData, args ) {
 }
 
 // Removes an event trigger for a mouse event
-qbs._.addCommand( "offmouse", offmouse, false, true );
+qbs._.addCommand( "offmouse", offmouse, false, true, [ "eventName", "fn" ] );
 function offmouse( screenData, args ) {
-	var mode, fn;
+	var eventName, fn;
 
-	mode = args[ 0 ];
+	eventName = args[ 0 ];
 	fn = args[ 1 ];
 
-	qbData.commands.offevent( mode, fn, "down", "up", "move", "offmouse", screenData.onMouseEventListeners );
+	qbData.commands.offevent( eventName, fn, "down", "up", "move", "offmouse", screenData.onMouseEventListeners );
 }
 
-qbs._.addCommand( "enableContextMenu", enableContextMenu, false, true );
+qbs._.addCommand( "enableContextMenu", enableContextMenu, false, true, [ "isEnabled" ] );
 function enableContextMenu( screenData, args ) {
 	var isEnabled;
 
