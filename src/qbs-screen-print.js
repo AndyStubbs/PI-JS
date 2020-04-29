@@ -21,6 +21,11 @@ function print( screenData, args ) {
 	msg = args[ 0 ];
 	inLine = args[ 1 ];
 
+	// bail if not possible to print an entire line on a screen
+	if( screenData.printCursor.charHeight > screenData.height ) {
+		return;
+	}
+
 	if( msg === undefined ) {
 		msg = "";
 	} else if( typeof msg !== "string" ) {

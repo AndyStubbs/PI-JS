@@ -14,15 +14,16 @@ qbData = qbs._.data;
 // QBS Core API
 // State Function
 // Creates a new screen object
-qbs._.addCommand( "screen", screen, false, false, [ "aspect", "container", "isOffscreen" ] );
+qbs._.addCommand( "screen", screen, false, false, [ "aspect", "container", "isOffscreen", "noStyles" ] );
 function screen( args ) {
 
-	var aspect, container, isOffscreen, aspectData, screenObj, screenData, i, commandData;
+	var aspect, container, isOffscreen, noStyles, aspectData, screenObj, screenData, i, commandData;
 
 	// Input from args
 	aspect = args[ 0 ];
 	container = args[ 1 ];
 	isOffscreen = args[ 2 ];
+	noStyles = args[ 3 ];
 
 	if( typeof aspect === "string" && aspect !== "" ) {
 		aspect = aspect.toLowerCase();
@@ -36,7 +37,11 @@ function screen( args ) {
 		}
 		screenData = createOffscreenScreen( aspectData );
 	} else {
-		screenData = createScreen( aspectData, container );
+		if( noStyles ) {
+			screenData = createNoStyleScreen( aspectData, container );
+		} else {
+			screenData = createScreen( aspectData, container );
+		}
 	}
 
 	screenData.cache = {
@@ -120,12 +125,12 @@ function createOffscreenScreen( aspectData ) {
 	bufferCanvas.width = aspectData.width;
 	bufferCanvas.height = aspectData.height;
 
-	return createScreenData( canvas, bufferCanvas, null, aspectData, true );
+	return createScreenData( canvas, bufferCanvas, null, aspectData, true, false );
 }
 
 // Create a new canvas
 function createScreen( aspectData, container ) {
-	var canvas, bufferCanvas;
+	var canvas, bufferCanvas, size;
 
 	// Create the canvas
 	canvas = document.createElement( "canvas" );
@@ -144,10 +149,9 @@ function createScreen( aspectData, container ) {
 		document.body.style.height = "100%";
 		document.body.style.margin = "0";
 		document.body.style.overflow = "hidden";
-		container = document.body;
 		canvas.style.left = "0";
 		canvas.style.top = "0";
-		//canvas.style.imageRendering = "crisp-edges";
+		container = document.body;
 	}
 
 	// Make sure the container is not blank
@@ -159,29 +163,64 @@ function createScreen( aspectData, container ) {
 	container.appendChild( canvas );
 
 	if( aspectData ) {
+
+		// Calculate the size of the container
+		size = getSize( container );
+
 		// Set the canvas size
-		setCanvasSize( aspectData, canvas, container.offsetWidth, container.offsetHeight );
+		setCanvasSize( aspectData, canvas, size.width, size.height );
 
 		// Set the buffer size
 		bufferCanvas.width = canvas.width;
 		bufferCanvas.height = canvas.height;
 
 	} else {
+
+		// Set canvas to fullscreen absolute pixels
 		canvas.style.width = "100%";
 		canvas.style.height = "100%";
-		bufferCanvas.width = canvas.offsetWidth;
-		bufferCanvas.height = canvas.offsetHeight;
-		window.addEventListener( "resize", function () {
-			bufferCanvas.width = canvas.offsetWidth;
-			bufferCanvas.height = canvas.offsetHeight;
-		} );
+		size = getSize( canvas );
+		canvas.width = size.width;
+		canvas.height = size.height;
+		bufferCanvas.width = size.width;
+		bufferCanvas.height = size.height;
+	}
+	return createScreenData( canvas, bufferCanvas, container, aspectData, false, false );
+}
+
+function createNoStyleScreen( aspectData, container ) {
+	var canvas, bufferCanvas, size;
+
+	// Create the canvas
+	canvas = document.createElement( "canvas" );
+	bufferCanvas = document.createElement( "canvas" );
+
+	// If no container applied then use document body.
+	if( ! qbs.util.isDomElement( container ) ) {
+		container = document.body;
 	}
 
-	return createScreenData( canvas, bufferCanvas, container, aspectData, false );
+	// Append the canvas to the container
+	container.appendChild( canvas );
+
+	if( aspectData && aspectData.splitter === "x" ) {
+
+		// Set the buffer size
+		canvas.width = aspectData.width;
+		canvas.height = aspectData.height;
+		bufferCanvas.width = canvas.width;
+		bufferCanvas.height = canvas.height;
+
+	} else {
+		size = getSize( canvas );
+		bufferCanvas.width = size.width;
+		bufferCanvas.height = size.height;
+	}
+	return createScreenData( canvas, bufferCanvas, container, aspectData, false, true );
 }
 
 // Create the screen data
-function createScreenData( canvas, bufferCanvas, container, aspectData, isOffscreen ) {
+function createScreenData( canvas, bufferCanvas, container, aspectData, isOffscreen, isNoStyles ) {
 	var screenData = {};
 
 	// Set the screen id
@@ -199,6 +238,7 @@ function createScreenData( canvas, bufferCanvas, container, aspectData, isOffscr
 	screenData.container = container;
 	screenData.aspectData = aspectData;
 	screenData.isOffscreen = isOffscreen;
+	screenData.isNoStyles = isNoStyles;
 	screenData.context = canvas.getContext( "2d" );
 	screenData.bufferCanvas = bufferCanvas;
 	screenData.bufferContext = screenData.bufferCanvas.getContext( "2d" );
@@ -250,7 +290,7 @@ function createScreenData( canvas, bufferCanvas, container, aspectData, isOffscr
 
 // Sets the canvas size
 function setCanvasSize( aspectData, canvas, maxWidth, maxHeight ) {
-	var width, height, newWidth, newHeight, offset, splitter, ratio1, ratio2;
+	var width, height, newWidth, newHeight, offset, splitter, ratio1, ratio2, size;
 
 	width = aspectData.width;
 	height = aspectData.height;
@@ -295,30 +335,44 @@ function setCanvasSize( aspectData, canvas, maxWidth, maxHeight ) {
 	canvas.style.height = Math.floor( newHeight ) + "px";
 
 	// If we are doing pixel exact set the canvas internal sizes
-	if(splitter === "x") {
+	if( splitter === "x" ) {
 		canvas.width = width;
 		canvas.height = height;
 	} else {
-		canvas.width = canvas.offsetWidth;
-		canvas.height = canvas.offsetHeight;
+		size = getSize( canvas );
+		canvas.width = size.width;
+		canvas.height = size.height;
 	}
+
 }
 
 // Resizes all screens
 function resizeScreens() {
-	var i, screenData;
+	var i, screenData, size;
 
 	for( i in qbData.screens ) {
 		screenData = qbData.screens[ i ];
 
-		if( ! screenData.isOffscreen ) {
+		if( ! ( screenData.isOffscreen || screenData.isNoStyles ) ) {
 
 			// Draw the canvas to the buffer
 			screenData.bufferContext.clearRect( 0, 0, screenData.width, screenData.height );
 			screenData.bufferContext.drawImage( screenData.canvas, 0, 0 );
 
-			// Update the canvas to the new size
-			setCanvasSize( screenData.aspectData, screenData.canvas, screenData.container.offsetWidth, screenData.container.offsetHeight );
+			if( screenData.aspectData ) {
+
+				// Update the canvas to the new size
+				size = getSize( screenData.container );
+				setCanvasSize( screenData.aspectData, screenData.canvas, size.width, size.height );
+
+			} else {
+
+				// Update canvas to fullscreen absolute pixels
+				size = getSize( screenData.canvas );
+				screenData.canvas.width = size.width;
+				screenData.canvas.height = size.height;
+
+			}
 
 			// Resize the client rectangle
 			screenData.clientRect = screenData.canvas.getBoundingClientRect();
@@ -329,8 +383,35 @@ function resizeScreens() {
 			// Set the new buffer size
 			screenData.bufferCanvas.width = screenData.canvas.width;
 			screenData.bufferCanvas.height = screenData.canvas.height;
+
+			// Set the new screen size
+			screenData.width = screenData.canvas.width;
+			screenData.height = screenData.canvas.height;
 		}
 	}
+}
+
+function getSize( element ) {
+	var computedStyle, paddingX, paddingY, borderX, borderY, elementWidth, elementHeight;
+
+	computedStyle = getComputedStyle( element );
+
+	// Compute the padding
+	paddingX = parseFloat( computedStyle.paddingLeft ) + parseFloat( computedStyle.paddingRight );
+	paddingY = parseFloat( computedStyle.paddingTop ) + parseFloat( computedStyle.paddingBottom );
+
+	// Compute the borders
+	borderX = parseFloat( computedStyle.borderLeftWidth ) + parseFloat( computedStyle.borderRightWidth );
+	borderY = parseFloat( computedStyle.borderTopWidth ) + parseFloat( computedStyle.borderBottomWidth );
+
+	// Compute the dimensions
+	elementWidth = element.offsetWidth - paddingX - borderX;
+	elementHeight = element.offsetHeight - paddingY - borderY;
+
+	return {
+		"width": elementWidth,
+		"height": elementHeight
+	};
 }
 
 // Any time the screen resizes need to resize canvas too
