@@ -35,6 +35,10 @@ function screen( args ) {
 			console.error( "screen: You must supply an aspect ratio with exact dimensions for offscreen screens." );
 			return;
 		}
+		if( aspectData.splitter !== "x" ) {
+			console.error( "screen: You must use aspect ratio with e(x)act pixel dimensions such as 320x200 offscreen screens." );
+			return;
+		}
 		screenData = createOffscreenScreen( aspectData );
 	} else {
 		if( noStyles ) {
@@ -90,6 +94,8 @@ function parseAspect( aspect ) {
 		splitter = ":";
 	} else if( aspect.indexOf( "x" ) > -1 ) {
 		splitter = "x";
+	} else if ( aspect.indexOf( "s" ) ) {
+		splitter = "s";
 	}
 
 	parts = aspect.split( splitter );
@@ -130,7 +136,7 @@ function createOffscreenScreen( aspectData ) {
 
 // Create a new canvas
 function createScreen( aspectData, container ) {
-	var canvas, bufferCanvas, size;
+	var canvas, bufferCanvas, size, isContainer;
 
 	// Create the canvas
 	canvas = document.createElement( "canvas" );
@@ -143,7 +149,9 @@ function createScreen( aspectData, container ) {
 	canvas.style.imageRendering = "crisp-edges";
 
 	// If no container applied then use document body.
+	isContainer = true;
 	if( ! qbs.util.isDomElement( container ) ) {
+		isContainer = false;
 		document.documentElement.style.height = "100%";
 		document.documentElement.style.margin = "0";
 		document.body.style.height = "100%";
@@ -176,7 +184,12 @@ function createScreen( aspectData, container ) {
 
 	} else {
 
-		// Set canvas to fullscreen absolute pixels
+		// If canvas is inside an element then apply static position
+		if( isContainer ) {
+			canvas.style.position = "static";
+		}
+
+		// Set canvas to fullscreen
 		canvas.style.width = "100%";
 		canvas.style.height = "100%";
 		size = getSize( canvas );
@@ -334,16 +347,38 @@ function setCanvasSize( aspectData, canvas, maxWidth, maxHeight ) {
 	canvas.style.width = Math.floor( newWidth ) + "px";
 	canvas.style.height = Math.floor( newHeight ) + "px";
 
-	// If we are doing pixel exact set the canvas internal sizes
-	if( splitter === "x" ) {
+	// Extending the canvas to match container size
+	if( splitter === "s" ) {
+
+		// Add the margin size to width and height
+		width += Math.round( ( maxWidth - newWidth ) * ( width / newWidth ) );
+		height += Math.round( ( maxHeight - newHeight ) * ( height / newHeight ) );
+
+		// Set the margins to 0
+		canvas.style.marginLeft = 0;
+		canvas.style.marginTop = 0;
+
+		// Set the canvas size to size of parent
+		size = getSize( canvas.parentNode );
+		canvas.style.width = size.width + "px";
+		canvas.style.height = size.height + "px";
 		canvas.width = width;
 		canvas.height = height;
+
+	} else if( splitter === "x" ) {
+
+		// Set canvas size to be exact specified from the aspect ratio
+		canvas.width = width;
+		canvas.height = height;
+
 	} else {
+
+		// Set the canvas size to the compute canvas size
 		size = getSize( canvas );
 		canvas.width = size.width;
 		canvas.height = size.height;
-	}
 
+	}
 }
 
 // Resizes all screens

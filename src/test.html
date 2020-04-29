@@ -27,54 +27,33 @@
 	<script src="qbs-init.js"></script>
 	<style>
 		html, body {
-			background-color: gray;
+			background-color: black;
 		}
 		canvas {
-			background-color: blue;
-			margin: 5px;
-			border: 1px solid white;
+			background-color: rgba(0 , 0 , 0, 0) !important;
 		}
 	</style>
 </head>
 <body>
-	<div id="container1"></div>
-	<div id="container2"></div>
 <script>
-		$.ready(function () {
+	$.ready( function () {
 
-			$.screen( false, false, false, true );
-			$.color( 15 );
-			$.setFont( 4 );
-			$.print( "No aspect, no container, no styles." );
-			$.print( "The quick brown fox jumped over the lazy dog." );
-			$.print( "" );
-			$.render();
+		$.screen( "75 s 75" );
+		$.color( 15 );
+		$.print( "75 s 75, container1, with styles." );
+		$.pset( 80, 20 );
+		$.render();
 
-			$.screen( "400x250", false, false, true );
-			$.color( 15 );
-			$.setFont( 4 );
-			$.print( "400x250, no container, no styles.");
-			$.print( "The quick brown fox jumped over the lazy dog." );
-			$.print( "" );
-			$.render();
+		$.screen( "75 x 75" );
+		$.line( 0, 50, 74, 50 );
+		$.color( 15 );
+		$.print();
+		$.print();
+		$.print();
+		$.print( "75 x 75, container1, with styles." );
+		$.render();
 
-			$.screen( "400x250", document.getElementById( "container1" ), false, true );
-			$.color( 15 );
-			$.setFont( 4 );
-			$.print( "400x250, container1, no styles" );
-			$.print( "The quick brown fox jumped over the lazy dog." );
-			$.print( "" );
-			$.render();
-
-			$.screen( "3:2", document.getElementById( "container2" ), false, true );
-			$.color( 15 );
-			$.setFont( 4 );
-			$.print( "3:2, container2, no styles" );
-			$.print( "The quick brown fox jumped over the lazy dog." );
-			$.print( "" );
-			$.render();
-
-		});
+	} );
 </script>
 </body>
 </html>
