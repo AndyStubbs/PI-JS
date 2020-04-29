@@ -94,8 +94,8 @@ function parseAspect( aspect ) {
 		splitter = ":";
 	} else if( aspect.indexOf( "x" ) > -1 ) {
 		splitter = "x";
-	} else if ( aspect.indexOf( "s" ) ) {
-		splitter = "s";
+	} else if ( aspect.indexOf( "e" ) ) {
+		splitter = "e";
 	}
 
 	parts = aspect.split( splitter );
@@ -348,7 +348,7 @@ function setCanvasSize( aspectData, canvas, maxWidth, maxHeight ) {
 	canvas.style.height = Math.floor( newHeight ) + "px";
 
 	// Extending the canvas to match container size
-	if( splitter === "s" ) {
+	if( splitter === "e" ) {
 
 		// Add the margin size to width and height
 		width += Math.round( ( maxWidth - newWidth ) * ( width / newWidth ) );
