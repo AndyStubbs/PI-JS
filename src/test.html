@@ -29,15 +29,24 @@
 		html, body {
 			background-color: gray;
 		}
+		div {
+			display: inline-block;
+			width: 350px;
+			height: 220px;
+			background-color: aliceblue;
+		}
 	</style>
 </head>
 <body>
+	<div id="container1"></div>
+	<div id="container2"></div>
 <script>
 	$.ready( function () {
 
 		$.screen( { 
 			"aspect": "320 e 200",
-			"isMultiple": true
+			"isMultiple": true,
+			"container": document.getElementById( "container1" )
 		} );
 		$.color( 9 );
 		$.rect( 0, 0, $.width() - 1, $.height() - 1 );
@@ -50,7 +59,8 @@
 
 		$.screen( { 
 			"aspect": "320 x 200",
-			"isMultiple": true
+			"isMultiple": true,
+			"container": document.getElementById( "container2" )
 		} );
 		$.color( 4 );
 		$.rect( 0, 0, 319, 199 );
