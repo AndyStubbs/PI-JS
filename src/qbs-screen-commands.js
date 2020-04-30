@@ -77,6 +77,16 @@ function containerBgColor( screenData, args ) {
 	}
 }
 
+qbs._.addCommand( "width", width, false, true, [] );
+function width( screenData ) {
+	return screenData.width;
+}
+
+qbs._.addCommand( "height", height, false, true, [] );
+function height( screenData ) {
+	return screenData.height;
+}
+
 qbs._.addCommand( "canvas", canvas, false, true, [] );
 function canvas( screenData ) {
 	return screenData.canvas;

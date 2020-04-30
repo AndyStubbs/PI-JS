@@ -14,20 +14,22 @@ qbData = qbs._.data;
 // QBS Core API
 // State Function
 // Creates a new screen object
-qbs._.addCommand( "screen", screen, false, false, [ "aspect", "container", "isOffscreen", "noStyles" ] );
+qbs._.addCommand( "screen", screen, false, false, [ "aspect", "container", "isOffscreen", "noStyles", "isMultiple" ] );
 function screen( args ) {
 
-	var aspect, container, isOffscreen, noStyles, aspectData, screenObj, screenData, i, commandData;
+	var aspect, container, isOffscreen, noStyles, isMultiple, aspectData, screenObj, screenData, i, commandData;
 
 	// Input from args
 	aspect = args[ 0 ];
 	container = args[ 1 ];
 	isOffscreen = args[ 2 ];
 	noStyles = args[ 3 ];
+	isMultiple = args[ 4 ];
 
 	if( typeof aspect === "string" && aspect !== "" ) {
 		aspect = aspect.toLowerCase();
 		aspectData = parseAspect( aspect );
+		aspectData.isMultiple = !!isMultiple;
 	}
 
 	if( isOffscreen ) {
@@ -303,65 +305,78 @@ function createScreenData( canvas, bufferCanvas, container, aspectData, isOffscr
 
 // Sets the canvas size
 function setCanvasSize( aspectData, canvas, maxWidth, maxHeight ) {
-	var width, height, newWidth, newHeight, offset, splitter, ratio1, ratio2, size;
+	var width, height, newWidth, newHeight, splitter, ratio1, ratio2, size, factor, factorX, factorY;
 
 	width = aspectData.width;
 	height = aspectData.height;
 	splitter = aspectData.splitter;
 
-	// Calculate the ratios
-	ratio1 = height / width;
-	ratio2 = width / height;
-
-	// Calculate the new sizes
-	newWidth = maxHeight * ratio2;
-	newHeight = maxWidth * ratio1;
-	if( newWidth > maxWidth ) {
-
-		// Set the width to full width
-		newWidth = maxWidth;
-
-		// Calculate the best fit height
-		newHeight = newWidth * ratio1;
-
-		// Calucate the remainder to center the canvas vertically
-		offset = ( maxHeight - newHeight ) / 2;
-
-		// Set the margins
-		canvas.style.marginLeft = "0";
-		canvas.style.marginTop = Math.floor( offset ) + "px";
+	// If set size to exact multiple
+	if( aspectData.isMultiple && splitter !== ":" ) {
+		factorX = Math.floor( maxWidth / width );
+		factorY = Math.floor( maxHeight / height );
+		if( factorX > factorY ) {
+			factor = factorY;
+		} else {
+			factor = factorX;
+		}
+		if( factor < 1 ) {
+			factor = 1;
+		}
+		newWidth = width * factor;
+		newHeight = height * factor;
 	} else {
 
-		// Set the height to full height
-		newHeight = maxHeight;
+		// Calculate the screen ratios
+		ratio1 = height / width;
+		ratio2 = width / height;
+		newWidth = maxHeight * ratio2;
+		newHeight = maxWidth * ratio1;
 
-		// Calucate the remainder to center the canvas horizontally
-		offset = ( maxWidth - newWidth ) / 2;
-
-		// Set the margins
-		canvas.style.marginLeft = Math.floor( offset ) + "px";
-		canvas.style.marginTop = "0";
+		// Calculate the best fit
+		if( newWidth > maxWidth ) {
+			newWidth = maxWidth;
+			newHeight = newWidth * ratio1;
+		} else {
+			newHeight = maxHeight;
+		}
 	}
 
 	// Set the size
 	canvas.style.width = Math.floor( newWidth ) + "px";
 	canvas.style.height = Math.floor( newHeight ) + "px";
 
+	// Set the margins
+	canvas.style.marginLeft = Math.floor( ( maxWidth - newWidth ) / 2 ) + "px";
+	canvas.style.marginTop = Math.floor( ( maxHeight - newHeight ) / 2 ) + "px";
+
 	// Extending the canvas to match container size
 	if( splitter === "e" ) {
 
-		// Add the margin size to width and height
-		width += Math.round( ( maxWidth - newWidth ) * ( width / newWidth ) );
-		height += Math.round( ( maxHeight - newHeight ) * ( height / newHeight ) );
+		// Extend as many pixels that fit
+		if( aspectData.isMultiple ) {
 
-		// Set the margins to 0
-		canvas.style.marginLeft = 0;
-		canvas.style.marginTop = 0;
+			width = Math.floor( maxWidth / factor );
+			height = Math.floor( maxHeight / factor );
+			newWidth = width * factor;
+			newHeight = height * factor;
+		} else {
 
-		// Set the canvas size to size of parent
-		size = getSize( canvas.parentNode );
-		canvas.style.width = size.width + "px";
-		canvas.style.height = size.height + "px";
+			// Add the margin size to width and height
+			width += Math.round( ( maxWidth - newWidth ) * ( width / newWidth ) );
+			height += Math.round( ( maxHeight - newHeight ) * ( height / newHeight ) );
+			newWidth = maxWidth;
+			newHeight = maxHeight;
+
+		}
+
+		// Reset the margins after adjustments
+		canvas.style.marginLeft = Math.floor( ( maxWidth - newWidth ) / 2 ) + "px";
+		canvas.style.marginTop = Math.floor( ( maxHeight - newHeight ) / 2 ) + "px";
+
+		// Reset the canvas size after adjustments
+		canvas.style.width = newWidth + "px";
+		canvas.style.height = newHeight + "px";
 		canvas.width = width;
 		canvas.height = height;
 
