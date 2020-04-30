@@ -8,7 +8,7 @@ const TOML = require( "@iarna/toml" );
 
 // Global constants
 const BROWSER = "\"C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe\"";
-const HOME = "http://localhost:8080/test/index.html";
+const HOME = "http://localhost:8080/";
 const TEMPLATE_FILE = "test/index-template.html";
 const INDEX_FILE = "test/index.html";
 //const LOG_FILE = "test/log_" + ( new Date() ).getTime() + ".log";
@@ -30,6 +30,12 @@ let g_totalTestsParsedCount = 0;
 let g_StrHtml = FS.readFileSync( TEMPLATE_FILE ).toString();
 let g_Files = FS.readdirSync( TESTS_FOLDER );
 let g_StrLog = "";
+let g_indexFile = INDEX_FILE;
+
+if( process.argv.length > 2 ) {
+	g_Files = [ process.argv[ 2 ] ];
+	g_indexFile = "test/test-" + g_Files[ 0 ];
+}
 
 for( let i = 0; i < g_Files.length; i++ ) {
 	run_test( i );
@@ -201,12 +207,12 @@ function writeFinalHtml() {
 	//Write the index.html file
 	FS.writeFile( LOG_FILE, g_StrLog, function () {} );
 
-	FS.writeFile( INDEX_FILE, g_StrHtml, function () {
+	FS.writeFile( g_indexFile, g_StrHtml, function () {
 		console.log( "Tests completed" );
 	} );
 
 	//Set the command to startup chrome and point to the home page
-	let cmdStr = BROWSER + " " + HOME;
+	let cmdStr = BROWSER + " " + HOME + g_indexFile;
 
 	//Launch Chrome with link to test file
 	CMD.get( cmdStr, function ( err, data, stderr ) {
