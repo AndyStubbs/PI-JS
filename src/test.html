@@ -29,48 +29,34 @@
 		html, body {
 			background-color: gray;
 		}
-		div {
-			display: inline-block;
-			width: 350px;
-			height: 220px;
-			background-color: aliceblue;
-		}
 	</style>
 </head>
 <body>
-	<div id="container1"></div>
-	<div id="container2"></div>
+	
 <script>
 	$.ready( function () {
-
-		$.screen( { 
-			"aspect": "320 e 200",
-			"isMultiple": true,
-			"container": document.getElementById( "container1" )
-		} );
+		$.screen( "200x200" );
+		$.setPen( "circle", 10, 35 );
 		$.color( 9 );
-		$.rect( 0, 0, $.width() - 1, $.height() - 1 );
-		$.color( 15 );
-		$.print();
-		$.print( " 320 e 200, exact multiples - extend." );
-		$.print();
-		$.print( " The quick brown fox jumped over the lazy dog!" );
-		$.render();
-
-		$.screen( { 
-			"aspect": "320 x 200",
-			"isMultiple": true,
-			"container": document.getElementById( "container2" )
-		} );
+		$.line( 0, 0, 199, 199 );
+		$.color( 10 );
+		$.line( 0, 199, 199, 0 );
+		$.color( 2 );
+		$.print( "This color is green." );
 		$.color( 4 );
-		$.rect( 0, 0, 319, 199 );
-		$.color( 15 );
-		$.print();
-		$.print( " 320 x 200, exact multiples." );
-		$.print();
-		$.print( " The quick brown fox jumped over the lazy dog!" );
+		$.print( "This color is red." );
+		$.color( 1 );
+		$.print( "This color is blue." );
+		$.filterImg( function ( color, x, y ) {
+			var avg = Math.round( ( color.r + color.g + color.b ) / 3 );
+			if( y % 50 > 30 || x % 50 > 30 ) {
+				color.r = avg;
+				color.g = avg;
+				color.b = avg;
+			}
+			return color;
+		} );
 		$.render();
-
 	} );
 </script>
 </body>

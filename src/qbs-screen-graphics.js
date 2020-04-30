@@ -812,6 +812,50 @@ function cls( screenData ) {
 	screenData.dirty = false;
 }
 
+qbs._.addCommand( "filterImg", filterImg, false, true, [ "filter" ] );
+function filterImg( screenData, args ) {
+	var filter, data, x, y, i, color;
+
+	filter = args[ 0 ];
+
+	if( ! qbs.util.isFunction( filter ) ) {
+		console.error("filter: Argument filter must be a callback function.");
+		return;
+	}
+
+	qbData.commands.getImageData( screenData );
+	data = screenData.imageData.data;
+
+	// Swap's all colors
+	for( y = 0; y < screenData.height; y++ ) {
+		for( x = 0; x < screenData.width; x++ ) {
+			i = ( ( screenData.width * y ) + x ) * 4;
+			color = filter( {
+				"r": data[ i ],
+				"g": data[ i + 1 ],
+				"b": data[ i + 2 ],
+				"a": data[ i + 3 ]
+			}, x, y );
+			if( color && 
+					Number.isInteger( color.r ) &&
+					Number.isInteger( color.g ) &&
+					Number.isInteger( color.b ) &&
+					Number.isInteger( color.a ) ) {
+				color.r = qbs.util.clamp( color.r, 0, 255 );
+				color.g = qbs.util.clamp( color.g, 0, 255 );
+				color.b = qbs.util.clamp( color.b, 0, 255 );
+				color.a = qbs.util.clamp( color.a, 0, 255 );
+				data[ i ] = color.r;
+				data[ i + 1 ] = color.g;
+				data[ i + 2 ] = color.b;
+				data[ i + 3 ] = color.a;
+			}
+		}
+	}
+
+	screenData.dirty = true;
+}
+
 // Render command
 qbs._.addCommand( "render", render, false, true, [] );
 function render( screenData ) {
