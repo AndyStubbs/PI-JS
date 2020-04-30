@@ -165,7 +165,9 @@ function run_test( i ) {
 function updateCounts() {
 	g_totalTestsParsedCount += 1;
 	if( g_totalTestsParsedCount === g_totalTestsCount ) {
-		writeFinalHtml();
+		setTimeout( function () {
+			writeFinalHtml();
+		}, 1000 );
 	}
 }
 
