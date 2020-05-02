@@ -34,99 +34,14 @@
 </head>
 <body>
 <script>
-$.ready( function () {
-	var cnt = 0;
-	var x = 150;
-	var y = 150;
-	var msg = "";
-	var color = [ 125, 125, 125, 255 ];
-
-	$.screen( "300x300" );
-	$.ongamepad( 0, "pressed", "any", pressButton );
-	$.ongamepad( 0, "touched", "any", touchButton );
-	$.ongamepad( 0, "pressed", "any", pressButton2 );
-	$.ongamepad( 0, "pressReleased", "any", releaseButton );
-	$.ongamepad( 0, "pressed", 0, ontimeButtonPress, true );
-	$.ongamepad( 0, "axis", 0, moveX, false );
-	$.ongamepad( 0, "axis", 1, moveY, false );
-	$.ongamepad( 0, "axis", 2, colorChange1, false );
-	$.ongamepad( 0, "axis", 3, colorChange2, false );
-	$.onkey( "s", function () {
-		$.stopGamepads();
-		$.cls();
-		$.color( 15 );
-		$.print( "Gamepad access has been removed." );
+	$.ready( function () {
+		$.screen( "260x100" );
+		for( var i = 0; i < 128; i++ ) {
+			$.color( i + 1 );
+			$.print( " " + i + " - abcdefghijklmnopqrstuvwxyz" );
+		}
 		$.render();
-	}, true );
-
-	draw();
-
-	function draw() {
-		//$.cls();
-		$.color( [ Math.floor( color[ 0 ] ), Math.floor( color[ 1 ] ), Math.floor( color[ 2 ] ), Math.floor( color[ 3 ] )] );
-		$.pset( Math.floor( x ), Math.floor( y ) );
-		$.circle( Math.floor( x ), Math.floor( y ), 10 );
-		$.render();
-	}
-
-	function colorChange1( axis ) {
-		color[ 0 ] = qbs.util.clamp( color[ 0 ] + axis, 0, 255 );
-		draw();
-	}
-
-	function colorChange2( axis ) {
-		color[ 1 ] = qbs.util.clamp( color[ 1 ] + axis, 0, 255 );
-		draw();
-	}
-
-	function moveX( axis ) {
-		x = qbs.util.clamp( x + axis, 0, 299 );
-		draw();
-	}
-
-	function moveY( axis ) {
-		y = qbs.util.clamp( y + axis, 0, 299 );
-		draw();
-	}
-
-	function ontimeButtonPress( button ) {
-		$.print( "Once - You pressed button " + button.index + " value: " + button.value.toFixed( 6 ) );
-		$.render();
-	}
-
-	function pressButton( button ) {
-		$.print( "1 - You pressed button " + button.index + " value: " + button.value.toFixed( 6 ) );
-		$.offgamepad( 0, "pressed", "any", pressButton );
-		$.render();
-	}
-
-	function releaseButton( button ) {
-		$.print( "1 - You released button " + button.index + " value: " + button.value.toFixed( 6 ) );
-		$.offgamepad( 0, "pressReleased", "any", releaseButton );
-		$.render();
-		$.ongamepad( 0, "pressed", "any", pressButton3 );
-	}
-
-	function touchButton( button ) {
-		$.print( "You touched button " + button.index + " value: " + button.value.toFixed( 6 ) );
-		$.offgamepad( 0, "touched", "any", touchButton );
-		$.render();
-	}
-
-	function pressButton2( button ) {
-		$.print( "2 - You pressed button " + button.index + " value: " + button.value.toFixed( 6 ) );
-		$.offgamepad( 0, "pressed", "any", pressButton2 );
-		$.render();
-	}
-
-	function pressButton3( button ) {
-		$.cls();
-		draw();
-		$.print( "3 - You pressed button " + button.index + " value: " + button.value.toFixed( 6 ) );
-		$.render();
-	}
-
-} );
+	} );
 </script>
 </body>
 </html>

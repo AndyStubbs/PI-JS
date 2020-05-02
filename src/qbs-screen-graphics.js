@@ -104,9 +104,8 @@ function aaCircle( screenData, args ) {
 		console.error("circle: parameters cx, cy, r must be numbers.");
 		return;
 	}
-	if( screenData.dirty ) {
-		screenData.screenObj.render();
-	}
+
+	screenData.screenObj.render();
 	angle1 = qbs.util.degreesToRadian( 0 );
 	angle2 = qbs.util.degreesToRadian( 360 );
 	screenData.context.beginPath();
@@ -241,9 +240,8 @@ function aaArc( screenData, args ) {
 	if( radius < 0 ) {
 		radius = 0;
 	}
-	if( screenData.dirty ) {
-		screenData.screenObj.render();
-	}
+
+	screenData.screenObj.render();
 	angle1 = qbs.util.degreesToRadian( angle1 );
 	angle2 = qbs.util.degreesToRadian( angle2 );
 	screenData.context.beginPath();
@@ -605,9 +603,8 @@ function aaLine( screenData, args ) {
 		console.error("line: parameters x1, y1, x2, y2 must be numbers.");
 		return;
 	}
-	if( screenData.dirty ) {
-		screenData.screenObj.render();
-	}
+
+	screenData.screenObj.render();
 	screenData.context.strokeStyle = screenData.pal[ screenData.fColor ].s;
 	screenData.context.beginPath();
 	screenData.context.moveTo( x1, y1 );
@@ -647,9 +644,8 @@ function aaRect( screenData, args ) {
 		console.error("rect: parameters x, y, width, height must be numbers.");
 		return;
 	}
-	if( screenData.dirty ) {
-		screenData.screenObj.render();
-	}
+
+	screenData.screenObj.render();
 	screenData.context.beginPath();
 	screenData.context.strokeStyle = screenData.pal[ screenData.fColor ].s;
 	screenData.context.rect( x, y, width, height );

@@ -71,23 +71,16 @@ function startPrint( screenData, msg, inLine ) {
 	//Adjust if the text is too tall for the screen
 	if( printCursor.y + printCursor.charHeight > screenData.height ) {
 
-		//Draw the canvas
-		screenData.screenObj.render();
+		if( printCursor.mode === "canvas" ) {
+			screenData.screenObj.render();
+		}
 
-		//Draw the image on the buffer
-		screenData.bufferContext.clearRect( 0, 0, screenData.width, screenData.height );
-		screenData.bufferContext.drawImage( screenData.canvas, 0, 0 );
-
-		//Clear the current context and draw the buffer image
-		screenData.context.clearRect( 0, 0, screenData.width, screenData.height );
-		screenData.context.drawImage( screenData.bufferCanvas, 0, -printCursor.charHeight );
-
-		// Get the image data
-		screenData.dirty = false;
-		qbData.commands.getImageData( screenData );
+		// Shift image up by the vertical size of the font
+		shiftImageUp( screenData, printCursor.charHeight );
 
 		//Backup the print_cursor
 		printCursor.y -= printCursor.charHeight;
+
 	}
 
 	printCursor.printFunction( screenData, msg, printCursor.x, printCursor.y );
@@ -103,6 +96,52 @@ function startPrint( screenData, msg, inLine ) {
 			printCursor.y += printCursor.charHeight;
 		}
 	}
+}
+
+function shiftImageUp( screenData, yOffset ) {
+	var x, y, iSrc, iDest;
+
+	if( yOffset <= 0 ) {
+		return;
+	}
+
+	// Get the image data
+	qbData.commands.getImageData( screenData );
+
+	y = yOffset;
+
+	// Loop through all the pixels after the yOffset
+	for( ; y < screenData.height; y++ ) {
+		for( x = 0; x < screenData.width; x++ ) {
+
+			// Get the index of the source pixel
+			iDest = ( ( screenData.width * y ) + x ) * 4;
+
+			// Get the index of the destination pixel
+			iSrc = ( ( screenData.width * ( y - yOffset ) ) + x ) * 4;
+
+			// Move the pixel up
+			screenData.imageData.data[ iSrc ] = screenData.imageData.data[ iDest ];
+			screenData.imageData.data[ iSrc + 1 ] = screenData.imageData.data[ iDest + 1 ];
+			screenData.imageData.data[ iSrc + 2 ] = screenData.imageData.data[ iDest + 2 ];
+			screenData.imageData.data[ iSrc + 3 ] = screenData.imageData.data[ iDest + 3 ];
+
+		}
+	}
+
+	// Clear the bottom pixels
+	for( y = screenData.height - yOffset; y < screenData.height; y++ ) {
+		for( x = 0; x < screenData.width; x++ ) {
+			iSrc = ( ( screenData.width * y ) + x ) * 4;
+			screenData.imageData.data[ iSrc ] = 0;
+			screenData.imageData.data[ iSrc + 1 ] = 0;
+			screenData.imageData.data[ iSrc + 2 ] = 0;
+			screenData.imageData.data[ iSrc + 3 ] = 0;
+		}
+	}
+
+	screenData.dirty = true;
+
 }
 
 function qbsCalcWidth( screenData, msg ) {
@@ -148,6 +187,7 @@ function qbsPrint( screenData, msg, x, y ) {
 }
 
 function contextPrint( screenData, msg, x, y ) {
+	screenData.screenObj.render();
 	screenData.context.fillText( msg, x, y );
 }
 
@@ -316,6 +356,7 @@ function setFont( screenData, args ) {
 		// Set the print functions
 		screenData.printCursor.printFunction = qbsPrint;
 		screenData.printCursor.calcWidth = qbsCalcWidth;
+		screenData.printCursor.mode = "pixel";
 
 	} else if( typeof fontId === "string" ) {
 
@@ -338,6 +379,7 @@ function setFont( screenData, args ) {
 		// Set the print functions
 		screenData.printCursor.printFunction = contextPrint;
 		screenData.printCursor.calcWidth = contextCalcWidth;
+		screenData.printCursor.mode = "canvas";
 	}
 }
 

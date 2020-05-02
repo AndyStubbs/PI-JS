@@ -90,9 +90,9 @@ function drawItem( screenData, img, x, y, angle, anchorX, anchorY, alpha ) {
 
 	oldAlpha = context.globalAlpha;
 	context.globalAlpha = ( alpha / 255 );
-	if( screenData.dirty ) {
-		screenData.screenObj.render();
-	}
+
+	screenData.screenObj.render();
+
 	context.translate( x, y );
 	context.rotate( angle );
 	context.drawImage( img, -anchorX, -anchorY );

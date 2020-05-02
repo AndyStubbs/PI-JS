@@ -276,7 +276,8 @@ function createScreenData( canvas, bufferCanvas, container, aspectData, isOffscr
 		"prompt": qbData.defaultPrompt,
 		"breakWord": true,
 		"printFunction": qbData.defaultFont.printFunction,
-		"calcWidth": qbData.defaultFont.calcWidth
+		"calcWidth": qbData.defaultFont.calcWidth,
+		"mode": "pixel"
 	};
 	screenData.clientRect = canvas.getBoundingClientRect();
 	screenData.mouse = {

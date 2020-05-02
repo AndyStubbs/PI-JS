@@ -129,9 +129,9 @@ function aaBezier( screenData, args ) {
 		console.error("bezier: parameters x, y, x2, y2, x3, y3, x4, and y4 must be numbers.");
 		return;
 	}
-	if( screenData.dirty ) {
-		screenData.screenObj.render();
-	}
+
+	screenData.screenObj.render();
+
 	screenData.context.strokeStyle = screenData.pal[ screenData.fColor ].s;
 	screenData.context.beginPath();
 	screenData.context.moveTo( x, y );
