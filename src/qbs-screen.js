@@ -43,6 +43,13 @@ function screen( args ) {
 		}
 		screenData = createOffscreenScreen( aspectData );
 	} else {
+		if( typeof container === "string" ) {
+			container = document.getElementById( container );
+		}
+		if( container && ! qbs.util.isDomElement( container ) ) {
+			console.error( "screen: Invalid argument container. Container must be a DOM element or a string id of a DOM element." );
+			return;
+		}
 		if( noStyles ) {
 			screenData = createNoStyleScreen( aspectData, container );
 		} else {
