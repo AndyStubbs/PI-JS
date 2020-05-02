@@ -193,17 +193,33 @@ function triggerEventListeners( mode, data, listenerArr ) {
 }
 
 qbs._.addCommand( "onevent", onevent, true, true, [] );
-function onevent( mode, fn, once, hitBox, mode1, mode2, mode3, name, offevent, listenerArr ) {
+function onevent( mode, fn, once, hitBox, modes, name, listenerArr, extraId, extraData ) {
 
 	// Prevent event from being triggered in case event is called in an event
 	setTimeout( function () {
-		var tempFn;
+		var tempFn, i, modeFound, newMode;
 
-		// Validate parameters
-		if( mode !== mode1 && mode !== mode2 && mode !== mode3 ) {
-			console.error( name + ": mode needs to be either up, down, or move.");
+		// Make sure mode is valid
+		modeFound = false;
+		for( i = 0; i < modes.length; i++ ) {
+			if( mode === modes[ i ] ) {
+				modeFound = true;
+				break;
+			}
+		}
+		if( ! modeFound ) {
+			console.error( name + ": mode needs to be on of the following " + modes.join( ", " ) + ".");
 			return;
 		}
+
+		// Add extraId to mode
+		if( typeof extraId === "string" ) {
+			newMode = mode + extraId;
+		} else {
+			newMode = mode;
+		}
+
+		// Make sure function is valid
 		if( ! qbs.util.isFunction( fn ) ) {
 			console.error( name + ": fn is not a valid function." );
 			return;
@@ -213,34 +229,47 @@ function onevent( mode, fn, once, hitBox, mode1, mode2, mode3, name, offevent, l
 		if( once ) {
 			tempFn = fn;
 			fn = function ( data ) {
-				offevent( mode, fn );
+				offevent( mode, fn, modes, name, listenerArr, extraId );
 				tempFn( data );
 			};
 		}
 
-		//if( ( hitBox && isNaN( hitBox.screen ) ) || ( hitBox && ! qbData.screens[ hitBox.screen ] ) ) {
-		//	hitBox.screen = qbData.screenData.id;
-		//}
-		if( ! listenerArr[ mode ] ) {
-			listenerArr[ mode ] = [];
+		if( ! listenerArr[ newMode ] ) {
+			listenerArr[ newMode ] = [];
 		}
-		listenerArr[ mode ].push( {
+		listenerArr[ newMode ].push( {
 			"fn": fn,
-			"hitBox": hitBox
+			"hitBox": hitBox,
+			"extraData": extraData
 		} );
 
-	}, 1);
+	}, 1 );
 }
 
 qbs._.addCommand( "offevent", offevent, true, true, [] );
-function offevent( mode, fn, mode1, mode2, mode3, name, listenerArr ) {
-	var isClear, i;
+function offevent( mode, fn, modes, name, listenerArr, extraId ) {
 
-	// Validate parameters
-	if( mode !== mode1 && mode !== mode2 && mode !== mode3 ) {
-		console.error( name + ": mode needs to be either up, down, or move.");
+	var isClear, i, modeFound;
+
+	// Make sure mode is valid
+	modeFound = false;
+	for( i = 0; i < modes.length; i++ ) {
+		if( mode === modes[ i ] ) {
+			modeFound = true;
+			break;
+		}
+	}
+	if( ! modeFound ) {
+		console.error( name + ": mode needs to be on of the following " + modes.join( ", " ) + ".");
 		return;
 	}
+
+	// Add extraId to mode
+	if( typeof extraId === "string" ) {
+		mode += extraId;
+	}
+
+	// Validate fn
 	if( ! qbs.util.isFunction( fn ) ) {
 		console.error( name + ": fn is not a valid function." );
 		return;
@@ -253,15 +282,19 @@ function offevent( mode, fn, mode1, mode2, mode3, name, listenerArr ) {
 
 	if( listenerArr[ mode ] ) {
 		if( isClear ) {
-			listenerArr[ mode ] = [];
+			delete listenerArr[ mode ];
 		} else {
 			for( i = listenerArr[ mode ].length - 1; i >= 0; i-- ) {
-				if( listenerArr[ mode ][ i ] === fn ) {
+				if( listenerArr[ mode ][ i ].fn === fn ) {
 					listenerArr[ mode ].splice( i, 1 );
+				}
+				if( listenerArr[ mode ].length === 0 ) {
+					delete listenerArr[ mode ];
 				}
 			}
 		}
 	}
+
 }
 
 // End of File Encapsulation

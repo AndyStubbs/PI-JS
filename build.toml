@@ -10,6 +10,7 @@ files = [
 	"src/qbs.js",
 	"src/qbs-util.js",
 	"src/qbs-keyboard.js",
+	"src/qbs-gamepad.js",
 	"src/qbs-screen.js",
 	"src/qbs-screen-mouse.js",
 	"src/qbs-screen-touch.js",

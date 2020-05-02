@@ -294,6 +294,7 @@ function createScreenData( canvas, bufferCanvas, container, aspectData, isOffscr
 	// Disable anti aliasing
 	screenData.context.imageSmoothingEnabled = false;
 
+	// Event listeners
 	screenData.onMouseEventListeners = {};
 	screenData.onTouchEventListeners = {};
 

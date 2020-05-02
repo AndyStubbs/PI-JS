@@ -350,12 +350,20 @@ function onkey( args ) {
 			console.error( "onkey: fn is not a valid function." );
 			return;
 		}
+		if( typeof key === "string" && key.length === 1 ) {
+			key = key.toUpperCase();
+			if( key >= "0" && key <= "9" ) {
+				key = "Digit" + key;
+			} else if( key >= "A" && key <= "Z" ) {
+				key = "Key" + key;
+			}
+		}
 
 		// If it's a one time function
 		if( once ) {
 			tempFn = fn;
 			fn = function () {
-				offkey( key, fn );
+				offkey( [ key, fn ] );
 				tempFn();
 			};
 		}

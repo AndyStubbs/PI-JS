@@ -108,17 +108,18 @@ function ontouch( screenData, args ) {
 	once = args[ 2 ];
 	hitBox = args[ 3 ];
 
-	qbData.commands.onevent( mode, fn, once, hitBox, "start", "end", "move", "ontouch", offtouch, screenData.onTouchEventListeners );
+	qbData.commands.onevent( mode, fn, once, hitBox, [ "start", "end", "move" ], "ontouch", screenData.onTouchEventListeners );
 }
 
 // Removes an event trigger for a touch event
+qbs._.addCommand( "offtouch", offtouch, false, true, [ "mode", "fn" ] );
 function offtouch( screenData, args ) {
 	var mode, fn;
 
 	mode = args[ 0 ];
 	fn = args[ 1 ];
 
-	qbData.commands.offevent( mode, fn, "start", "end", "move", "offtouch", screenData.onTouchEventListeners );
+	qbData.commands.offevent( mode, fn, [ "start", "end", "move" ], "offtouch", screenData.onTouchEventListeners );
 }
 
 qbs._.addCommand( "setPinchZoom", setPinchZoom, false, true, [ "isEnabled" ] );

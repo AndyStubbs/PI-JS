@@ -119,7 +119,7 @@ function onmouse( screenData, args ) {
 	once = args[ 2 ];
 	hitBox = args[ 3 ];
 
-	qbData.commands.onevent( mode, fn, once, hitBox, "down", "up", "move", "onmouse", offmouse, screenData.onMouseEventListeners );
+	qbData.commands.onevent( mode, fn, once, hitBox, [ "down", "up", "move" ], "onmouse", screenData.onMouseEventListeners );
 }
 
 // Removes an event trigger for a mouse event
@@ -130,7 +130,7 @@ function offmouse( screenData, args ) {
 	eventName = args[ 0 ];
 	fn = args[ 1 ];
 
-	qbData.commands.offevent( eventName, fn, "down", "up", "move", "offmouse", screenData.onMouseEventListeners );
+	qbData.commands.offevent( eventName, fn, [ "down", "up", "move" ], "offmouse", screenData.onMouseEventListeners );
 }
 
 qbs._.addCommand( "enableContextMenu", enableContextMenu, false, true, [ "isEnabled" ] );
