@@ -88,7 +88,7 @@ function paint( screenData, args ) {
 
 	// Setup pixels for garbage collection
 	pixels = null;
-	screenData.dirty = true;
+	qbData.commands.setImageDirty( screenData );
 }
 
 function setPixelNoise( screenData, x, y, fillColor ) {

@@ -18,7 +18,7 @@ qbs._.addCommands( "bezier", pxBezier, aaBezier, [ "xStart", "yStart",
 	"xEnd", "yEnd" ] );
 function pxBezier( screenData, args ) {
 	var xStart, yStart, xControlPoint1, yControlPoint1, xControlPoint2,
-		yControlPoint2, xEnd, yEnd, c, points, t, dt, point, lastPoint,
+		yControlPoint2, xEnd, yEnd, color, points, t, dt, point, lastPoint,
 		distance, minDistance;
 
 	xStart = parseInt( args[ 0 ] );
@@ -42,7 +42,7 @@ function pxBezier( screenData, args ) {
 	}
 
 	// Initialize the color for the line
-	c = screenData.pal[ screenData.fColor ];
+	color = screenData.fColor;
 
 	qbData.commands.getImageData( screenData );
 	minDistance = screenData.pen.size;
@@ -56,7 +56,7 @@ function pxBezier( screenData, args ) {
 	lastPoint = calcStep( 0, points );
 
 	// Set the first pixel
-	screenData.pen.draw( screenData, lastPoint.x, lastPoint.y, c );
+	screenData.pen.draw( screenData, lastPoint.x, lastPoint.y, color );
 
 	t = 0.1;
 	dt = 0.1;
@@ -69,7 +69,7 @@ function pxBezier( screenData, args ) {
 			t -= dt;
 			dt = dt * 0.75;
 		} else {
-			screenData.pen.draw( screenData, point.x, point.y, c );
+			screenData.pen.draw( screenData, point.x, point.y, color );
 			lastPoint = point;
 		}
 		t += dt;
@@ -77,9 +77,9 @@ function pxBezier( screenData, args ) {
 
 	// Draw the last step
 	point = calcStep( 1, points );
-	screenData.pen.draw( screenData, point.x, point.y, c );
+	screenData.pen.draw( screenData, point.x, point.y, color );
 
-	screenData.dirty = true;
+	qbData.commands.setImageDirty( screenData );
 }
 
 function calcDistance( p1, p2 ) {
@@ -132,7 +132,7 @@ function aaBezier( screenData, args ) {
 
 	screenData.screenObj.render();
 
-	screenData.context.strokeStyle = screenData.pal[ screenData.fColor ].s;
+	screenData.context.strokeStyle = screenData.fColor.s;
 	screenData.context.beginPath();
 	screenData.context.moveTo( x, y );
 	screenData.context.bezierCurveTo( x2, y2, x3, y3, x4, y4 );

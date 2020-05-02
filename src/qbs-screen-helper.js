@@ -17,6 +17,21 @@ function getImageData( screenData ) {
 	}
 }
 
+qbs._.addCommand( "setImageDirty", setImageDirty, true, false, [] );
+function setImageDirty( screenData ) {
+	if( screenData.dirty === false ) {
+		screenData.dirty = true;
+		if( screenData.isAutoRender && ! screenData.autoRenderMicrotaskScheduled ) {
+			screenData.autoRenderMicrotaskScheduled = true;
+			window.queueMicrotask( function () {
+				console.log( "Microtask to the rescue!" );
+				screenData.screenObj.render();
+				screenData.autoRenderMicrotaskScheduled = false;
+			} );
+		}
+	}
+}
+
 qbs._.addCommand( "setPixel", setPixel, true, false, [] );
 function setPixel( screenData, x, y, c ) {
 	var data, i;
@@ -58,7 +73,7 @@ function setPixelSafe( screenData, x, y, c ) {
 	data[ i + 2 ] = c.b;
 	data[ i + 3 ] = c.a;
 
-	screenData.dirty = true;
+	qbData.commands.setImageDirty( screenData );
 }
 
 qbs._.addCommand( "getPixelColor", getPixelColor, true, false, [] );
@@ -103,7 +118,7 @@ function drawSquarePen( screenData, x, y, c ) {
 		}
 	}
 
-	screenData.dirty = true;
+	qbData.commands.setImageDirty( screenData );
 }
 
 qbs._.addCommand( "drawCirclePen", drawCirclePen, true, false, [] );
@@ -118,7 +133,7 @@ function drawCirclePen( screenData, x, y, c ) {
 		qbData.commands.setPixelSafe( screenData, x - 1, y, c );
 		qbData.commands.setPixelSafe( screenData, x, y + 1, c );
 		qbData.commands.setPixelSafe( screenData, x, y - 1, c );
-		screenData.dirty = true;
+		qbData.commands.setImageDirty( screenData );
 		return;
 	}
 
@@ -149,7 +164,7 @@ function drawCirclePen( screenData, x, y, c ) {
 		}
 	}
 
-	screenData.dirty = true;
+	qbData.commands.setImageDirty( screenData );
 }
 
 qbs._.addCommand( "getPixel", getPixel, true, false, [] );

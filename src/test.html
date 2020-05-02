@@ -30,25 +30,24 @@
 		html, body {
 			background-color: gray;
 		}
-		#myDiv {
+		div {
 			background-color: blue;
-			width: 300px;
-			height: 200px;
+			width: 600px;
+			height: 640px;
 			display:inline-block;
 		}
 	</style>
 </head>
 <body>
-<div id="myDiv"></div>
 <script>
-	$.ready( function () {
-		$.screen( "110x100", "myDiv" );
-		for( var i = 0; i < 16; i++ ) {
-			$.color( i + 30 );
-			$.print( " " + qbs.util.padR( i, 2 ) + " - abcdefghijkl" );
-		}
+	$.ready(function () {
+		$.screen( "200x200" );
+		$.color(2);
+		$.print("2 is Green");
+		$.setPalColor(2, "#3612ac");
+		$.print("2 - is now this purple.");
 		$.render();
-	} );
+	});
 </script>
 </body>
 </html>

@@ -92,12 +92,13 @@ function canvas( screenData ) {
 	return screenData.canvas;
 }
 
-qbs._.addCommand( "findColor", findColor, false, true, [ "color", "tolerance" ] );
+qbs._.addCommand( "findColor", findColor, false, true, [ "color", "tolerance", "isAddToPalette" ] );
 function findColor( screenData, args ) {
-	var color, tolerance, i, pal, dr, dg, db, da, difference;
+	var color, tolerance, isAddToPalette, i, pal, dr, dg, db, da, difference;
 
 	color = args[ 0 ];
 	tolerance = args[ 1 ];
+	isAddToPalette = !!( args[ 2 ] );
 
 	if(tolerance === undefined) {
 		tolerance = 0;
@@ -125,9 +126,12 @@ function findColor( screenData, args ) {
 			}
 		}
 	}
-	pal.push( color );
-	screenData.cache[ "findColor" ][ color.s ] = pal.length - 1;
-	return pal.length - 1;
+	if( isAddToPalette ) {
+		pal.push( color );
+		screenData.cache[ "findColor" ][ color.s ] = pal.length - 1;
+		return pal.length - 1;
+	}
+	return false;
 }
 
 qbs._.addCommand( "setPixelMode", setPixelMode, false, true, [ "isEnabled" ] );
@@ -295,6 +299,18 @@ function offevent( mode, fn, modes, name, listenerArr, extraId ) {
 		}
 	}
 
+}
+
+qbs._.addCommand( "setAutoRender", setAutoRender, false, true, [ "isAutoRender" ] );
+function setAutoRender( screenData, args ) {
+	var isAutoRender;
+
+	isAutoRender = args[ 0 ];
+	screenData.isAutoRender = !!( isAutoRender );
+
+	if( screenData.isAutoRender ) {
+		screenData.screenObj.render();
+	}
 }
 
 // End of File Encapsulation

@@ -27,7 +27,7 @@ function pxCircle( screenData, args ) {
 	}
 
 	// Initialize the color for the circle
-	color = screenData.pal[ screenData.fColor ];
+	color = screenData.fColor;
 
 	radius -= 1;
 	x2 = radius;
@@ -47,11 +47,11 @@ function pxCircle( screenData, args ) {
 		screenData.pen.draw( screenData, x - 1, y, color );
 		screenData.pen.draw( screenData, x, y + 1, color );
 		screenData.pen.draw( screenData, x, y - 1, color );
-		screenData.dirty = true;
+		qbData.commands.setImageDirty( screenData );
 		return;
 	} else if( radius === 0 ) {
 		screenData.pen.draw( screenData, x, y, color );
-		screenData.dirty = true;
+		qbData.commands.setImageDirty( screenData );
 		return;
 	}
 
@@ -90,7 +90,7 @@ function pxCircle( screenData, args ) {
 		}
 	}
 
-	screenData.dirty = true;
+	qbData.commands.setImageDirty( screenData );
 }
 
 function aaCircle( screenData, args ) {
@@ -109,7 +109,7 @@ function aaCircle( screenData, args ) {
 	angle1 = qbs.util.degreesToRadian( 0 );
 	angle2 = qbs.util.degreesToRadian( 360 );
 	screenData.context.beginPath();
-	screenData.context.strokeStyle = screenData.pal[ screenData.fColor ].s;
+	screenData.context.strokeStyle = screenData.fColor.s;
 	screenData.context.moveTo( x + Math.cos( angle1 ) * r, y + Math.sin( angle1 ) * r );
 	screenData.context.arc( x, y, r, angle1, angle2 );
 	screenData.context.stroke();
@@ -156,7 +156,7 @@ function pxArc( screenData, args ) {
 	}
 
 	// Initialize the color for the circle
-	color = screenData.pal[ screenData.fColor ];
+	color = screenData.fColor;
 
 	radius -= 1;
 	if( radius < 0 ) {
@@ -179,11 +179,11 @@ function pxArc( screenData, args ) {
 		set( x - 1, y, color );
 		set( x, y + 1, color );
 		set( x, y - 1, color );
-		screenData.dirty = true;
+		qbData.commands.setImageDirty( screenData );
 		return;
 	} else if( radius === 0 ) {
 		screenData.pen.draw( screenData, x, y, color );
-		screenData.dirty = true;
+		qbData.commands.setImageDirty( screenData );
 		return;
 	}
 
@@ -216,7 +216,7 @@ function pxArc( screenData, args ) {
 		}
 	}
 
-	screenData.dirty = true;
+	qbData.commands.setImageDirty( screenData );
 
 }
 
@@ -245,7 +245,7 @@ function aaArc( screenData, args ) {
 	angle1 = qbs.util.degreesToRadian( angle1 );
 	angle2 = qbs.util.degreesToRadian( angle2 );
 	screenData.context.beginPath();
-	screenData.context.strokeStyle = screenData.pal[ screenData.fColor ].s;
+	screenData.context.strokeStyle = screenData.fColor.s;
 	screenData.context.moveTo( x + Math.cos(angle1) * radius, y + Math.sin(angle1) * radius );
 	screenData.context.arc( x, y, radius, angle1, angle2 );
 	screenData.context.stroke();
@@ -269,11 +269,11 @@ function pxEllipse( screenData, args ) {
 	qbData.commands.getImageData( screenData );
 
 	// Initialize the color for the circle
-	color = screenData.pal[ screenData.fColor ];
+	color = screenData.fColor;
 
 	if( radiusX === 0 && radiusY === 0 ) {
 		screenData.pen.draw( screenData, x, y, color );
-		screenData.dirty = true;
+		qbData.commands.setImageDirty( screenData );
 		return;
 	}
 
@@ -340,7 +340,7 @@ function pxEllipse( screenData, args ) {
 		}
 	}
 
-	screenData.dirty = true;
+	qbData.commands.setImageDirty( screenData );
 }
 
 function aaEllipse( screenData, args ) {
@@ -360,7 +360,7 @@ function aaEllipse( screenData, args ) {
 	}
 
 	screenData.context.beginPath();
-	screenData.context.strokeStyle = screenData.pal[ screenData.fColor ].s;
+	screenData.context.strokeStyle = screenData.fColor.s;
 	screenData.context.moveTo( cx + rx, cy );
 	screenData.context.ellipse( cx, cy, rx, ry, 0, qbs.util.math.deg360, false );
 	screenData.context.stroke();
@@ -433,7 +433,7 @@ function put( screenData, args ) {
 		}
 	}
 
-	screenData.dirty = true;
+	qbData.commands.setImageDirty( screenData );
 }
 
 // Get command
@@ -506,28 +506,28 @@ function pset( screenData, args ) {
 		return;
 	}
 
-	// Make sure x and y are on the screen
-	if( ! qbs.util.inRange2( x, y, 0, 0, screenData.width, screenData.height ) ) {
-		console.error( "pset: Argument's x and y are not on the screen." );
-		return;
-	}
-
 	// Set the cursor
 	screenData.x = x;
 	screenData.y = y;
 
+	// Make sure x and y are on the screen
+	if( ! qbs.util.inRange2( x, y, 0, 0, screenData.width, screenData.height ) ) {
+		//console.error( "pset: Argument's x and y are not on the screen." );
+		return;
+	}
+
 	// Get the fore color
-	color = screenData.pal[ screenData.fColor ];
+	color = screenData.fColor;
 
 	qbData.commands.getImageData( screenData );
 	screenData.pen.draw( screenData, x, y, color );
-	screenData.dirty = true;
+	qbData.commands.setImageDirty( screenData );
 }
 
 // Line command
 qbs._.addCommands( "line", pxLine, aaLine, [ "x1", "y1", "x2", "y2" ] );
 function pxLine( screenData, args ) {
-	var x1, y1, x2, y2, c, dx, dy, sx, sy, err, e2;
+	var x1, y1, x2, y2, color, dx, dy, sx, sy, err, e2;
 
 	x1 = args[ 0 ];
 	y1 = args[ 1 ];
@@ -542,7 +542,7 @@ function pxLine( screenData, args ) {
 	}
 
 	// Initialize the color for the line
-	c = screenData.pal[ screenData.fColor ];
+	color = screenData.fColor;
 
 	dx = Math.abs( x2 - x1 );
 	dy = Math.abs( y2 - y1 );
@@ -568,7 +568,7 @@ function pxLine( screenData, args ) {
 	qbData.commands.getImageData( screenData );
 
 	// Set the first pixel
-	screenData.pen.draw( screenData, x1, y1, c );
+	screenData.pen.draw( screenData, x1, y1, color );
 
 	// Loop until the end of the line
 	while ( ! ( ( x1 === x2 ) && ( y1 === y2 ) ) ) {
@@ -585,10 +585,10 @@ function pxLine( screenData, args ) {
 		}
 
 		// Set the next pixel
-		screenData.pen.draw( screenData, x1, y1, c );
+		screenData.pen.draw( screenData, x1, y1, color );
 	}
 
-	screenData.dirty = true;
+	qbData.commands.setImageDirty( screenData );
 }
 
 function aaLine( screenData, args ) {
@@ -605,7 +605,7 @@ function aaLine( screenData, args ) {
 	}
 
 	screenData.screenObj.render();
-	screenData.context.strokeStyle = screenData.pal[ screenData.fColor ].s;
+	screenData.context.strokeStyle = screenData.fColor.s;
 	screenData.context.beginPath();
 	screenData.context.moveTo( x1, y1 );
 	screenData.context.lineTo( x2, y2 );
@@ -647,7 +647,7 @@ function aaRect( screenData, args ) {
 
 	screenData.screenObj.render();
 	screenData.context.beginPath();
-	screenData.context.strokeStyle = screenData.pal[ screenData.fColor ].s;
+	screenData.context.strokeStyle = screenData.fColor.s;
 	screenData.context.rect( x, y, width, height );
 	screenData.context.stroke();
 }
@@ -660,16 +660,22 @@ function setPalColor( screenData, args ) {
 	index = args[ 0 ];
 	color = args[ 1 ];
 
-	if( ! Number.isInteger( index ) ) {
-		console.error( "setPalColor: parameter i must be an integer value." );
+	if( ! Number.isInteger( index ) || index < 0 || index > screenData.pal.length ) {
+		console.error( "setPalColor: index is not a valid integer value." );
 		return;
 	}
 	colorValue = qbs.util.convertToColor( color );
 	if( colorValue === null ) {
-		console.error( "setPalColor: parameter c is not a valid color format." );
+		console.error( "setPalColor: parameter color is not a valid color format." );
 		return;
 	}
+
+	// Check if we are changine the current selected fore color
+	if( screenData.fColor.s === screenData.pal[ index ].s ) {
+		screenData.fColor = colorValue;
+	}
 	screenData.pal[ index ] = colorValue;
+	
 }
 
 // Get pal command
@@ -691,28 +697,34 @@ function getPal( screenData, args ) {
 }
 
 // Color command
-qbs._.addCommand( "color", color, false, true, [ "color" ] );
+qbs._.addCommand( "color", color, false, true, [ "color", "isAddToPalette" ] );
 function color( screenData, args ) {
-	var color, colorValue;
+	var colorInput, colorValue, isAddToPalette;
 
-	color = args[ 0 ];
+	colorInput = args[ 0 ];
+	isAddToPalette = !!( args[ 1 ] );
 
-	if( Number.isInteger( color ) ) {
-		if( color > screenData.pal.length ) {
+	if( Number.isInteger( colorInput ) ) {
+		if( colorInput > screenData.pal.length ) {
 			console.error( "color: parameter c is not a color in the palette." );
 			return;
 		}
-		screenData.fColor = color;
+		colorValue = screenData.pal[ colorInput ]
+		screenData.fColor = colorValue;
 	} else {
-		colorValue = qbs.util.convertToColor( color );
+		colorValue = qbs.util.convertToColor( colorInput );
 		if( colorValue === null ) {
 			console.error( "color: parameter c is not a valid color format." );
 			return;
 		}
-		screenData.fColor = screenData.screenObj.findColor( colorValue );
+		if( isAddToPalette ) {
+			screenData.fColor = screenData.screenObj.findColor( colorValue, isAddToPalette );
+		} else {
+			screenData.fColor = colorValue;
+		}
 	}
-	screenData.context.fillStyle = screenData.pal[ screenData.fColor ].s;
-	screenData.context.strokeStyle = screenData.pal[ screenData.fColor ].s;
+	screenData.context.fillStyle = colorValue.s;
+	screenData.context.strokeStyle = colorValue.s;
 }
 
 qbs._.addCommand( "swapColor", swapColor, false, true, [ "oldColor", "newColor" ] );
@@ -761,7 +773,7 @@ function swapColor( screenData, args ) {
 		}
 	}
 
-	screenData.dirty = true;
+	qbData.commands.setImageDirty( screenData );
 
 	// Update the pal data
 	screenData.pal[ index ] = newColor;
@@ -849,7 +861,7 @@ function filterImg( screenData, args ) {
 		}
 	}
 
-	screenData.dirty = true;
+	qbData.commands.setImageDirty( screenData );
 }
 
 // Render command

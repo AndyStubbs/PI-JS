@@ -140,7 +140,7 @@ function shiftImageUp( screenData, yOffset ) {
 		}
 	}
 
-	screenData.dirty = true;
+	qbData.commands.setImageDirty( screenData );
 
 }
 
@@ -175,7 +175,7 @@ function qbsPrint( screenData, msg, x, y ) {
 
 	// Setup a temporary pallette with the fore color and back color
 	defaultPal = screenData.pal;
-	screenData.pal = [ defaultPal[ 0 ], defaultPal[ screenData.fColor ] ];
+	screenData.pal = [ defaultPal[ 0 ], screenData.fColor ];
 
 	//Loop through each character in the message and put it on the screen
 	for( i = 0; i < msg.length; i++ ) {

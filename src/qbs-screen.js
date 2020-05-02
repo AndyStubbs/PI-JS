@@ -265,13 +265,15 @@ function createScreenData( canvas, bufferCanvas, container, aspectData, isOffscr
 	screenData.bufferCanvas = bufferCanvas;
 	screenData.bufferContext = screenData.bufferCanvas.getContext( "2d" );
 	screenData.dirty = false;
-	screenData.fColor = 7;
+	screenData.isAutoRender = false;
+	screenData.autoRenderMicrotaskScheduled = false;
 	screenData.x = 0;
 	screenData.y = 0;
 	screenData.angle = 0;
 	screenData.pal = qbData.defaultPalette.slice();
-	screenData.context.fillStyle = screenData.pal[ screenData.fColor ].s;
-	screenData.context.strokeStyle = screenData.pal[ screenData.fColor ].s;
+	screenData.fColor = screenData.pal[ 7 ];
+	screenData.context.fillStyle = screenData.fColor.s;
+	screenData.context.strokeStyle = screenData.fColor.s;
 	screenData.printCursor = {
 		"charWidth": qbData.defaultFont.width,
 		"charHeight": qbData.defaultFont.height,
