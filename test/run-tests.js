@@ -167,7 +167,7 @@ function updateCounts() {
 	if( g_totalTestsParsedCount === g_totalTestsCount ) {
 		setTimeout( function () {
 			writeFinalHtml();
-		}, 1000 );
+		}, 2000 );
 	}
 }
 
