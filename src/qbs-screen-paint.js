@@ -38,7 +38,12 @@ function paint( screenData, args ) {
 	}
 
 	// Soften the tolerance so closer to one it changes less closer to 0 changes more
-	tolerance = tolerance * ( 2 - tolerance );
+	tolerance = tolerance * ( 2 - tolerance ) * maxDifference;
+
+	if( navigator.brave && tolerance === maxDifference ) {
+		tolerance -= 1;
+	}
+
 	fills = [ {
 		"x": x,
 		"y": y
@@ -116,7 +121,7 @@ function addFill( screenData, x, y, fills, fillColor, backgroundColor, tolerance
 }
 
 function floodCheck( screenData, x, y, fillColor, backgroundColor, tolerance ) {
-	var pixelColor, dr, dg, db, simularity, simularityPct;
+	var pixelColor, dr, dg, db, simularity, difference;
 
 	if( x < 0 || x >= screenData.width || y < 0 || y >= screenData.height ) {
 		return false;
@@ -130,10 +135,10 @@ function floodCheck( screenData, x, y, fillColor, backgroundColor, tolerance ) {
 		dr = ( pixelColor.r - backgroundColor.r );
 		dg = ( pixelColor.g - backgroundColor.g );
 		db = ( pixelColor.b - backgroundColor.b );
-		simularity = ( dr * dr + dg * dg + db * db );
-		simularityPct = ( maxDifference - simularity ) / maxDifference;
+		difference = ( dr * dr + dg * dg + db * db );
+		simularity = maxDifference - difference;
 
-		return simularityPct >= tolerance;
+		return simularity >= tolerance;
 	}
 	return false;
 }
