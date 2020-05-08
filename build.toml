@@ -11,6 +11,7 @@ files = [
 	"src/qbs-util.js",
 	"src/qbs-keyboard.js",
 	"src/qbs-gamepad.js",
+	"src/qbs-font.js",
 	"src/qbs-screen.js",
 	"src/qbs-screen-mouse.js",
 	"src/qbs-screen-touch.js",
@@ -26,4 +27,3 @@ files = [
 	"src/fonts/font-data.js",
 	"src/qbs-init.js"
 ]
-
