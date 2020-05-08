@@ -37,19 +37,19 @@
 
 		$.screen( "75 x 75", document.getElementById( "container1" ), false );
 		$.color( 15 );
-		$.setFont( 0 );
+		$.setFont( 1 );
 		$.print( "75 x 75, container1, with styles." );
 		$.render();
 
 		$.screen( "5 : 2", document.getElementById( "container2" ), false );
 		$.color( 15 );
-		$.setFont( 0 );
+		$.setFont( 1 );
 		$.print( "5 : 2, container2, with styles." );
 		$.render();
 
 		$.screen( false, document.getElementById( "container3" ), false );
 		$.color( 15 );
-		$.setFont( 0 );
+		$.setFont( 1 );
 		$.print( "No aspect, container3, with styles." );
 		$.print();
 		$.print( "The quick brown fox jumped over the lazy dog." );
@@ -58,7 +58,7 @@
 
 		$.screen( "75 e 75", document.getElementById( "container4" ), false, false );
 		$.color( 15 );
-		$.setFont( 0 );
+		$.setFont( 1 );
 		$.print( "75 e 75, container4, a a a a a with a a a a styles, with stretch." );
 		$.render();
 	} );

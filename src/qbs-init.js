@@ -7,7 +7,7 @@
 
 "use strict";
 
-var i, qbData, font;
+var i, qbData;
 
 qbData = qbs._.data;
 
@@ -24,14 +24,6 @@ qbData.defaultPalette[ 0 ] = {
 // Initialize the default palette
 for( i = 1; i < qbData.defaultPalette.length; i++ ) {
 	qbData.defaultPalette[ i ] = qbs.util.hexToRgb( qbData.defaultPalette[ i ] );
-}
-
-// Set the default font
-if( qbData.fonts[ 0 ] ) {
-	font = qbData.fonts[ 0 ];
-	qbData.defaultFont.width = font.width;
-	qbData.defaultFont.height = font.height;
-	qbData.defaultFont.data = font.data;
 }
 
 // Create the API

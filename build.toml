@@ -23,11 +23,7 @@ files = [
 	"src/qbs-screen-print.js",
 	"src/qbs-screen-draw.js",
 	"src/qbs-sound.js",
-	"src/fonts/font-6x8.js",
-	"src/fonts/font-6x6.js",
-	"src/fonts/font-8x8.js",
-	"src/fonts/font-8x14.js",
-	"src/fonts/font-8x16.js",
+	"src/fonts/font-data.js",
 	"src/qbs-init.js"
 ]
 
