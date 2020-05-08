@@ -7,9 +7,11 @@
 
 "use strict";
 
-var qbData;
+var qbData, qbWait, qbResume;
 
 qbData = qbs._.data;
+qbWait = qbs._.wait;
+qbResume = qbs._.resume;
 
 // Loads a font into memory
 qbs._.addCommand( "loadFont", loadFont, false, false, [ "fontSrc", "width", "height", "isBase32Encoded" ] );
@@ -124,60 +126,78 @@ function decompressFont( numStr, width, height ) {
 
 function loadFontFromImg( fontSrc, width, height, font ) {
 
-	// Create a new image
-	img = new Image();
+	var img;
 
-	// Set the source
-	img.src = fontSrc;
+	if( typeof fontSrc === "string" ) {
+		// Create a new image
+		img = new Image();
 
-	// Signal qbs to wait
-	qbWait();
+		// Set the source
+		img.src = fontSrc;
+	} else {
+		img = fontSrc;
+	}
 
-	// Need to wait until the image is loaded
-	img.onload = function () {
-		var canvas, context, data, i, x, y, index, xStart, yStart, cols, r, g, b, a;
+	if( ! img.complete ) {
+		// Signal qbs to wait
+		qbWait();
 
-		// Create a new canvas to read the pixel data
-		canvas = document.createElement( "canvas" );
-		context = canvas.getContext( "2d" );
-		canvas.width = img.width;
-		canvas.height = img.height;
+		// Need to wait until the image is loaded
+		img.onload = function () {
+			readImageData( img, width, height, font );
+			qbResume();
+		};
+		img.onerror = function ( err ) {
+			console.error( "loadFont: unable to load image for font." );
+			qbResume();
+		};
+	} else {
+		readImageData( img, width, height, font );
+	}
+}
 
-		// Draw the image onto the canva
-		context.drawImage( img, 0, 0 );
+function readImageData( img, width, height, font ) {
+	var canvas, context, data, i, x, y, index, xStart, yStart, cols, r, g, b, a;
 
-		// Get the image data
-		data = context.getImageData( 0, 0, img.width, img.height );
-		xStart = 0;
-		yStart = 0;
-		cols = img.width;
+	// Create a new canvas to read the pixel data
+	canvas = document.createElement( "canvas" );
+	context = canvas.getContext( "2d" );
+	canvas.width = img.width;
+	canvas.height = img.height;
 
-		// Loop through all ascii characters
-		for( i = 0; i < 255; i++ ) {
-			font.data.push( [] );
-			for( y = yStart; y < yStart + height; y++ ) {
-				font.data[ i ].push( [] );
-				for( x = xStart; x < xStart + width; x++ ) {
-					index = y * ( cols * 4 ) + x * 4;
-					r = data.data[ index ];
-					g = data.data[ index + 1 ];
-					b = data.data[ index + 2 ];
-					a = data.data[ index + 3 ];
-					if( ( r > 1 || g > 1 || b > 1 ) && a > 1 ) {
-						font.data[ i ][ y - yStart ].push( 1 );
-					} else {
-						font.data[ i ][ y - yStart ].push( 0 );
-					}
+	// Draw the image onto the canva
+	context.drawImage( img, 0, 0 );
+
+	// Get the image data
+	data = context.getImageData( 0, 0, img.width, img.height );
+	xStart = 0;
+	yStart = 0;
+	cols = img.width;
+
+	// Loop through all ascii characters
+	for( i = 0; i < 255; i++ ) {
+		font.data.push( [] );
+		for( y = yStart; y < yStart + height; y++ ) {
+			font.data[ i ].push( [] );
+			for( x = xStart; x < xStart + width; x++ ) {
+				index = y * ( cols * 4 ) + x * 4;
+				r = data.data[ index ];
+				g = data.data[ index + 1 ];
+				b = data.data[ index + 2 ];
+				a = data.data[ index + 3 ];
+				if( ( r > 1 || g > 1 || b > 1 ) && a > 1 ) {
+					font.data[ i ][ y - yStart ].push( 1 );
+				} else {
+					font.data[ i ][ y - yStart ].push( 0 );
 				}
 			}
-			xStart += width;
-			if( xStart >= cols ) {
-				xStart = 0;
-				yStart += height;
-			}
 		}
-		qbResume();
-	};
+		xStart += width;
+		if( xStart >= cols ) {
+			xStart = 0;
+			yStart += height;
+		}
+	}
 }
 
 qbs._.addCommand( "setDefaultFont", setDefaultFont, false, false, [ "fontId" ] );

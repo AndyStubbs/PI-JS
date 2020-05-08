@@ -7,11 +7,9 @@
 
 "use strict";
 
-var qbData, qbWait, qbResume;
+var qbData;
 
 qbData = qbs._.data;
-qbWait = qbs._.wait;
-qbResume = qbs._.resume;
 
 // Print Command
 qbs._.addCommand( "print", print, false, true, [ "msg", "inLine" ] );

@@ -153,7 +153,13 @@ window.qbs = ( function () {
 		var i, options, args2;
 
 		// if the first argument is an object then use named parameters
-		if(	args.length > 0 && typeof args[ 0 ] === "object" && args[ 0 ] !== null && ! args[ 0 ].hasOwnProperty( "screen" ) && ! Array.isArray( args[ 0 ] ) ) {
+		if( 
+			args.length > 0 &&
+			typeof args[ 0 ] === "object" &&
+			args[ 0 ] !== null && 
+			! args[ 0 ].hasOwnProperty( "screen" ) && 
+			! Array.isArray( args[ 0 ] ) &&
+			! qbs.util.isDomElement( args[ 0 ] ) ) {
 			options = args[ 0 ];
 			args2 = [];
 			for( i = 0; i < cmd.parameters.length; i++ ) {
