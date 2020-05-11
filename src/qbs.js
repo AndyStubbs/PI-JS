@@ -158,7 +158,7 @@ window.qbs = ( function () {
 			typeof args[ 0 ] === "object" &&
 			args[ 0 ] !== null && 
 			! args[ 0 ].hasOwnProperty( "screen" ) && 
-			! Array.isArray( args[ 0 ] ) &&
+			! qbs.util.isArray( args[ 0 ] ) &&
 			! qbs.util.isDomElement( args[ 0 ] ) ) {
 			options = args[ 0 ];
 			args2 = [];
@@ -195,7 +195,7 @@ window.qbs = ( function () {
 		if( screenId === undefined || screenId === null ) {
 			screenId = qbData.activeScreen.id;
 		}
-		if( Number.isInteger( screenId ) && ! qbData.screens[ screenId ] ) {
+		if( qbs.util.isInteger( screenId ) && ! qbData.screens[ screenId ] ) {
 			console.error( commandName + ": Invalid screen id." );
 			return false;
 		}
@@ -281,7 +281,7 @@ window.qbs = ( function () {
 		var pal, i, c;
 
 		pal = args[ 0 ];
-		if( ! Array.isArray( pal ) ) {
+		if( ! qbs.util.isArray( pal ) ) {
 			console.error( "setDefaultPal: parameter pal is not an array." );
 			return;
 		}

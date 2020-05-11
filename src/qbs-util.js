@@ -42,7 +42,7 @@ window.qbs.util = ( function () {
 	}
 
 	function cToHex( c ) {
-		if( ! Number.isInteger( c ) ) {
+		if( ! qbs.util.isInteger( c ) ) {
 			c = 255;
 		}
 		c = clamp( c, 0, 255 );
@@ -66,10 +66,10 @@ window.qbs.util = ( function () {
 		if( color === undefined ) {
 			return null;
 		}
-		if( Array.isArray( color ) && color.length > 2 ) {
+		if( qbs.util.isArray( color ) && color.length > 2 ) {
 			return rgbToColor( color[ 0 ], color[ 1 ], color[ 2 ], color[ 3 ] ); 
 		}
-		if( Number.isInteger( color.r ) && Number.isInteger( color.g ) && Number.isInteger( color.b ) ) {
+		if( qbs.util.isInteger( color.r ) && qbs.util.isInteger( color.g ) && qbs.util.isInteger( color.b ) ) {
 			return rgbToColor( color.r, color.g, color.b, color.a );
 		}
 		check_hex_color = /(^#[0-9A-F]{8}$)|(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i;
@@ -163,14 +163,6 @@ window.qbs.util = ( function () {
 		return rad * ( 180 / Math.PI );
 	}
 
-	function sanitizeBool( b ) {
-		if( b ) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-
 	function padL( str, len, c ) {
 		var i, pad;
 		if(typeof c !== "string") {
@@ -200,6 +192,9 @@ window.qbs.util = ( function () {
 	var api = {
 		"isFunction": isFunction,
 		"isDomElement": isDomElement,
+		"isInteger": Number.isInteger,
+		"isArray": Array.isArray,
+		"queueMicrotask": function( callback ) { window.queueMicrotask( callback ) },
 		"hexToRgb": hexToRgb,
 		"cToHex": cToHex,
 		"rgbToHex": rgbToHex,
@@ -216,7 +211,6 @@ window.qbs.util = ( function () {
 		"rndRange": rndRange,
 		"degreesToRadian": degreesToRadian,
 		"radiansToDegrees": radiansToDegrees,
-		"sanitizeBool": sanitizeBool,
 		"padL": padL,
 		"padR": padR,
 		"math": {
@@ -239,29 +233,28 @@ window.qbs.util = ( function () {
 		}
 	};
 
+	// Number.isInteger polyfill
+	if( typeof Number.isInteger !== "function" ) {
+		api.isInteger = function( value ) {
+			return typeof value === 'number' && 
+				isFinite( value ) && 
+				Math.floor( value ) === value;
+		};
+	}
+
+	// Array.isArray polyfill
+	if ( typeof Array.isArray !== "function" ) {
+		api.isArray = function( arg ) {
+			return Object.prototype.toString.call( arg ) === '[object Array]';
+		};
+	}
+
+	// Queue Microtask polyfill
+	if ( typeof window.queueMicrotask !== "function" ) {
+		api.queueMicrotask = function ( callback ) {
+			setTimeout( callback, 0 );
+		};
+	}
 	return api;
 
 } )();
-
-// Polyfills
-
-// Number.isInteger polyfill
-Number.isInteger = Number.isInteger || function( value ) {
-return typeof value === 'number' && 
-	isFinite( value ) && 
-	Math.floor( value ) === value;
-};
-
-// Array.isArray polyfill
-if ( ! Array.isArray ) {
-	Array.isArray = function( arg ) {
-		return Object.prototype.toString.call( arg ) === '[object Array]';
-	};
-}
-
-// Queue Microtask polyfill
-if ( typeof window.queueMicrotask !== "function" ) {
-	window.queueMicrotask = function ( callback ) {
-		setTimeout( callback, 0 );
-	};
-}

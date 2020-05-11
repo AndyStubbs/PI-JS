@@ -139,7 +139,7 @@ function enableContextMenu( screenData, args ) {
 
 	isEnabled = args[ 0 ];
 
-	qbData.isContextMenuEnabled = qbs.util.sanitizeBool( isEnabled );
+	qbData.isContextMenuEnabled = !!( isEnabled );
 }
 
 // Setup events

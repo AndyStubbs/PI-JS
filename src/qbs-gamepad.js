@@ -122,7 +122,7 @@ function getExtraData( name, items, gamepadIndex, mode ) {
 	if( mode === "connect" || mode === "disconnect" ) {
 		items = null;
 	} else if ( mode === "axis" ) { 
-		if( ! Number.isInteger( items ) || items < 0 ) {
+		if( ! qbs.util.isInteger( items ) || items < 0 ) {
 			console.error( name + ": items is not a valid axis index." );
 			return;
 		}
@@ -133,7 +133,7 @@ function getExtraData( name, items, gamepadIndex, mode ) {
 		} else if( ! isNaN( parseInt( items ) ) && items >= 0 ) {
 			items = [ items ];
 		}
-		if( ! Array.isArray( items ) ) {
+		if( ! qbs.util.isArray( items ) ) {
 			console.error( name + ": items is not a valid array." );
 			return;
 		}

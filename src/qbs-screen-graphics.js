@@ -501,7 +501,7 @@ function pset( screenData, args ) {
 	y = args[ 1 ];
 
 	// Make sure x and y are integers
-	if( ! Number.isInteger( x ) || ! Number.isInteger( y ) ) {
+	if( ! qbs.util.isInteger( x ) || ! qbs.util.isInteger( y ) ) {
 		console.error( "pset: Argument's x and y must be integers." );
 		return;
 	}
@@ -535,8 +535,8 @@ function pxLine( screenData, args ) {
 	y2 = args[ 3 ];
 
 	// Make sure x and y are integers
-	if( ! Number.isInteger( x1 ) || ! Number.isInteger( y1 ) ||
-		! Number.isInteger( x2 ) || ! Number.isInteger( y2 ) ) {
+	if( ! qbs.util.isInteger( x1 ) || ! qbs.util.isInteger( y1 ) ||
+		! qbs.util.isInteger( x2 ) || ! qbs.util.isInteger( y2 ) ) {
 		console.error( "line: Argument's x1, y1, x2, and y2 must be integers." );
 		return;
 	}
@@ -660,7 +660,7 @@ function setPalColor( screenData, args ) {
 	index = args[ 0 ];
 	color = args[ 1 ];
 
-	if( ! Number.isInteger( index ) || index < 0 || index > screenData.pal.length ) {
+	if( ! qbs.util.isInteger( index ) || index < 0 || index > screenData.pal.length ) {
 		console.error( "setPalColor: index is not a valid integer value." );
 		return;
 	}
@@ -736,7 +736,7 @@ function colors( screenData, args ) {
 
 	colorInput = args[ 0 ];
 	colors = [];
-	if( Array.isArray( colorInput ) ) {
+	if( qbs.util.isArray( colorInput ) ) {
 		if( colorInput.length === 0 ) {
 			console.error( "color: color array cannot be empty." );
 			return;
@@ -769,7 +769,7 @@ function swapColor( screenData, args ) {
 	newColor = args[ 1 ];
 
 	// Validate oldColor
-	if( ! Number.isInteger( oldColor ) ) {
+	if( ! qbs.util.isInteger( oldColor ) ) {
 		console.error( "swapColor: parameter oldColor must be an integer." );
 		return;
 	} else if( oldColor < 0 || oldColor > screenData.pal.length ) {
@@ -823,7 +823,7 @@ function point( screenData, args ) {
 	y = args[ 1 ];
 
 	// Make sure x and y are integers
-	if( ! Number.isInteger( x ) || ! Number.isInteger( y ) ) {
+	if( ! qbs.util.isInteger( x ) || ! qbs.util.isInteger( y ) ) {
 		console.error("point: Argument's x and y must be integers.");
 		return;
 	}
@@ -879,10 +879,10 @@ function filterImg( screenData, args ) {
 				"a": data[ i + 3 ]
 			}, x, y );
 			if( color && 
-					Number.isInteger( color.r ) &&
-					Number.isInteger( color.g ) &&
-					Number.isInteger( color.b ) &&
-					Number.isInteger( color.a ) ) {
+					qbs.util.isInteger( color.r ) &&
+					qbs.util.isInteger( color.g ) &&
+					qbs.util.isInteger( color.b ) &&
+					qbs.util.isInteger( color.a ) ) {
 				color.r = qbs.util.clamp( color.r, 0, 255 );
 				color.g = qbs.util.clamp( color.g, 0, 255 );
 				color.b = qbs.util.clamp( color.b, 0, 255 );
@@ -920,15 +920,15 @@ function setPen( screenData, args ) {
 		console.error( "setPen: Argument pen is not a valid pen. Valid pens: " + qbData.penList.join(", " ) );
 		return;
 	}
-	if( ! Number.isInteger( size ) ) {
+	if( ! qbs.util.isInteger( size ) ) {
 		console.error( "setPen: Argument size is not a valid number." );
 		return;
 	}
-	if( noise && ( ! Array.isArray( noise ) && Number.isNaN( noise ) ) ) {
+	if( noise && ( ! qbs.util.isArray( noise ) && Number.isNaN( noise ) ) ) {
 		console.error( "setPen: Argument noise is not an array or number." );
 		return;
 	}
-	if( Array.isArray( noise ) ) {
+	if( qbs.util.isArray( noise ) ) {
 		noise = noise.slice();
 		for( i = 0; i < noise.length; i++ ) {
 			if( Number.isNaN( noise[ i ] ) ) {

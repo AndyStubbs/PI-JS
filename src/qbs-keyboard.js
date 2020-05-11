@@ -539,8 +539,8 @@ function input( args ) {
 	}
 
 	// Convert params to boolean
-	isNumber = qbs.util.sanitizeBool( isNumber );
-	isInteger = qbs.util.sanitizeBool( isInteger );
+	isNumber = !!( isNumber );
+	isInteger = !!( isInteger );
 
 	// Create a list of functions to trigger
 	readyList = [];

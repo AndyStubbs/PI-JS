@@ -22,7 +22,7 @@ function paint( screenData, args ) {
 	fillColor = args[ 2 ];
 	tolerance = args[ 3 ];
 
-	if( ! Number.isInteger( x ) || ! Number.isInteger( y ) ) {
+	if( ! qbs.util.isInteger( x ) || ! qbs.util.isInteger( y ) ) {
 		console.error( "paint: Argument's x and y must be integers." );
 		return;
 	}
@@ -56,7 +56,7 @@ function paint( screenData, args ) {
 		setPixel = qbData.commands.setPixel;
 	}
 
-	if( Number.isInteger( fillColor ) ) {
+	if( qbs.util.isInteger( fillColor ) ) {
 		if( fillColor > screenData.pal.length ) {
 			console.error( "paint: Argument fillColor is not a color in the palette." );
 			return;

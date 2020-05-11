@@ -41,7 +41,7 @@ function bgColor( screenData, args ) {
 
 	color = args[ 0 ];
 
-	if( Number.isInteger( color ) ) {
+	if( qbs.util.isInteger( color ) ) {
 		bc = screenData.pal[ color ];
 	} else {
 		bc = qbs.util.convertToColor( color );
@@ -62,7 +62,7 @@ function containerBgColor( screenData, args ) {
 	color = args[ 0 ];
 
 	if( screenData.container ) {
-		if( Number.isInteger( color ) ) {
+		if( qbs.util.isInteger( color ) ) {
 			bc = screenData.pal[ color ];
 		} else {
 			bc = qbs.util.convertToColor( color );
@@ -172,7 +172,7 @@ function triggerEventListeners( mode, data, listenerArr ) {
 			if( temp[ i ].hitBox ) {
 
 				// If it's an array loop
-				if( Array.isArray ( data ) ) {
+				if( qbs.util.isArray ( data ) ) {
 					newData = [];
 					for( j = 0; j < data.length; j++ ) {
 						pos = data[ j ];

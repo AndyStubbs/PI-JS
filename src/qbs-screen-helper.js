@@ -23,8 +23,7 @@ function setImageDirty( screenData ) {
 		screenData.dirty = true;
 		if( screenData.isAutoRender && ! screenData.autoRenderMicrotaskScheduled ) {
 			screenData.autoRenderMicrotaskScheduled = true;
-			window.queueMicrotask( function () {
-				console.log( "Microtask to the rescue!" );
+			qbs.util.queueMicrotask( function () {
 				screenData.screenObj.render();
 				screenData.autoRenderMicrotaskScheduled = false;
 			} );
@@ -86,7 +85,7 @@ function getPixelColor( screenData, c ) {
 	}
 	c2 = { "r": c.r, "g": c.g, "b": c.b, "a": c.a };
 	half = noise / 2;
-	if( Array.isArray( noise ) ) {
+	if( qbs.util.isArray( noise ) ) {
 		c2.r = qbs.util.clamp( Math.round( c2.r + qbs.util.rndRange( -noise[ 0 ], noise[ 0 ] ) ), 0, 255 );
 		c2.g = qbs.util.clamp( Math.round( c2.g + qbs.util.rndRange( -noise[ 1 ], noise[ 1 ] ) ), 0, 255 );
 		c2.b = qbs.util.clamp( Math.round( c2.b + qbs.util.rndRange( -noise[ 2 ], noise[ 2 ] ) ), 0, 255 );
@@ -198,7 +197,7 @@ qbs._.addCommand( "findColorValue", findColorValue, true, false, [] );
 function findColorValue( screenData, colorInput, commandName ) {
 	var colorValue;
 
-	if( Number.isInteger( colorInput ) ) {
+	if( qbs.util.isInteger( colorInput ) ) {
 		if( colorInput > screenData.pal.length ) {
 			console.error( commandName + ": parameter color is not a color in the palette." );
 			return;
