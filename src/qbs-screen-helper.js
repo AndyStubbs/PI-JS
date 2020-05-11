@@ -193,6 +193,27 @@ function getPixelSafe( screenData, x, y ) {
 	return getPixel( screenData, x, y );
 }
 
+// Finds a color from the palette and returns it's value.
+qbs._.addCommand( "findColorValue", findColorValue, true, false, [] );
+function findColorValue( screenData, colorInput, commandName ) {
+	var colorValue;
+
+	if( Number.isInteger( colorInput ) ) {
+		if( colorInput > screenData.pal.length ) {
+			console.error( commandName + ": parameter color is not a color in the palette." );
+			return;
+		}
+		colorValue = screenData.pal[ colorInput ]
+	} else {
+		colorValue = qbs.util.convertToColor( colorInput );
+		if( colorValue === null ) {
+			console.error( commandName + ": parameter color is not a valid color format." );
+			return;
+		}
+	}
+	return colorValue;
+}
+
 // Set the default pen draw function
 qbData.defaultPenDraw = setPixelSafe;
 

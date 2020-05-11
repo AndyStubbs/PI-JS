@@ -272,6 +272,7 @@ function createScreenData( canvas, bufferCanvas, container, aspectData, isOffscr
 	screenData.angle = 0;
 	screenData.pal = qbData.defaultPalette.slice();
 	screenData.fColor = screenData.pal[ 7 ];
+	screenData.colors = [ screenData.fColor ];
 	screenData.context.fillStyle = screenData.fColor.s;
 	screenData.context.strokeStyle = screenData.fColor.s;
 	screenData.printCursor = {

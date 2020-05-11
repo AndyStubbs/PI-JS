@@ -14,7 +14,7 @@ qbData = qbs._.data;
 // Print Command
 qbs._.addCommand( "print", print, false, true, [ "msg", "inLine" ] );
 function print( screenData, args ) {
-	var msg, inLine, parts, i;
+	var msg, inLine, colors, parts, i, i2, colorValue, colorCount;
 
 	msg = args[ 0 ];
 	inLine = args[ 1 ];
@@ -22,6 +22,33 @@ function print( screenData, args ) {
 	// bail if not possible to print an entire line on a screen
 	if( screenData.printCursor.charHeight > screenData.height ) {
 		return;
+	}
+
+	// Grab the colors from the screenData
+	colors = screenData.colors.slice();
+
+	// Set the first color to the background color
+	colors.unshift( screenData.pal[ 0 ] );
+
+	// Validate colors
+	for( i = 0; i < colors.length; i++ ) {
+		colorValue = qbData.commands.findColorValue( screenData, colors[ i ], "color" );
+
+		if( colorValue === undefined ) {
+			return;
+		}
+		colors[ i ] = colorValue;
+	}
+
+	// Make sure there are enough colors -- if not then rotate colors
+	colorCount = colors.length;
+	for( i = 0; i < screenData.printCursor.colorCount; i ++ ) {
+		if( i >= colors.length ) {
+
+			// Rotate colors -- skip 0
+			i2 = ( i % ( colorCount - 1 ) ) + 1;
+			colors.push( colors[ i2 ] );
+		}
 	}
 
 	if( msg === undefined ) {
@@ -36,11 +63,11 @@ function print( screenData, args ) {
 	// Split messages by \n
 	parts = msg.split( /\n/ );
 	for( i = 0; i < parts.length; i++ ) {
-		startPrint( screenData, parts[ i ], inLine );
+		startPrint( screenData, parts[ i ], inLine, colors );
 	}
 }
 
-function startPrint( screenData, msg, inLine ) {
+function startPrint( screenData, msg, inLine, colors ) {
 	var width, overlap, onScreen, onScreenPct, msgSplit, index, msg1, msg2, printCursor;
 
 	printCursor = screenData.printCursor;
@@ -61,8 +88,8 @@ function startPrint( screenData, msg, inLine ) {
 				msg1 = msg1.substring( 0, index );
 			}
 		}
-		startPrint( screenData, msg1, inLine );
-		startPrint( screenData, msg2, inLine );
+		startPrint( screenData, msg1, inLine, colors );
+		startPrint( screenData, msg2, inLine, colors );
 		return;
 	}
 
@@ -81,7 +108,7 @@ function startPrint( screenData, msg, inLine ) {
 
 	}
 
-	printCursor.printFunction( screenData, msg, printCursor.x, printCursor.y );
+	printCursor.printFunction( screenData, msg, printCursor.x, printCursor.y, colors );
 
 	//If it's not in_line print the advance to next line
 	if( ! inLine ) {
@@ -165,7 +192,7 @@ function setWordBreak( screenData, args ) {
 }
 
 // Print to the screen by using qbs_fonts
-function qbsPrint( screenData, msg, x, y ) {
+function qbsPrint( screenData, msg, x, y, colors ) {
 	var i, printCursor, defaultPal;
 
 	// Get reference to printCursor data
@@ -173,7 +200,12 @@ function qbsPrint( screenData, msg, x, y ) {
 
 	// Setup a temporary pallette with the fore color and back color
 	defaultPal = screenData.pal;
-	screenData.pal = [ defaultPal[ 0 ], screenData.fColor ];
+	screenData.pal = colors;
+	//screenData.pal = [ defaultPal[ 0 ], screenData.fColor ];
+	// screenData.pal = [ defaultPal[ 0 ] ];
+	// for( i = 0; i < colors.length; i++ ) {
+	// 	screenData.pal.push( colors[ i ] );
+	// }
 
 	//Loop through each character in the message and put it on the screen
 	for( i = 0; i < msg.length; i++ ) {
@@ -267,6 +299,7 @@ function setFont( screenData, args ) {
 		// Set the font dimensions
 		screenData.printCursor.charWidth = font.width;
 		screenData.printCursor.charHeight = font.height;
+		screenData.printCursor.colorCount = font.colorCount;
 
 		// Set the rows and cols
 		screenData.printCursor.cols = Math.floor( screenData.width / font.width );

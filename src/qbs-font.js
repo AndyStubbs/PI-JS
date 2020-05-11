@@ -28,7 +28,8 @@ function loadFont( args ) {
 		"id": qbData.nextFontId,
 		"width": width,
 		"height": height,
-		"data": []
+		"data": [],
+		"colorCount": 2
 	};
 
 	// Add this to the font data
@@ -157,13 +158,17 @@ function loadFontFromImg( fontSrc, width, height, font ) {
 }
 
 function readImageData( img, width, height, font ) {
-	var canvas, context, data, i, x, y, index, xStart, yStart, cols, r, g, b, a;
+	var canvas, context, data, i, x, y, index, xStart, yStart, cols, 
+		r, g, b, a, colors, colorIndex;
 
 	// Create a new canvas to read the pixel data
 	canvas = document.createElement( "canvas" );
 	context = canvas.getContext( "2d" );
 	canvas.width = img.width;
 	canvas.height = img.height;
+
+	// Colors lookup
+	colors = [];
 
 	// Draw the image onto the canva
 	context.drawImage( img, 0, 0 );
@@ -185,11 +190,8 @@ function readImageData( img, width, height, font ) {
 				g = data.data[ index + 1 ];
 				b = data.data[ index + 2 ];
 				a = data.data[ index + 3 ];
-				if( ( r > 1 || g > 1 || b > 1 ) && a > 1 ) {
-					font.data[ i ][ y - yStart ].push( 1 );
-				} else {
-					font.data[ i ][ y - yStart ].push( 0 );
-				}
+				colorIndex = findColorIndex( colors, r, g, b, a );
+				font.data[ i ][ y - yStart ].push( colorIndex );
 			}
 		}
 		xStart += width;
@@ -198,6 +200,30 @@ function readImageData( img, width, height, font ) {
 			yStart += height;
 		}
 	}
+	font.colorCount = colors.length;
+}
+
+function findColorIndex( colors, r, g, b, a ) {
+	var i, dr, dg, db, d;
+
+	if( a === 0 ) {
+		r = 0;
+		g = 0;
+		b = 0;
+	}
+	for( i = 0; i < colors.length; i++ ) {
+		dr = colors[ i ].r - r;
+		dg = colors[ i ].g - g;
+		db = colors[ i ].b - b;
+		d = dr * dr + dg * dg + db * db;
+		if( d < 2 ) {
+			return i;
+		}
+	}
+	colors.push( {
+		"r": r, "g": g, "b": b
+	} );
+	return colors.length - 1;
 }
 
 qbs._.addCommand( "setDefaultFont", setDefaultFont, false, false, [ "fontId" ] );

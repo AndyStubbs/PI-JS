@@ -92,6 +92,7 @@ function canvas( screenData ) {
 	return screenData.canvas;
 }
 
+// Finds a color from the palette and returns it's index.
 qbs._.addCommand( "findColor", findColor, false, true, [ "color", "tolerance", "isAddToPalette" ] );
 function findColor( screenData, args ) {
 	var color, tolerance, isAddToPalette, i, pal, dr, dg, db, da, difference;

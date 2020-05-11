@@ -655,7 +655,7 @@ function aaRect( screenData, args ) {
 // Set Pal Color command
 qbs._.addCommand( "setPalColor", setPalColor, false, true, [ "index", "color" ] );
 function setPalColor( screenData, args ) {
-	var index, color, colorValue;
+	var index, color, colorValue, i;
 
 	index = args[ 0 ];
 	color = args[ 1 ];
@@ -670,12 +670,19 @@ function setPalColor( screenData, args ) {
 		return;
 	}
 
-	// Check if we are changine the current selected fore color
+	// Check if we are changing the current selected fore color
 	if( screenData.fColor.s === screenData.pal[ index ].s ) {
 		screenData.fColor = colorValue;
 	}
+
+	// Check if we are changing any of the colors
+	for( i = 0; i < screenData.colors.length; i++ ) {
+		if( screenData.colors[ i ].s === screenData.pal[ index ].s ) {
+			screenData.colors[ i ] = colorValue;
+		}
+	}
+
 	screenData.pal[ index ] = colorValue;
-	
 }
 
 // Get pal command
@@ -699,30 +706,57 @@ function getPal( screenData, args ) {
 // Color command
 qbs._.addCommand( "color", color, false, true, [ "color", "isAddToPalette" ] );
 function color( screenData, args ) {
-	var colorInput, colorValue, isAddToPalette;
+	var colorInput, colorValue, isAddToPalette, colors;
 
 	colorInput = args[ 0 ];
 	isAddToPalette = !!( args[ 1 ] );
+	colorValue = qbData.commands.findColorValue( screenData, colorInput, "color" );
 
-	if( Number.isInteger( colorInput ) ) {
-		if( colorInput > screenData.pal.length ) {
-			console.error( "color: parameter c is not a color in the palette." );
-			return;
-		}
-		colorValue = screenData.pal[ colorInput ]
-		screenData.fColor = colorValue;
-	} else {
-		colorValue = qbs.util.convertToColor( colorInput );
-		if( colorValue === null ) {
-			console.error( "color: parameter c is not a valid color format." );
-			return;
-		}
-		if( isAddToPalette ) {
-			screenData.fColor = screenData.screenObj.findColor( colorValue, isAddToPalette );
-		} else {
-			screenData.fColor = colorValue;
-		}
+	if( colorValue === undefined ) {
+		return;
 	}
+	colors = [ colorValue ];
+
+	if( isAddToPalette ) {
+		screenData.fColor = screenData.screenObj.findColor( colorValue, isAddToPalette );
+	} else {
+		screenData.fColor = colorValue;
+	}
+
+	screenData.colors = colors;
+
+	screenData.context.fillStyle = colorValue.s;
+	screenData.context.strokeStyle = colorValue.s;
+}
+
+// Colors command
+qbs._.addCommand( "colors", colors, false, true, [ "colors" ] );
+function colors( screenData, args ) {
+	var colorInput, colorValue, i, colors;
+
+	colorInput = args[ 0 ];
+	colors = [];
+	if( Array.isArray( colorInput ) ) {
+		if( colorInput.length === 0 ) {
+			console.error( "color: color array cannot be empty." );
+			return;
+		}
+		for( i = 0; i < colorInput.length; i++ ) {
+			colorValue = qbData.commands.findColorValue( screenData, colorInput[ i ], "color" );
+			if( colorValue === undefined ) {
+				return;
+			}
+			colors.push( colorValue );
+		}
+		colorValue = colors[ 0 ];
+	} else {
+		console.error( "color: colors must be an array." );
+		return;
+	}
+
+	screenData.fColor = colorValue;
+	screenData.colors = colors;
+
 	screenData.context.fillStyle = colorValue.s;
 	screenData.context.strokeStyle = colorValue.s;
 }
