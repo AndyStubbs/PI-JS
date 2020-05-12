@@ -23,7 +23,10 @@ qbs._.addCommand( "setImageDirty", setImageDirty, true, false, [] );
 function setImageDirty( screenData ) {
 	if( screenData.dirty === false ) {
 		screenData.dirty = true;
-		if( screenData.isAutoRender && ! screenData.autoRenderMicrotaskScheduled ) {
+		if(
+			screenData.isAutoRender && 
+			! screenData.autoRenderMicrotaskScheduled 
+		) {
 			screenData.autoRenderMicrotaskScheduled = true;
 			qbs.util.queueMicrotask( function () {
 				screenData.screenObj.render();
