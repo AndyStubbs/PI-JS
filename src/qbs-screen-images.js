@@ -20,17 +20,33 @@ function loadImage( args ) {
 	src = args[ 0 ];
 	name = args[ 1 ];
 
+	if( typeof src === "string" ) {
+
+		// Create a new image
+		image = new Image();
+
+		// Set the source
+		image.src = src;
+
+	} else {
+		image = src;
+	}
+
 	if( typeof name !== "string" ) {
 		name = "" + qbData.imageCount;
 		qbData.imageCount += 1;
 	}
-	image = new Image();
-	image.src = src;
-	qbWait();
-	image.onload = function () {
+
+	if( ! image.complete ) {
+		qbWait();
+		image.onload = function () {
+			qbData.images[ name ] = image;
+			qbResume();
+		};
+	} else {
 		qbData.images[ name ] = image;
-		qbResume();
-	};
+	}
+
 	return name;
 }
 
