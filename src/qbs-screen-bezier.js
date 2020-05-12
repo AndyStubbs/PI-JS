@@ -125,8 +125,12 @@ function aaBezier( screenData, args ) {
 	x4 = args[ 6 ] + 0.5;
 	y4 = args[ 7 ] + 0.5;
 
-	if( isNaN( x ) || isNaN( y ) || isNaN( x2 ) || isNaN( y2 ) || isNaN( x3 ) || isNaN( y3 ) || isNaN( x4 ) || isNaN( y4 ) ) {
-		console.error("bezier: parameters x, y, x2, y2, x3, y3, x4, and y4 must be numbers.");
+	if(
+		isNaN( x ) || isNaN( y ) || isNaN( x2 ) || isNaN( y2 ) || isNaN( x3 ) ||
+		isNaN( y3 ) || isNaN( x4 ) || isNaN( y4 )
+	) {
+		console.error("bezier: parameters x, y, x2, y2, x3, y3, x4, and y4 must " +
+			"be numbers." );
 		return;
 	}
 

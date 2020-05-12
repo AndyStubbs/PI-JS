@@ -7,7 +7,8 @@
 
 "use strict";
 
-var g_qbData, g_Controllers, g_ControllerArr, g_Events, g_GamepadLoopId, g_Modes, g_IsLooping, g_LoopInterval, g_axesSensitivity;
+var g_qbData, g_Controllers, g_ControllerArr, g_Events, g_GamepadLoopId,
+		g_Modes, g_IsLooping, g_LoopInterval, g_axesSensitivity;
 
 g_qbData = qbs._.data;
 
@@ -15,7 +16,7 @@ g_qbData = qbs._.data;
 g_Controllers = {};
 
 // An array to return to user of all the controllers
-// This is used instead of the object because an array is easier to loop through
+// This is used instead of the object because an array is easier to loop
 g_ControllerArr = [];
 
 // The event listener object
@@ -63,7 +64,8 @@ function ingamepads( args ) {
 	return g_ControllerArr;
 }
 
-qbs._.addCommand( "ongamepad", ongamepad, false, false, [ "gamepadIndex", "mode", "item", "fn", "once" ] );
+qbs._.addCommand( "ongamepad", ongamepad, false, false,
+	[ "gamepadIndex", "mode", "item", "fn", "once" ] );
 function ongamepad( args ) {
 	var mode, item, fn, gamepadIndex, extraData, once;
 
@@ -80,17 +82,18 @@ function ongamepad( args ) {
 	extraData.mode = mode;
 
 	// Add the event listener
-	g_qbData.commands.onevent( mode, fn, once, false, g_Modes, "ongamepad", g_Events, extraData.extraId, extraData );
+	g_qbData.commands.onevent( mode, fn, once, false, g_Modes, "ongamepad",
+		g_Events, extraData.extraId, extraData );
 
 	// Start the loop if it isn't already started
 	if( ! g_IsLooping ) {
-		//g_GamepadLoopId = setInterval( gamepadLoop, g_LoopInterval );
 		g_GamepadLoopId = requestAnimationFrame( gamepadLoop );
 	}
 
 }
 
-qbs._.addCommand( "offgamepad", offgamepad, false, false, [ "gamepadIndex", "mode", "item", "fn" ] );
+qbs._.addCommand( "offgamepad", offgamepad, false, false,
+	[ "gamepadIndex", "mode", "item", "fn" ] );
 function offgamepad( args ) {
 	var mode, item, gamepadIndex, fn, extraData;
 
@@ -105,7 +108,8 @@ function offgamepad( args ) {
 	}
 
 	// Remove the event listener
-	g_qbData.commands.offevent( mode, fn, g_Modes, "offgamepad", g_Events, extraData.extraId );
+	g_qbData.commands.offevent( mode, fn, g_Modes, "offgamepad", g_Events,
+		extraData.extraId );
 }
 
 function getExtraData( name, items, gamepadIndex, mode ) {
@@ -121,7 +125,7 @@ function getExtraData( name, items, gamepadIndex, mode ) {
 	// Validate buttons
 	if( mode === "connect" || mode === "disconnect" ) {
 		items = null;
-	} else if ( mode === "axis" ) { 
+	} else if ( mode === "axis" ) {
 		if( ! qbs.util.isInteger( items ) || items < 0 ) {
 			console.error( name + ": items is not a valid axis index." );
 			return;
@@ -211,8 +215,12 @@ function triggerAxes( gamepadIndex, axis, eventName ) {
 	axes = g_ControllerArr[ gamepadIndex ].axes;
 
 	if( axes.length > axis ) {
-		if( axes[ axis ] > g_axesSensitivity || axes[ axis ] < -g_axesSensitivity ) {
-			g_qbData.commands.triggerEventListeners( eventName, axes[ axis ], g_Events );
+		if(
+			axes[ axis ] > g_axesSensitivity ||
+			axes[ axis ] < -g_axesSensitivity
+			) {
+				g_qbData.commands.triggerEventListeners( eventName, axes[ axis ],
+					g_Events );
 		}
 	}
 
@@ -228,7 +236,8 @@ function triggerButtons( gamepadIndex, items, mode, eventName ) {
 	for( i = 0; i < items.length; i++ ) {
 		button = buttons[ items[ i ] ];
 
-		// If any of the buttons are pressed then we trigger the event listeners then break to the next event
+		// If any of the buttons are pressed then we trigger the event listeners
+		// then break to the next event
 		if( button ) {
 			button.index = items[ i ];
 			if( button.pressed && mode === "pressed" ) {
@@ -249,8 +258,8 @@ function triggerButtons( gamepadIndex, items, mode, eventName ) {
 }
 
 function updateControllers() {
-	var i, j, gamepads, controllerIndex, button1, button2;
-	
+	var i, j, gamepads, controllerIndex, buttons, button1, button2;
+
 	if( "getGamepads" in navigator ) {
 		gamepads = navigator.getGamepads();
 	} else if ( "webkitGetGamepads" in navigator ) {
@@ -267,8 +276,9 @@ function updateControllers() {
 			gamepads[ i ].controllerIndex = controllerIndex;
 
 			// Update pressReleased and touchReleased for all buttons
-			for( j = 0; j < g_Controllers[ gamepads[ i ].index ].buttons.length; j++ ) {
-				button1 = g_Controllers[ gamepads[ i ].index ].buttons[ j ];
+			buttons = g_Controllers[ gamepads[ i ].index ].buttons;
+			for( j = 0; j < buttons.length; j++ ) {
+				button1 = buttons[ j ];
 				button2 = gamepads[ i ].buttons[ j ];
 				if( button1.pressed && ! button2.pressed ) {
 					button2.pressReleased = true;

@@ -5,7 +5,8 @@ window.qbs.util = ( function () {
 	"use strict";
 
 	function isFunction( functionToCheck ) {
-		return functionToCheck && {}.toString.call( functionToCheck ) === '[object Function]';
+		return functionToCheck &&
+			{}.toString.call( functionToCheck ) === '[object Function]';
 	}
 
 	function isDomElement( el ) {
@@ -67,9 +68,13 @@ window.qbs.util = ( function () {
 			return null;
 		}
 		if( qbs.util.isArray( color ) && color.length > 2 ) {
-			return rgbToColor( color[ 0 ], color[ 1 ], color[ 2 ], color[ 3 ] ); 
+			return rgbToColor( color[ 0 ], color[ 1 ], color[ 2 ], color[ 3 ] );
 		}
-		if( qbs.util.isInteger( color.r ) && qbs.util.isInteger( color.g ) && qbs.util.isInteger( color.b ) ) {
+		if(
+			qbs.util.isInteger( color.r ) &&
+			qbs.util.isInteger( color.g ) &&
+			qbs.util.isInteger( color.b )
+		) {
 			return rgbToColor( color.r, color.g, color.b, color.a );
 		}
 		check_hex_color = /(^#[0-9A-F]{8}$)|(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i;
@@ -81,7 +86,7 @@ window.qbs.util = ( function () {
 			if( color.length < 3 ) {
 				return null;
 			}
-			return rgbToColor( color[ 0 ], color[ 1 ], color[ 2 ], color[ 3 ] ); 
+			return rgbToColor( color[ 0 ], color[ 1 ], color[ 2 ], color[ 3 ] );
 		}
 		return null;
 	}
@@ -104,7 +109,10 @@ window.qbs.util = ( function () {
 	}
 
 	function compareColors( color_1, color_2 ) {
-		return color_1.r === color_2.r && color_1.g === color_2.g && color_1.b === color_2.b && color_1.a === color_2.a;
+		return color_1.r === color_2.r &&
+				   color_1.g === color_2.g &&
+					 color_1.b === color_2.b &&
+					 color_1.a === color_2.a;
 	}
 
 	// Copies properties from one object to another
@@ -142,12 +150,12 @@ window.qbs.util = ( function () {
 	}
 
 	function inRange( point, hitBox ) {
-		return 	point.x >= hitBox.x && point.x < hitBox.x + hitBox.width && 
+		return 	point.x >= hitBox.x && point.x < hitBox.x + hitBox.width &&
 				point.y >= hitBox.y && point.y < hitBox.y + hitBox.height;
 	}
 
 	function inRange2( x1, y1, x2, y2, width, height ) {
-		return 	x1 >= x2 && x1 < x2 + width && 
+		return 	x1 >= x2 && x1 < x2 + width &&
 				y1 >= y2 && y1 < y2 + height;
 	}
 
@@ -236,8 +244,8 @@ window.qbs.util = ( function () {
 	// Number.isInteger polyfill
 	if( typeof Number.isInteger !== "function" ) {
 		api.isInteger = function( value ) {
-			return typeof value === 'number' && 
-				isFinite( value ) && 
+			return typeof value === 'number' &&
+				isFinite( value ) &&
 				Math.floor( value ) === value;
 		};
 	}

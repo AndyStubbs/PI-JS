@@ -13,7 +13,9 @@ qbData = qbs._.data;
 qbs._.addCommand( "getImageData", getImageData, true, false, [] );
 function getImageData( screenData ) {
 	if( screenData.dirty === false ) {
-		screenData.imageData = screenData.context.getImageData( 0, 0, screenData.width, screenData.height );
+		screenData.imageData = screenData.context.getImageData(
+			0, 0, screenData.width, screenData.height
+		);
 	}
 }
 
@@ -86,10 +88,22 @@ function getPixelColor( screenData, c ) {
 	c2 = { "r": c.r, "g": c.g, "b": c.b, "a": c.a };
 	half = noise / 2;
 	if( qbs.util.isArray( noise ) ) {
-		c2.r = qbs.util.clamp( Math.round( c2.r + qbs.util.rndRange( -noise[ 0 ], noise[ 0 ] ) ), 0, 255 );
-		c2.g = qbs.util.clamp( Math.round( c2.g + qbs.util.rndRange( -noise[ 1 ], noise[ 1 ] ) ), 0, 255 );
-		c2.b = qbs.util.clamp( Math.round( c2.b + qbs.util.rndRange( -noise[ 2 ], noise[ 2 ] ) ), 0, 255 );
-		c2.a = qbs.util.clamp( c2.a + qbs.util.rndRange( -noise[ 3 ], noise[ 3 ] ), 0, 255 );
+		c2.r = qbs.util.clamp(
+			Math.round( c2.r + qbs.util.rndRange( -noise[ 0 ], noise[ 0 ] ) ),
+			0, 255
+		);
+		c2.g = qbs.util.clamp(
+			Math.round( c2.g + qbs.util.rndRange( -noise[ 1 ], noise[ 1 ] ) ),
+			0, 255
+		);
+		c2.b = qbs.util.clamp(
+			Math.round( c2.b + qbs.util.rndRange( -noise[ 2 ], noise[ 2 ] ) ),
+			0, 255
+		);
+		c2.a = qbs.util.clamp(
+			c2.a + qbs.util.rndRange( -noise[ 3 ], noise[ 3 ] ),
+			0, 255
+		);
 	} else {
 		change = Math.round( Math.random() * noise - half );
 		c2.r = qbs.util.clamp( c2.r + change, 0, 255 );
@@ -113,7 +127,12 @@ function drawSquarePen( screenData, x, y, c ) {
 	// Draw the square
 	for( y2 = 0; y2 < size; y2++ ) {
 		for( x2 = 0; x2 < size; x2++ ) {
-			qbData.commands.setPixelSafe( screenData, x2 + x - offset, y2 + y - offset, c );
+			qbData.commands.setPixelSafe(
+				screenData,
+				x2 + x - offset,
+				y2 + y - offset,
+				c
+			);
 		}
 	}
 
@@ -199,14 +218,18 @@ function findColorValue( screenData, colorInput, commandName ) {
 
 	if( qbs.util.isInteger( colorInput ) ) {
 		if( colorInput > screenData.pal.length ) {
-			console.error( commandName + ": parameter color is not a color in the palette." );
+			console.error(
+				commandName + ": parameter color is not a color in the palette."
+			);
 			return;
 		}
 		colorValue = screenData.pal[ colorInput ]
 	} else {
 		colorValue = qbs.util.convertToColor( colorInput );
 		if( colorValue === null ) {
-			console.error( commandName + ": parameter color is not a valid color format." );
+			console.error( commandName +
+				": parameter color is not a valid color format."
+			);
 			return;
 		}
 	}

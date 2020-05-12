@@ -40,13 +40,8 @@ function draw( screenData, args ) {
 	//Regular expression for the draw commands
 	reg = /(?=C|C#|R|B|F|G|L|A|T|D|G|H|U|E|N|M|P|S)/;
 
-	//var reg = /(?=C\d+|R\d+|B+|F\d+|G\d+|L\d+|A\d+|TA\d+|D\d+|G\d+|H\d+|U\d+|E\d+|N+|M\d+,\d+|P\d+,\d+)/;
-
 	//Run the regular expression and split into seperate commands
 	parts = drawString.split( reg );
-
-	//Start drawing
-	//qbsg.start_path( true );
 
 	//This triggers a move back after drawing the next command
 	isReturn = false;
@@ -151,7 +146,8 @@ function draw( screenData, args ) {
 			case "S":
 				color1 = getInt( drawArgs[ 1 ], 0 );
 
-				screenData.screenObj.paint( screenData.x, screenData.y, color1, drawArgs[ 0 ] === "S" );
+				screenData.screenObj.paint( screenData.x, screenData.y, color1,
+					drawArgs[ 0 ] === "S" );
 				isBlind = true;
 				break;
 
@@ -165,7 +161,9 @@ function draw( screenData, args ) {
 
 			//TA - T - Turn Angle
 			case "T":
-				screenData.angle = qbs.util.degreesToRadian( getInt( drawArgs[ 1 ], 1 ) );
+				screenData.angle = qbs.util.degreesToRadian(
+					getInt( drawArgs[ 1 ], 1 )
+				);
 				isBlind = true;
 				break;
 
@@ -181,9 +179,11 @@ function draw( screenData, args ) {
 		}
 		if( ! isBlind ) {
 			if( isArc ) {
-				screenData.screenObj.arc( screenData.x, screenData.y, radius, angle1, angle2 );
+				screenData.screenObj.arc( screenData.x, screenData.y, radius, angle1,
+					angle2 );
 			} else {
-				screenData.screenObj.line( lastCursor.x, lastCursor.y, screenData.x, screenData.y );
+				screenData.screenObj.line( lastCursor.x, lastCursor.y, screenData.x,
+					screenData.y );
 			}
 		}
 		isBlind = false;
@@ -197,7 +197,11 @@ function draw( screenData, args ) {
 		if( drawArgs[ 0 ] === "N" ) {
 			isReturn = true;
 		} else {
-			lastCursor = { x: screenData.x, y: screenData.y, angle: screenData.angle };
+			lastCursor = {
+				"x": screenData.x,
+				"y": screenData.y,
+				"angle": screenData.angle
+			};
 		}
 
 		if( drawArgs[ 0 ] === "B" ) {

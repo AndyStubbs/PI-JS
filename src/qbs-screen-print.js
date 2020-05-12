@@ -32,7 +32,9 @@ function print( screenData, args ) {
 
 	// Validate colors
 	for( i = 0; i < colors.length; i++ ) {
-		colorValue = qbData.commands.findColorValue( screenData, colors[ i ], "color" );
+		colorValue = qbData.commands.findColorValue(
+			screenData, colors[ i ], "color"
+		);
 
 		if( colorValue === undefined ) {
 			return;
@@ -68,7 +70,8 @@ function print( screenData, args ) {
 }
 
 function startPrint( screenData, msg, inLine, colors ) {
-	var width, overlap, onScreen, onScreenPct, msgSplit, index, msg1, msg2, printCursor;
+	var width, overlap, onScreen, onScreenPct, msgSplit, index, msg1, msg2,
+		printCursor;
 
 	printCursor = screenData.printCursor;
 
@@ -108,7 +111,8 @@ function startPrint( screenData, msg, inLine, colors ) {
 
 	}
 
-	printCursor.printFunction( screenData, msg, printCursor.x, printCursor.y, colors );
+	printCursor.printFunction( screenData, msg, printCursor.x, printCursor.y,
+		colors );
 
 	//If it's not in_line print the advance to next line
 	if( ! inLine ) {
@@ -124,7 +128,7 @@ function startPrint( screenData, msg, inLine, colors ) {
 }
 
 function shiftImageUp( screenData, yOffset ) {
-	var x, y, iSrc, iDest;
+	var x, y, iSrc, iDest, data;
 
 	if( yOffset <= 0 ) {
 		return;
@@ -146,10 +150,11 @@ function shiftImageUp( screenData, yOffset ) {
 			iSrc = ( ( screenData.width * ( y - yOffset ) ) + x ) * 4;
 
 			// Move the pixel up
-			screenData.imageData.data[ iSrc ] = screenData.imageData.data[ iDest ];
-			screenData.imageData.data[ iSrc + 1 ] = screenData.imageData.data[ iDest + 1 ];
-			screenData.imageData.data[ iSrc + 2 ] = screenData.imageData.data[ iDest + 2 ];
-			screenData.imageData.data[ iSrc + 3 ] = screenData.imageData.data[ iDest + 3 ];
+			data = screenData.imageData.data;
+			screenData.imageData.data[ iSrc ] = data[ iDest ];
+			screenData.imageData.data[ iSrc + 1 ] = data[ iDest + 1 ];
+			screenData.imageData.data[ iSrc + 2 ] = data[ iDest + 2 ];
+			screenData.imageData.data[ iSrc + 3 ] = data[ iDest + 3 ];
 
 		}
 	}
@@ -201,11 +206,6 @@ function qbsPrint( screenData, msg, x, y, colors ) {
 	// Setup a temporary pallette with the fore color and back color
 	defaultPal = screenData.pal;
 	screenData.pal = colors;
-	//screenData.pal = [ defaultPal[ 0 ], screenData.fColor ];
-	// screenData.pal = [ defaultPal[ 0 ] ];
-	// for( i = 0; i < colors.length; i++ ) {
-	// 	screenData.pal.push( colors[ i ] );
-	// }
 
 	//Loop through each character in the message and put it on the screen
 	for( i = 0; i < msg.length; i++ ) {
@@ -267,8 +267,12 @@ function locatePx( screenData, args, x, y ) {
 qbs._.addCommand( "pos", pos, false, true, [] );
 function pos( screenData ) {
 	return {
-		col: Math.floor( screenData.printCursor.x / screenData.printCursor.charWidth ),
-		row: Math.floor( screenData.printCursor.y / screenData.printCursor.charHeight )
+		"col": Math.floor(
+			screenData.printCursor.x / screenData.printCursor.charWidth
+		),
+		"row": Math.floor(
+			screenData.printCursor.y / screenData.printCursor.charHeight
+		)
 	};
 }
 
@@ -276,8 +280,8 @@ function pos( screenData ) {
 qbs._.addCommand( "posPx", posPx, false, true, [] );
 function posPx( screenData ) {
 	return {
-		x: screenData.printCursor.x,
-		y: screenData.printCursor.y
+		"x": screenData.printCursor.x,
+		"y": screenData.printCursor.y
 	};
 }
 
@@ -398,4 +402,4 @@ qbData.defaultFont.printFunction = qbsPrint;
 qbData.defaultFont.calcWidth = qbsCalcWidth;
 
 // End of File Encapsulation
-} )(); 
+} )();

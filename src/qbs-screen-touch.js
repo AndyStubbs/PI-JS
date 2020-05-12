@@ -32,7 +32,9 @@ function touchStart( e ) {
 	screenData = qbData.screens[ e.target.dataset.screenId ];
 
 	updateTouch( screenData, e );
-	qbData.commands.triggerEventListeners( "start", intouch( screenData ), screenData.onTouchEventListeners );
+	qbData.commands.triggerEventListeners( "start", intouch( screenData ),
+		screenData.onTouchEventListeners
+	);
 }
 
 function touchMove( e ) {
@@ -40,7 +42,8 @@ function touchMove( e ) {
 	screenData = qbData.screens[ e.target.dataset.screenId ];
 
 	updateTouch( screenData, e );
-	qbData.commands.triggerEventListeners( "move", intouch( screenData ), screenData.onTouchEventListeners );
+	qbData.commands.triggerEventListeners( "move", intouch( screenData ),
+		screenData.onTouchEventListeners );
 }
 
 function touchEnd( e ) {
@@ -48,7 +51,8 @@ function touchEnd( e ) {
 	screenData = qbData.screens[ e.target.dataset.screenId ];
 
 	updateTouch( screenData, e );
-	qbData.commands.triggerEventListeners( "end", intouch( screenData ), screenData.onTouchEventListeners );
+	qbData.commands.triggerEventListeners( "end", intouch( screenData ),
+		screenData.onTouchEventListeners );
 }
 
 function updateTouch( screenData, e ) {
@@ -60,8 +64,12 @@ function updateTouch( screenData, e ) {
 		for( j = 0; j < e.touches.length; j++ ) {
 			touch = e.touches[ j ];
 			touchData = {};
-			touchData.x = Math.floor( ( touch.pageX - rect.left ) / rect.width * screenData.width );
-			touchData.y = Math.floor( ( touch.pageY - rect.top ) / rect.height * screenData.height );
+			touchData.x = Math.floor(
+				( touch.pageX - rect.left ) / rect.width * screenData.width
+			);
+			touchData.y = Math.floor(
+				( touch.pageY - rect.top ) / rect.height * screenData.height
+			);
 			touchData.id = touch.identifier;
 			if( screenData.touches[ touchData.id ] ) {
 				touchData.lastX = screenData.touches[ touchData.id ].x;
@@ -99,7 +107,9 @@ function intouch( screenData ) {
 }
 
 // Adds an event trigger for a mouse event
-qbs._.addCommand( "ontouch", ontouch, false, true, [ "mode", "fn", "once", "hitBox" ] );
+qbs._.addCommand( "ontouch", ontouch, false, true,
+	[ "mode", "fn", "once", "hitBox" ]
+);
 function ontouch( screenData, args ) {
 	var mode, fn, once, hitBox;
 
@@ -108,7 +118,9 @@ function ontouch( screenData, args ) {
 	once = args[ 2 ];
 	hitBox = args[ 3 ];
 
-	qbData.commands.onevent( mode, fn, once, hitBox, [ "start", "end", "move" ], "ontouch", screenData.onTouchEventListeners );
+	qbData.commands.onevent( mode, fn, once, hitBox, [ "start", "end", "move" ],
+		"ontouch", screenData.onTouchEventListeners
+	);
 }
 
 // Removes an event trigger for a touch event
@@ -119,7 +131,9 @@ function offtouch( screenData, args ) {
 	mode = args[ 0 ];
 	fn = args[ 1 ];
 
-	qbData.commands.offevent( mode, fn, [ "start", "end", "move" ], "offtouch", screenData.onTouchEventListeners );
+	qbData.commands.offevent( mode, fn, [ "start", "end", "move" ], "offtouch",
+		screenData.onTouchEventListeners
+	);
 }
 
 qbs._.addCommand( "setPinchZoom", setPinchZoom, false, true, [ "isEnabled" ] );

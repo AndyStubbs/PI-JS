@@ -198,7 +198,8 @@ $.ready( function () {
 		gx = ( g - g2 ) / ( num - 1);
 		bx = ( b - b2 ) / ( num - 1);
 		for( var j = 0; j < num; j++ ) {
-			var c = qbs.util.rgbToHex( Math.round( r ), Math.round( g ), Math.round( b ), 255 ).slice( 0, 7 );
+			var c = qbs.util.rgbToHex( Math.round( r ), Math.round( g ),
+				Math.round( b ), 255 ).slice( 0, 7 );
 			move( c );
 			r -= rx;
 			g -= gx;

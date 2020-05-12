@@ -13,7 +13,9 @@ qbData = qbs._.data;
 maxDifference = 195075;		// 255^2 * 3
 
 // Paint Command
-qbs._.addCommand( "paint", paint, false, true, [ "x", "y", "fillColor", "tolerance" ] );
+qbs._.addCommand( "paint", paint, false, true,
+	[ "x", "y", "fillColor", "tolerance" ]
+);
 function paint( screenData, args ) {
 	var x, y, fillColor, tolerance, fills, pixel, backgroundColor;
 
@@ -37,7 +39,8 @@ function paint( screenData, args ) {
 		return;
 	}
 
-	// Soften the tolerance so closer to one it changes less closer to 0 changes more
+	// Soften the tolerance so closer to one it changes less
+	// closer to 0 changes more
 	tolerance = tolerance * ( 2 - tolerance ) * maxDifference;
 
 	if( navigator.brave && tolerance === maxDifference ) {
@@ -58,7 +61,9 @@ function paint( screenData, args ) {
 
 	if( qbs.util.isInteger( fillColor ) ) {
 		if( fillColor > screenData.pal.length ) {
-			console.error( "paint: Argument fillColor is not a color in the palette." );
+			console.error(
+				"paint: Argument fillColor is not a color in the palette."
+			);
 			return;
 		}
 		fillColor = screenData.pal[ fillColor ];
@@ -85,10 +90,14 @@ function paint( screenData, args ) {
 		setPixel( screenData, pixel.x, pixel.y, fillColor );
 
 		// Add fills to neighbors
-		addFill( screenData, pixel.x + 1, pixel.y, fills, fillColor, backgroundColor, tolerance );
-		addFill( screenData, pixel.x - 1, pixel.y, fills, fillColor, backgroundColor, tolerance );
-		addFill( screenData, pixel.x, pixel.y + 1, fills, fillColor, backgroundColor, tolerance );
-		addFill( screenData, pixel.x, pixel.y - 1, fills, fillColor, backgroundColor, tolerance );
+		addFill( screenData, pixel.x + 1, pixel.y, fills, fillColor,
+			backgroundColor, tolerance );
+		addFill( screenData, pixel.x - 1, pixel.y, fills, fillColor,
+			backgroundColor, tolerance );
+		addFill( screenData, pixel.x, pixel.y + 1, fills, fillColor,
+			backgroundColor, tolerance );
+		addFill( screenData, pixel.x, pixel.y - 1, fills, fillColor,
+			backgroundColor, tolerance );
 	}
 
 	// Setup pixels for garbage collection
@@ -111,7 +120,9 @@ function checkPixel( x, y ) {
 	return false;
 }
 
-function addFill( screenData, x, y, fills, fillColor, backgroundColor, tolerance ) {
+function addFill( screenData, x, y, fills, fillColor, backgroundColor,
+	tolerance
+) {
 	var fill;
 	if( floodCheck( screenData, x, y, fillColor, backgroundColor, tolerance ) ) {
 		setPixel( screenData, x, y, fillColor );
@@ -145,4 +156,3 @@ function floodCheck( screenData, x, y, fillColor, backgroundColor, tolerance ) {
 
 // End of File Encapsulation
 } )();
-

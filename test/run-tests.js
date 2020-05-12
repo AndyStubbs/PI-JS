@@ -7,7 +7,8 @@ const PNG = require( "pngjs" ).PNG;
 const TOML = require( "@iarna/toml" );
 
 // Global constants
-const BROWSER = "\"C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe\"";
+const BROWSER1 = "\"C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe\"";
+const BROWSER2 = "chromium-browser";
 const HOME = "http://localhost:8080/";
 const TEMPLATE_FILE = "test/index-template.html";
 const INDEX_FILE = "test/index.html";
@@ -31,7 +32,11 @@ let g_StrHtml = FS.readFileSync( TEMPLATE_FILE ).toString();
 let g_Files = FS.readdirSync( TESTS_FOLDER );
 let g_StrLog = "";
 let g_indexFile = INDEX_FILE;
+let g_Browser = BROWSER2;
 
+if( process.platform === "win32" ) {
+	g_Browser = BROWSER1;
+}
 if( process.argv.length > 2 ) {
 	g_Files = [ process.argv[ 2 ] ];
 	g_indexFile = "test/test-" + g_Files[ 0 ];
@@ -75,13 +80,13 @@ function run_test( i ) {
 	//Update the image html
 	g_ImgHtml[ i ] += "\n\t\t<div id='" + TEST_HTML_ID + i + "'></div>";
 	g_ImgHtml[ i ] += "\n\t\t<h2>" + test.name + "</h2>";
-	g_ImgHtml[ i ] += "\n\t\t<div class='link'><a href='" + test.url + "' target='_blank'>" + test.url + 
+	g_ImgHtml[ i ] += "\n\t\t<div class='link'><a href='" + test.url + "' target='_blank'>" + test.url +
 		"</a>&nbsp;&nbsp;-&nbsp;&nbsp;<a href='#stats'>Go back</a></div>";
 	g_ImgHtml[ i ] += "\n\t\t[" + test.file + "]<br />";
 	g_ImgHtml[ i ] += "\n\t\t<img src='" + IMG_URL_ROOT + test.file + ".png' />";
 	g_ImgHtml[ i ] += "\n\t\t<img src='" + IMG_URL_ROOT + test.file + "_new.png' />";
 
-	let cmdStr = BROWSER + " --headless --screenshot=" + ROOT_DIR + saveFile + " --window-size=" + test.width + "," + test.height + " " + test.url;
+	let cmdStr = g_Browser + " --headless --screenshot=" + ROOT_DIR + saveFile + " --window-size=" + test.width + "," + test.height + " " + test.url;
 
 	//Log some output
 	console.log( "" );
@@ -147,7 +152,7 @@ function run_test( i ) {
 			img2 = FS.createReadStream( test.new_img_file ).pipe( new PNG() ).on( "parsed", parsed );
 		} else {
 			console.log( "IMAGE NOT VERIFIED" );
-			g_ImgHtml[ i ] = g_ImgHtml[ i ].replace( "[" + test.file + "]", 
+			g_ImgHtml[ i ] = g_ImgHtml[ i ].replace( "[" + test.file + "]",
 				"<span class='neutral'>Not Verified</span>"
 			);
 			g_Errors.push( {
@@ -194,7 +199,7 @@ function writeFinalHtml() {
 			statsHtml += "\n\t\t\t<ol>";
 		}
 		for( let i = 0; i < g_Errors.length; i++ ) {
-			statsHtml += "\n\t\t\t\t<li><a href='#" + TEST_HTML_ID + g_Errors[ i ].test.id + "'>" + 
+			statsHtml += "\n\t\t\t\t<li><a href='#" + TEST_HTML_ID + g_Errors[ i ].test.id + "'>" +
 				g_Errors[ i ].test.name + " - " + g_Errors[ i ].type + "</a></li>";
 		}
 		if( g_Errors.length > 0 ) {
@@ -214,7 +219,7 @@ function writeFinalHtml() {
 	} );
 
 	//Set the command to startup chrome and point to the home page
-	let cmdStr = BROWSER + " " + HOME + g_indexFile;
+	let cmdStr = g_Browser + " " + HOME + g_indexFile;
 
 	//Launch Chrome with link to test file
 	CMD.get( cmdStr, function ( err, data, stderr ) {

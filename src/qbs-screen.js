@@ -14,10 +14,13 @@ qbData = qbs._.data;
 // QBS Core API
 // State Function
 // Creates a new screen object
-qbs._.addCommand( "screen", screen, false, false, [ "aspect", "container", "isOffscreen", "noStyles", "isMultiple" ] );
+qbs._.addCommand( "screen", screen, false, false,
+	[ "aspect", "container", "isOffscreen", "noStyles", "isMultiple" ]
+);
 function screen( args ) {
 
-	var aspect, container, isOffscreen, noStyles, isMultiple, aspectData, screenObj, screenData, i, commandData;
+	var aspect, container, isOffscreen, noStyles, isMultiple, aspectData,
+		screenObj, screenData, i, commandData;
 
 	// Input from args
 	aspect = args[ 0 ];
@@ -34,11 +37,17 @@ function screen( args ) {
 
 	if( isOffscreen ) {
 		if( ! aspectData ) {
-			console.error( "screen: You must supply an aspect ratio with exact dimensions for offscreen screens." );
+			console.error(
+				"screen: You must supply an aspect ratio with exact dimensions for " +
+				"offscreen screens."
+			);
 			return;
 		}
 		if( aspectData.splitter !== "x" ) {
-			console.error( "screen: You must use aspect ratio with e(x)act pixel dimensions such as 320x200 offscreen screens." );
+			console.error(
+				"screen: You must use aspect ratio with e(x)act pixel dimensions such" +
+				" as 320x200 offscreen screens."
+			);
 			return;
 		}
 		screenData = createOffscreenScreen( aspectData );
@@ -47,7 +56,9 @@ function screen( args ) {
 			container = document.getElementById( container );
 		}
 		if( container && ! qbs.util.isDomElement( container ) ) {
-			console.error( "screen: Invalid argument container. Container must be a DOM element or a string id of a DOM element." );
+			console.error( "screen: Invalid argument container. Container must be a" +
+				" DOM element or a string id of a DOM element."
+			);
 			return;
 		}
 		if( noStyles ) {
@@ -140,7 +151,9 @@ function createOffscreenScreen( aspectData ) {
 	bufferCanvas.width = aspectData.width;
 	bufferCanvas.height = aspectData.height;
 
-	return createScreenData( canvas, bufferCanvas, null, aspectData, true, false );
+	return createScreenData( canvas, bufferCanvas, null, aspectData, true,
+		false
+	);
 }
 
 // Create a new canvas
@@ -207,7 +220,9 @@ function createScreen( aspectData, container ) {
 		bufferCanvas.width = size.width;
 		bufferCanvas.height = size.height;
 	}
-	return createScreenData( canvas, bufferCanvas, container, aspectData, false, false );
+	return createScreenData( canvas, bufferCanvas, container, aspectData, false,
+		false
+	);
 }
 
 function createNoStyleScreen( aspectData, container ) {
@@ -238,11 +253,15 @@ function createNoStyleScreen( aspectData, container ) {
 		bufferCanvas.width = size.width;
 		bufferCanvas.height = size.height;
 	}
-	return createScreenData( canvas, bufferCanvas, container, aspectData, false, true );
+	return createScreenData( canvas, bufferCanvas, container, aspectData, false,
+		true
+	);
 }
 
 // Create the screen data
-function createScreenData( canvas, bufferCanvas, container, aspectData, isOffscreen, isNoStyles ) {
+function createScreenData(
+	canvas, bufferCanvas, container, aspectData, isOffscreen, isNoStyles
+) {
 	var screenData = {};
 
 	// Set the screen id
@@ -317,7 +336,8 @@ function createScreenData( canvas, bufferCanvas, container, aspectData, isOffscr
 
 // Sets the canvas size
 function setCanvasSize( aspectData, canvas, maxWidth, maxHeight ) {
-	var width, height, newWidth, newHeight, splitter, ratio1, ratio2, size, factor, factorX, factorY;
+	var width, height, newWidth, newHeight, splitter, ratio1, ratio2, size,
+		factor, factorX, factorY;
 
 	width = aspectData.width;
 	height = aspectData.height;
@@ -376,7 +396,9 @@ function setCanvasSize( aspectData, canvas, maxWidth, maxHeight ) {
 
 			// Add the margin size to width and height
 			width += Math.round( ( maxWidth - newWidth ) * ( width / newWidth ) );
-			height += Math.round( ( maxHeight - newHeight ) * ( height / newHeight ) );
+			height += Math.round(
+				( maxHeight - newHeight ) * ( height / newHeight )
+			);
 			newWidth = maxWidth;
 			newHeight = maxHeight;
 
@@ -418,14 +440,18 @@ function resizeScreens() {
 		if( ! ( screenData.isOffscreen || screenData.isNoStyles ) ) {
 
 			// Draw the canvas to the buffer
-			screenData.bufferContext.clearRect( 0, 0, screenData.width, screenData.height );
+			screenData.bufferContext.clearRect( 0, 0, screenData.width,
+				screenData.height
+			);
 			screenData.bufferContext.drawImage( screenData.canvas, 0, 0 );
 
 			if( screenData.aspectData ) {
 
 				// Update the canvas to the new size
 				size = getSize( screenData.container );
-				setCanvasSize( screenData.aspectData, screenData.canvas, size.width, size.height );
+				setCanvasSize( screenData.aspectData, screenData.canvas, size.width,
+					size.height
+				);
 
 			} else {
 
@@ -440,7 +466,9 @@ function resizeScreens() {
 			screenData.clientRect = screenData.canvas.getBoundingClientRect();
 
 			// Draw the buffer back onto the canvas
-			screenData.context.drawImage( screenData.bufferCanvas, 0, 0, screenData.width, screenData.height );
+			screenData.context.drawImage( screenData.bufferCanvas, 0, 0,
+				screenData.width, screenData.height
+			);
 
 			// Set the new buffer size
 			screenData.bufferCanvas.width = screenData.canvas.width;
@@ -454,17 +482,22 @@ function resizeScreens() {
 }
 
 function getSize( element ) {
-	var computedStyle, paddingX, paddingY, borderX, borderY, elementWidth, elementHeight;
+	var computedStyle, paddingX, paddingY, borderX, borderY, elementWidth,
+		elementHeight;
 
 	computedStyle = getComputedStyle( element );
 
 	// Compute the padding
-	paddingX = parseFloat( computedStyle.paddingLeft ) + parseFloat( computedStyle.paddingRight );
-	paddingY = parseFloat( computedStyle.paddingTop ) + parseFloat( computedStyle.paddingBottom );
+	paddingX = parseFloat( computedStyle.paddingLeft ) +
+		parseFloat( computedStyle.paddingRight );
+	paddingY = parseFloat( computedStyle.paddingTop ) +
+		parseFloat( computedStyle.paddingBottom );
 
 	// Compute the borders
-	borderX = parseFloat( computedStyle.borderLeftWidth ) + parseFloat( computedStyle.borderRightWidth );
-	borderY = parseFloat( computedStyle.borderTopWidth ) + parseFloat( computedStyle.borderBottomWidth );
+	borderX = parseFloat( computedStyle.borderLeftWidth ) +
+		parseFloat( computedStyle.borderRightWidth );
+	borderY = parseFloat( computedStyle.borderTopWidth ) +
+		parseFloat( computedStyle.borderBottomWidth );
 
 	// Compute the dimensions
 	elementWidth = element.offsetWidth - paddingX - borderX;

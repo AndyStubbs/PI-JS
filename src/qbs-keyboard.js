@@ -7,8 +7,9 @@
 
 "use strict";
 
-var qbData, keys, keyLookup, keyCodes, preventKeys, inputs, inputIndex, t, promptInterval, blink,
-promptBackground, promptBackgroundWidth, inputReadyList, onKeyEventListeners, anyKeyEventListeners;
+var qbData, keys, keyLookup, keyCodes, preventKeys, inputs, inputIndex, t,
+	promptInterval, blink, promptBackground, promptBackgroundWidth,
+	inputReadyList, onKeyEventListeners, anyKeyEventListeners;
 
 qbData = qbs._.data;
 
@@ -215,7 +216,7 @@ function keydown( e ) {
 		removeLastChar = false;
 		input = inputs[ inputIndex ];
 		if( e.keyCode === 13 ) {
-			
+
 			// The enter key was pressed
 			showPrompt( true );
 			$.print( "" );
@@ -343,7 +344,8 @@ function onkey( args ) {
 
 		// Validate parameters
 		if( ! isNaN( key ) && typeof key !== "string" ) {
-			console.error( "onkey: key needs to be either an interger keyCode or a string key name." );
+			console.error( "onkey: key needs to be either an interger keyCode or " +
+				"a string key name." );
 			return;
 		}
 		if( ! qbs.util.isFunction( fn ) ) {
@@ -390,11 +392,13 @@ function offkey( args ) {
 
 	// Validate parameters
 	if( ! isNaN( key ) && typeof key !== "string" ) {
-		console.error( "offkey: key needs to be either an interger keyCode or a string." );
+		console.error( "offkey: key needs to be either an interger keyCode or a " +
+			"string." );
 		return;
 	}
 	if( ! qbs.util.isFunction( fn ) && fn !== undefined ) {
-		console.error( "offkey: fn is not a valid function.  Leave this undefined or set it to a function." );
+		console.error( "offkey: fn is not a valid function.  Leave this undefined" +
+			" or set it to a function." );
 		return;
 	}
 
@@ -430,7 +434,8 @@ function offkey( args ) {
 
 // Disables the default behavior for a key
 // TODO: rename this command
-qbs._.addCommand( "disableDefaultKey", disableDefaultKey, false, false, [ "key" ] );
+qbs._.addCommand( "disableDefaultKey", disableDefaultKey, false, false,
+	[ "key" ] );
 function disableDefaultKey( args ) {
 	var key;
 
@@ -445,7 +450,8 @@ function disableDefaultKey( args ) {
 
 // Enables the default behavior for a key
 // TODO: rename this command
-qbs._.addCommand( "enableDefaultKey", enableDefaultKey, false, false, [ "key" ] );
+qbs._.addCommand( "enableDefaultKey", enableDefaultKey, false, false,
+	[ "key" ] );
 function enableDefaultKey( args ) {
 	var key;
 
@@ -489,11 +495,15 @@ function showPrompt( hideCursor ) {
 
 		// If there is no background
 		if( ! promptBackground ) {
-			promptBackground = $.get( posPx.x, posPx.y, posPx.x + width, posPx.y + height );
+			promptBackground = $.get(
+				posPx.x, posPx.y, posPx.x + width, posPx.y + height
+			);
 		} else if( promptBackgroundWidth < width ) {
 			// We have a background but we need a bigger background
 			$.put( promptBackground, posPx.x, posPx.y );
-			promptBackground = $.get( posPx.x, posPx.y, posPx.x + width, posPx.y + height );
+			promptBackground = $.get(
+				posPx.x, posPx.y, posPx.x + width, posPx.y + height
+			);
 		} else {
 			// Else redraw the background
 			$.put( promptBackground, posPx.x, posPx.y );
@@ -516,10 +526,11 @@ function showPrompt( hideCursor ) {
 }
 
 // Prompts the user to enter input through the keyboard.
-qbs._.addCommand( "input", input, false, false, [ "prompt", "name", "isNumber", "min", "max", "isInteger", "ready", "readyList" ] );
+qbs._.addCommand( "input", input, false, false,
+	[ "prompt", "name", "isNumber", "min", "max", "isInteger", "ready",
+	"readyList" ] );
 function input( args ) {
 	var prompt, name, isNumber, min, max, isInteger, ready, readyList;
-	//prompt, name, isNumber, min, max, isInteger
 
 	prompt = args[ 0 ];
 	name = args[ 1 ];
@@ -538,7 +549,6 @@ function input( args ) {
 		console.error( "input: name must be a string or left blank." );
 	}
 
-	// Convert params to boolean
 	isNumber = !!( isNumber );
 	isInteger = !!( isInteger );
 
@@ -593,7 +603,8 @@ function triggerReady( input ) {
 	}
 }
 
-// Process the input for numbers and if a number makes sure it meets the requirements
+// Process the input for numbers and if a number makes sure it meets the
+// requirements
 function processInput( input ) {
 	if( input.isNumber ) {
 		if( input.val === "" ) {
@@ -619,6 +630,7 @@ function closeInputs() {
 		processInput( input );
 		data[ input.name ] = input.val;
 	}
+
 	inputs = [];
 	inputIndex = 0;
 
@@ -645,7 +657,8 @@ function inputReady( args ) {
 }
 
 // Set the charcode for the input prompt
-qbs._.addCommand( "setInputCursor", setInputCursor, false, false, [ "cursor" ] );
+qbs._.addCommand( "setInputCursor", setInputCursor, false, false, [ "cursor" ]
+	);
 function setInputCursor( args ) {
 	var cursor;
 

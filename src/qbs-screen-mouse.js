@@ -33,7 +33,8 @@ function mouseMove( e ) {
 	screenData = qbData.screens[ e.target.dataset.screenId ];
 
 	updateMouse( screenData, e );
-	qbData.commands.triggerEventListeners( "move", inmouse( screenData ), screenData.onMouseEventListeners );
+	qbData.commands.triggerEventListeners( "move", inmouse( screenData ),
+		screenData.onMouseEventListeners );
 }
 
 function mouseDown( e ) {
@@ -42,7 +43,8 @@ function mouseDown( e ) {
 	screenData = qbData.screens[ e.target.dataset.screenId ];
 
 	updateMouse( screenData, e );
-	qbData.commands.triggerEventListeners( "down", inmouse( screenData ), screenData.onMouseEventListeners );
+	qbData.commands.triggerEventListeners( "down", inmouse( screenData ),
+		screenData.onMouseEventListeners );
 }
 
 function mouseUp( e ) {
@@ -51,7 +53,8 @@ function mouseUp( e ) {
 	screenData = qbData.screens[ e.target.dataset.screenId ];
 
 	updateMouse( screenData, e );
-	qbData.commands.triggerEventListeners( "up", inmouse( screenData ), screenData.onMouseEventListeners );
+	qbData.commands.triggerEventListeners( "up", inmouse( screenData ),
+		screenData.onMouseEventListeners );
 
 }
 
@@ -110,7 +113,9 @@ function inmouse( screenData ) {
 }
 
 // Adds an event trigger for a mouse event
-qbs._.addCommand( "onmouse", onmouse, false, true, [ "mode", "fn", "once", "hitBox" ] );
+qbs._.addCommand( "onmouse", onmouse, false, true,
+	[ "mode", "fn", "once", "hitBox" ]
+);
 function onmouse( screenData, args ) {
 	var mode, fn, once, hitBox;
 
@@ -119,7 +124,9 @@ function onmouse( screenData, args ) {
 	once = args[ 2 ];
 	hitBox = args[ 3 ];
 
-	qbData.commands.onevent( mode, fn, once, hitBox, [ "down", "up", "move" ], "onmouse", screenData.onMouseEventListeners );
+	qbData.commands.onevent( mode, fn, once, hitBox, [ "down", "up", "move" ],
+		"onmouse", screenData.onMouseEventListeners
+	);
 }
 
 // Removes an event trigger for a mouse event
@@ -130,10 +137,14 @@ function offmouse( screenData, args ) {
 	eventName = args[ 0 ];
 	fn = args[ 1 ];
 
-	qbData.commands.offevent( eventName, fn, [ "down", "up", "move" ], "offmouse", screenData.onMouseEventListeners );
+	qbData.commands.offevent( eventName, fn, [ "down", "up", "move" ],
+		"offmouse", screenData.onMouseEventListeners
+	);
 }
 
-qbs._.addCommand( "enableContextMenu", enableContextMenu, false, true, [ "isEnabled" ] );
+qbs._.addCommand( "enableContextMenu", enableContextMenu, false, true,
+	[ "isEnabled" ]
+);
 function enableContextMenu( screenData, args ) {
 	var isEnabled;
 
@@ -146,4 +157,3 @@ function enableContextMenu( screenData, args ) {
 
 // End of File Encapsulation
 } )();
- 

@@ -38,4 +38,3 @@ delete qbs._;
 
 // End of File Encapsulation
 })();
-

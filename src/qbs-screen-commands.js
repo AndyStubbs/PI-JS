@@ -55,7 +55,8 @@ function bgColor( screenData, args ) {
 }
 
 // Set the background color of the container
-qbs._.addCommand( "containerBgColor", containerBgColor, false, true, [ "color" ] );
+qbs._.addCommand( "containerBgColor", containerBgColor, false, true,
+	[ "color" ] );
 function containerBgColor( screenData, args ) {
 	var color, bc;
 
@@ -93,7 +94,8 @@ function canvas( screenData ) {
 }
 
 // Finds a color from the palette and returns it's index.
-qbs._.addCommand( "findColor", findColor, false, true, [ "color", "tolerance", "isAddToPalette" ] );
+qbs._.addCommand( "findColor", findColor, false, true,
+	[ "color", "tolerance", "isAddToPalette" ] );
 function findColor( screenData, args ) {
 	var color, tolerance, isAddToPalette, i, pal, dr, dg, db, da, difference;
 
@@ -110,6 +112,7 @@ function findColor( screenData, args ) {
 	if( screenData.cache[ "findColor" ][ color.s ] ) {
 		return screenData.cache[ "findColor" ][ color.s ];
 	}
+
 	for( i = 0; i < pal.length; i++ ) {
 		if(tolerance === 0 && pal[ i ].s === color.s) {
 			screenData.cache[ "findColor" ][ color.s ] = i;
@@ -156,13 +159,15 @@ function setPixelMode( screenData, args ) {
 	}
 }
 
-qbs._.addCommand( "triggerEventListeners", triggerEventListeners, true, true, [] );
+qbs._.addCommand( "triggerEventListeners", triggerEventListeners, true, true,
+	[] );
 function triggerEventListeners( mode, data, listenerArr ) {
 	var temp, i, j, pos, newData;
 
 	if( listenerArr[ mode ] ) {
 
-		// Make a temp copy so we don't get infinite loop if new event listener added here
+		// Make a temp copy so we don't get infinite loop if new event listener
+		// added here
 		temp = listenerArr[ mode ].slice();
 
 		// Loop through all the event listeners
@@ -198,7 +203,8 @@ function triggerEventListeners( mode, data, listenerArr ) {
 }
 
 qbs._.addCommand( "onevent", onevent, true, true, [] );
-function onevent( mode, fn, once, hitBox, modes, name, listenerArr, extraId, extraData ) {
+function onevent( mode, fn, once, hitBox, modes, name, listenerArr, extraId,
+	extraData ) {
 
 	// Prevent event from being triggered in case event is called in an event
 	setTimeout( function () {
@@ -213,7 +219,8 @@ function onevent( mode, fn, once, hitBox, modes, name, listenerArr, extraId, ext
 			}
 		}
 		if( ! modeFound ) {
-			console.error( name + ": mode needs to be on of the following " + modes.join( ", " ) + ".");
+			console.error( name + ": mode needs to be on of the following " +
+				modes.join( ", " ) + ".");
 			return;
 		}
 
@@ -265,7 +272,8 @@ function offevent( mode, fn, modes, name, listenerArr, extraId ) {
 		}
 	}
 	if( ! modeFound ) {
-		console.error( name + ": mode needs to be on of the following " + modes.join( ", " ) + ".");
+		console.error( name + ": mode needs to be on of the following " +
+			modes.join( ", " ) + ".");
 		return;
 	}
 
@@ -299,10 +307,10 @@ function offevent( mode, fn, modes, name, listenerArr, extraId ) {
 			}
 		}
 	}
-
 }
 
-qbs._.addCommand( "setAutoRender", setAutoRender, false, true, [ "isAutoRender" ] );
+qbs._.addCommand( "setAutoRender", setAutoRender, false, true,
+	[ "isAutoRender" ] );
 function setAutoRender( screenData, args ) {
 	var isAutoRender;
 

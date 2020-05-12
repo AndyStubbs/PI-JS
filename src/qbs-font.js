@@ -14,7 +14,8 @@ qbWait = qbs._.wait;
 qbResume = qbs._.resume;
 
 // Loads a font into memory
-qbs._.addCommand( "loadFont", loadFont, false, false, [ "fontSrc", "width", "height", "isBase32Encoded" ] );
+qbs._.addCommand( "loadFont", loadFont, false, false,
+	[ "fontSrc", "width", "height", "isBase32Encoded" ] );
 function loadFont( args ) {
 	var fontSrc, width, height, isBase32Encoded, font;
 
@@ -158,7 +159,7 @@ function loadFontFromImg( fontSrc, width, height, font ) {
 }
 
 function readImageData( img, width, height, font ) {
-	var canvas, context, data, i, x, y, index, xStart, yStart, cols, 
+	var canvas, context, data, i, x, y, index, xStart, yStart, cols,
 		r, g, b, a, colors, colorIndex;
 
 	// Create a new canvas to read the pixel data
@@ -226,7 +227,8 @@ function findColorIndex( colors, r, g, b, a ) {
 	return colors.length - 1;
 }
 
-qbs._.addCommand( "setDefaultFont", setDefaultFont, false, false, [ "fontId" ] );
+qbs._.addCommand( "setDefaultFont", setDefaultFont, false, false,
+[ "fontId" ] );
 function setDefaultFont( args ) {
 	var fontId, font;
 

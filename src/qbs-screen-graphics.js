@@ -35,7 +35,7 @@ function pxCircle( screenData, args ) {
 
 	// Set the first pixel at 90 degrees
 	//screenData.pen.draw( screenData, x + cx, y + cy, c );
-	
+
 	// Only print inital points if r > 0
 	if( radius > 1 ) {
 		screenData.pen.draw( screenData, x2 + x, y2 + y, color );
@@ -59,7 +59,7 @@ function pxCircle( screenData, args ) {
 	midPoint = 1 - radius;
 	while( x2 > y2 ) {
 		y2 += 1;
-		
+
 		if( midPoint <= 0 ) {
 			// Mid-point is inside or on the perimeter
 			midPoint = midPoint + 2 * y2 + 1;
@@ -68,19 +68,19 @@ function pxCircle( screenData, args ) {
 			x2 -= 1;
 			midPoint = midPoint + 2 * y2 - 2 * x2 + 1;
 		}
-		
+
 		// All the perimeter points have already been printed
 		//if( x < y ) {
 		// ???Unreachable code???
 		//	break;
 		//}
-		
+
 		// Set pixels around point and reflection in other octants
 		screenData.pen.draw( screenData, x2 + x, y2 + y, color );
 		screenData.pen.draw( screenData, -x2 + x, y2 + y, color );
 		screenData.pen.draw( screenData, x2 + x, -y2 + y, color );
 		screenData.pen.draw( screenData, -x2 + x, -y2 + y, color );
-		
+
 		// Set pixels on the perimeter points if not on x = y
 		if( x2 != y2 ) {
 			screenData.pen.draw( screenData, y2 + x, x2 + y, color );
@@ -110,13 +110,16 @@ function aaCircle( screenData, args ) {
 	angle2 = qbs.util.degreesToRadian( 360 );
 	screenData.context.beginPath();
 	screenData.context.strokeStyle = screenData.fColor.s;
-	screenData.context.moveTo( x + Math.cos( angle1 ) * r, y + Math.sin( angle1 ) * r );
+	screenData.context.moveTo( x + Math.cos( angle1 ) * r, y +
+		Math.sin( angle1 ) * r );
 	screenData.context.arc( x, y, r, angle1, angle2 );
 	screenData.context.stroke();
 }
 
 // Arc command
-qbs._.addCommands( "arc", pxArc, aaArc, [ "x", "y", "radius", "angle1", "angle2" ] );
+qbs._.addCommands( "arc", pxArc, aaArc,
+	[ "x", "y", "radius", "angle1", "angle2" ]
+);
 function pxArc( screenData, args ) {
 	var x, y, radius, angle1, angle2, color, x2, y2, midPoint, winding;
 
@@ -143,9 +146,6 @@ function pxArc( screenData, args ) {
 	winding = false;
 	if( angle1 > angle2 ) {
 		winding = true;
-	//	temp = a1;
-	//	a1 = a2;
-	//	a2 = temp;
 	}
 	qbData.commands.getImageData( screenData );
 
@@ -165,9 +165,6 @@ function pxArc( screenData, args ) {
 	x2 = radius;
 	y2 = 0;
 
-	// Set the first pixel at 90 degrees
-	//screenData.pen.draw( screenData, x + cx, y + cy, c );
-	
 	// Only print inital points if r > 0
 	if( radius > 1 ) {
 		set( x2 + x, y2 + y, color );
@@ -206,7 +203,7 @@ function pxArc( screenData, args ) {
 		set( -x2 + x, y2 + y, color );
 		set( x2 + x, -y2 + y, color );
 		set( -x2 + x, -y2 + y, color );
-		
+
 		// Set pixels on the perimeter points if not on x = y
 		if( x2 != y2 ) {
 			set( y2 + x, x2 + y, color );
@@ -229,8 +226,11 @@ function aaArc( screenData, args ) {
 	angle1 = args[ 3 ];
 	angle2 = args[ 4 ];
 
-	if( isNaN( x ) || isNaN( y ) || isNaN( radius ) || isNaN( angle1 ) || isNaN( angle2 ) ) {
-		console.error( "arc: parameters cx, cy, r, a1, a2 must be numbers." );
+	if(
+			isNaN( x ) || isNaN( y ) || isNaN( radius ) ||
+			isNaN( angle1 ) || isNaN( angle2 )
+		) {
+			console.error( "arc: parameters cx, cy, r, a1, a2 must be numbers." );
 		return;
 	}
 
@@ -246,13 +246,18 @@ function aaArc( screenData, args ) {
 	angle2 = qbs.util.degreesToRadian( angle2 );
 	screenData.context.beginPath();
 	screenData.context.strokeStyle = screenData.fColor.s;
-	screenData.context.moveTo( x + Math.cos(angle1) * radius, y + Math.sin(angle1) * radius );
+	screenData.context.moveTo(
+		x + Math.cos( angle1 ) * radius,
+		y + Math.sin(angle1) * radius
+	);
 	screenData.context.arc( x, y, radius, angle1, angle2 );
 	screenData.context.stroke();
 }
 
 // Ellipse command
-qbs._.addCommands( "ellipse", pxEllipse, aaEllipse, [ "x", "y", "radiusX", "radiusY" ] );
+qbs._.addCommands( "ellipse", pxEllipse, aaEllipse,
+	[ "x", "y", "radiusX", "radiusY" ]
+);
 function pxEllipse( screenData, args ) {
 	var x, y, radiusX, radiusY, color, dx, dy, d1, d2, x2, y2;
 
@@ -280,16 +285,17 @@ function pxEllipse( screenData, args ) {
 	// Starting points
 	x2 = 0;
 	y2 = radiusY;
-	
+
 	// Decision parameter of region 1
-	d1 = ( radiusY * radiusY ) - ( radiusX * radiusX * radiusY ) + ( 0.25 * radiusX * radiusX );
-	
+	d1 = ( radiusY * radiusY ) - ( radiusX * radiusX * radiusY ) +
+		( 0.25 * radiusX * radiusX );
+
 	dx = 2 * radiusY * radiusY * x2;
 	dy = 2 * radiusX * radiusX * y2;
-	
+
 	// For region 1
 	while( dx < dy ) {
-		
+
 		// 4-way symmetry
 		screenData.pen.draw( screenData, x2 + x, y2 + y, color );
 		screenData.pen.draw( screenData, -x2 + x, y2 + y, color );
@@ -315,7 +321,7 @@ function pxEllipse( screenData, args ) {
 	d2 = ( ( radiusY * radiusY ) * ( ( x2 + 0.5 ) * ( x2 + 0.5 ) ) ) +
 		 ( ( radiusX * radiusX ) * ( ( y2 - 1 ) * ( y2 - 1 ) ) ) -
 		 ( radiusX * radiusX * radiusY * radiusY );
-	
+
 	// Plotting points of region 2
 	while( y2 >= 0 ) {
 
@@ -324,19 +330,19 @@ function pxEllipse( screenData, args ) {
 		screenData.pen.draw( screenData, -x2 + x, y2 + y, color );
 		screenData.pen.draw( screenData, x2 + x, -y2 + y, color );
 		screenData.pen.draw( screenData, -x2 + x, -y2 + y, color );
-		
-		// Checking and updating parameter 
-		// value based on algorithm 
-		if( d2 > 0 ) { 
-			y2--; 
-			dy = dy - ( 2 * radiusX * radiusX ); 
-			d2 = d2 + ( radiusX * radiusX ) - dy; 
-		} else { 
-			y2--; 
-			x2++; 
-			dx = dx + ( 2 * radiusY * radiusY ); 
-			dy = dy - ( 2 * radiusX * radiusX ); 
-			d2 = d2 + dx - dy + ( radiusX * radiusX ); 
+
+		// Checking and updating parameter
+		// value based on algorithm
+		if( d2 > 0 ) {
+			y2--;
+			dy = dy - ( 2 * radiusX * radiusX );
+			d2 = d2 + ( radiusX * radiusX ) - dy;
+		} else {
+			y2--;
+			x2++;
+			dx = dx + ( 2 * radiusY * radiusY );
+			dy = dy - ( 2 * radiusX * radiusX );
+			d2 = d2 + dx - dy + ( radiusX * radiusX );
 		}
 	}
 
@@ -437,9 +443,12 @@ function put( screenData, args ) {
 }
 
 // Get command
-qbs._.addCommand( "get", get, false, true, [ "x1", "y1", "x2", "y2", "tolerance" ] );
+qbs._.addCommand( "get", get, false, true,
+	[ "x1", "y1", "x2", "y2", "tolerance" ]
+);
 function get( screenData, args ) {
-	var x1, y1, x2, y2, tolerance, t, width, height, imageData, data, x, y, c, r, g, b, i, row, a;
+	var x1, y1, x2, y2, tolerance, t, width, height, imageData, data, x, y, c, r,
+		g, b, i, row, a;
 
 	x1 = args[ 0 ];
 	y1 = args[ 1 ];
@@ -483,7 +492,8 @@ function get( screenData, args ) {
 			g = imageData.data[ i + 1 ];
 			b = imageData.data[ i + 2 ];
 			a = imageData.data[ i + 3 ];
-			c = screenData.screenObj.findColor( qbs.util.rgbToColor( r, g, b, a ), tolerance );
+			c = screenData.screenObj.findColor( qbs.util.rgbToColor( r, g, b, a ),
+				tolerance );
 			data[ row ].push( c );
 		}
 		row += 1;
@@ -641,7 +651,7 @@ function aaRect( screenData, args ) {
 	height = args[ 3 ];
 
 	if( isNaN(x) || isNaN(y) || isNaN(width) || isNaN(height) ) {
-		console.error("rect: parameters x, y, width, height must be numbers.");
+		console.error( "rect: parameters x, y, width, height must be numbers." );
 		return;
 	}
 
@@ -653,20 +663,28 @@ function aaRect( screenData, args ) {
 }
 
 // Set Pal Color command
-qbs._.addCommand( "setPalColor", setPalColor, false, true, [ "index", "color" ] );
+qbs._.addCommand( "setPalColor", setPalColor, false, true,
+	[ "index", "color" ]
+);
 function setPalColor( screenData, args ) {
 	var index, color, colorValue, i;
 
 	index = args[ 0 ];
 	color = args[ 1 ];
 
-	if( ! qbs.util.isInteger( index ) || index < 0 || index > screenData.pal.length ) {
+	if(
+		! qbs.util.isInteger( index ) ||
+		index < 0 ||
+		index > screenData.pal.length
+	) {
 		console.error( "setPalColor: index is not a valid integer value." );
 		return;
 	}
 	colorValue = qbs.util.convertToColor( color );
 	if( colorValue === null ) {
-		console.error( "setPalColor: parameter color is not a valid color format." );
+		console.error(
+			"setPalColor: parameter color is not a valid color format."
+		);
 		return;
 	}
 
@@ -710,7 +728,9 @@ function color( screenData, args ) {
 
 	colorInput = args[ 0 ];
 	isAddToPalette = !!( args[ 1 ] );
-	colorValue = qbData.commands.findColorValue( screenData, colorInput, "color" );
+	colorValue = qbData.commands.findColorValue(
+		screenData, colorInput, "color"
+	);
 
 	if( colorValue === undefined ) {
 		return;
@@ -718,7 +738,9 @@ function color( screenData, args ) {
 	colors = [ colorValue ];
 
 	if( isAddToPalette ) {
-		screenData.fColor = screenData.screenObj.findColor( colorValue, isAddToPalette );
+		screenData.fColor = screenData.screenObj.findColor(
+			colorValue, isAddToPalette
+		);
 	} else {
 		screenData.fColor = colorValue;
 	}
@@ -742,7 +764,9 @@ function colors( screenData, args ) {
 			return;
 		}
 		for( i = 0; i < colorInput.length; i++ ) {
-			colorValue = qbData.commands.findColorValue( screenData, colorInput[ i ], "color" );
+			colorValue = qbData.commands.findColorValue(
+				screenData, colorInput[ i ], "color"
+			);
 			if( colorValue === undefined ) {
 				return;
 			}
@@ -761,7 +785,9 @@ function colors( screenData, args ) {
 	screenData.context.strokeStyle = colorValue.s;
 }
 
-qbs._.addCommand( "swapColor", swapColor, false, true, [ "oldColor", "newColor" ] );
+qbs._.addCommand( "swapColor", swapColor, false, true,
+	[ "oldColor", "newColor" ]
+);
 function swapColor( screenData, args ) {
 	var oldColor, newColor, index, x, y, i;
 
@@ -783,7 +809,9 @@ function swapColor( screenData, args ) {
 	// Validate newColor
 	newColor = qbs.util.convertToColor( newColor );
 	if( newColor === null ) {
-		console.error( "swapColor: parameter newColor is not a valid color format." );
+		console.error(
+			"swapColor: parameter newColor is not a valid color format."
+		);
 		return;
 	}
 
@@ -794,10 +822,10 @@ function swapColor( screenData, args ) {
 	for( y = 0; y < screenData.height; y++ ) {
 		for( x = 0; x < screenData.width; x++ ) {
 			i = ( ( screenData.width * y ) + x ) * 4;
-			if( 
-				data[ i ] === oldColor.r && 
-				data[ i + 1 ] === oldColor.g && 
-				data[ i + 2 ] === oldColor.b && 
+			if(
+				data[ i ] === oldColor.r &&
+				data[ i + 1 ] === oldColor.g &&
+				data[ i + 2 ] === oldColor.b &&
 				data[ i + 3 ] === oldColor.a ) {
 					data[ i ] = newColor.r;
 					data[ i + 1 ] = newColor.g;
@@ -845,7 +873,7 @@ function point( screenData, args ) {
 // CLS command
 qbs._.addCommand( "cls", cls, false, true, [] );
 function cls( screenData ) {
-	screenData.context.clearRect(0, 0, screenData.width, screenData.height);
+	screenData.context.clearRect( 0, 0, screenData.width, screenData.height );
 	screenData.imageData = null;
 	screenData.printCursor.x = 0;
 	screenData.printCursor.y = 0;
@@ -878,7 +906,7 @@ function filterImg( screenData, args ) {
 				"b": data[ i + 2 ],
 				"a": data[ i + 3 ]
 			}, x, y );
-			if( color && 
+			if( color &&
 					qbs.util.isInteger( color.r ) &&
 					qbs.util.isInteger( color.g ) &&
 					qbs.util.isInteger( color.b ) &&
@@ -917,7 +945,10 @@ function setPen( screenData, args ) {
 	noise = args[ 2 ];
 
 	if( ! qbData.pens[ pen ] ) {
-		console.error( "setPen: Argument pen is not a valid pen. Valid pens: " + qbData.penList.join(", " ) );
+		console.error(
+			"setPen: Argument pen is not a valid pen. Valid pens: " +
+			qbData.penList.join(", " )
+		);
 		return;
 	}
 	if( ! qbs.util.isInteger( size ) ) {
@@ -932,7 +963,9 @@ function setPen( screenData, args ) {
 		noise = noise.slice();
 		for( i = 0; i < noise.length; i++ ) {
 			if( Number.isNaN( noise[ i ] ) ) {
-				console.error( "setPen: Argument noise array contains an invalid value." );
+				console.error(
+					"setPen: Argument noise array contains an invalid value."
+				);
 				return;
 			}
 		}

@@ -34,7 +34,9 @@ function loadImage( args ) {
 	return name;
 }
 
-qbs._.addCommand( "drawImage", drawImage, false, true, [ "name", "x", "y", "angle", "anchorX", "anchorY", "img", "alpha" ] );
+qbs._.addCommand( "drawImage", drawImage, false, true,
+	[ "name", "x", "y", "angle", "anchorX", "anchorY", "img", "alpha" ]
+);
 function drawImage( screenData, args ) {
 	var name, x, y, angle, anchorX, anchorY, img, alpha;
 
@@ -54,7 +56,10 @@ function drawImage( screenData, args ) {
 		img = qbData.images[ name ];
 	} else {
 		if( ! name || ! name.canvas ) {
-			console.error( "drawImage: image source object type. Must be an image already loaded by the loadImage command or a screen." );
+			console.error(
+				"drawImage: image source object type. Must be an image already " +
+				"loaded by the loadImage command or a screen."
+			);
 			return;
 		}
 		img = name.canvas();
