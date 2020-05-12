@@ -198,7 +198,7 @@ function setWordBreak( screenData, args ) {
 
 // Print to the screen by using qbs_fonts
 function qbsPrint( screenData, msg, x, y, colors ) {
-	var i, printCursor, defaultPal;
+	var i, printCursor, defaultPal, charIndex;
 
 	// Get reference to printCursor data
 	printCursor = screenData.printCursor;
@@ -209,7 +209,16 @@ function qbsPrint( screenData, msg, x, y, colors ) {
 
 	//Loop through each character in the message and put it on the screen
 	for( i = 0; i < msg.length; i++ ) {
-		screenData.screenObj.put( printCursor.font[ msg.charCodeAt( i ) ], x + printCursor.charWidth * i, y );
+
+		// Get the character index for the character data
+		charIndex = printCursor.chars[ msg.charCodeAt( i ) ];
+
+		// Draw the character on the screen
+		screenData.screenObj.put(
+			printCursor.font[ charIndex ],
+			x + printCursor.charWidth * i,
+			y
+		);
 	}
 
 	// Reset the palette to the default
@@ -299,6 +308,7 @@ function setFont( screenData, args ) {
 		// Set the font data for the current print cursor
 		font = qbData.fonts[ fontId ];
 		screenData.printCursor.font = font.data;
+		screenData.printCursor.chars = font.chars;
 
 		// Set the font dimensions
 		screenData.printCursor.charWidth = font.width;
@@ -322,6 +332,7 @@ function setFont( screenData, args ) {
 
 		// Set the font data
 		screenData.printCursor.font = screenData.context.font;
+		screenData.printCursor.chars = {};
 
 		// Set the font dimensions
 		size = calcFontSize( screenData.context );

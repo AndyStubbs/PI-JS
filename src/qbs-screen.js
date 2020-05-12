@@ -300,6 +300,7 @@ function createScreenData(
 		"x": 0,
 		"y": 0,
 		"font": qbData.defaultFont.data,
+		"chars": qbData.defaultFont.chars,
 		"rows": Math.floor( canvas.width / qbData.defaultFont.width ),
 		"cols": Math.floor( canvas.height / qbData.defaultFont.height ),
 		"prompt": qbData.defaultPrompt,

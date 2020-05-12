@@ -15,14 +15,34 @@ qbResume = qbs._.resume;
 
 // Loads a font into memory
 qbs._.addCommand( "loadFont", loadFont, false, false,
-	[ "fontSrc", "width", "height", "isBase32Encoded" ] );
+	[ "fontSrc", "width", "height", "charSet", "isEncoded" ] );
 function loadFont( args ) {
-	var fontSrc, width, height, isBase32Encoded, font;
+	var fontSrc, width, height, charSet, isEncoded, font, chars, i;
 
 	fontSrc = args[ 0 ];
 	width = args[ 1 ];
 	height = args[ 2 ];
-	isBase32Encoded = !!( args[ 3 ] );
+	charSet = args[ 3 ];
+	isEncoded = !!( args[ 4 ] );
+
+	// Default charset to 0 to 255
+	if( ! charSet ) {
+		charSet = [];
+		for( i = 0; i < 256; i += 1 ) {
+			charSet.push( i );
+		}
+	}
+
+	if( ! qbs.util.isArray( charSet ) ) {
+		console.error( "loadFont: charSet must be an array." );
+		return;
+	}
+
+	// Load the chars
+	chars = {};
+	for( i = 0; i < charSet.length; i += 1 ) {
+		chars[ charSet[ i ] ] = i;
+	}
 
 	// Set the font data
 	font = {
@@ -30,6 +50,7 @@ function loadFont( args ) {
 		"width": width,
 		"height": height,
 		"data": [],
+		"chars": chars,
 		"colorCount": 2
 	};
 
@@ -39,7 +60,7 @@ function loadFont( args ) {
 	// Increment the next font id
 	qbData.nextFontId += 1;
 
-	if( isBase32Encoded ) {
+	if( isEncoded ) {
 		loadFontFromBase32Encoded( fontSrc, width, height, font );
 	} else {
 		loadFontFromImg( fontSrc, width, height, font );
@@ -228,7 +249,8 @@ function findColorIndex( colors, r, g, b, a ) {
 }
 
 qbs._.addCommand( "setDefaultFont", setDefaultFont, false, false,
-[ "fontId" ] );
+	[ "fontId" ]
+);
 function setDefaultFont( args ) {
 	var fontId, font;
 
@@ -241,6 +263,7 @@ function setDefaultFont( args ) {
 	qbData.defaultFont.width = font.width;
 	qbData.defaultFont.height = font.height;
 	qbData.defaultFont.data = font.data;
+	qbData.defaultFont.chars = font.chars;
 }
 
 // End of File Encapsulation

@@ -1,42 +1,32 @@
 <!DOCTYPE html>
 <html>
-<head>
-	<!--meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/-->
-	<title>Test App</title>
-	<script src="../test/libs/seedrandom.js"></script>
-	<script src="qbs.js"></script>
-	<script src="qbs-util.js"></script>
-	<script src="qbs-keyboard.js"></script>
-	<script src="qbs-gamepad.js"></script>
-	<script src="qbs-font.js"></script>
-	<script src="qbs-screen.js"></script>
-	<script src="qbs-screen-mouse.js"></script>
-	<script src="qbs-screen-touch.js"></script>
-	<script src="qbs-screen-commands.js"></script>
-	<script src="qbs-screen-helper.js"></script>
-	<script src="qbs-screen-graphics.js"></script>
-	<script src="qbs-screen-paint.js"></script>
-	<script src="qbs-screen-bezier.js"></script>
-	<script src="qbs-screen-images.js"></script>
-	<script src="qbs-screen-draw.js"></script>
-	<script src="qbs-screen-print.js"></script>
-	<script src="qbs-sound.js"></script>
-	<script src="fonts/font-data.js"></script>
-	<script src="qbs-init.js"></script>
-	<style>
-		html, body {
-			background-color: gray;
-		}
-		div {
-			background-color: blue;
-			width: 600px;
-			height: 140px;
-		}
-	</style>
-</head>
+	<head>
+		<title>Print 09</title>
+		<script type="text/toml">
+			[[TOML_START]]
+			test = "screenshot.js"
+			file = "print_09"
+			name = "Print 09"
+			width = 620
+			height = 400
+			delay = 0
+			[[TOML_END]]
+		</script>
+		<script src="../../build/qbs.min.js"></script>
+		<style>
+			html, body {
+				background-color: gray;
+			}
+			div {
+				background-color: blue;
+				width: 600px;
+				height: 140px;
+			}
+		</style>
+	</head>
 <body>
 	<div>
-		<img src="fonts/font-8x14.png" id="goofy"></img>
+		<img src="images/font-8x14.png" id="goofy"></img>
 	</div>
 	<div id="div"></div>
 	<script>
