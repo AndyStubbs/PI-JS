@@ -27,15 +27,15 @@ Math.seedrandom('constant');
 $.ready( function () {
 	$.screen( "200x200" );
 	$.setPen( "circle", 10, 35 );
-	$.color( 9 );
+	$.setColor( 9 );
 	$.line( 0, 0, 199, 199 );
-	$.color( 10 );
+	$.setColor( 10 );
 	$.line( 0, 199, 199, 0 );
-	$.color( 2 );
+	$.setColor( 2 );
 	$.print( "This color is green." );
-	$.color( 4 );
+	$.setColor( 4 );
 	$.print( "This color is red." );
-	$.color( 1 );
+	$.setColor( 1 );
 	$.print( "This color is blue." );
 	$.filterImg( function ( color, x, y ) {
 		var avg = Math.round( ( color.r + color.g + color.b ) / 3 );

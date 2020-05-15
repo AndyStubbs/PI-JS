@@ -136,11 +136,14 @@ function offtouch( screenData, args ) {
 	);
 }
 
-qbs._.addCommand( "setPinchZoom", setPinchZoom, false, true, [ "isEnabled" ] );
-function setPinchZoom( screenData, args ) {
+qbs._.addCommand( "setPinchZoom", setPinchZoom, false, false,
+	[ "isEnabled" ]
+);
+qbs._.addSetting( "pinchZoom", setPinchZoom, false, [ "isEnabled" ] );
+function setPinchZoom( args ) {
 	var isEnabled;
 
-	isEnabled = args[ 0 ];
+	isEnabled = !!( args[ 0 ] );
 
 	if( isEnabled ) {
 		document.body.style.touchAction = "";

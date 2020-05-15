@@ -218,7 +218,7 @@ function keydown( e ) {
 		if( e.keyCode === 13 ) {
 
 			// The enter key was pressed
-			showPrompt( true );
+			showPrompt( input.screenData, true );
 			$.print( "" );
 			triggerReady( input );
 			inputIndex += 1;
@@ -465,17 +465,13 @@ function enableDefaultKey( args ) {
 }
 
 // Shows the prompt for the input command
-function showPrompt( hideCursor ) {
-	var msg, pos, dt, posPx, width, height, input, screenData;
+function showPrompt( screenData, hideCursor ) {
+	var msg, pos, dt, posPx, width, height, input;
 
 	// If we are collecting any inputs
 	if( inputs.length > 0 && inputIndex < inputs.length ) {
 		input = inputs[ inputIndex ];
 		msg = input.prompt + input.val;
-		screenData = qbData.commands.getScreenData( null, "input" );
-		if( ! screenData ) {
-			return null;
-		}
 
 		// Blink cursor every half second
 		dt = ( new Date() ).getTime() - t;
@@ -526,10 +522,10 @@ function showPrompt( hideCursor ) {
 }
 
 // Prompts the user to enter input through the keyboard.
-qbs._.addCommand( "input", input, false, false,
+qbs._.addCommand( "input", input, false, true,
 	[ "prompt", "name", "isNumber", "min", "max", "isInteger", "ready",
 	"readyList" ] );
-function input( args ) {
+function input( screenData, args ) {
 	var prompt, name, isNumber, min, max, isInteger, ready, readyList;
 
 	prompt = args[ 0 ];
@@ -586,10 +582,13 @@ function input( args ) {
 		"min": min,
 		"max": max,
 		"val": "",
-		"readyList": readyList
+		"readyList": readyList,
+		"screenData": screenData
 	} );
 	t = ( new Date() ).getTime();
-	promptInterval = setInterval( showPrompt, 100 );
+	promptInterval = setInterval( function() {
+		showPrompt( screenData );
+	}, 100 );
 	return ready;
 }
 
@@ -657,18 +656,31 @@ function inputReady( args ) {
 }
 
 // Set the charcode for the input prompt
-qbs._.addCommand( "setInputCursor", setInputCursor, false, false, [ "cursor" ]
-	);
-function setInputCursor( args ) {
-	var cursor;
+qbs._.addCommand( "setInputCursor", setInputCursor, false, true,
+	[ "cursor" ]
+);
+qbs._.addSetting( "inputCursor", setInputCursor, true, [ "cursor" ] );
+function setInputCursor( screenData, args ) {
+	var cursor, font;
 
 	cursor = args[ 0 ];
+	font = screenData.printCursor.font;
 
-	if( ! isNaN( cursor ) ) {
-		qbData.screenData.printCursor.prompt = cursor;
-	} else if( typeof cursor === "string" ) {
-		qbData.screenData.printCursor.prompt = cursor.charCodeAt( 0 );
+	if( typeof cursor === "string" ) {
+		cursor = cursor.charCodeAt( 0 );
 	}
+
+	if( ! qbs.util.isInteger( cursor ) ) {
+		console.error( "setInputCursor: cursor must be a string or integer" );
+		return;
+	}
+
+	if( font.mode === "pixel" && ! font.chars.indexOf( cursor ) ) {
+		console.error( "setInputCursor: invalid cursor" );
+		return;
+	}
+
+	screenData.printCursor.prompt = cursor;
 }
 
 // End of File Encapsulation

@@ -666,6 +666,9 @@ function aaRect( screenData, args ) {
 qbs._.addCommand( "setPalColor", setPalColor, false, true,
 	[ "index", "color" ]
 );
+qbs._.addSetting( "palColor", setPalColor, true,
+	[ "index", "color" ]
+);
 function setPalColor( screenData, args ) {
 	var index, color, colorValue, i;
 
@@ -722,8 +725,11 @@ function getPal( screenData, args ) {
 }
 
 // Color command
-qbs._.addCommand( "color", color, false, true, [ "color", "isAddToPalette" ] );
-function color( screenData, args ) {
+qbs._.addCommand( "setColor", setColor, false, true,
+	[ "color", "isAddToPalette" ]
+);
+qbs._.addSetting( "color", setColor, true, [ "color", "isAddToPalette" ] );
+function setColor( screenData, args ) {
 	var colorInput, colorValue, isAddToPalette, colors;
 
 	colorInput = args[ 0 ];
@@ -752,8 +758,9 @@ function color( screenData, args ) {
 }
 
 // Colors command
-qbs._.addCommand( "colors", colors, false, true, [ "colors" ] );
-function colors( screenData, args ) {
+qbs._.addCommand( "setColors", setColors, false, true, [ "colors" ] );
+qbs._.addSetting( "colors", setColors, true, [ "colors" ] );
+function setColors( screenData, args ) {
 	var colorInput, colorValue, i, colors;
 
 	colorInput = args[ 0 ];
@@ -937,6 +944,7 @@ function render( screenData ) {
 
 // Set pen command
 qbs._.addCommand( "setPen", setPen, false, true, [ "pen", "size", "noise" ] );
+qbs._.addSetting( "pen", setPen, true, [ "pen", "size", "noise" ] );
 function setPen( screenData, args ) {
 	var pen, size, noise, i;
 

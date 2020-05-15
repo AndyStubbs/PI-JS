@@ -35,7 +35,7 @@ $.ready( function () {
 	setInterval( function () {
 		var touches = $.intouch();
 		$.put( corner, 0, 0 );
-		$.locate(0, 0);
+		$.setPos(0, 0);
 		$.print( touches.length );
 		if( touches.length > 0 ) {
 			for( var i = 0; i < touches.length; i++ ) {

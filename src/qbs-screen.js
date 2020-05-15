@@ -83,7 +83,7 @@ function screen( args ) {
 		screenData.commands[ i ] = commandData.fn;
 
 		// Setup the api
-		setupApiCommand( screenObj, i, screenData );
+		setupApiCommand( screenObj, i, screenData, commandData );
 
 	}
 
@@ -98,9 +98,9 @@ function screen( args ) {
 
 };
 
-function setupApiCommand( screenObj, name, screenData ) {
+function setupApiCommand( screenObj, name, screenData, cmd ) {
 	screenObj[ name ] = function () {
-		var args = [].slice.call( arguments );
+		var args = qbData.commands.parseOptions( cmd, [].slice.call( arguments ) );
 		return screenData.commands[ name ]( screenData, args );
 	};
 }
@@ -295,19 +295,13 @@ function createScreenData(
 	screenData.context.fillStyle = screenData.fColor.s;
 	screenData.context.strokeStyle = screenData.fColor.s;
 	screenData.printCursor = {
-		"charWidth": qbData.defaultFont.width,
-		"charHeight": qbData.defaultFont.height,
 		"x": 0,
 		"y": 0,
-		"font": qbData.defaultFont.data,
-		"chars": qbData.defaultFont.chars,
+		"font": qbData.defaultFont,
 		"rows": Math.floor( canvas.width / qbData.defaultFont.width ),
 		"cols": Math.floor( canvas.height / qbData.defaultFont.height ),
 		"prompt": qbData.defaultPrompt,
 		"breakWord": true,
-		"printFunction": qbData.defaultFont.printFunction,
-		"calcWidth": qbData.defaultFont.calcWidth,
-		"mode": "pixel"
 	};
 	screenData.clientRect = canvas.getBoundingClientRect();
 	screenData.mouse = {
@@ -328,6 +322,7 @@ function createScreenData(
 	// Event listeners
 	screenData.onMouseEventListeners = {};
 	screenData.onTouchEventListeners = {};
+	screenData.isContextMenuEnabled = true;
 
 	// Set this to the active screen
 	qbData.screens[ screenData.id ] = screenData;

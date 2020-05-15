@@ -24,19 +24,19 @@
 $.ready( function () {
 	var x, y, i;
 	function draw( x, y ) {
-		$.color( 15 );
+		$.setColor( 15 );
 		$.pset( x, y );
 		y += 20;
-		$.color( 1 );
+		$.setColor( 1 );
 		$.circle( x, y, 10 );
 		y += 20;
-		$.color( 2 );
+		$.setColor( 2 );
 		$.arc( x, y, 10, 90, 180 );
 		y += 20;
-		$.color( 3 );
+		$.setColor( 3 );
 		$.line( x - 5, y, x + 5, y + 10 );
 		y += 30;
-		$.color( 4 );
+		$.setColor( 4 );
 		$.ellipse( x, y, 10, 7 );
 		y += 20;
 	}
@@ -48,7 +48,7 @@ $.ready( function () {
 	y = 15
 	for( i = 1; i < 5; i++ ) {
 		y = 15;
-		$.color( 7 );
+		$.setColor( 7 );
 
 		$.setPixelMode( true );
 		$.setPen( "square", i );

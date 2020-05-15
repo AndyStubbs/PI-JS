@@ -31,10 +31,10 @@ $.ready( function () {
 	y = 15
 	for( i = 1; i < 13; i++ ) {
 		x += i * 2 + 1;
-		$.color( 7 );
+		$.setColor( 7 );
 		$.setPen( "square", i );
 		$.pset( x, y );
-		$.color( 15 );
+		$.setColor( 15 );
 		$.setPen( "pixel", 1 );
 		$.pset( x, y );
 	}
@@ -46,36 +46,36 @@ $.ready( function () {
 		$.setPixelMode( true );
 
 		// Draw the pen
-		$.color( 7 );
+		$.setColor( 7 );
 		$.setPen( "circle", i );
 		$.pset( x, 40 );
 
 		// Draw the outer circle
-		$.color( 15 );
+		$.setColor( 15 );
 		$.setPen( "pixel", 1 );
 		$.circle( x, 65, i );
 
 		// Draw the inner dots
-		$.color( 8 );
+		$.setColor( 8 );
 		$.pset( x, 40 );
 
 		// Draw the arcs
-		$.color( 9 );
+		$.setColor( 9 );
 		$.arc( x, 90, i, 0, 180 );
-		$.color( 10 );
+		$.setColor( 10 );
 		$.arc( x, 90, i, 180, 360 );
 
 		$.setPixelMode( false );
-		$.color( 9 );
+		$.setColor( 9 );
 		$.arc( x, 115, i, 0, 180 );
-		$.color( 10 );
+		$.setColor( 10 );
 		$.arc( x, 115, i, 180, 360 );
 
-		$.color( 9 );
+		$.setColor( 9 );
 		$.circle( x, 140, i );
 
 		$.setPixelMode( true );
-		$.color( 10 );
+		$.setColor( 10 );
 		$.circle( x, 140, i );
 	}
 

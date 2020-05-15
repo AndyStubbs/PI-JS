@@ -19,62 +19,18 @@ window.qbs = ( function () {
 		"activeScreen": null,
 		"images": {},
 		"imageCount": 0,
-		"fCos": [],
-		"fSin": [],
 		"defaultPrompt": 219,
-		"defaultFont": {
-			"width": 8,
-			"height": 8,
-			"x": 0,
-			"y": 0,
-			"data": null,
-			"printFunction": null,
-			"calcWidth": null
-		},
+		"defaultFont": {},
 		"nextFontId": 0,
 		"fonts": {},
-		"defaultPalette": [ "#000000","#0000AA","#00AA00","#00AAAA","#AA0000",
-			"#AA00AA","#AA5500","#AAAAAA","#555555","#5555FF","#55FF55","#55FFFF",
-			"#FF5555","#FF55FF","#FFFF55","#FFFFFF","#000000","#141414","#202020",
-			"#2D2D2D","#393939","#454545","#515151","#616161","#717171","#828282",
-			"#929292","#A2A2A2","#B6B6B6","#CACACA","#E3E3E3","#FFFFFF","#0000FF",
-			"#4100FF","#7D00FF","#BE00FF","#FF00FF","#FF00BE","#FF007D","#FF0041",
-			"#FF0000","#FF4100","#FF7D00","#FFBE00","#FFFF00","#BEFF00","#7DFF00",
-			"#41FF00","#00FF00","#00FF41","#00FF7D","#00FFBE","#00FFFF","#00BEFF",
-			"#007DFF","#0041FF","#7D7DFF","#9E7DFF","#BE7DFF","#DF7DFF","#FF7DFF",
-			"#FF7DDF","#FF7DBE","#FF7D9E","#FF7D7D","#FF9E7D","#FFBE7D","#FFDF7D",
-			"#FFFF7D","#DFFF7D","#BEFF7D","#9EFF7D","#7DFF7D","#7DFF9E","#7DFFBE",
-			"#7DFFDF","#7DFFFF","#7DDFFF","#7DBEFF","#7D9EFF","#B6B6FF","#C6B6FF",
-			"#DBB6FF","#EBB6FF","#FFB6FF","#FFB6EB","#FFB6DB","#FFB6C6","#FFB6B6",
-			"#FFC6B6","#FFDBB6","#FFEBB6","#FFFFB6","#EBFFB6","#DBFFB6","#C6FFB6",
-			"#B6FFB6","#B6FFC6","#B6FFDB","#B6FFEB","#B6FFFF","#B6EBFF","#B6DBFF",
-			"#B6C6FF","#000071","#1C0071","#390071","#550071","#710071","#710055",
-			"#710039","#71001C","#710000","#711C00","#713900","#715500","#717100",
-			"#557100","#397100","#1C7100","#007100","#00711C","#007139","#007155",
-			"#007171","#005571","#003971","#001C71","#393971","#453971","#553971",
-			"#613971","#713971","#713961","#713955","#713945","#713939","#714539",
-			"#715539","#716139","#717139","#617139","#557139","#457139","#397139",
-			"#397145","#397155","#397161","#397171","#396171","#395571","#394571",
-			"#515171","#595171","#615171","#695171","#715171","#715169","#715161",
-			"#715159","#715151","#715951","#716151","#716951","#717151","#697151",
-			"#617151","#597151","#517151","#517159","#517161","#517169","#517171",
-			"#516971","#516171","#515971","#000041","#100041","#200041","#310041",
-			"#410041","#410031","#410020","#410010","#410000","#411000","#412000",
-			"#413100","#414100","#314100","#204100","#104100","#004100","#004110",
-			"#004120","#004131","#004141","#003141","#002041","#001041","#202041",
-			"#282041","#312041","#392041","#412041","#412039","#412031","#412028",
-			"#412020","#412820","#413120","#413920","#414120","#394120","#314120",
-			"#284120","#204120","#204128","#204131","#204139","#204141","#203941",
-			"#203141","#202841","#2D2D41","#312D41","#352D41","#3D2D41","#412D41",
-			"#412D3D","#412D35","#412D31","#412D2D","#41312D","#41352D","#413D2D",
-			"#41412D","#3D412D","#35412D","#31412D","#2D412D","#2D4131","#2D4135",
-			"#2D413D","#2D4141","#2D3D41","#2D3541","#2D3141","#000000","#000000",
-			"#000000","#000000","#000000","#000000","#000000" ],
+		"defaultPalette": [],
 		"commands": {},
 		"screenCommands": {},
 		"defaultPenDraw": null,
 		"pens": {},
-		"penList": []
+		"penList": [],
+		"settings": {},
+		"settingsList": []
 	};
 
 	// QBS api
@@ -82,6 +38,7 @@ window.qbs = ( function () {
 		"_": {
 			"addCommand": addCommand,
 			"addCommands": addCommands,
+			"addSetting": addSetting,
 			"processCommands": processCommands,
 			"addPen": addPen,
 			"data": qbData,
@@ -91,18 +48,19 @@ window.qbs = ( function () {
 	};
 
 	// Add a command to the internal list
-	function addCommand( name, fn, isInternal, isScreen, parameters ) {
-		if( parameters === undefined ) {
-			console.error( "Missing parameters: " + name );
-		}
+	function addCommand( name, fn, isInternal, isScreen, parameters, isSet ) {
 		qbData.commands[ name ] = fn;
-		commandList.push( {
-			"name": name,
-			"fn": fn,
-			"isInternal": isInternal,
-			"isScreen": isScreen,
-			"parameters": parameters
-		} );
+
+		if( ! isInternal ) {
+			commandList.push( {
+				"name": name,
+				"fn": fn,
+				"isScreen": isScreen,
+				"parameters": parameters,
+				"isSet": isSet,
+				"noParse": isSet
+			} );
+		}
 	}
 
 	function addCommands( name, fnPx, fnAa, parameters ) {
@@ -113,6 +71,16 @@ window.qbs = ( function () {
 				fnAa( screenData, args );
 			}
 		}, false, true, parameters );
+	}
+
+	function addSetting( name, fn, isScreen, parameters ) {
+		qbData.settings[ name ] = {
+			"name": name,
+			"fn": fn,
+			"isScreen": isScreen,
+			"parameters": parameters
+		};
+		qbData.settingsList.push( name );
 	}
 
 	function processCommands() {
@@ -138,32 +106,43 @@ window.qbs = ( function () {
 	}
 
 	function processCommand( cmd ) {
-		if( ! cmd.isInternal ) {
-			if( cmd.isScreen ) {
-				qbData.screenCommands[ cmd.name ] = {
-					"fn": cmd.fn
-				};
-				api[ cmd.name ] = function () {
-					var args, screenData;
-					args = parseOptions( cmd, [].slice.call( arguments ) );
-					screenData = getScreenData( undefined, cmd.name );
-					if( screenData !== false ) {
-						return qbData.commands[ cmd.name ]( screenData, args );
-					}
-				};
-			} else {
-				api[ cmd.name ] = function () {
-					var args;
-					args = parseOptions( cmd, [].slice.call( arguments ) );
-					return qbData.commands[ cmd.name ]( args );
-				};
-			}
+		if( cmd.isSet ) {
+			qbData.screenCommands[ cmd.name ] = cmd;
+			api[ cmd.name ] = function () {
+				var args;
+				args = parseOptions( cmd, [].slice.call( arguments ) );
+				return qbData.commands[ cmd.name ]( null, args );
+			};
+			return;
+		}
+
+		if( cmd.isScreen ) {
+			qbData.screenCommands[ cmd.name ] = cmd
+			api[ cmd.name ] = function () {
+				var args, screenData;
+				args = parseOptions( cmd, [].slice.call( arguments ) );
+				screenData = getScreenData( undefined, cmd.name );
+				if( screenData !== false ) {
+					return qbData.commands[ cmd.name ]( screenData, args );
+				}
+			};
+		} else {
+			api[ cmd.name ] = function () {
+				var args;
+				args = parseOptions( cmd, [].slice.call( arguments ) );
+				return qbData.commands[ cmd.name ]( args );
+			};
 		}
 	}
 
 	// Convert named arguments to array
+	addCommand( "parseOptions", parseOptions, true, false );
 	function parseOptions( cmd, args ) {
-		var i, options, args2;
+		var i, options, args2, foundParameter;
+
+		if( cmd.noParse ) {
+			return args;
+		}
 
 		// if the first argument is an object then use named parameters
 		if(
@@ -172,19 +151,24 @@ window.qbs = ( function () {
 			args[ 0 ] !== null &&
 			! args[ 0 ].hasOwnProperty( "screen" ) &&
 			! qbs.util.isArray( args[ 0 ] ) &&
-			! qbs.util.isDomElement( args[ 0 ] ) ) {
+			! qbs.util.isDomElement( args[ 0 ] ) 
+		) {
 			options = args[ 0 ];
 			args2 = [];
+			foundParameter = false;
 			for( i = 0; i < cmd.parameters.length; i++ ) {
 
 				// Check if option has parameter
 				if( options.hasOwnProperty( cmd.parameters[ i ] ) ) {
 					args2.push( options[ cmd.parameters[ i ] ] );
+					foundParameter = true;
 				} else {
 					args2.push( null );
 				}
 			}
-			return args2;
+			if( foundParameter ) {
+				return args2;
+			}
 		}
 		return args;
 	}
@@ -202,6 +186,9 @@ window.qbs = ( function () {
 	addCommand( "getScreenData", getScreenData, true, false, [] );
 	function getScreenData( screenId, commandName ) {
 		if( qbData.activeScreen === null ) {
+			if( commandName === "set" ) {
+				return false;
+			}
 			console.error( commandName + ": No screens available for command." );
 			return false;
 		}
@@ -262,11 +249,22 @@ window.qbs = ( function () {
 
 	// Set the active screen on qbs
 	addCommand( "setScreen", setScreen, false, false, [ "screen" ] );
+	addSetting( "screen", setScreen, false, [ "screen" ] );
 	function setScreen( args ) {
-		var screenData;
+		var screenObj, screenId;
 
-		screenData = args[ 0 ];
-		qbData.activeScreen = qbData.screens[ screenData.id ];
+		screenObj = args[ 0 ];
+
+		if( qbs.util.isInteger( screenObj ) ) {
+			screenId = screenObj;
+		} else if( screenObj && qbs.util.isInteger( screenObj.id ) ) {
+			screenId = screenObj.id;
+		}
+		if( ! qbData.screens[ screenId ] ) {
+			console.error( "screen: Invalid screen." );
+			return;
+		}
+		qbData.activeScreen = qbData.screens[ screenId ];
 	}
 
 	// Remove all screens from the page and memory
@@ -290,6 +288,7 @@ window.qbs = ( function () {
 
 	// Set the default palette
 	addCommand( "setDefaultPal", setDefaultPal, false, false, [ "pal" ] );
+	addSetting( "defaultPal", setDefaultPal, false, [ "pal" ] );
 	function setDefaultPal( args ) {
 		var pal, i, c;
 
@@ -310,7 +309,14 @@ window.qbs = ( function () {
 				qbData.defaultPalette.push( qbs.util.convertToColor( pal[ i ] ) );
 			}
 		}
-		qbData.defaultPalette[ 0 ].a = 0;
+
+		// Set color 0 to transparent
+		qbData.defaultPalette[ 0 ] = qbs.util.convertToColor( [
+			qbData.defaultPalette[ 0 ].r,
+			qbData.defaultPalette[ 0 ].g,
+			qbData.defaultPalette[ 0 ].b,
+			0
+		] );
 	}
 
 	// Get default pal command
@@ -329,6 +335,48 @@ window.qbs = ( function () {
 			colors.push( qbData.defaultPalette[ i ] );
 		}
 		return colors;
+	}
+
+	// Global settings command
+	addCommand( "set", set, false, true, qbData.settingsList, true );
+	function set( screenData, args ) {
+		var options, optionName, setting, optionValues;
+
+		options = args[ 0 ];
+
+		// Loop through all the options
+		for( optionName in options ) {
+
+			// If the option is a valid setting
+			if( qbData.settings[ optionName ] ) {
+
+				// Get the setting data
+				setting = qbData.settings[ optionName ];
+
+				// Parse the options from the setting
+				optionValues = options[ optionName ];
+				if( 
+					! qbs.util.isArray( optionValues ) && 
+					typeof optionValues === "object"
+				) {
+					optionValues = parseOptions( setting, [ optionValues ] );
+				} else {
+					optionValues = [ optionValues ];
+				}
+
+				// Call the setting function
+				if( setting.isScreen ) {
+					if( ! screenData ) {
+						screenData = getScreenData(
+							undefined, "set " + setting.name
+						);
+					}
+					setting.fn( screenData, optionValues );
+				} else {
+					setting.fn( optionValues );
+				}
+			}
+		}
 	}
 
 	return api;

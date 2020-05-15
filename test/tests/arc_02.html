@@ -28,10 +28,10 @@
 		let ea = 90;
 		let da = 45;
 		for(let r = 0; r < 50; r++) {
-			$.color(2);
+			$.setColor(2);
 			$.setPixelMode( false );
 			$.arc(50, 50, r, sa, ea);
-			$.color(1);
+			$.setColor(1);
 			$.setPixelMode( true );
 			$.arc(50, 50, r, sa, ea);
 			sa += da;

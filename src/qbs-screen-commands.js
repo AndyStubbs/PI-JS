@@ -35,8 +35,9 @@ function removeScreen( screenData ) {
 }
 
 // Set the background color of the canvas
-qbs._.addCommand( "bgColor", bgColor, false, true, [ "color" ] );
-function bgColor( screenData, args ) {
+qbs._.addCommand( "setBgColor", setBgColor, false, true, [ "color" ] );
+qbs._.addSetting( "bgColor", setBgColor, true, [ "color" ] );
+function setBgColor( screenData, args ) {
 	var color, bc;
 
 	color = args[ 0 ];
@@ -55,9 +56,13 @@ function bgColor( screenData, args ) {
 }
 
 // Set the background color of the container
-qbs._.addCommand( "containerBgColor", containerBgColor, false, true,
-	[ "color" ] );
-function containerBgColor( screenData, args ) {
+qbs._.addCommand( "setContainerBgColor", setContainerBgColor, false, true,
+	[ "color" ]
+);
+qbs._.addSetting( "containerBgColor", setContainerBgColor, true,
+	[ "color" ]
+);
+function setContainerBgColor( screenData, args ) {
 	var color, bc;
 
 	color = args[ 0 ];
@@ -139,6 +144,7 @@ function findColor( screenData, args ) {
 }
 
 qbs._.addCommand( "setPixelMode", setPixelMode, false, true, [ "isEnabled" ] );
+qbs._.addSetting( "pixelMode", setPixelMode, true, [ "isEnabled" ] );
 function setPixelMode( screenData, args ) {
 	var isEnabled;
 

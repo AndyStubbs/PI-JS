@@ -63,13 +63,13 @@ function draw( screenData, args ) {
 			case "C":
 				color = Number( drawArgs[ 1 ] );
 
-				screenData.screenObj.color( color );
+				screenData.screenObj.setColor( color );
 				isBlind = true;
 				break;
 
 			case "O":
 				color = tempColors[ drawArgs[ 1 ] ];
-				screenData.screenObj.color( color );
+				screenData.screenObj.setColor( color );
 				isBlind = true;
 				break;
 

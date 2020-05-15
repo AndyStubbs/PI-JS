@@ -27,13 +27,13 @@ $.ready( function () {
 	var color = [ 255, 255, 255 ];
 	var color2 = [ 0, 225, 225 ];
 	$.screen( "256x256" );
-	$.color( 15 );
+	$.setColor( 15 );
 	$.setPen( "pixel", 1, 100 );
 	for( i = 0; i < 128; i++ ) {
 		color[ 0 ] -= 2;
 		color[ 1 ] -= 2;
 		color[ 2 ] -= 2;
-		$.color( color );
+		$.setColor( color );
 		$.rect( i, i, 255 - i * 2, 255 - i * 2 );
 	}
 	$.setPen( "pixel", 1 );

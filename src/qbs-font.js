@@ -51,7 +51,10 @@ function loadFont( args ) {
 		"height": height,
 		"data": [],
 		"chars": chars,
-		"colorCount": 2
+		"colorCount": 2,
+		"mode": "pixel",
+		"printFunction": qbData.commands.qbsPrint,
+		"calcWidth": qbData.commands.qbsCalcWidth
 	};
 
 	// Add this to the font data
@@ -251,19 +254,128 @@ function findColorIndex( colors, r, g, b, a ) {
 qbs._.addCommand( "setDefaultFont", setDefaultFont, false, false,
 	[ "fontId" ]
 );
+qbs._.addSetting( "defaultFont", setDefaultFont, false, [ "fontId" ] );
 function setDefaultFont( args ) {
-	var fontId, font;
+	var fontId;
 
 	fontId = parseInt( args[ 0 ] );
 	if( isNaN( fontId ) || fontId < 0 || fontId < qbData.fonts.length ) {
 		console.error( "setDefaultFont: invalid fontId" );
 		return;
 	}
-	font = qbData.fonts[ fontId ];
-	qbData.defaultFont.width = font.width;
-	qbData.defaultFont.height = font.height;
-	qbData.defaultFont.data = font.data;
-	qbData.defaultFont.chars = font.chars;
+	qbData.defaultFont = qbData.fonts[ fontId ];
+
+}
+
+
+// Set Font Command
+qbs._.addCommand( "setFont", setFont, false, true, [ "fontId" ] );
+qbs._.addSetting( "font", setFont, true, [ "fontId" ] );
+function setFont( screenData, args ) {
+	var fontId, font, size;
+
+	fontId = args[ 0 ];
+
+	// Check if this is a valid font
+	if( qbData.fonts[ fontId ] ) {
+
+		// Set the font data for the current print cursor
+		font = qbData.fonts[ fontId ];
+		screenData.printCursor.font = font;
+
+		// Set the rows and cols
+		screenData.printCursor.cols = Math.floor(
+			screenData.width / font.width
+		);
+		screenData.printCursor.rows = Math.floor(
+			screenData.height / font.height
+		);
+
+	} else if( typeof fontId === "string" ) {
+
+		// Set the context font
+		screenData.context.font = fontId;
+		screenData.context.textBaseline = "top";
+
+		// Set the font dimensions
+		size = calcFontSize( screenData.context );
+
+		// Set the font data
+		screenData.printCursor.font = {
+			"name": screenData.context.font,
+			"width": size.width,
+			"height": size.height,
+			"mode": "canvas",
+			"printFunction": qbData.commands.canvasPrint,
+			"calcWidth": qbData.commands.canvasCalcWidth
+		};
+
+		// Set the rows and cols
+		screenData.printCursor.cols = Math.floor(
+			screenData.width / size.width
+		);
+		screenData.printCursor.rows = Math.floor(
+			screenData.height / size.height
+		);
+	}
+}
+
+function calcFontSize( context ) {
+	var font, start, end, px, tCanvas, tContext, data, i, i2, size, x, y;
+
+	font = context.font;
+
+	// Get the font size from the name of the font
+	end = font.indexOf( "px" );
+	font = font.substring( 0, end );
+	start = font.lastIndexOf( " " );
+	if( start === -1 ) {
+		start = 0;
+	}
+	px = parseInt( font.substring( start, end ) );
+
+	// Add some padding to px just in case
+	px = Math.round( px * 1.5 );
+
+	// Create a temporary canvas the size of the font px
+	tCanvas = document.createElement( "canvas" );
+	tCanvas.width = px;
+	tCanvas.height = px;
+
+	// Create a temporary canvas
+	tContext = tCanvas.getContext( "2d" );
+	tContext.font = context.font;
+	tContext.textBaseline = "top";
+	tContext.fillStyle = "#FF0000";
+
+	// Set a blank size object
+	size = {
+		"width": 0, "height": 0
+	};
+
+	// Fill text with some characters at the same spot to read data
+	data = "HMIyjg_|";
+	for( i = 0; i < data.length; i++ ) {
+		tContext.fillText( data[ i ], 0, 0 );
+	}
+
+	// Loop through all the pixels to get the dimensions
+	data = tContext.getImageData( 0, 0, px, px );
+	for( i = 0; i < data.data.length; i += 4 ) {
+		if( data.data[ i ] === 255 ) {
+			i2 = i / 4;
+			y = Math.floor( i2 / px );
+			x = i2 - y * px;
+			if( y > size.height ) {
+				size.height = y;
+			}
+			if( x > size.width ) {
+				size.width = x;
+			}
+		}
+	}
+
+	return size;
 }
 
 // End of File Encapsulation

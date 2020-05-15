@@ -14,13 +14,13 @@ qbData = qbs._.data;
 // Print Command
 qbs._.addCommand( "print", print, false, true, [ "msg", "inLine" ] );
 function print( screenData, args ) {
-	var msg, inLine, colors, parts, i, i2, colorValue, colorCount;
+	var msg, inLine, colors, parts, i, i2, colorCount;
 
 	msg = args[ 0 ];
 	inLine = args[ 1 ];
 
 	// bail if not possible to print an entire line on a screen
-	if( screenData.printCursor.charHeight > screenData.height ) {
+	if( screenData.printCursor.font.height > screenData.height ) {
 		return;
 	}
 
@@ -30,21 +30,9 @@ function print( screenData, args ) {
 	// Set the first color to the background color
 	colors.unshift( screenData.pal[ 0 ] );
 
-	// Validate colors
-	for( i = 0; i < colors.length; i++ ) {
-		colorValue = qbData.commands.findColorValue(
-			screenData, colors[ i ], "color"
-		);
-
-		if( colorValue === undefined ) {
-			return;
-		}
-		colors[ i ] = colorValue;
-	}
-
 	// Make sure there are enough colors -- if not then rotate colors
 	colorCount = colors.length;
-	for( i = 0; i < screenData.printCursor.colorCount; i ++ ) {
+	for( i = 0; i < screenData.printCursor.font.colorCount; i ++ ) {
 		if( i >= colors.length ) {
 
 			// Rotate colors -- skip 0
@@ -76,7 +64,7 @@ function startPrint( screenData, msg, inLine, colors ) {
 	printCursor = screenData.printCursor;
 
 	//Adjust if the text is too wide for the screen
-	width = printCursor.calcWidth( screenData, msg );
+	width = printCursor.font.calcWidth( screenData, msg );
 	if( width + printCursor.x > screenData.width && ! inLine && msg.length > 1 ) {
 		overlap = ( width + printCursor.x ) - screenData.width;
 		onScreen = width - overlap;
@@ -97,32 +85,33 @@ function startPrint( screenData, msg, inLine, colors ) {
 	}
 
 	//Adjust if the text is too tall for the screen
-	if( printCursor.y + printCursor.charHeight > screenData.height ) {
+	if( printCursor.y + printCursor.font.height > screenData.height ) {
 
-		if( printCursor.mode === "canvas" ) {
+		if( printCursor.font.mode === "canvas" ) {
 			screenData.screenObj.render();
 		}
 
 		// Shift image up by the vertical size of the font
-		shiftImageUp( screenData, printCursor.charHeight );
+		shiftImageUp( screenData, printCursor.font.height );
 
 		//Backup the print_cursor
-		printCursor.y -= printCursor.charHeight;
+		printCursor.y -= printCursor.font.height;
 
 	}
 
-	printCursor.printFunction( screenData, msg, printCursor.x, printCursor.y,
-		colors );
+	printCursor.font.printFunction( screenData, msg, printCursor.x,
+		printCursor.y, colors
+	);
 
 	//If it's not in_line print the advance to next line
 	if( ! inLine ) {
-		printCursor.y += printCursor.charHeight;
+		printCursor.y += printCursor.font.height;
 		printCursor.x = 0;
 	} else {
-		printCursor.x += printCursor.charWidth * msg.length;
-		if( printCursor.x > screenData.width - printCursor.charWidth ) {
+		printCursor.x += printCursor.font.width * msg.length;
+		if( printCursor.x > screenData.width - printCursor.font.width ) {
 			printCursor.x = 0;
-			printCursor.y += printCursor.charHeight;
+			printCursor.y += printCursor.font.height;
 		}
 	}
 }
@@ -174,29 +163,25 @@ function shiftImageUp( screenData, yOffset ) {
 
 }
 
+qbs._.addCommand( "qbsCalcWidth", qbsCalcWidth, true, false );
 function qbsCalcWidth( screenData, msg ) {
-	return screenData.printCursor.charWidth * msg.length;
+	return screenData.printCursor.font.width * msg.length;
 }
 
-function contextCalcWidth( screenData, msg ) {
+qbs._.addCommand( "canvasCalcWidth", canvasCalcWidth, true, false );
+function canvasCalcWidth( screenData, msg ) {
 	return screenData.context.measureText( msg ).width;
 }
 
 // Set Word Break Command
 qbs._.addCommand( "setWordBreak", setWordBreak, false, true, [ "isEnabled" ] );
+qbs._.addSetting( "wordBreak", setWordBreak, true, [ "isEnabled" ] );
 function setWordBreak( screenData, args ) {
-	var isEnabled;
-
-	isEnabled = args[ 0 ];
-
-	if( isEnabled ) {
-		screenData.printCursor.breakWord = true;
-	} else {
-		screenData.printCursor.breakWord = false;
-	}
+	screenData.printCursor.breakWord = !!( args[ 0 ] );
 }
 
 // Print to the screen by using qbs_fonts
+qbs._.addCommand( "qbsPrint", qbsPrint, true, false );
 function qbsPrint( screenData, msg, x, y, colors ) {
 	var i, printCursor, defaultPal, charIndex;
 
@@ -211,12 +196,12 @@ function qbsPrint( screenData, msg, x, y, colors ) {
 	for( i = 0; i < msg.length; i++ ) {
 
 		// Get the character index for the character data
-		charIndex = printCursor.chars[ msg.charCodeAt( i ) ];
+		charIndex = printCursor.font.chars[ msg.charCodeAt( i ) ];
 
 		// Draw the character on the screen
 		screenData.screenObj.put(
-			printCursor.font[ charIndex ],
-			x + printCursor.charWidth * i,
+			printCursor.font.data[ charIndex ],
+			x + printCursor.font.width * i,
 			y
 		);
 	}
@@ -225,14 +210,16 @@ function qbsPrint( screenData, msg, x, y, colors ) {
 	screenData.pal = defaultPal;
 }
 
-function contextPrint( screenData, msg, x, y ) {
+qbs._.addCommand( "canvasPrint", canvasPrint, true, false );
+function canvasPrint( screenData, msg, x, y ) {
 	screenData.screenObj.render();
 	screenData.context.fillText( msg, x, y );
 }
 
 // Locate Command
-qbs._.addCommand( "locate", locate, false, true, [ "col", "row" ] );
-function locate( screenData, args ) {
+qbs._.addCommand( "setPos", setPos, false, true, [ "col", "row" ] );
+qbs._.addSetting( "pos", setPos, true, [ "col", "row" ] );
+function setPos( screenData, args ) {
 	var col, row, x, y;
 
 	col = args[ 0 ];
@@ -240,26 +227,28 @@ function locate( screenData, args ) {
 
 	// Set the x value
 	if( col !== null ) {
-		x = Math.floor( col * screenData.printCursor.charWidth );
+		x = Math.floor( col * screenData.printCursor.font.width );
 		if(x > screenData.width) {
-			x = screenData.width - screenData.printCursor.charWidth;
+			x = screenData.width - screenData.printCursor.font.width;
 		}
 		screenData.printCursor.x = x;
 	}
 
 	// Set the y value
 	if( row !== null ) {
-		y = Math.floor( row * screenData.printCursor.charHeight );
+		y = Math.floor( row * screenData.printCursor.font.height );
 		if( y > screenData.height ) {
-			y = screenData.height - screenData.printCursor.charHeight;
+			y = screenData.height - screenData.printCursor.font.height;
 		}
 		screenData.printCursor.y = y;
 	}
 }
 
 // Locate Px Command
-qbs._.addCommand( "locatePx", locatePx, false, true, [ "x", "y" ] );
-function locatePx( screenData, args, x, y ) {
+qbs._.addCommand( "setPosPx", setPosPx, false, true, [ "x", "y" ] );
+qbs._.addSetting( "posPx", setPosPx, true, [ "x", "y" ] );
+function setPosPx( screenData, args ) {
+	var x, y;
 
 	x = args[ 0 ];
 	y = args[ 1 ];
@@ -273,144 +262,26 @@ function locatePx( screenData, args, x, y ) {
 }
 
 // Pos Command
-qbs._.addCommand( "pos", pos, false, true, [] );
-function pos( screenData ) {
+qbs._.addCommand( "getPos", getPos, false, true, [] );
+function getPos( screenData ) {
 	return {
 		"col": Math.floor(
-			screenData.printCursor.x / screenData.printCursor.charWidth
+			screenData.printCursor.x / screenData.printCursor.font.width
 		),
 		"row": Math.floor(
-			screenData.printCursor.y / screenData.printCursor.charHeight
+			screenData.printCursor.y / screenData.printCursor.font.height
 		)
 	};
 }
 
 // Pos Px Command
-qbs._.addCommand( "posPx", posPx, false, true, [] );
-function posPx( screenData ) {
+qbs._.addCommand( "getPosPx", getPosPx, false, true, [] );
+function getPosPx( screenData ) {
 	return {
 		"x": screenData.printCursor.x,
 		"y": screenData.printCursor.y
 	};
 }
-
-
-// Set Font Command
-qbs._.addCommand( "setFont", setFont, false, true, [ "fontId" ] );
-function setFont( screenData, args ) {
-	var fontId, font, size;
-
-	fontId = args[ 0 ];
-
-	// Check if this is a valid font
-	if( qbData.fonts[ fontId ] ) {
-
-		// Set the font data for the current print cursor
-		font = qbData.fonts[ fontId ];
-		screenData.printCursor.font = font.data;
-		screenData.printCursor.chars = font.chars;
-
-		// Set the font dimensions
-		screenData.printCursor.charWidth = font.width;
-		screenData.printCursor.charHeight = font.height;
-		screenData.printCursor.colorCount = font.colorCount;
-
-		// Set the rows and cols
-		screenData.printCursor.cols = Math.floor( screenData.width / font.width );
-		screenData.printCursor.rows = Math.floor( screenData.height / font.height );
-
-		// Set the print functions
-		screenData.printCursor.printFunction = qbsPrint;
-		screenData.printCursor.calcWidth = qbsCalcWidth;
-		screenData.printCursor.mode = "pixel";
-
-	} else if( typeof fontId === "string" ) {
-
-		// Set the context font
-		screenData.context.font = fontId;
-		screenData.context.textBaseline = "top";
-
-		// Set the font data
-		screenData.printCursor.font = screenData.context.font;
-		screenData.printCursor.chars = {};
-
-		// Set the font dimensions
-		size = calcFontSize( screenData.context );
-		screenData.printCursor.charWidth = size.width;
-		screenData.printCursor.charHeight = size.height;
-
-		// Set the rows and cols
-		screenData.printCursor.cols = Math.floor( screenData.width / size.width );
-		screenData.printCursor.rows = Math.floor( screenData.height / size.height );
-
-		// Set the print functions
-		screenData.printCursor.printFunction = contextPrint;
-		screenData.printCursor.calcWidth = contextCalcWidth;
-		screenData.printCursor.mode = "canvas";
-	}
-}
-
-function calcFontSize( context ) {
-	var font, start, end, px, tCanvas, tContext, data, i, i2, size, x, y;
-
-	font = context.font;
-
-	// Get the font size from the name of the font
-	end = font.indexOf( "px" );
-	font = font.substring( 0, end );
-	start = font.lastIndexOf( " " );
-	if( start === -1 ) {
-		start = 0;
-	}
-	px = parseInt( font.substring( start, end ) );
-
-	// Add some padding to px just in case
-	px = Math.round( px * 1.5 );
-
-	// Create a temporary canvas the size of the font px
-	tCanvas = document.createElement( "canvas" );
-	tCanvas.width = px;
-	tCanvas.height = px;
-
-	// Create a temporary canvas
-	tContext = tCanvas.getContext( "2d" );
-	tContext.font = context.font;
-	tContext.textBaseline = "top";
-	tContext.fillStyle = "#FF0000";
-
-	// Set a blank size object
-	size = {
-		"width": 0, "height": 0
-	};
-
-	// Fill text with some characters at the same spot to read data
-	data = "HMIyjg_";
-	for( i = 0; i < data.length; i++ ) {
-		tContext.fillText( data[ i ], 0, 0 );
-	}
-
-	// Loop through all the pixels to get the dimensions
-	data = tContext.getImageData( 0, 0, px, px );
-	for( i = 0; i < data.data.length; i += 4 ) {
-		if( data.data[ i ] === 255 ) {
-			i2 = i / 4;
-			y = Math.floor( i2 / px );
-			x = i2 - y * px;
-			if( y > size.height ) {
-				size.height = y;
-			}
-			if( x > size.width ) {
-				size.width = x;
-			}
-		}
-	}
-
-	return size;
-}
-
-// Set the default print functions
-qbData.defaultFont.printFunction = qbsPrint;
-qbData.defaultFont.calcWidth = qbsCalcWidth;
 
 // End of File Encapsulation
 } )();

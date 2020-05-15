@@ -27,11 +27,11 @@ $.ready( function () {
 	var color = [ 0, 255, 0 ];
 	var color2 = [ 0, 87, 225 ];
 	$.screen( "256x256" );
-	$.color( 15 );
+	$.setColor( 15 );
 	$.setPen( "pixel", 1, 35 );
 	for( i = 0; i < 128; i++ ) {
 		color[ 1 ] -= 2;
-		$.color( color );
+		$.setColor( color );
 		$.rect( i, i, 255 - i * 2, 255 - i * 2 );
 	}
 	$.paint( 127, 127, color2, 0.8 );

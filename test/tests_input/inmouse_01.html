@@ -34,7 +34,7 @@
 		setInterval( function () {
 			var mouse = $.inmouse();
 			$.put( corner, 0, 0 );
-			$.locate(0, 0);
+			$.setPos(0, 0);
 			$.print( mouse.buttons );
 			if( mouse.buttons > 0 ) {
 				if( ! isDrawing ) {

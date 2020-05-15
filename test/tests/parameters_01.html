@@ -26,7 +26,7 @@ Math.seedrandom('constant');
 $.ready(function () {
 	var data;
 	$.screen( { "aspect": "100x100" } );
-	$.color( { "color": 15 } );
+	$.setColor( { "color": 15 } );
 	$.bezier( {
 		"xStart": 5,
 		"yStart": 5,
@@ -37,13 +37,13 @@ $.ready(function () {
 		"xEnd": 95,
 		"yEnd": 95
 	} );
-	$.color( { "color": 9 } );
+	$.setColor( { "color": 9 } );
 	$.line( { "x1": 10, "y1": 35, "x2": 55, "y2": 10 } );
-	$.color( { "color": 15 } );
+	$.setColor( { "color": 15 } );
 	$.pset( { "x": 10, "y": 35 } );
 	$.pset( { "x": 55, "y": 10 } );
 	$.setPen( { "pen": "circle", "size": 3, "noise": 55 } );
-	$.color( 2 );
+	$.setColor( 2 );
 	$.bezier( {
 		"xStart": 5,
 		"yStart": 95,

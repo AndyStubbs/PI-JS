@@ -142,15 +142,18 @@ function offmouse( screenData, args ) {
 	);
 }
 
-qbs._.addCommand( "enableContextMenu", enableContextMenu, false, true,
+qbs._.addCommand( "setEnableContextMenu", setEnableContextMenu, false, true,
 	[ "isEnabled" ]
 );
-function enableContextMenu( screenData, args ) {
+qbs._.addSetting( "enableContextMenu", setEnableContextMenu, true,
+	[ "isEnabled" ]
+);
+function setEnableContextMenu( screenData, args ) {
 	var isEnabled;
 
 	isEnabled = args[ 0 ];
 
-	qbData.isContextMenuEnabled = !!( isEnabled );
+	screenData.isContextMenuEnabled = !!( isEnabled );
 }
 
 // Setup events

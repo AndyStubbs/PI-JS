@@ -31,7 +31,7 @@
 	$.ready( function () {
 		$.screen( "110x100", "myDiv" );
 		for( var i = 0; i < 16; i++ ) {
-			$.color( i + 30 );
+			$.setColor( i + 30 );
 			$.print( " " + qbs.util.padR( i, 2 ) + " - abcdefghijkl" );
 		}
 		$.render();

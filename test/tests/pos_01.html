@@ -24,38 +24,38 @@
 	$.ready(function () {
 		$.screen( "200x200" );
 		$.setFont(1);
-		$.color(15);
-		$.locate(0, 0);
+		$.setColor(15);
+		$.setPos(0, 0);
 		for(var i = 0; i < 25; i++) {
 			$.print(i);
 		}
-		$.locate(1, 0);
+		$.setPos(1, 0);
 		for(var i = 1; i < 33; i++) {
 			$.print(i % 10, true);
 		}
-		$.color(2);
-		$.locate(1, 2);
-		$.print($.pos().col + ", " + $.pos().row);
+		$.setColor(2);
+		$.setPos(1, 2);
+		$.print($.getPos().col + ", " + $.getPos().row);
 
-		$.color(3);
-		$.locate(6, 5);
-		$.print($.pos().col + ", " + $.pos().row);
+		$.setColor(3);
+		$.setPos(6, 5);
+		$.print($.getPos().col + ", " + $.getPos().row);
 
-		$.color(4);
-		$.locate(28, 1);
-		$.print($.pos().col + ", " + $.pos().row);
+		$.setColor(4);
+		$.setPos(28, 1);
+		$.print($.getPos().col + ", " + $.getPos().row);
 
-		$.color(5);
-		$.locate(27, 22);
-		$.print($.pos().col + ", " + $.pos().row);
+		$.setColor(5);
+		$.setPos(27, 22);
+		$.print($.getPos().col + ", " + $.getPos().row);
 
-		$.color(6);
-		$.locate(15, 15);
-		$.print($.pos().col + ", " + $.pos().row);
+		$.setColor(6);
+		$.setPos(15, 15);
+		$.print($.getPos().col + ", " + $.getPos().row);
 
-		$.color(9);
-		$.locate(15, 16);
-		$.print($.posPx().x + ", " + $.posPx().y);
+		$.setColor(9);
+		$.setPos(15, 16);
+		$.print($.getPosPx().x + ", " + $.getPosPx().y);
 		$.render();
 	});
 </script>

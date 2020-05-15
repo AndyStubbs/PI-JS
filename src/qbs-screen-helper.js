@@ -10,7 +10,7 @@ var qbData;
 
 qbData = qbs._.data;
 
-qbs._.addCommand( "getImageData", getImageData, true, false, [] );
+qbs._.addCommand( "getImageData", getImageData, true, false );
 function getImageData( screenData ) {
 	if( screenData.dirty === false ) {
 		screenData.imageData = screenData.context.getImageData(
@@ -19,7 +19,7 @@ function getImageData( screenData ) {
 	}
 }
 
-qbs._.addCommand( "setImageDirty", setImageDirty, true, false, [] );
+qbs._.addCommand( "setImageDirty", setImageDirty, true, false );
 function setImageDirty( screenData ) {
 	if( screenData.dirty === false ) {
 		screenData.dirty = true;
@@ -36,7 +36,7 @@ function setImageDirty( screenData ) {
 	}
 }
 
-qbs._.addCommand( "setPixel", setPixel, true, false, [] );
+qbs._.addCommand( "setPixel", setPixel, true, false );
 function setPixel( screenData, x, y, c ) {
 	var data, i;
 
@@ -53,7 +53,7 @@ function setPixel( screenData, x, y, c ) {
 
 }
 
-qbs._.addCommand( "setPixelSafe", setPixelSafe, true, false, [] );
+qbs._.addCommand( "setPixelSafe", setPixelSafe, true, false );
 qbs._.addPen( "pixel", setPixelSafe, "square" );
 function setPixelSafe( screenData, x, y, c ) {
 	var data, i;
@@ -80,7 +80,7 @@ function setPixelSafe( screenData, x, y, c ) {
 	qbData.commands.setImageDirty( screenData );
 }
 
-qbs._.addCommand( "getPixelColor", getPixelColor, true, false, [] );
+qbs._.addCommand( "getPixelColor", getPixelColor, true, false );
 function getPixelColor( screenData, c ) {
 	var noise, change, half, c2;
 
@@ -116,7 +116,7 @@ function getPixelColor( screenData, c ) {
 	return c2;
 }
 
-qbs._.addCommand( "drawSquarePen", drawSquarePen, true, false, [] );
+qbs._.addCommand( "drawSquarePen", drawSquarePen, true, false );
 qbs._.addPen( "square", drawSquarePen, "square" );
 function drawSquarePen( screenData, x, y, c ) {
 	var size, x2, y2, offset;
@@ -142,7 +142,7 @@ function drawSquarePen( screenData, x, y, c ) {
 	qbData.commands.setImageDirty( screenData );
 }
 
-qbs._.addCommand( "drawCirclePen", drawCirclePen, true, false, [] );
+qbs._.addCommand( "drawCirclePen", drawCirclePen, true, false );
 qbs._.addPen( "circle", drawCirclePen, "round" );
 function drawCirclePen( screenData, x, y, c ) {
 	var size, half, x2, y2, x3, y3, offset, r;
@@ -188,7 +188,7 @@ function drawCirclePen( screenData, x, y, c ) {
 	qbData.commands.setImageDirty( screenData );
 }
 
-qbs._.addCommand( "getPixel", getPixel, true, false, [] );
+qbs._.addCommand( "getPixel", getPixel, true, false );
 function getPixel( screenData, x, y ) {
 	var data, i;
 
@@ -206,7 +206,7 @@ function getPixel( screenData, x, y ) {
 	};
 }
 
-qbs._.addCommand( "getPixelSafe", getPixelSafe, true, false, [] );
+qbs._.addCommand( "getPixelSafe", getPixelSafe, true, false );
 function getPixelSafe( screenData, x, y ) {
 
 	qbData.commands.getImageData( screenData );
@@ -215,7 +215,7 @@ function getPixelSafe( screenData, x, y ) {
 }
 
 // Finds a color from the palette and returns it's value.
-qbs._.addCommand( "findColorValue", findColorValue, true, false, [] );
+qbs._.addCommand( "findColorValue", findColorValue, true, false );
 function findColorValue( screenData, colorInput, commandName ) {
 	var colorValue;
 
