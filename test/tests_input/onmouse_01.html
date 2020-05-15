@@ -27,8 +27,9 @@ $.ready( function () {
 	var isDrawing = false;
 	var corner;
 	$.screen( "160x100" );
+	$.set( { "enableContextMenu": false } );
 	$.paint( 1, 1, 16 );
-	$.color( 15 );
+	$.setColor( 15 );
 	corner = $.get(0, 0, 8, 14);
 	$.print( 0 );
 	$.render();
@@ -42,7 +43,7 @@ $.ready( function () {
 		var digit;
 		if( key.code.indexOf( "Digit" ) > -1 ) {
 			digit = parseInt( key.code.substr( key.code.length - 1 ) );
-			$.color( digit );
+			$.setColor( digit );
 			$.put( corner, 0, 0 );
 			$.setPos( 0, 0 );
 			$.print( digit );

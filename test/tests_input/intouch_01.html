@@ -27,10 +27,10 @@ $.ready( function () {
 	$.screen( "320x200" );
 	$.startTouch();
 	$.setPinchZoom( false );
-	$.color( 16 );
+	$.setColor( 16 );
 	$.rect( 0, 0, 8, 14 );
 	$.paint( 1, 1, 16 );
-	$.color( 15 );
+	$.setColor( 15 );
 	var corner = $.get(0, 0, 8, 14);
 	setInterval( function () {
 		var touches = $.intouch();
@@ -57,7 +57,7 @@ $.ready( function () {
 		var keys = $.inkey();
 		for( i = 0; i < 10; i++) {
 			if( keys[ "Digit" + i ] ) {
-				$.color( i );
+				$.setColor( i );
 			}
 		}
 

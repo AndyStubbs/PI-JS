@@ -25,11 +25,12 @@
 		var last = {x: 0, y: 0};
 		var isDrawing = false;
 		$.screen("160x100");
+		$.set( { "enableContextMenu": false } );
 		$.startMouse();
-		$.color( 16 );
+		$.setColor( 16 );
 		$.rect( 0, 0, 8, 14 );
 		$.paint( 1, 1, 16 );
-		$.color( 15 );
+		$.setColor( 15 );
 		var corner = $.get(0, 0, 8, 14);
 		setInterval( function () {
 			var mouse = $.inmouse();
@@ -53,7 +54,7 @@
 			var keys = $.inkey();
 			for( i = 0; i < 10; i++) {
 				if( keys[ "Digit" + i ] ) {
-					$.color( i );
+					$.setColor( i );
 				}
 			}
 

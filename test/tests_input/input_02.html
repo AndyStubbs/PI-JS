@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Input 02</title>
+		<script type="text/toml">
+			[[TOML_START]]
+			test = "screenshot.js"
+			file = "input_02"
+			name = "input 02"
+			width = 200
+			height = 200
+			delay = 0
+			[[TOML_END]]
+		</script>
+		<script src="../../build/qbs.min.js"></script>
+		<style>
+			html, body {
+				background-color: grey;
+			}
+		</style>
+	</head>
+<body>
+<script>
+
+	var $screen = $.screen( "300x200" );
+	$screen.setContainerBgColor( "#000000" );
+	$screen.paint( 1, 1, 1 );
+	$screen.setColor( 15 );
+	$screen.render();
+	$screen.input( "What is your name? ", "name" );
+	$.inputReady( function ( data ) {
+		$.print( "Your name is " + data.name + "." );
+		$.render();
+	} );
+
+</script>
+</body>
+</html>

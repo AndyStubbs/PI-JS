@@ -75,13 +75,13 @@
 			if( frames % 2 === 0 ) {
 				$screen.cls();
 			}
-			$screen.color( 9 );
+			$screen.setColor( 9 );
 			$screen.circle( Math.floor( x ), Math.floor( y ), r );
 			$screen.paint( Math.floor( x ), Math.floor( y ), [ 125, 200, 37, 137 ] );
-			$screen.color( 1 );
+			$screen.setColor( 1 );
 			$screen.pset( Math.floor( x ), Math.floor( y ) );
 			for( var i = 0; i < 5; i++ ) {
-				$screen.color( [
+				$screen.setColor( [
 					Math.floor( Math.random() * 256 ),
 					Math.floor( Math.random() * 256 ),
 					Math.floor( Math.random() * 256 ),
@@ -94,7 +94,7 @@
 					Math.floor( Math.random() * height )
 				);
 			}
-			$screen.color( 15 );
+			$screen.setColor( 15 );
 			$screen.setPos( 0, 0 );
 			$screen.print();
 			$screen.print( " " + msg );

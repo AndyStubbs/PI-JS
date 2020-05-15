@@ -7,11 +7,9 @@
 
 "use strict";
 
-var qbData, keys, keyLookup, keyCodes, preventKeys, inputs, inputIndex, t,
+var keys, keyLookup, keyCodes, preventKeys, inputs, inputIndex, t,
 	promptInterval, blink, promptBackground, promptBackgroundWidth,
 	inputReadyList, onKeyEventListeners, anyKeyEventListeners;
-
-qbData = qbs._.data;
 
 keyLookup = {
 	"Alt_1": "AltLeft",
@@ -433,35 +431,28 @@ function offkey( args ) {
 }
 
 // Disables the default behavior for a key
-// TODO: rename this command
-qbs._.addCommand( "disableDefaultKey", disableDefaultKey, false, false,
-	[ "key" ] );
-function disableDefaultKey( args ) {
-	var key;
+qbs._.addCommand( "setActionKey", setActionKey, false, false,
+	[ "key", "isEnabled" ]
+);
+qbs._.addSetting( "actionKey", setActionKey, false, [ "key", "isEnabled" ] );
+function setActionKey( args ) {
+	var key, isEnabled;
 
 	key = args[ 0 ];
+	isEnabled = !!( args[ 1 ] );
 
-	if( typeof key !== "string" && isNaN( key ) ) {
-		console.error( "disableDefaultKey: invalid key parameter." );
+	if( typeof key !== "string" && qbs.util.isInteger( key ) ) {
+		console.error(
+			"setActionKey: key must be a string or integer"
+		);
 		return;
 	}
-	preventKeys[ key ] = true;
-}
 
-// Enables the default behavior for a key
-// TODO: rename this command
-qbs._.addCommand( "enableDefaultKey", enableDefaultKey, false, false,
-	[ "key" ] );
-function enableDefaultKey( args ) {
-	var key;
-
-	key = args[ 0 ];
-
-	if( typeof key !== "string" && isNaN( key ) ) {
-		console.error( "disableDefaultKey: invalid key parameter." );
-		return;
+	if( isEnabled ) {
+		preventKeys[ key ] = true;
+	} else {
+		delete preventKeys[ key ];
 	}
-	delete preventKeys[ key ];
 }
 
 // Shows the prompt for the input command
@@ -485,9 +476,9 @@ function showPrompt( screenData, hideCursor ) {
 		}
 
 		// Get the background pixels
-		posPx = $.posPx();
-		width = ( msg.length + 1 ) * screenData.printCursor.charWidth;
-		height = screenData.printCursor.charHeight;
+		posPx = $.getPosPx();
+		width = ( msg.length + 1 ) * screenData.printCursor.font.width;
+		height = screenData.printCursor.font.height;
 
 		// If there is no background
 		if( ! promptBackground ) {
@@ -509,9 +500,9 @@ function showPrompt( screenData, hideCursor ) {
 		promptBackgroundWidth = width;
 
 		// Print the prompt
-		pos = $.pos();
+		pos = $.getPos();
 		$.print( msg, true );
-		$.locate( pos.col, pos.row );
+		$.setPos( pos.col, pos.row );
 		$.render();
 	} else {
 		// There are no inputs then stop the interval and clear prompt data
@@ -676,7 +667,9 @@ function setInputCursor( screenData, args ) {
 	}
 
 	if( font.mode === "pixel" && ! font.chars.indexOf( cursor ) ) {
-		console.error( "setInputCursor: invalid cursor" );
+		console.error( 
+			"setInputCursor: font does not contain the cursor character"
+		);
 		return;
 	}
 

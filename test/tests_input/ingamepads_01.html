@@ -30,7 +30,7 @@ $.ready( function () {
 	$.screen( "300x300" );
 	setInterval( function () {
 		$.cls();
-		$.color( 7 );
+		$.setColor( 7 );
 		gamepads = $.ingamepads();
 		if( gamepads[ 0 ] ) {
 			i = 0;
@@ -67,7 +67,7 @@ $.ready( function () {
 			}
 		}
 		
-		$.color( 15 );
+		$.setColor( 15 );
 		$.circle( Math.floor( x ), Math.floor( y ), 10 );
 		$.pset( Math.floor( x ), Math.floor( y ) );
 

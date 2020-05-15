@@ -38,27 +38,16 @@
 <body>
 <script>
 
-$.ready(function () {
-	var data;
-	$.screen("100x100");
-	$.setColor(2);
-	$.line(0, 0, 99, 99);
-	$.line(0, 99, 99, 0);
-	$.paint(50, 25, 4);
-	$.paint(25, 75, 5);
-	$.paint(15, 50, 6);
-	$.paint(75, 50, 9);
-	data = $.get(40, 40, 60, 60);
-	$.put(data, 10, 10);
-	$.put(data, 70, 10);
-	$.put(data, 10, 70);
-	$.put(data, 70, 70);
-	$.put(data, -10, 40);
-	$.put(data, 90, 40);
-	$.put(data, 40, -10);
-	$.put(data, 40, 90);
+var $screen = $.screen( "300x200" );
+$screen.setContainerBgColor( "#000000" );
+$screen.paint( 1, 1, 1 );
+$screen.setColor( 15 );
+$screen.render();
+$screen.input( "What is your name? ", "name" );
+$.inputReady( function ( data ) {
+	$.print( "Your name is " + data.name + "." );
 	$.render();
-});
+} );
 
 </script>
 </body>

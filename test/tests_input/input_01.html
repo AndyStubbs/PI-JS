@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>Inkey 01</title>
+		<title>Input 01</title>
 		<script type="text/toml">
 			[[TOML_START]]
 			test = "screenshot.js"
-			file = "inkey_01"
-			name = "inkey 01"
+			file = "input_01"
+			name = "input 01"
 			width = 200
 			height = 200
 			delay = 0
@@ -23,9 +23,9 @@
 <script>
 	$.ready(function () {
 		$.screen("300x200");
-		$.containerBgColor("#000000");
+		$.setContainerBgColor("#000000");
 		$.paint(1, 1, 1);
-		$.color(15);
+		$.setColor(15);
 		$.render();
 		$.input("First name: ", "first");
 		$.input("Last name: ", "last");

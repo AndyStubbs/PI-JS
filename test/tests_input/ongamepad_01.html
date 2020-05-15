@@ -41,7 +41,7 @@ $.ready( function () {
 	$.onkey( "s", function () {
 		$.stopGamepads();
 		$.cls();
-		$.color( 15 );
+		$.setColor( 15 );
 		$.print( "Gamepad access has been removed." );
 		$.render();
 	}, true );
@@ -50,7 +50,7 @@ $.ready( function () {
 
 	function draw() {
 		//$.cls();
-		$.color( [ Math.floor( color[ 0 ] ), Math.floor( color[ 1 ] ), Math.floor( color[ 2 ] ), Math.floor( color[ 3 ] )] );
+		$.setColor( [ Math.floor( color[ 0 ] ), Math.floor( color[ 1 ] ), Math.floor( color[ 2 ] ), Math.floor( color[ 3 ] )] );
 		$.pset( Math.floor( x ), Math.floor( y ) );
 		$.circle( Math.floor( x ), Math.floor( y ), 10 );
 		$.render();
