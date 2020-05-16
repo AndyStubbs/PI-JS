@@ -7,10 +7,11 @@
 
 "use strict";
 
-var keys, keyLookup, keyCodes, preventKeys, inputs, inputIndex, t,
+var qbData, keys, keyLookup, keyCodes, preventKeys, inputs, inputIndex, t,
 	promptInterval, blink, promptBackground, promptBackgroundWidth,
 	inputReadyList, onKeyEventListeners, anyKeyEventListeners;
 
+qbData = qbs._.data;
 keyLookup = {
 	"Alt_1": "AltLeft",
 	"Alt_2": "AltRight",
@@ -187,86 +188,49 @@ anyKeyEventListeners = [];
 
 // Key up event - document event
 document.addEventListener( "keyup", keyup );
-function keyup( e ) {
+function keyup( event ) {
 	var key;
 
 	// Lookup the key by using key and location
-	key = keyLookup[ e.key + "_" + e.location ];
+	key = keyLookup[ event.key + "_" + event.location ];
 
 	// Reset the keys - no longer pressed
 	keys[ key ] = 0;
-	keyCodes[ e.keyCode ] = 0;
+	keyCodes[ event.keyCode ] = 0;
 
 	// If a key is registered then prevent the default behavior
-	if( preventKeys[ key ] || preventKeys[ e.keyCode ] ) {
-		e.preventDefault();
-		e.stopPropagation();
+	if( preventKeys[ key ] || preventKeys[ event.keyCode ] ) {
+		event.preventDefault();
+		event.stopPropagation();
 	}
 }
 
 // Key down - document event
 document.addEventListener( "keydown", keydown );
-function keydown( e ) {
-	var key, keyVal, input, removeLastChar, i, temp;
+function keydown( event ) {
+	var key, keyVal, i, temp;
 
 	// If we are collecting any inputs
 	if( inputs.length > 0 ) {
-		removeLastChar = false;
-		input = inputs[ inputIndex ];
-		if( e.keyCode === 13 ) {
-
-			// The enter key was pressed
-			showPrompt( input.screenData, true );
-			$.print( "" );
-			triggerReady( input );
-			inputIndex += 1;
-			if( inputIndex >= inputs.length ) {
-				closeInputs();
-			}
-		} else if( e.keyCode === 8 ) {
-			// The backspace key was pressed
-			if( input.val.length > 0 ) {
-				removeLastChar = true;
-			}
-		} else if( e.key && e.key.length === 1 ) {
-			// A character key was pressed
-			input.val += e.key;
-
-			// Return if character is not a digit
-			if( input.isNumber ) {
-				if( isNaN( Number( input.val ) ) ) {
-					removeLastChar = true;
-				} else if( input.max && Number( input.val ) > input.max ) {
-					removeLastChar = true;
-				} else if( input.min && Number( input.val ) < input.min ) {
-					removeLastChar = true;
-				} else if( input.isInteger && e.key === "." ) {
-					removeLastChar = true;
-				}
-			}
-		}
-		// Remove one character from the end of the string
-		if( removeLastChar ) {
-			input.val = input.val.substring( 0, input.val.length - 1 );
-		}
+		collectInput( event );
 		return;
 	}
 
 	// Lookup the key
-	key = keyLookup[ e.key + "_" + e.location ];
+	key = keyLookup[ event.key + "_" + event.location ];
 	keyVal = {
-		"key": e.key,
-		"location": e.location,
+		"key": event.key,
+		"location": event.location,
 		"code": key,
-		"keyCode": e.keyCode
+		"keyCode": event.keyCode
 	};
 	keys[ key ] = keyVal;
-	keyCodes[ e.keyCode ] = keyVal;
+	keyCodes[ event.keyCode ] = keyVal;
 
 	// Prevent default behavior
-	if( preventKeys[ key ] || preventKeys[ e.keyCode ] ) {
-		e.preventDefault();
-		e.stopPropagation();
+	if( preventKeys[ key ] || preventKeys[ event.keyCode ] ) {
+		event.preventDefault();
+		event.stopPropagation();
 	}
 
 	// trigger on key events
@@ -476,34 +440,38 @@ function showPrompt( screenData, hideCursor ) {
 		}
 
 		// Get the background pixels
-		posPx = $.getPosPx();
+		posPx = qbData.commands.getPosPx( input.screenData );
 		width = ( msg.length + 1 ) * screenData.printCursor.font.width;
 		height = screenData.printCursor.font.height;
 
 		// If there is no background
 		if( ! promptBackground ) {
-			promptBackground = $.get(
-				posPx.x, posPx.y, posPx.x + width, posPx.y + height
+			promptBackground = qbData.commands.get( input.screenData,
+				[ posPx.x, posPx.y, posPx.x + width, posPx.y + height ]
 			);
 		} else if( promptBackgroundWidth < width ) {
 			// We have a background but we need a bigger background
-			$.put( promptBackground, posPx.x, posPx.y );
-			promptBackground = $.get(
-				posPx.x, posPx.y, posPx.x + width, posPx.y + height
+			qbData.commands.put( input.screenData,
+				[ promptBackground, posPx.x, posPx.y ]
+			);
+			promptBackground = qbData.commands.get( input.screenData,
+				[ posPx.x, posPx.y, posPx.x + width, posPx.y + height ]
 			);
 		} else {
 			// Else redraw the background
-			$.put( promptBackground, posPx.x, posPx.y );
+			qbData.commands.put( input.screenData,
+				[ promptBackground, posPx.x, posPx.y ]
+			);
 		}
 
 		// Store the background width for later use
 		promptBackgroundWidth = width;
 
 		// Print the prompt
-		pos = $.getPos();
-		$.print( msg, true );
-		$.setPos( pos.col, pos.row );
-		$.render();
+		pos = qbData.commands.getPos( input.screenData );
+		qbData.commands.print( input.screenData, [ msg, true ] );
+		qbData.commands.setPos( input.screenData, [ pos.col, pos.row ] );
+		qbData.commands.render( input.screenData );
 	} else {
 		// There are no inputs then stop the interval and clear prompt data
 		clearInterval( promptInterval );
@@ -581,6 +549,49 @@ function input( screenData, args ) {
 		showPrompt( screenData );
 	}, 100 );
 	return ready;
+}
+
+function collectInput( event ) {
+	var input, removeLastChar;
+
+	removeLastChar = false;
+	input = inputs[ inputIndex ];
+	if( event.keyCode === 13 ) {
+
+		// The enter key was pressed
+		showPrompt( input.screenData, true );
+		qbData.commands.print( input.screenData, [ "" ] );
+		triggerReady( input );
+		inputIndex += 1;
+		if( inputIndex >= inputs.length ) {
+			closeInputs();
+		}
+	} else if( event.keyCode === 8 ) {
+		// The backspace key was pressed
+		if( input.val.length > 0 ) {
+			removeLastChar = true;
+		}
+	} else if( event.key && event.key.length === 1 ) {
+		// A character key was pressed
+		input.val += event.key;
+
+		// Return if character is not a digit
+		if( input.isNumber ) {
+			if( isNaN( Number( input.val ) ) ) {
+				removeLastChar = true;
+			} else if( input.max && Number( input.val ) > input.max ) {
+				removeLastChar = true;
+			} else if( input.min && Number( input.val ) < input.min ) {
+				removeLastChar = true;
+			} else if( input.isInteger && event.key === "." ) {
+				removeLastChar = true;
+			}
+		}
+	}
+	// Remove one character from the end of the string
+	if( removeLastChar ) {
+		input.val = input.val.substring( 0, input.val.length - 1 );
+	}
 }
 
 // Triggers the ready functions once the enter key has been pressed in input
