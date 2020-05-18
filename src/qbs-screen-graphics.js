@@ -373,13 +373,14 @@ function aaEllipse( screenData, args ) {
 }
 
 // Put command
-qbs._.addCommand( "put", put, false, true, [ "data", "x", "y" ] );
+qbs._.addCommand( "put", put, false, true, [ "data", "x", "y", "includeZero" ] );
 function put( screenData, args ) {
-	var data, x, y, dataX, dataY, startX, startY, width, height, i, c;
+	var data, x, y, includeZero, dataX, dataY, startX, startY, width, height, i, c;
 
 	data = args[ 0 ];
 	x = args[ 1 ];
 	y = args[ 2 ];
+	includeZero = !!( args[ 3 ] );
 
 	// Exit if no data
 	if( ! data || data.length < 1 ) {
@@ -430,7 +431,7 @@ function put( screenData, args ) {
 			i = ( ( screenData.width * ( y + dataY ) ) + ( x + dataX ) ) * 4;
 
 			//Put the color in the image data
-			if( c.a > 0 ) {
+			if( c.a > 0 || includeZero ) {
 				screenData.imageData.data[ i ] = c.r;
 				screenData.imageData.data[ i + 1 ] = c.g;
 				screenData.imageData.data[ i + 2 ] = c.b;

@@ -9,7 +9,7 @@
 
 var qbData, keys, keyLookup, keyCodes, preventKeys, inputs, inputIndex, t,
 	promptInterval, blink, promptBackground, promptBackgroundWidth,
-	inputReadyList, onKeyEventListeners, anyKeyEventListeners;
+	inputReadyList, onKeyEventListeners, anyKeyEventListeners, keyboard;
 
 qbData = qbs._.data;
 keyLookup = {
@@ -185,6 +185,22 @@ inputIndex = 0;
 inputReadyList = [];
 onKeyEventListeners = {};
 anyKeyEventListeners = [];
+keyboard = {
+	"qwerty": "" + 
+		"`1234567890-={Backspace}\n" +
+		"{Tab}qwertyuiop[]\\\n" +
+		"asdfghjkl;'{Enter}\n" +
+		"{Shift}zxcvbnm,./{Shift}\n" +
+		"{Space}",
+	"gap": 1,
+	"symbols": {
+		"Backspace": "<-",
+		"Tab": "Tab",
+		"Enter": "Enter",
+		"Shift": "Shift",
+		"Space": "     "
+	}
+};
 
 // Key up event - document event
 document.addEventListener( "keyup", keyup );
@@ -452,7 +468,7 @@ function showPrompt( screenData, hideCursor ) {
 		} else if( promptBackgroundWidth < width ) {
 			// We have a background but we need a bigger background
 			qbData.commands.put( input.screenData,
-				[ promptBackground, posPx.x, posPx.y ]
+				[ promptBackground, posPx.x, posPx.y, true ]
 			);
 			promptBackground = qbData.commands.get( input.screenData,
 				[ posPx.x, posPx.y, posPx.x + width, posPx.y + height ]
@@ -460,7 +476,7 @@ function showPrompt( screenData, hideCursor ) {
 		} else {
 			// Else redraw the background
 			qbData.commands.put( input.screenData,
-				[ promptBackground, posPx.x, posPx.y ]
+				[ promptBackground, posPx.x, posPx.y, true ]
 			);
 		}
 
@@ -472,6 +488,10 @@ function showPrompt( screenData, hideCursor ) {
 		qbData.commands.print( input.screenData, [ msg, true ] );
 		qbData.commands.setPos( input.screenData, [ pos.col, pos.row ] );
 		qbData.commands.render( input.screenData );
+
+		if( input.showKeyboard ) {
+			showKeyboard( input );
+		}
 	} else {
 		// There are no inputs then stop the interval and clear prompt data
 		clearInterval( promptInterval );
@@ -480,21 +500,46 @@ function showPrompt( screenData, hideCursor ) {
 	}
 }
 
+function showKeyboard( input ) {
+	// var pos, i, end, word;
+
+	// pos = qbData.commands.getPos( input.screenData );
+	// qbData.commands.print( input.screenData, [ "" ] );
+	// i = 0;
+	// while( i < keyboard.qwerty.length ) {
+	// 	word = keyboard.qwerty[ i ];
+	// 	if( keyboard.qwerty[ i ] === "{" ) {
+	// 		end = keyboard.qwerty.indexOf( "}", i + 1 );
+	// 		if( end !== -1 ) {
+	// 			word = keyboard.qwerty.substring( i, end );
+	// 			if( ! keyboard.symbols[ word ] ) {
+	// 				word = keyboard.qwerty[ i ];
+	// 			}
+	// 		}
+	// 	}
+	// 	word = qbs.util.pad( word, keyboard.gap, " " );
+	// 	i += 1;
+	// }
+	// qbData.commands.setPos( input.screenData, [ pos.col, pos.row ] );
+}
+
 // Prompts the user to enter input through the keyboard.
-qbs._.addCommand( "input", input, false, true,
-	[ "prompt", "name", "isNumber", "min", "max", "isInteger", "ready",
-	"readyList" ] );
+qbs._.addCommand( "input", input, false, true, [
+	"prompt", "name", "isNumber", "min", "max", "isInteger", "ready",
+	"showKeyboard"
+] );
 function input( screenData, args ) {
-	var prompt, name, isNumber, min, max, isInteger, ready, readyList;
+	var prompt, name, isNumber, min, max, isInteger, ready, showKeyboard,
+		readyList;
 
 	prompt = args[ 0 ];
 	name = args[ 1 ];
-	isNumber = args[ 2 ];
+	isNumber = !!( args[ 2 ] );
 	min = args[ 3 ];
 	max = args[ 4 ];
-	isInteger = args[ 5 ];
+	isInteger = !!( args[ 5 ] );
 	ready = args[ 6 ];
-	readyList = args[ 7 ];
+	showKeyboard = !!( args[ 7 ] );
 
 	if( typeof prompt !== "string" ) {
 		console.error( "input: prompt is required and must be a string." );
@@ -503,9 +548,6 @@ function input( screenData, args ) {
 	if( typeof name !== "string" && name !== undefined ) {
 		console.error( "input: name must be a string or left blank." );
 	}
-
-	isNumber = !!( isNumber );
-	isInteger = !!( isInteger );
 
 	// Create a list of functions to trigger
 	readyList = [];
@@ -542,12 +584,14 @@ function input( screenData, args ) {
 		"max": max,
 		"val": "",
 		"readyList": readyList,
-		"screenData": screenData
+		"screenData": screenData,
+		"showKeyboard": showKeyboard
 	} );
 	t = ( new Date() ).getTime();
 	promptInterval = setInterval( function() {
 		showPrompt( screenData );
 	}, 100 );
+
 	return ready;
 }
 
