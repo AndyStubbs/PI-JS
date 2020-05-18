@@ -1,42 +1,28 @@
 <!DOCTYPE html>
 <html>
-<head>
-	<!--meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/-->
-	<title>Test App</title>
-	<script src="../test/libs/seedrandom.js"></script>
-	<script src="qbs.js"></script>
-	<script src="qbs-util.js"></script>
-	<script src="qbs-keyboard.js"></script>
-	<script src="qbs-gamepad.js"></script>
-	<script src="qbs-font.js"></script>
-	<script src="qbs-screen.js"></script>
-	<script src="qbs-screen-mouse.js"></script>
-	<script src="qbs-screen-touch.js"></script>
-	<script src="qbs-screen-commands.js"></script>
-	<script src="qbs-screen-helper.js"></script>
-	<script src="qbs-screen-graphics.js"></script>
-	<script src="qbs-screen-paint.js"></script>
-	<script src="qbs-screen-bezier.js"></script>
-	<script src="qbs-screen-images.js"></script>
-	<script src="qbs-screen-draw.js"></script>
-	<script src="qbs-screen-print.js"></script>
-	<script src="qbs-sound.js"></script>
-	<script src="fonts/font-data.js"></script>
-	<script src="qbs-pal.js"></script>
-	<script src="qbs-init.js"></script>
-	<style>
-		html, body {
-			background-color: gray;
-		}
-		div {
-			background-color: blue;
-			width: 600px;
-			height: 140px;
-		}
-	</style>
-</head>
+	<head>
+		<title>FormatTable 01</title>
+		<script type="text/toml">
+			[[TOML_START]]
+			test = "screenshot.js"
+			file = "formatTable_01"
+			name = "FormatTable 01"
+			width = 300
+			height = 310
+			delay = 0
+			[[TOML_END]]
+		</script>
+		<script src="../libs/seedrandom.js"></script>
+		<script src="../../build/qbs.min.js"></script>
+		<style>
+			html, body {
+				background-color: grey;
+			}
+		</style>
+	</head>
 <body>
 <script>
+Math.seedrandom('constant');
 var $screen = $.screen( { "aspect": "300x310", "isMultiple": true } );
 $screen.setColor( 2 );
 $screen.setFont( 1 );
