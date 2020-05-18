@@ -4,6 +4,40 @@
 window.qbs.util = ( function () {
 	"use strict";
 
+	var borderStyles = {
+		"single": [
+			[ 218, 196, 194, 191 ],
+			[ 195, 196, 197, 180 ],
+			[ 192, 196, 193, 217 ],
+			[ 179, 32, 179 ]
+		],
+		"double": [
+			[ 201, 205, 203, 187 ],
+			[ 204, 205, 206, 185 ],
+			[ 200, 205, 202, 188 ],
+			[ 186, 32, 186 ]
+		],
+		"singleDouble": [
+			[ 213, 205, 209, 184 ],
+			[ 198, 205, 216, 181 ],
+			[ 212, 205, 207, 190 ],
+			[ 179, 32, 179 ]
+		],
+		"doubleSingle": [
+			[ 214, 196, 210, 183 ],
+			[ 199, 196, 215, 182 ],
+			[ 211, 196, 208, 189 ],
+			[ 186, 32, 186 ]
+		],
+		"thick": [
+			[ 220, 220, 220, 220 ],
+			[ 219, 223, 219, 219 ],
+			[ 223, 223, 223, 223 ],
+			[ 221, 32, 222 ]
+		]
+
+	};
+
 	function isFunction( functionToCheck ) {
 		return functionToCheck &&
 			{}.toString.call( functionToCheck ) === '[object Function]';
@@ -196,6 +230,163 @@ window.qbs.util = ( function () {
 		return str;
 	}
 
+	function pad( str, len, c ) {
+		if( typeof c !== "string" || c.length === 0 ) {
+			c = " ";
+		}
+		str = str + "";
+		while( str.length < len ) {
+			str = c + str + c;
+		}
+		if( str.length > len ) {
+			str = str.substr( 0, str.length - 1 );
+		}
+		return str;
+	}
+
+	function formatTable( items, width, borderStyle, padding ) {
+		var borders, row, col, msg, msgTop, msgMid, msgBot, cellWidth, rowWidth,
+			rowPad, bottomRow;
+
+		if( ! qbs.util.isArray( items ) ) {
+			console.error( "formatBorder: items must be an array" );
+			return;
+		}
+
+		if( ! borderStyle ) {
+			borders = borderStyles[ "single" ];
+		}
+
+		if( padding === undefined ) {
+			padding = 0;
+		}
+
+		if( typeof borderStyle === "string" && borderStyles[ borderStyle ] ) {
+			borders = borderStyles[ borderStyle ];
+		} else if( qbs.util.isArray( borderStyles ) ) {
+			borders = borderStyle;
+		}
+
+		msg = "";
+
+		for( row = 0; row < items.length; row += 1 ) {
+
+			// Calculate the cellWidth
+			cellWidth = Math.floor( width / items[ row ].length );
+			if( cellWidth < 3 ) {
+				cellWidth = 3;
+			}
+			if( padding === 0 ) {
+				rowWidth = ( cellWidth - 2 ) * items[ row ].length + items[ row ].length + 1;
+			} else {
+				rowWidth = cellWidth * items[ row ].length;
+			}
+
+			rowPad = Math.round( ( width - rowWidth ) / 2 );
+
+			//rowPad = 2;
+			msgTop = padL( "", rowPad, " " );
+			msgMid = msgTop;
+			msgBot = msgTop;
+
+			// Format all the cells
+			for( col = 0; col < items[ row ].length; col += 1 ) {
+
+				// Middle cell
+				msgMid += String.fromCharCode( borders[ 3 ][ 0 ] ) + 
+					pad(
+						items[ row ][ col ],
+						cellWidth - 2,
+						String.fromCharCode( borders[ 3 ][ 1 ] )
+					);
+
+				if( col === items[ row ].length - 1 ) {
+					msgMid += String.fromCharCode( borders[ 3 ][ 2 ] );
+				}
+
+				// Each cell is individually bordered
+				if( padding > 0 ) {
+
+					// Top
+					msgTop += String.fromCharCode( borders[ 0 ][ 0 ] );
+					msgTop += pad( "", cellWidth - 2, String.fromCharCode( 
+						borders[ 0 ][ 1 ] )
+					);
+					msgTop += String.fromCharCode( borders[ 0 ][ 3 ] );
+
+					// Middle
+					if( col !== items[ row ].length - 1 ) {
+						msgMid += String.fromCharCode( borders[ 3 ][ 2 ] );
+					}
+
+					// Bottom
+					msgBot += String.fromCharCode( borders[ 2 ][ 0 ] );
+					msgBot += pad( "", cellWidth - 2, String.fromCharCode( 
+						borders[ 2 ][ 1 ] )
+					);
+					msgBot += String.fromCharCode( borders[ 2 ][ 3 ] );
+					continue;
+				}
+
+				// Top Row
+				if( row === 0 ) {
+
+					// Top left corner
+					if( col === 0 ) {
+						msgTop += String.fromCharCode( borders[ 0 ][ 0 ] );
+					} else {
+						msgTop += String.fromCharCode( borders[ 0 ][ 2 ] );
+					}
+
+					// Top center line
+					msgTop += pad( "", cellWidth - 2, String.fromCharCode( 
+						borders[ 0 ][ 1 ] )
+					);
+
+					// Top Right corner
+					if( col === items[ row ].length - 1 ) {
+						msgTop += String.fromCharCode( borders[ 0 ][ 3 ] );
+					}
+
+				}
+
+				// Bottom Row
+				if( row === items.length - 1 ) {
+					bottomRow = 2;
+				} else {
+					bottomRow = 1;
+				}
+
+				// Bottom Left Corner
+				if( col === 0 ) {
+					msgBot += String.fromCharCode( borders[ bottomRow ][ 0 ] );
+				} else {
+					msgBot += String.fromCharCode( borders[ bottomRow ][ 2 ] );
+				}
+
+				// Bottom center line
+				msgBot += pad( "", cellWidth - 2, String.fromCharCode(
+					borders[ bottomRow ][ 1 ] )
+				);
+
+				// Bottom Right corner
+				if( col === items[ row ].length - 1 ) {
+					msgBot += String.fromCharCode( borders[ bottomRow ][ 3 ] );
+				}
+
+			}
+
+			// Move to the next row
+			if( row === 0 || padding > 0 ) {
+				msg += msgTop + "\n";
+			}
+			msg += msgMid + "\n";
+			msg += msgBot + "\n";
+		}
+
+		return msg.substr( 0, msg.length - 1 );
+	}
+
 	// Setup commands that will run only in the qbs api
 	var api = {
 		"isFunction": isFunction,
@@ -221,6 +412,8 @@ window.qbs.util = ( function () {
 		"radiansToDegrees": radiansToDegrees,
 		"padL": padL,
 		"padR": padR,
+		"pad": pad,
+		"formatTable": formatTable,
 		"math": {
 			"deg30": Math.PI / 6,
 			"deg45": Math.PI / 4,

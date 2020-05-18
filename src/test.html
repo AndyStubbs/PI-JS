@@ -38,9 +38,9 @@
 <body>
 <script>
 
-var $screen = $.screen( "300x200" );
+var $screen = $.screen( "300x300" );
 $screen.setContainerBgColor( "#000000" );
-$screen.paint( 1, 1, 1 );
+//$screen.paint( 1, 1, 1 );
 $screen.setColor( 15 );
 $screen.render();
 $screen.input( "What is your name? ", "name" );
@@ -48,6 +48,45 @@ $.inputReady( function ( data ) {
 	$.print( "Your name is " + data.name + "." );
 	$.render();
 } );
+
+// var $screen = $.screen( "300x300" );
+// $screen.setFont( 1 );
+// $screen.print( "12345678901234567890123456789012345678901234567890");
+// var msg = qbs.util.formatTable( [
+// 	[ "One", "2", "3", "4", "5", "6" ],
+// 	[ "Four", "Five", "Six", "7", "8", "9" ],
+// 	[ "Seven", "Eight", "Nine", "a", "b", "c" ],
+
+// ], $screen.getCols(), null, 0 );
+// $screen.print( msg );
+
+// var msg = qbs.util.formatTable( [
+// 	[ "time", "for", "action", "getting", "into", "space" ],
+// ], $screen.getCols(), null, 1 );
+// $screen.print( msg );
+
+// var msg = qbs.util.formatTable( [
+// [ "One", "2", "3", "4", "5", "6" ],
+// 	[ "Four", "Five", "Six", "7", "8", "9" ],
+// 	[ "Seven", "Eight", "Nine", "a", "b", "c" ]
+// ], $screen.getCols(), "singleDouble", 0 );
+// $screen.print( msg );
+
+// var msg = qbs.util.formatTable( [
+// [ "One", "2", "3", "4", "5", "6" ],
+// 	[ "Four", "Five", "Six", "7", "8", "9" ],
+// 	[ "Seven", "Eight", "Nine", "a", "b", "c" ]
+// ], $screen.getCols(), "doubleSingle", 0 );
+// $screen.print( msg );
+
+// var msg = qbs.util.formatTable( [
+// [ "One", "2", "3", "4", "5", "6" ],
+// 	[ "Four", "Five", "Six", "7", "8", "9" ],
+// 	[ "Seven", "Eight", "Nine", "a", "b", "c" ]
+// ], $screen.getCols(), "thick", 0 );
+// $screen.print( msg );
+
+// $screen.render();
 
 </script>
 </body>

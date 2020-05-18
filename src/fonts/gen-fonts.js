@@ -2,7 +2,16 @@ var g_Fonts = {};
 var g_FontId = 0;
 var g_FontsLoading = 0;
 var g_FontsLoaded = 0;
-function loadFont( fontSrc, width, height ) {
+
+var images = document.querySelectorAll( "#images img" );
+for( var i = 0; i < images.length; i++ ) {
+	var width = parseInt( images[ i ].dataset.width );
+	var height = parseInt( images[ i ].dataset.height );
+	//break;
+	loadFont( images[ i ], width, height );
+}
+
+function loadFont( img, width, height ) {
 	var font;
 
 	// Set the font data
@@ -10,24 +19,19 @@ function loadFont( fontSrc, width, height ) {
 		"id": g_FontId++,
 		"width": width,
 		"height": height,
-		"img": new Image(),
+		"img": img,
 		"data": []
 	};
-
-	// Set the source
-	font.img.src = fontSrc;
 
 	// Add to global fonts
 	g_Fonts[ font.id ] = font;
 
 	g_FontsLoading += 1;
 
-	// Need to wait until the image is loaded
-	font.img.onload = function () {
-		setTimeout( function () {
-			getFontData( font );
-		}, 1000 );
-	};
+	setTimeout( function () {
+		getFontData( font );
+	}, 1 );
+
 }
 
 function getFontData( font ) {
@@ -50,6 +54,9 @@ function getFontData( font ) {
 
 	// Loop through all ascii characters
 	for( i = 0; i < 255; i++ ) {
+		// if( i === 127) {
+		// 	debugger;
+		// }
 		font.data.push( [] );
 		for( y = yStart; y < yStart + font.height; y++ ) {
 			font.data[ i ].push( [] );

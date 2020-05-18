@@ -489,9 +489,9 @@ function showPrompt( screenData, hideCursor ) {
 		qbData.commands.setPos( input.screenData, [ pos.col, pos.row ] );
 		qbData.commands.render( input.screenData );
 
-		if( input.showKeyboard ) {
-			showKeyboard( input );
-		}
+		// if( input.showKeyboard ) {
+		// 	showKeyboard( input );
+		// }
 	} else {
 		// There are no inputs then stop the interval and clear prompt data
 		clearInterval( promptInterval );
@@ -500,28 +500,28 @@ function showPrompt( screenData, hideCursor ) {
 	}
 }
 
-function showKeyboard( input ) {
-	// var pos, i, end, word;
+// function showKeyboard( input ) {
+// 	var pos, i, end, word;
 
-	// pos = qbData.commands.getPos( input.screenData );
-	// qbData.commands.print( input.screenData, [ "" ] );
-	// i = 0;
-	// while( i < keyboard.qwerty.length ) {
-	// 	word = keyboard.qwerty[ i ];
-	// 	if( keyboard.qwerty[ i ] === "{" ) {
-	// 		end = keyboard.qwerty.indexOf( "}", i + 1 );
-	// 		if( end !== -1 ) {
-	// 			word = keyboard.qwerty.substring( i, end );
-	// 			if( ! keyboard.symbols[ word ] ) {
-	// 				word = keyboard.qwerty[ i ];
-	// 			}
-	// 		}
-	// 	}
-	// 	word = qbs.util.pad( word, keyboard.gap, " " );
-	// 	i += 1;
-	// }
-	// qbData.commands.setPos( input.screenData, [ pos.col, pos.row ] );
-}
+// 	pos = qbData.commands.getPos( input.screenData );
+// 	qbData.commands.print( input.screenData, [ "" ] );
+// 	i = 0;
+// 	while( i < keyboard.qwerty.length ) {
+// 		word = keyboard.qwerty[ i ];
+// 		if( keyboard.qwerty[ i ] === "{" ) {
+// 			end = keyboard.qwerty.indexOf( "}", i + 1 );
+// 			if( end !== -1 ) {
+// 				word = keyboard.qwerty.substring( i, end );
+// 				if( ! keyboard.symbols[ word ] ) {
+// 					word = keyboard.qwerty[ i ];
+// 				}
+// 			}
+// 		}
+// 		word = qbs.util.pad( word, keyboard.gap, " " );
+// 		i += 1;
+// 	}
+// 	qbData.commands.setPos( input.screenData, [ pos.col, pos.row ] );
+// }
 
 // Prompts the user to enter input through the keyboard.
 qbs._.addCommand( "input", input, false, true, [

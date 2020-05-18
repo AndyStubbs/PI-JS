@@ -52,12 +52,22 @@
 	</div>
 	<div id="msg">&nbsp;</div>
 	<input id="show" type="button" value="Hide" />
+	<input id="diffSlider" type="range" min="0" max="255" value="100" />
+	<label><input id="switchPrimary" type="checkbox" />Switch Primary</label>
 	<script>
 		let $fileBox = $(".file-box");
 		let $fileInput = $(".input-file");
 		let $show = $("#show");
 		let droppedFiles = false;
 		let screen, screen2, hidden;
+		let $diffSlider = $("#diffSlider");
+		let $primary = $("#switchPrimary");
+		$primary.on("change", function () {
+			compareImages();
+		});
+		$diffSlider.on("change", function () {
+			compareImages();
+		} );
 		hidden = false;
 		$show.hide();
 		$show.on("click", function () {
@@ -106,7 +116,8 @@
 		}
 
 		function compareImages() {
-			var count, canvas1, canvas2, canvas3, context1, context2, context3, canvas4, context4;
+			var count, canvas1, canvas2, canvas3, context1, context2, context3, canvas4, context4, simAlpha, temp;
+			simAlpha = $diffSlider.val();
 			count = 0;
 			$fileBox.each( function () {
 				if( $(this).data("canvas") ) {
@@ -130,6 +141,11 @@
 				$("#msg").removeClass("error");
 			}
 
+			if( $primary.is( ":checked" ) ) {
+				temp = canvas1;
+				canvas1 = canvas2;
+				canvas2 = temp;
+			}
 			context1 = canvas1.getContext("2d");
 			context2 = canvas2.getContext("2d");
 			if(screen) {
@@ -177,7 +193,7 @@
 				if( d > 2 ) {
 					data3.data[ i + 3 ] = 255;
 				} else {
-					data3.data[ i + 3 ] = 100;
+					data3.data[ i + 3 ] = simAlpha;
 				}
 				if( da * da > 2 && a2 === 0) {
 					data3.data[ i ] = r1;

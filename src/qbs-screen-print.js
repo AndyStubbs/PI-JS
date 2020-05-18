@@ -274,6 +274,16 @@ function getPos( screenData ) {
 	};
 }
 
+qbs._.addCommand( "getCols", getCols, false, true, [] );
+function getCols( screenData ) {
+	return screenData.printCursor.cols;
+}
+
+qbs._.addCommand( "getRows", getRows, false, true, [] );
+function getRows( screenData ) {
+	return screenData.printCursor.rows;
+}
+
 // Pos Px Command
 qbs._.addCommand( "getPosPx", getPosPx, false, true, [] );
 function getPosPx( screenData ) {
