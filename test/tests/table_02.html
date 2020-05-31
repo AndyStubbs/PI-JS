@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>FormatTable 01</title>
+		<title>Table 02</title>
 		<script type="text/toml">
 			[[TOML_START]]
 			test = "screenshot.js"
-			file = "formatTable_01"
-			name = "FormatTable 01"
+			file = "table_02"
+			name = "table 02"
 			width = 300
 			height = 310
 			delay = 0
@@ -23,59 +23,54 @@
 <body>
 <script>
 Math.seedrandom('constant');
-var $screen = $.screen( { "aspect": "300x310", "isMultiple": true } );
+var $screen;
+
+$screen = $.screen( { "aspect": "300x310", "isMultiple": true } );
 $screen.setColor( 2 );
 $screen.setFont( 1 );
 $screen.print( "12345678901234567890123456789012345678901234567890");
-var msg = qbs.util.formatTable( [
+$screen.printTable( [
 	[ "One", "2", "3", "4", "5", "6" ],
 	[ "Four", "Five", "Six", "7", "8", "9" ],
-	[ "Seven", "Eight", "Nine", "a", "b", "c" ],
-
-], $screen.getCols(), null, 0 );
-$screen.print( msg );
+	[ "Seven", "Eight", "Nine", "a", "b", "c" ]
+], null, null );
 
 $screen.setColor( 3 );
-var msg = qbs.util.formatTable( [
+$screen.printTable( [
 	[ "One", "2", "3", "4", "5", "6" ],
 	[ "Four", "Five", "Six", "7", "8", "9" ],
 	[ "Seven", "Eight", "Nine", "a", "b", "c" ],
 
-], $screen.getCols(), "double", 0 );
-$screen.print( msg );
+], null, "double" );
 
 $screen.setColor( 4 );
-var msg = qbs.util.formatTable( [
+$screen.printTable( [
 	[ "time", "for", "action", "getting", "into", "space" ],
-], $screen.getCols(), null, 1 );
-$screen.print( msg );
+], null, null, 1 );
 
 $screen.setColor( 5 );
-var msg = qbs.util.formatTable( [
+$screen.printTable( [
 [ "One", "2", "3", "4", "5", "6" ],
 	[ "Four", "Five", "Six", "7", "8", "9" ],
 	[ "Seven", "Eight", "Nine", "a", "b", "c" ]
-], $screen.getCols(), "singleDouble", 0 );
-$screen.print( msg );
+], null, "singleDouble" );
 
 $screen.setColor( 6 );
-var msg = qbs.util.formatTable( [
-[ "One", "2", "3", "4", "5", "6" ],
+$screen.printTable( [
+	[ "One", "2", "3", "4", "5", "6" ],
 	[ "Four", "Five", "Six", "7", "8", "9" ],
 	[ "Seven", "Eight", "Nine", "a", "b", "c" ]
-], $screen.getCols(), "doubleSingle", 0 );
-$screen.print( msg );
+], null, "doubleSingle" );
+
 
 $screen.setColor( 9 );
-var msg = qbs.util.formatTable( [
-[ "One", "2", "3", "4", "5", "6" ],
+$screen.printTable( [
+	[ "One", "2", "3", "4", "5", "6" ],
 	[ "Four", "Five", "Six", "7", "8", "9" ],
 	[ "Seven", "Eight", "Nine", "a", "b", "c" ]
-], $screen.getCols(), "thick", 0 );
-$screen.print( msg );
+], null, "thick" );
 
 $screen.render();
-
 </script>
 </body>
 </html>
