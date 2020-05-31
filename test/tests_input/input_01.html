@@ -21,40 +21,47 @@
 	</head>
 <body>
 <script>
-	$.ready(function () {
-		$.screen("300x200");
-		$.setContainerBgColor("#000000");
-		$.paint(1, 1, 1);
-		$.setColor(15);
+$.ready( function () {
+	$.screen( "300x200" );
+	$.setContainerBgColor( "#000000" );
+	$.paint( 1, 1, 1 );
+	$.setColor( 15 );
+	$.render();
+	$.input( "Say something? ", function ( val ) {
+		$.print( "You said, \"" + val + "\"" );
 		$.render();
-		$.input("First name: ", "first");
-		$.input("Last name: ", "last");
-		$.input("Money: ", "money", true);
-		$.inputReady(function (data) {
-			$.print(data.first + " " + data.last + " has $" + data.money + ".");
-			$.render();
-			gotoInput2();
-		});
-	});
+	} );
+	$.input( "First name: ", null, "first" );
+	$.input( "Last name: ", null, "last" );
+	$.input( "Money: ", null, "money", true );
+	$.inputReady( function ( data ) {
+		$.print(
+			data.first + " " + data.last + " has $" + data.money + "."
+		);
+		$.render();
+		gotoInput2();
+	} );
+});
 
-	function gotoInput2() {
-		var pickAnumber = $.input("Pick a number between 1 and 10: ", "num", true, 1, 10, true);
-		pickAnumber.ready(function (val) {
-			$.print("Your number is " + val + ".");
+function gotoInput2() {
+	$.input(
+		"Pick a number between 1 and 10: ", function ( val ) {
+			$.print( "Your number is " + val + "." );
 			$.render();
-			$.input("What is x? ", "x");
-		});
-		$.inputReady(function (data) {
-			$.print(data.num + " is a good number.");
-			$.print(data.x + " is x.");
+			$.input( "What is x? ", null, "x" );
+		}, "num", true, 1, 10, true
+	);
+	$.inputReady( function ( data ) {
+		$.print( data.num + " is a good number." );
+		$.print( data.x + " is x." );
+		$.render();
+		$.input( "What is y? ", null, "y" );
+		$.inputReady( function( data ) {
+			$.print( "y is " + data.y );
 			$.render();
-			$.input("What is y? ", "y");
-			$.inputReady(function(data) {
-				$.print("y is " + data.y);
-				$.render();
-			});
-		});
-	}
+		} );
+	} );
+}
 </script>
 </body>
 </html>

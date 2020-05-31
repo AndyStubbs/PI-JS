@@ -39,54 +39,47 @@
 <body>
 <script>
 Math.seedrandom('constant');
-var $screen;
+$.ready( function () {
+	$.screen( "300x200" );
+	$.setContainerBgColor( "#000000" );
+	$.paint( 1, 1, 1 );
+	$.setColor( 15 );
+	$.render();
+	$.input( "Say something? ", function ( val ) {
+		$.print( "You said, \"" + val + "\"" );
+		$.render();
+	} );
+	$.input( "First name: ", null, "first" );
+	$.input( "Last name: ", null, "last" );
+	$.input( "Money: ", null, "money", true );
+	$.inputReady( function ( data ) {
+		$.print(
+			data.first + " " + data.last + " has $" + data.money + "."
+		);
+		$.render();
+		gotoInput2();
+	} );
+});
 
-$screen = $.screen( { "aspect": "300x310", "isMultiple": true } );
-$screen.setColor( 2 );
-$screen.setFont( 1 );
-$screen.print( "12345678901234567890123456789012345678901234567890");
-$screen.printTable( [
-	[ "One", "2", "3", "4", "5", "6" ],
-	[ "Four", "Five", "Six", "7", "8", "9" ],
-	[ "Seven", "Eight", "Nine", "a", "b", "c" ]
-], null, null );
-
-$screen.setColor( 3 );
-$screen.printTable( [
-	[ "One", "2", "3", "4", "5", "6" ],
-	[ "Four", "Five", "Six", "7", "8", "9" ],
-	[ "Seven", "Eight", "Nine", "a", "b", "c" ],
-
-], null, "double" );
-
-$screen.setColor( 4 );
-$screen.printTable( [
-	[ "time", "for", "action", "getting", "into", "space" ],
-], null, null, 1 );
-
-$screen.setColor( 5 );
-$screen.printTable( [
-[ "One", "2", "3", "4", "5", "6" ],
-	[ "Four", "Five", "Six", "7", "8", "9" ],
-	[ "Seven", "Eight", "Nine", "a", "b", "c" ]
-], null, "singleDouble" );
-
-$screen.setColor( 6 );
-$screen.printTable( [
-	[ "One", "2", "3", "4", "5", "6" ],
-	[ "Four", "Five", "Six", "7", "8", "9" ],
-	[ "Seven", "Eight", "Nine", "a", "b", "c" ]
-], null, "doubleSingle" );
-
-
-$screen.setColor( 9 );
-$screen.printTable( [
-	[ "One", "2", "3", "4", "5", "6" ],
-	[ "Four", "Five", "Six", "7", "8", "9" ],
-	[ "Seven", "Eight", "Nine", "a", "b", "c" ]
-], null, "thick" );
-
-$screen.render();
+function gotoInput2() {
+	$.input(
+		"Pick a number between 1 and 10: ", function ( val ) {
+			$.print( "Your number is " + val + "." );
+			$.render();
+			$.input( "What is x? ", null, "x" );
+		}, "num", true, 1, 10, true
+	);
+	$.inputReady( function ( data ) {
+		$.print( data.num + " is a good number." );
+		$.print( data.x + " is x." );
+		$.render();
+		$.input( "What is y? ", null, "y" );
+		$.inputReady( function( data ) {
+			$.print( "y is " + data.y );
+			$.render();
+		} );
+	} );
+}
 </script>
 </body>
 </html>

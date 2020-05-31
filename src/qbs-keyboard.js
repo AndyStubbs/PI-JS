@@ -525,20 +525,20 @@ function showPrompt( screenData, hideCursor ) {
 
 // Prompts the user to enter input through the keyboard.
 qbs._.addCommand( "input", input, false, true, [
-	"prompt", "name", "isNumber", "min", "max", "isInteger", "ready",
+	"prompt", "name", "callback", "isNumber", "min", "max", "isInteger",
 	"showKeyboard"
 ] );
 function input( screenData, args ) {
-	var prompt, name, isNumber, min, max, isInteger, ready, showKeyboard,
+	var prompt, callback, name, isNumber, min, max, isInteger, showKeyboard,
 		readyList;
 
 	prompt = args[ 0 ];
-	name = args[ 1 ];
-	isNumber = !!( args[ 2 ] );
-	min = args[ 3 ];
-	max = args[ 4 ];
-	isInteger = !!( args[ 5 ] );
-	ready = args[ 6 ];
+	callback = args[ 1 ];
+	name = args[ 2 ];
+	isNumber = !!( args[ 3 ] );
+	min = args[ 4 ];
+	max = args[ 5 ];
+	isInteger = !!( args[ 6 ] );
 	showKeyboard = !!( args[ 7 ] );
 
 	if( typeof prompt !== "string" ) {
@@ -552,14 +552,9 @@ function input( screenData, args ) {
 	// Create a list of functions to trigger
 	readyList = [];
 
-	// This is a register event function
-	ready = {
-		"ready": function ( fn ) {
-			if( qbs.util.isFunction( fn ) ) {
-				readyList.push( fn );
-			}
-		}
-	};
+	if( qbs.util.isFunction( callback ) ) {
+		readyList.push( callback );
+	}
 
 	// If no name is provided then lets create one
 	if( ! name ) {
@@ -591,8 +586,6 @@ function input( screenData, args ) {
 	promptInterval = setInterval( function() {
 		showPrompt( screenData );
 	}, 100 );
-
-	return ready;
 }
 
 function collectInput( event ) {

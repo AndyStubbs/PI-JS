@@ -27,7 +27,7 @@
 	$screen.paint( 1, 1, 1 );
 	$screen.setColor( 15 );
 	$screen.render();
-	$screen.input( "What is your name? ", "name" );
+	$screen.input( "What is your name? ", null, "name" );
 	$.inputReady( function ( data ) {
 		$.print( "Your name is " + data.name + "." );
 		$.render();
