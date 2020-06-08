@@ -25,6 +25,7 @@ files = [
 	"src/qbs-screen-table.js",
 	"src/qbs-screen-draw.js",
 	"src/qbs-sound.js",
+	"src/qbs-play.js",
 	"src/fonts/font-data.js",
 	"src/qbs-pal.js",
 	"src/qbs-init.js"

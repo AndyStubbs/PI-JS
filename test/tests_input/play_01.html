@@ -1,49 +1,35 @@
 <!DOCTYPE html>
 <html>
-<head>
-	<!--meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/-->
-	<title>Test App</title>
-	<script src="../test/libs/seedrandom.js"></script>
-	<script src="qbs.js"></script>
-	<script src="qbs-util.js"></script>
-	<script src="qbs-keyboard.js"></script>
-	<script src="qbs-gamepad.js"></script>
-	<script src="qbs-font.js"></script>
-	<script src="qbs-screen.js"></script>
-	<script src="qbs-screen-mouse.js"></script>
-	<script src="qbs-screen-touch.js"></script>
-	<script src="qbs-screen-commands.js"></script>
-	<script src="qbs-screen-helper.js"></script>
-	<script src="qbs-screen-graphics.js"></script>
-	<script src="qbs-screen-paint.js"></script>
-	<script src="qbs-screen-bezier.js"></script>
-	<script src="qbs-screen-images.js"></script>
-	<script src="qbs-screen-print.js"></script>
-	<script src="qbs-screen-table.js"></script>
-	<script src="qbs-screen-draw.js"></script>
-	<script src="qbs-sound.js"></script>
-	<script src="qbs-play.js"></script>
-	<script src="fonts/font-data.js"></script>
-	<script src="qbs-pal.js"></script>
-	<script src="qbs-init.js"></script>
-	<style>
-		html, body {
-			color: white;
-			background-color: blue;
-		}
-		pre {
-			width: 100%;
-			color: white;
-			font-size: 14px;
-		}
-		textarea {
-			width: 800px;
-			height: 300px;
-		}
-	</style>
-</head>
+	<head>
+		<title>Play 01</title>
+		<script type="text/toml">
+			[[TOML_START]]
+			test = "screenshot.js"
+			file = "play_01"
+			name = "play 01"
+			width = 800
+			height = 400
+			delay = 0
+			[[TOML_END]]
+		</script>
+		<script src="../../build/qbs.min.js"></script>
+		<style>
+			html, body {
+				color: white;
+				background-color: blue;
+			}
+			pre {
+				width: 100%;
+				color: white;
+				font-size: 14px;
+			}
+			textarea {
+				width: 800px;
+				height: 300px;
+			}
+		</style>
+	</head>
 <body>
-<ul>
 <pre>
 The commandstring can be any literal or variable STRING consisting of the following uppercase or lowercase commands:
 On - Sets the current octave (from 0 to 6). Example: PLAY "O3"
@@ -71,7 +57,7 @@ Qn - Changes the octave for all subsequent notes.  Example: Q1 increases the oct
 Enter Music Below:
 </div>
 <textarea id="music">
-msq1t140o2p4g2e4.f8g4o3c2o2b8o3c8d4c4o2b4a8g2.
+q1t140o2p4g2e4.f8g4o3c2o2b8o3c8d4c4o2b4a8g2.
 o2b8o3c8d4c4o2b4a8a8g8o3c4o2e8e4g8a8g4f4e4f4g2.
 g2e4.f8g4o3c2o2b8o3c8d4c4o2b4a8g2.
 o2b8o3c8d4c4o2b4a8a8g8o3c4o2e8e4g8a8g4f4e4d4c2.
@@ -83,7 +69,6 @@ t180g8g8g4g4g4a8g8g4g4g4a4g4e4g4d1
 t180g8g8g4g4g4a8g8g4g4g4g8g8g4a4b4o3c2c4p1
 </textarea>
 <script>
-Math.seedrandom('constant');
 var playButton = document.getElementById( "play" );
 var stopButton = document.getElementById( "stop" );
 var music = document.getElementById( "music" );
