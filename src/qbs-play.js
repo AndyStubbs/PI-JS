@@ -346,7 +346,7 @@
 		
 		oscillator.connect( envelope);
 		envelope.connect( context.destination );
-		console.log( context.currentTime );
+		// console.log( context.currentTime );
 		try {
 			envelope.gain.setValueCurveAtTime(
 				[ 1 * volume, 0.8 * volume ],
