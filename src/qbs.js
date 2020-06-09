@@ -30,7 +30,8 @@ window.qbs = ( function () {
 		"pens": {},
 		"penList": [],
 		"settings": {},
-		"settingsList": []
+		"settingsList": [],
+		"volume": 1
 	};
 
 	// QBS api

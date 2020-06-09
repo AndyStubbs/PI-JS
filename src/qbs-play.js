@@ -96,7 +96,7 @@
 		playString = playString.split( /\s+/ ).join( "" ).toUpperCase();
 
 		// Regular expression for the draw commands
-		reg = /(?=Q\d|O\d|\<|\>|N\d\d?|L\d\d?|MS|MN|ML|P\d|T\d|[[A|B|C|D|E|F|G][\d]?[\+|\-|\#|\.\.?]?)/;
+		reg = /(?=V\d|Q\d|O\d|\<|\>|N\d\d?|L\d\d?|MS|MN|ML|P\d|T\d|[[A|B|C|D|E|F|G][\d]?[\+|\-|\#|\.\.?]?)/;
 		playStringParts = playString.split( reg );
 		console.log( playStringParts );
 
@@ -113,7 +113,8 @@
 			"pace": 0.875,
 			"octave": 4,
 			"octaveExtra": 0,
-			"timeout": null
+			"timeout": null,
+			"volume": 1
 		} );
 		trackId = tracks.length - 1;
 		for( i = 0; i < playStringParts.length; i++ ) {
@@ -244,6 +245,15 @@
 				val = getInt( cmd[ 1 ], 1 );
 				track.extra = getNoteLength( val );
 				break;
+			case "V":
+				val = getInt( cmd[ 1 ], 50 );
+				if( val < 0 ) {
+					val = 0;
+				} else if( val > 100 ) {
+					val = 100;
+				}
+				track.volume = val / 100;
+				break;
 		}
 
 		// Calculate when to play the next note
@@ -281,8 +291,9 @@
 	}
 
 	function playNote( track, frequency ) {
-		var context, oscillator, envelope, duration, decayRate;
+		var context, oscillator, envelope, duration, decayRate, volume;
 
+		volume = qbData.volume * track.volume;
 		context = track.audioContext;
 		oscillator = context.createOscillator();
 		envelope = context.createGain();
@@ -291,17 +302,17 @@
 		
 		oscillator.frequency.value = frequency;
 		oscillator.type = 'triangle';
-		envelope.gain.value = 1;
+		envelope.gain.value = 1 * volume;
 		
 		oscillator.connect( envelope);
 		envelope.connect( context.destination );
 		envelope.gain.setValueCurveAtTime(
-			[ 1, 0.8 ],
+			[ 1 * volume, 0.8 * volume ],
 			context.currentTime,
 			duration
 		);
 		envelope.gain.setValueCurveAtTime(
-			[ 0.8, 0.1, 0 ],
+			[ 0.8 * volume, 0.1 * volume, 0 ],
 			context.currentTime + duration,
 			decayRate
 		);
