@@ -83,7 +83,8 @@
 	qbs._.addCommand( "play", play, false, false, [ "playString" ] );
 	function play( args ) {
 	
-		var playString, reg, playStringParts, i, trackId;
+		var tracksStrings, playString, reg, trackParts, i, j, trackId, index,
+		trackIds;
 	
 		playString = args[ 0 ];
 
@@ -94,48 +95,83 @@
 
 		// Convert the commands to uppercase and remove spaces
 		playString = playString.split( /\s+/ ).join( "" ).toUpperCase();
+		tracksStrings = playString.split( "," );
+		trackIds = [];
 
 		// Regular expression for the draw commands
-		reg = /(?=V\d|Q\d|O\d|\<|\>|N\d\d?|L\d\d?|MS|MN|ML|P\d|T\d|[[A|B|C|D|E|F|G][\d]?[\+|\-|\#|\.\.?]?)/;
-		playStringParts = playString.split( reg );
-		console.log( playStringParts );
+		reg = /(?=V\d|Q\d|(?<!M)O\d|\<|\>|N\d\d?|L\d\d?|MS|MN|ML|MO\d|MO\-\d|P[\d]?|T\d|[[A|B|C|D|E|F|G][\d]?[\+|\-|\#|\.\.?]?)/;
 
-		tracks.push( {
-			"audioContext": new AudioContext(),
-			"notes": [],
-			"noteId": 0,
-			"decay": 0.5,
-			"extra": 1,
-			"space": "normal",
-			"interval": 0,
-			"tempo": 60 / 120,
-			"noteLength": 0.25,
-			"pace": 0.875,
-			"octave": 4,
-			"octaveExtra": 0,
-			"timeout": null,
-			"volume": 1
-		} );
-		trackId = tracks.length - 1;
-		for( i = 0; i < playStringParts.length; i++ ) {
-			tracks[ trackId ].notes.push(
-				playStringParts[ i ].split( /(\d+)/ )
-			);
+		for( i = 0; i < tracksStrings.length; i++ ) {
+
+			trackParts = tracksStrings[ i ].split( reg );
+
+			tracks.push( {
+				"audioContext": new AudioContext(),
+				"notes": [],
+				"noteId": 0,
+				"decay": 0.5,
+				"extra": 1,
+				"space": "normal",
+				"interval": 0,
+				"tempo": 60 / 120,
+				"noteLength": 0.25,
+				"pace": 0.875,
+				"octave": 4,
+				"octaveExtra": 0,
+				"timeout": null,
+				"volume": 1,
+				"trackIds": trackIds
+			} );
+			trackId = tracks.length - 1;
+			trackIds.push( trackId );
+			for( j = 0; j < trackParts.length; j++ ) {
+				index = trackParts[ j ].indexOf( "-" );
+				if( index > -1 ) {
+					tracks[ trackId ].notes.push( [
+						trackParts[ j ].substr( 0, index ),
+						trackParts[ j ].substr( index )
+					] );
+				} else {
+					tracks[ trackId ].notes.push(
+						trackParts[ j ].split( /(\d+)/ )
+					);
+				}
+			}
+			playTrack( trackId );
+
 		}
-		playTrack( trackId );
+
+		return trackId;
 	}
 
-	qbs._.addCommand( "playStop", playStop, false, false, [ "" ] );
+	qbs._.addCommand( "playStop", playStop, false, false, [ "trackId" ] );
 	function playStop( args ) {
-		var i;
-		for( i = 0; i < tracks.length; i++ ) {
-			clearTimeout( tracks[ i ].timeout );
+		var trackId, i, trackIds;
+
+		trackId = args[ 0 ];
+
+		if( tracks[ trackId ] ) {
+
+			// Need to stop all sub tracks as well as main track
+			trackIds = tracks[ trackId ].trackIds;
+			for( i = 0; i < trackIds.length; i++ ) {
+				clearTimeout( tracks[ trackIds[ i ] ].timeout );
+				tracks[ trackIds[ i ] ] = null;
+			}
+
+		} else if( trackId == null ) {
+
+			// Stop all tracks and substracks
+			for( i = 0; i < tracks.length; i++ ) {
+				clearTimeout( tracks[ i ].timeout );
+			}
+			tracks = [];
+
 		}
-		tracks = [];
 	}
 
 	function playTrack( trackId ) {
-		var track, cmd, note, frequency, val, wait;
+		var track, cmd, note, frequency, val, wait, octave;
 
 		frequency = 0;
 		track = tracks[ trackId ];
@@ -146,10 +182,6 @@
 		wait = false;
 		track.extra = 0;
 		switch( cmd[ 0 ].charAt( 0 ) ) {
-			case "Q":
-				val = getInt( cmd[ 1 ], 0 );
-				track.octaveExtra = val;
-				break;
 			case "A": 
 			case "B":
 			case "C":
@@ -173,7 +205,10 @@
 
 				// Get the note frequency
 				if( notesData[ note ] ) {
-					frequency = notesData[ note ][ track.octave + track.octaveExtra ];
+					octave = track.octave + track.octaveExtra;
+					if( octave < notesData[ note ].length ) {
+						frequency = notesData[ note ][ octave ];
+					}
 				}
 
 				// Check if note length included
@@ -193,13 +228,13 @@
 				break;
 			case "O":
 				val = getInt( cmd[ 1 ], 4 );
-				if( val >= 0 && val + track.octaveExtra < notesData[ "A" ].length ) {
+				if( val >= 0 && val < notesData[ "A" ].length ) {
 					track.octave = val;
 				}
 				break;
 			case ">":
 				track.octave += 1;
-				if( track.octave + track.octaveExtra >= notesData[ "A" ].length ) {
+				if( track.octave >= notesData[ "A" ].length ) {
 					track.octave = notesData[ "A" ].length - 1;
 				}
 				break;
@@ -237,6 +272,11 @@
 						// Legato
 						track.pace = 1;
 
+					} else if ( cmd[ 0 ].charAt( 1 ) === "O" ) {
+
+						// Modify Octave
+						val = getInt( cmd[ 1 ], 0 );
+						track.octaveExtra = val;
 					}
 				}
 				break;
@@ -306,16 +346,21 @@
 		
 		oscillator.connect( envelope);
 		envelope.connect( context.destination );
-		envelope.gain.setValueCurveAtTime(
-			[ 1 * volume, 0.8 * volume ],
-			context.currentTime,
-			duration
-		);
-		envelope.gain.setValueCurveAtTime(
-			[ 0.8 * volume, 0.1 * volume, 0 ],
-			context.currentTime + duration,
-			decayRate
-		);
+		console.log( context.currentTime );
+		try {
+			envelope.gain.setValueCurveAtTime(
+				[ 1 * volume, 0.8 * volume ],
+				context.currentTime,
+				duration
+			);
+			envelope.gain.setValueCurveAtTime(
+				[ 0.8 * volume, 0.1 * volume, 0 ],
+				context.currentTime + duration,
+				decayRate
+			);
+		} catch( ex ) {
+			console.log( ex );
+		}
 		oscillator.start( context.currentTime );
 		oscillator.stop( context.currentTime + duration + decayRate );
 	}
