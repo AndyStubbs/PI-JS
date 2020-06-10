@@ -373,8 +373,6 @@
 		return val;
 	}
 
-
-	
 	// End of File Encapsulation
 	} )();
 	

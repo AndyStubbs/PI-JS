@@ -73,12 +73,18 @@ t180g8g8g4g4g4a8g8g4g4g4g8g8g4a4b4o3c2c4p1
 var playButton = document.getElementById( "play" );
 var stopButton = document.getElementById( "stop" );
 var music = document.getElementById( "music" );
+var trackId = 0;
 stopButton.onclick = function () {
-	$.playStop();
+	$.playStop( trackId );
 };
 
 playButton.onclick = function () {
 	var text = music.value;
+	for( i = 0; i < 10; i++ ) {
+		$.sound( 10 + i, 0.25, 0.1, "triangle", i * 0.25 );
+	}
+	trackId = $.play( text );
+
 	// $.play( "a8 a8" );
 	// $.play( "a4 a4" );
 	$.play( text );

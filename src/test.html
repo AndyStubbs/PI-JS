@@ -94,9 +94,13 @@ stopButton.onclick = function () {
 
 playButton.onclick = function () {
 	var text = music.value;
+	for( i = 0; i < 100; i++ ) {
+		$.sound( 100 + i, 0.1, 0.01, "triangle", i * 0.05 );
+	}
+	trackId = $.play( text );
+
 	// $.play( "a8 a8" );
 	// $.play( "a4 a4" );
-	trackId = $.play( text );
 	//$.play( "O0 A > A > A > A > A > A > A > A" );
 	//$.play( "O0 b > B > B > B > B > B > B > B" );
 	//$.play( "O0 A > A > A > A > A > A > A > A" );
