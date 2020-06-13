@@ -44,11 +44,16 @@ Ln - Sets length of a note (n can be 1 to 64 where 1 is a whole note and 4 is a 
 MS - Each note plays 3/4 of length set by L (staccato)
 MN - Each note plays 7/8 of length set by L (normal)
 ML - Each note plays full length set by L (legato)
+MOn - Changes the octave for all subsequent notes.  Example: MO1 increases the octave by 1, so o2 becomes o3, etc.
 Pn - Pause in the duration of n quarternotes (n can be 1 to 64) corresponding to L, Example: PLAY "P32"
 Tn - Tempo sets number of L4 quarter notes per minute (n can be 32 to 255 where 120 is the default). Example: PLAY "T180"
 .    - period after a note plays 1½ times the note length determined by L * T.
 ..   - two periods plays 1-3/4 times the note length determined by L * T.
-Qn - Changes the octave for all subsequent notes.  Example: Q1 increases the octave by 1, so o2 becomes o3, etc.
+Vn - Sets the volume betwen 0 and 100%.
+SQUARE - Sets the ocillator type to a square wave.
+SINE - Sets the ocillator type to a sine wave.
+TRIANGLE - Sets the ocillator type to a triangle wave.
+SAWTOOTH - Sets the ocillator type to a sawtooth wave.
 </pre>
 <div>
 	<input type="button" value="Play" id="play"></input>
@@ -80,38 +85,7 @@ stopButton.onclick = function () {
 
 playButton.onclick = function () {
 	var text = music.value;
-	for( i = 0; i < 10; i++ ) {
-		$.sound( 10 + i, 0.25, 0.1, "triangle", i * 0.25 );
-	}
 	trackId = $.play( text );
-
-	// $.play( "a8 a8" );
-	// $.play( "a4 a4" );
-	$.play( text );
-	//$.play( "O0 A > A > A > A > A > A > A > A" );
-	//$.play( "O0 b > B > B > B > B > B > B > B" );
-	//$.play( "O0 A > A > A > A > A > A > A > A" );
-	//$.play( "O0 A > A > A > A > A > A > A > A" );
-	//$.play( "A-BCDECO7B#BC+<<AL13AN42ABN3B>BCD.CE..CE#" );
-	//$.play( "ABCDEFGA#C#D#F#G#" );
-	//$.play( "ABCDEFG MS ABCDEFG ML abcdefg" );
-	//$.play( "A.B..AB" );
-	//$.play( "Q1 t240 o2 p4 n2 g n4 e. n8 f n4 g o3 n2 c o2 n8 b o3 n8 c n4 d n4 c o2 n4 b n8 a n2 g." );
-	//$.play( "C# A B C" );
-	//$.play( "Q1t140o2p4g2e4.f8g4o3c2o2b8o3c8d4c4o2b4a8g2." );
-	// $.play(
-	// 	"q1t140o2p4g2e4.f8g4o3c2o2b8o3c8d4c4o2b4a8g2." + 
-	// 	"o2b8o3c8d4c4o2b4a8a8g8o3c4o2e8e4g8a8g4f4e4f4g2." + 
-	// 	"g2e4.f8g4o3c2o2b8o3c8d4c4o2b4a8g2." + 
-	// 	"o2b8o3c8d4c4o2b4a8a8g8o3c4o2e8e4g8a8g4f4e4d4c2." + 
-	// 	"c4a4a4o3c4c4o2b4a4g4e4f4a4g4f4e2." +
-	// 	"e8e8d4d4g4g4b4b4o3d4d8o2b8o3d4c4o2b4a4g4p4" +
-	// 	"g2g2e4.f8g4o3c2o2b8o3c8d4c4o2b4a8g8g2." +
-	// 	"o2b8o3c8d4c4o2b4a8a8g8o3c4o2e8e4g8a8g4f4e4d4c2.p4" +
-	// 	"t180g8g8g4g4g4a8g8g4g4g4a4g4e4g4d1" +
-	// 	"t180g8g8g4g4g4a8g8g4g4g4g8g8g4a4b4o3c2c4p1"
-	// );
-	//$.play( "l4cf.l8el4fag.l8fl4gl8agl4f.l8fl4a>cl2dl4dl4c.<l8al4afg.l8fl4gl8agl4f.l8dl4dcl2f>l4dc.<l8al4afg.l8fl4g>dc.<l8al4a>cl2dl4dc.<l8al4afg.l8fl4gl8agl4f.l8dl4dcl1f");
 };
 </script>
 </body>
