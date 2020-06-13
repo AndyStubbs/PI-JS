@@ -99,9 +99,15 @@
 		trackIds = [];
 
 		// Regular expression for the draw commands
-		reg = /(?=V\d|Q\d|(?<!M)O\d|\<|\>|N\d\d?|L\d\d?|MS|MN|ML|MO\d|MO\-\d|P[\d]?|T\d|[[A|B|C|D|E|F|G][\d]?[\+|\-|\#|\.\.?]?)/;
+		reg = /(?=WS|WQ|WW|WT|V\d|Q\d|(?<!M)O\d|\<|\>|N\d\d?|L\d\d?|MS|MN|ML|MO\d|MO\-\d|P[\d]?|T\d|[[A|B|C|D|E|F|G][\d]?[\+|\-|\#|\.\.?]?)/;
 
 		for( i = 0; i < tracksStrings.length; i++ ) {
+
+			// Replace complex parts with small symbols
+			tracksStrings[ i ] = tracksStrings[ i ].replace( /SINE/g, "WS" );
+			tracksStrings[ i ] = tracksStrings[ i ].replace( /SQUARE/g, "WQ" );
+			tracksStrings[ i ] = tracksStrings[ i ].replace( /SAWTOOTH/g, "WW" );
+			tracksStrings[ i ] = tracksStrings[ i ].replace( /TRIANGLE/g, "WT" );
 
 			trackParts = tracksStrings[ i ].split( reg );
 
@@ -120,13 +126,19 @@
 				"octaveExtra": 0,
 				"timeout": null,
 				"volume": 1,
-				"trackIds": trackIds
+				"trackIds": trackIds,
+				"type": "triangle"
 			} );
 			trackId = tracks.length - 1;
 			trackIds.push( trackId );
 			for( j = 0; j < trackParts.length; j++ ) {
 				index = trackParts[ j ].indexOf( "-" );
-				if( index > -1 ) {
+
+				// Only split the minus symbol if is not a music note
+				if(
+					index > -1 && 
+					"ABCDEFG".indexOf( trackParts[ j ][ 0 ] ) === -1 
+				) {
 					tracks[ trackId ].notes.push( [
 						trackParts[ j ].substr( 0, index ),
 						trackParts[ j ].substr( index )
@@ -190,8 +202,21 @@
 			case "F":
 			case "G":
 				note = cmd[ 0 ];
+
+				// + is the same as sharp
 				note = note.replace( /\+/g, "#" );
-				note = note.replace( /\-/g, "" );
+
+				// Replace flats
+				note = note.replace( "C-", "B" );
+				note = note.replace( "D-", "C#" );
+				note = note.replace( "E-", "D#" );
+				note = note.replace( "G-", "F#" );
+				note = note.replace( "A-", "G#" );
+				note = note.replace( "B-", "A#" );
+
+				// Replace Duplicate Sharps
+				note = note.replace( "E#", "F" );
+				note = note.replace( "B#", "C" );
 
 				// Check for extra note length
 				if( cmd.indexOf( ".." ) > 0 ) {
@@ -294,6 +319,17 @@
 				}
 				track.volume = val / 100;
 				break;
+			case "W":
+				if( cmd[ 0 ] === "WS" ) {
+					track.type = "sine";
+				} else if( cmd[ 0 ] === "WQ" ) {
+					track.type = "square";
+				} else if( cmd[ 0 ] === "WW" ) {
+					track.type = "sawtooth";
+				} else if( cmd[ 0 ] === "WT" ) {
+					track.type = "triangle";
+				}
+				break;
 		}
 
 		// Calculate when to play the next note
@@ -341,7 +377,7 @@
 		decayRate = track.interval / 4;
 		
 		oscillator.frequency.value = frequency;
-		oscillator.type = 'triangle';
+		oscillator.type = track.type;
 		envelope.gain.value = 1 * volume;
 		
 		oscillator.connect( envelope);
