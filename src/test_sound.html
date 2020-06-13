@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<!--meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/-->
+	<title>Test App</title>
+	<script src="../test/libs/seedrandom.js"></script>
+	<script src="qbs.js"></script>
+	<script src="qbs-util.js"></script>
+	<script src="qbs-keyboard.js"></script>
+	<script src="qbs-gamepad.js"></script>
+	<script src="qbs-font.js"></script>
+	<script src="qbs-screen.js"></script>
+	<script src="qbs-screen-mouse.js"></script>
+	<script src="qbs-screen-touch.js"></script>
+	<script src="qbs-screen-commands.js"></script>
+	<script src="qbs-screen-helper.js"></script>
+	<script src="qbs-screen-graphics.js"></script>
+	<script src="qbs-screen-paint.js"></script>
+	<script src="qbs-screen-bezier.js"></script>
+	<script src="qbs-screen-images.js"></script>
+	<script src="qbs-screen-print.js"></script>
+	<script src="qbs-screen-table.js"></script>
+	<script src="qbs-screen-draw.js"></script>
+	<script src="qbs-sound.js"></script>
+	<script src="qbs-play.js"></script>
+	<script src="fonts/font-data.js"></script>
+	<script src="qbs-pal.js"></script>
+	<script src="qbs-init.js"></script>
+	<style>
+		html, body {
+			color: white;
+			background-color: blue;
+			margin: 10px;
+		}
+		pre {
+			width: 100%;
+			color: white;
+			font-size: 14px;
+		}
+		textarea {
+			width: 800px;
+			height: 300px;
+		}
+	</style>
+</head>
+<body>
+<div>
+	<input type="button" value="Play 1" id="play1"></input>
+	<input type="button" value="Play 2" id="play2"></input>
+</div>
+<script>
+var playButton1 = document.getElementById( "play1" );
+var playButton2 = document.getElementById( "play2" );
+
+playButton1.onclick = function () {
+	var duration = 0.05;
+	var volume = 0.5;
+	var decay = 0.03;
+	var totalDuration = 0;
+	for( i = 0; i < 30; i++ ) {
+		 $.sound(
+			240 + i * 8, duration, volume, decay, totalDuration, "sawtooth"
+		);
+		totalDuration += duration + decay;
+	}
+};
+
+playButton2.onclick = function () {
+	var duration = 1;
+	var volume = 0.5;
+	var decay = 0.5;
+	$.sound( 440, duration, volume, decay, 0,
+		[
+			[   0, 0.4, 0.4,   1,   1,   1, 0.3, 0.7, 0.6, 0.5, 0.9, 0.8 ],
+			[   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0 ]
+		]
+	);
+};
+</script>
+</body>
+</html>
