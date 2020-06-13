@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Sound 01</title>
+		<script type="text/toml">
+			[[TOML_START]]
+			test = "screenshot.js"
+			file = "sound_01"
+			name = "sound 01"
+			width = 800
+			height = 400
+			delay = 0
+			[[TOML_END]]
+		</script>
+		<script src="../../build/qbs.min.js"></script>
+		<style>
+			html, body {
+				color: white;
+				background-color: blue;
+				margin: 10px;
+			}
+			pre {
+				width: 100%;
+				color: white;
+				font-size: 14px;
+			}
+			textarea {
+				width: 800px;
+				height: 300px;
+			}
+		</style>
+	</head>
+<body>
+<div>
+	<input type="button" value="Play 1" id="play1"></input>
+	<input type="button" value="Play 2" id="play2"></input>
+</div>
+<script>
+var playButton1 = document.getElementById( "play1" );
+var playButton2 = document.getElementById( "play2" );
+
+playButton1.onclick = function () {
+	var duration = 0.05;
+	var volume = 0.5;
+	var decay = 0.03;
+	var totalDuration = 0;
+	for( i = 0; i < 30; i++ ) {
+			$.sound(
+			240 + i * 8, duration, volume, decay, totalDuration, "sawtooth"
+		);
+		totalDuration += duration + decay;
+	}
+};
+
+playButton2.onclick = function () {
+	var duration = 1;
+	var volume = 0.5;
+	var decay = 0.5;
+	$.sound( 440, duration, volume, decay, 0,
+		[
+			[   0, 0.4, 0.4,   1,   1,   1, 0.3, 0.7, 0.6, 0.5, 0.9, 0.8 ],
+			[   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0 ]
+		]
+	);
+};
+</script>
+</body>
+</html>

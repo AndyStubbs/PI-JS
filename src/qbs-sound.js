@@ -100,17 +100,18 @@ function playSound( args ) {
 }
 
 qbs._.addCommand( "sound", sound, false, false, [
-	"frequency", "duration", "decay", "type", "delay"
+	"frequency", "duration", "volume", "decay", "delay", "type"
 ] );
 function sound( args ) {
-	var frequency, duration, decay, type, oscillator, envelope, volume, 
-	delay, types;
+	var frequency, duration, decay, delay, type, oscillator, envelope, volume, 
+	types, real, imag, wave;
 
 	frequency = args[ 0 ];
 	duration = args[ 1 ];
-	decay = args[ 2 ];
-	type = args[ 3 ];
+	volume = args[ 2 ];
+	decay = args[ 3 ];
 	delay = args[ 4 ];
+	type = args[ 5 ];
 
 	if( ! qbs.util.isInteger( frequency ) ) {
 		console.error( "sound: frequency needs to be an integer." );
@@ -121,6 +122,25 @@ function sound( args ) {
 		console.error( "sound: duration needs to be a number." );
 		return;
 	}
+
+	if( volume == null ) {
+		volume = 0.75;
+	}
+
+	if( isNaN( volume ) ) {
+		console.error( "sound: volume needs to be a number between 0 and 1." );
+		return;
+	}
+
+	if( volume < 0 ) {
+		volume = 0;
+	}
+
+	if( volume > 1 ) {
+		volume = 1;
+	}
+
+	volume = volume / 1;
 
 	if( decay == null ) {
 		decay = 0.1;
@@ -135,18 +155,40 @@ function sound( args ) {
 		type = "triangle";
 	}
 
-	if( typeof type !== "string" ) {
-		console.error( "sound: type needs to be a string." );
-		return;
-	}
+	// Check for custom type
+	if( qbs.util.isArray( type ) ) {
+		if(
+			type.length !== 2 || 
+			! qbs.util.isArray( type[ 0 ] ) || 
+			! qbs.util.isArray( type[ 1 ] ) ||
+			type[ 0 ].length === 0 ||
+			type[ 1 ].length === 0
+		) {
+			console.error(
+				"sound: type array must be an array with " + 
+				"two non empty arrays."
+			);
+			return;
+		}
+		real = type[ 0 ];
+		imag = type[ 1 ];
+		type = "custom";
+	} else {
 
-	types = [
-		"triangle", "sine", "square"
-	];
+		if( typeof type !== "string" ) {
+			console.error( "sound: type needs to be a string." );
+			return;
+		}
 
-	if( types.indexOf( type ) === -1 ) {
-		console.error( "sound: type is not a valid type." );
-		return;
+		// Non-custom types
+		types = [
+			"triangle", "sine", "square", "sawtooth"
+		];
+
+		if( types.indexOf( type ) === -1 ) {
+			console.error( "sound: type is not a valid type." );
+			return;
+		}
 	}
 
 	if( delay == null ) {
@@ -162,13 +204,18 @@ function sound( args ) {
 		audioContext = new AudioContext();
 	}
 
-	volume = qbData.volume;
+	volume = qbData.volume * volume;
 	oscillator = audioContext.createOscillator();
 	envelope = audioContext.createGain();
 	oscillator.frequency.value = frequency;
-	oscillator.type = type;
+	if( type === "custom" ) {
+		wave = audioContext.createPeriodicWave( real, imag );
+		oscillator.setPeriodicWave( wave );
+	} else {
+		oscillator.type = type;
+	}
+
 	envelope.gain.value = 1 * volume;
-	
 	oscillator.connect( envelope);
 	envelope.connect( audioContext.destination );
 	// console.log( audioContext.currentTime );
@@ -189,7 +236,7 @@ function sound( args ) {
 		console.log( ex );
 	}
 	oscillator.start( audioContext.currentTime + delay );
-	oscillator.stop( audioContext.currentTime + duration + decay + delay);
+	oscillator.stop( audioContext.currentTime + delay + duration + decay );
 }
 
 // End of File Encapsulation
