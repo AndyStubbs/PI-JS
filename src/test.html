@@ -44,61 +44,37 @@
 	</style>
 </head>
 <body>
-<pre>
-The commandstring can be any literal or variable STRING consisting of the following uppercase or lowercase commands:
-On - Sets the current octave (from 0 to 6). Example: PLAY "O3"
-&lt; - Down one octave (cannot be below zero). Example: PLAY "&lt;&lt;" 'goes down two octaves.
-&gt; - Up one octave (cannot be above 6). Example: PLAY "&gt;&gt;" ' goes up two octaves.
-A, B, C, D, E, F or G are the notes in the current octave. Can use the following suffixes:
-+ or # for a sharp note. Example: PLAY "C#"}green
-- for a flat note. Example: PLAY "C-"
-Nn - Plays a note n by number(n can be between 0 to 84 in the 7 octaves, where 0 is a rest). Example: PLAY "N42"
-Ln - Sets length of a note (n can be 1 to 64 where 1 is a whole note and 4 is a quarter of a note etc.). Example: PLAY "L4"
-MS - Each note plays 3/4 of length set by L (staccato)
-MN - Each note plays 7/8 of length set by L (normal)
-ML - Each note plays full length set by L (legato)
-MOn - Changes the octave for all subsequent notes.  Example: MO1 increases the octave by 1, so o2 becomes o3, etc.
-Pn - Pause in the duration of n quarternotes (n can be 1 to 64) corresponding to L, Example: PLAY "P32"
-Tn - Tempo sets number of L4 quarter notes per minute (n can be 32 to 255 where 120 is the default). Example: PLAY "T180"
-.    - period after a note plays 1½ times the note length determined by L * T.
-..   - two periods plays 1-3/4 times the note length determined by L * T.
-Vn - Sets the volume betwen 0 and 100%.
-SQUARE - Sets the ocillator type to a square wave.
-SINE - Sets the ocillator type to a sine wave.
-TRIANGLE - Sets the ocillator type to a triangle wave.
-SAWTOOTH - Sets the ocillator type to a sawtooth wave.
-</pre>
 <div>
-	<input type="button" value="Play" id="play"></input>
-	<input type="button" value="Stop" id="stop"></input>
+	<input type="button" value="Play 1" id="play1"></input>
+	<input type="button" value="Play 2" id="play2"></input>
 </div>
-<div>
-Enter Music Below:
-</div>
-<textarea id="music">
-mo1t140o2p4g2e4.f8g4o3c2o2b8o3c8d4c4o2b4a8g2.
-o2b8o3c8d4c4o2b4a8a8g8o3c4o2e8e4g8a8g4f4e4f4g2.
-g2e4.f8g4o3c2o2b8o3c8d4c4o2b4a8g2.
-o2b8o3c8d4c4o2b4a8a8g8o3c4o2e8e4g8a8g4f4e4d4c2.
-c4a4a4o3c4c4o2b4a4g4e4f4a4g4f4e2.
-e8e8d4d4g4g4b4b4o3d4d8o2b8o3d4c4o2b4a4g4p4
-g2g2e4.f8g4o3c2o2b8o3c8d4c4o2b4a8g8g2.
-o2b8o3c8d4c4o2b4a8a8g8o3c4o2e8e4g8a8g4f4e4d4c2.p4
-t180g8g8g4g4g4a8g8g4g4g4a4g4e4g4d1
-t180g8g8g4g4g4a8g8g4g4g4g8g8g4a4b4o3c2c4p1
-</textarea>
 <script>
-var playButton = document.getElementById( "play" );
-var stopButton = document.getElementById( "stop" );
-var music = document.getElementById( "music" );
-var trackId = 0;
-stopButton.onclick = function () {
-	$.playStop( trackId );
+var playButton1 = document.getElementById( "play1" );
+var playButton2 = document.getElementById( "play2" );
+
+playButton1.onclick = function () {
+	var duration = 0.05;
+	var volume = 0.5;
+	var decay = 0.03;
+	var totalDuration = 0;
+	for( i = 0; i < 30; i++ ) {
+		 $.sound(
+			240 + i * 8, duration, volume, decay, totalDuration, "sawtooth"
+		);
+		totalDuration += duration + decay;
+	}
 };
 
-playButton.onclick = function () {
-	var text = music.value;
-	trackId = $.play( text );
+playButton2.onclick = function () {
+	var duration = 1;
+	var volume = 0.5;
+	var decay = 0.5;
+	$.sound( 440, duration, volume, decay, 0,
+		[
+			[   0, 0.4, 0.4,   1,   1,   1, 0.3, 0.7, 0.6, 0.5, 0.9, 0.8 ],
+			[   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0 ]
+		]
+	);
 };
 </script>
 </body>

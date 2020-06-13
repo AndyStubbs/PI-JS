@@ -83,8 +83,8 @@
 	qbs._.addCommand( "play", play, false, false, [ "playString" ] );
 	function play( args ) {
 	
-		var tracksStrings, playString, reg, trackParts, i, j, trackId, index,
-		trackIds;
+		var tracksStrings, playString, reg, trackParts, i, j, k, trackId, index,
+			trackIds, waveTables, start, end;
 	
 		playString = args[ 0 ];
 
@@ -95,11 +95,60 @@
 
 		// Convert the commands to uppercase and remove spaces
 		playString = playString.split( /\s+/ ).join( "" ).toUpperCase();
+
+		// Find wavetables
+		waveTables = [];
+		start = 0;
+		while( start > -1 ) {
+			start = playString.indexOf( "[[" );
+			if( start > -1 ) {
+				end = playString.indexOf( "]]", start );
+				waveTables.push( playString.substring( start, end + 2 ) );
+				i = waveTables.length - 1;
+				playString = playString.replace(
+					waveTables[ i ], "W" + i
+				);
+			}
+		}
+
+		// Convert wavetables to array
+		for( i = 0; i < waveTables.length; i++ ) {
+			waveTables[ i ] = JSON.parse( waveTables[ i ] );
+
+			// Validate wavetable
+			if(
+				waveTables[ i ].length !== 2 || 
+				waveTables[ i ][ 0 ].length !== waveTables[ i ][ 1 ].length
+			) {
+				
+				waveTables[ i ] = "triangle";
+				console.error( "play: wavetables in playstring must have 2 " +
+					"arrays of the same length. Defaulting to triangle wave."
+				);
+				continue;
+			}
+
+			// Loop through all the values and make sure they are a number
+			for( j = 0; j < 2; j += 1 ) {
+				for( k = 0; k < waveTables[ i ][ j ].length; k++ ) {
+
+					// Make sure value is a number
+					waveTables[ i ][ j ][ k ] = parseFloat(
+						waveTables[ i ][ j ][ k ]
+					);
+					if( isNaN( waveTables[ i ][ j ][ k ] ) ) {
+						waveTables[ i ][ j ][ k ] = 0;
+					}
+				}
+			}
+		}
+
+		// Split the tracks by commas
 		tracksStrings = playString.split( "," );
 		trackIds = [];
 
 		// Regular expression for the draw commands
-		reg = /(?=WS|WQ|WW|WT|V\d|Q\d|(?<!M)O\d|\<|\>|N\d\d?|L\d\d?|MS|MN|ML|MO\d|MO\-\d|P[\d]?|T\d|[[A|B|C|D|E|F|G][\d]?[\+|\-|\#|\.\.?]?)/;
+		reg = /(?=WS|WQ|WW|WT|W\d[\d]?|V\d|Q\d|(?<!M)O\d|\<|\>|N\d\d?|L\d\d?|MS|MN|ML|MO\d|MO\-\d|MK\d[\d]?[\d]?|P[\d]?|T\d|[[A|B|C|D|E|F|G][\d]?[\+|\-|\#|\.\.?]?)/;
 
 		for( i = 0; i < tracksStrings.length; i++ ) {
 
@@ -109,13 +158,14 @@
 			tracksStrings[ i ] = tracksStrings[ i ].replace( /SAWTOOTH/g, "WW" );
 			tracksStrings[ i ] = tracksStrings[ i ].replace( /TRIANGLE/g, "WT" );
 
+			// Replace custom wave table
 			trackParts = tracksStrings[ i ].split( reg );
 
 			tracks.push( {
 				"audioContext": new AudioContext(),
 				"notes": [],
 				"noteId": 0,
-				"decay": 0.5,
+				"decayRate": 0.25,
 				"extra": 1,
 				"space": "normal",
 				"interval": 0,
@@ -127,7 +177,8 @@
 				"timeout": null,
 				"volume": 1,
 				"trackIds": trackIds,
-				"type": "triangle"
+				"type": "triangle",
+				"waveTables": waveTables
 			} );
 			trackId = tracks.length - 1;
 			trackIds.push( trackId );
@@ -302,6 +353,10 @@
 						// Modify Octave
 						val = getInt( cmd[ 1 ], 0 );
 						track.octaveExtra = val;
+					} else if( cmd[ 0 ].charAt( 1 ) === "K" ) {
+						// Modify Decay Rate
+						val = getInt( cmd[ 1 ], 25 );
+						track.decayRate = val / 100;
 					}
 				}
 				break;
@@ -328,6 +383,13 @@
 					track.type = "sawtooth";
 				} else if( cmd[ 0 ] === "WT" ) {
 					track.type = "triangle";
+				} else {
+
+					// Custom wavetable
+					val = getInt( cmd[ 1 ], -1 );
+					if( track.waveTables[ val ] ) {
+						track.type = val;
+					}
 				}
 				break;
 		}
@@ -367,38 +429,53 @@
 	}
 
 	function playNote( track, frequency ) {
-		var context, oscillator, envelope, duration, decayRate, volume;
+		var audioContext, oscillator, envelope, duration, decayRate, volume,
+			wave, real, imag;
 
 		volume = qbData.volume * track.volume;
-		context = track.audioContext;
-		oscillator = context.createOscillator();
-		envelope = context.createGain();
+		audioContext = track.audioContext;
+		oscillator = audioContext.createOscillator();
+		envelope = audioContext.createGain();
 		duration = track.interval;
-		decayRate = track.interval / 4;
-		
+		decayRate = track.interval * track.decayRate;
+
 		oscillator.frequency.value = frequency;
-		oscillator.type = track.type;
+		if( typeof track.type === "string" ) {
+			oscillator.type = track.type;
+		} else {
+			real = track.waveTables[ track.type ][ 0 ];
+			imag = track.waveTables[ track.type ][ 1 ];
+			wave = audioContext.createPeriodicWave( real, imag );
+			oscillator.setPeriodicWave( wave );
+		}
+
 		envelope.gain.value = 1 * volume;
-		
 		oscillator.connect( envelope);
-		envelope.connect( context.destination );
+		envelope.connect( audioContext.destination );
 		// console.log( context.currentTime );
 		try {
+
+			// TODO - Set the attack
+
+			// Set the sustain
 			envelope.gain.setValueCurveAtTime(
 				[ 1 * volume, 0.8 * volume ],
-				context.currentTime,
+				audioContext.currentTime,
 				duration
 			);
+
+			// Set the decay
 			envelope.gain.setValueCurveAtTime(
 				[ 0.8 * volume, 0.1 * volume, 0 ],
-				context.currentTime + duration,
+				audioContext.currentTime + duration,
 				decayRate
 			);
+
 		} catch( ex ) {
 			console.log( ex );
 		}
-		oscillator.start( context.currentTime );
-		oscillator.stop( context.currentTime + duration + decayRate );
+		oscillator.start( audioContext.currentTime );
+		oscillator.stop( audioContext.currentTime + duration + decayRate );
 	}
 
 	function getInt( val, val_default ) {
