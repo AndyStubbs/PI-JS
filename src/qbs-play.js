@@ -231,30 +231,35 @@
 		return trackId;
 	}
 
-	qbs._.addCommand( "playStop", playStop, false, false, [ "trackId" ] );
-	function playStop( args ) {
+	qbs._.addCommand( "stopPlay", stopPlay, false, false, [ "trackId" ] );
+	function stopPlay( args ) {
 		var trackId, i, trackIds;
 
 		trackId = args[ 0 ];
 
-		if( m_tracks[ trackId ] ) {
-
-			// Need to stop all sub tracks as well as main track
-			trackIds = m_tracks[ trackId ].trackIds;
-			for( i = 0; i < trackIds.length; i++ ) {
-				clearTimeout( m_tracks[ trackIds[ i ] ].timeout );
-				m_tracks[ trackIds[ i ] ] = null;
-			}
-
-		} else if( trackId == null ) {
-
-			// Stop all tracks and substracks
+		// Stop all tracks and substracks
+		if( trackId == null ) {
 			for( i = 0; i < m_tracks.length; i++ ) {
 				clearTimeout( m_tracks[ i ].timeout );
 			}
 			m_tracks = [];
 
+			return;
 		}
+
+		// Validate soundId
+		if( ! m_tracks[ trackId ] ) {
+			console.error( "stopPlay: track ID " + trackId + " not found." );
+			return;
+		}
+
+		// Need to stop all sub tracks as well as main track
+		trackIds = m_tracks[ trackId ].trackIds;
+		for( i = 0; i < trackIds.length; i++ ) {
+			clearTimeout( m_tracks[ trackIds[ i ] ].timeout );
+			m_tracks[ trackIds[ i ] ] = null;
+		}
+
 	}
 
 	function playTrack( trackId ) {
@@ -507,6 +512,5 @@
 		return val;
 	}
 
-	// End of File Encapsulation
-	} )();
-	
+// End of File Encapsulation
+} )();

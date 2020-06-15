@@ -7,25 +7,31 @@
 
 "use strict";
 
-var m_audioPools, m_nextAudioId, m_audioContext, m_qbData, m_qbWait, m_qbResume;
+var m_qbData, m_qbWait, m_qbResume, m_audioPools, m_nextAudioId,
+	m_audioContext, m_soundPool, m_nextSoundId;
 
-m_audioPools = {};
-m_nextAudioId = 0;
 m_qbData = qbs._.data;
 m_qbWait = qbs._.wait;
 m_qbResume = qbs._.resume;
+m_audioPools = {};
+m_nextAudioId = 0;
+m_audioContext = null;
+m_soundPool = {};
+m_nextSoundId = 0;
 
 // Loads a sound
-qbs._.addCommand( "loadSound", loadSound, false, false, [ "src", "poolSize" ] );
-function loadSound( args ) {
-	var src, poolSize, i, audioItem, audio;
+qbs._.addCommand( "createAudioPool", createAudioPool, false, false, [
+	"src", "poolSize"
+] );
+function createAudioPool( args ) {
+	var src, poolSize, i, audioItem, audio, audioId;
 
 	src = args[ 0 ];
 	poolSize = args[ 1 ];
 
 	// Validate parameters
 	if( ! src ) {
-		console.error( "loadSound: No sound source provided." );
+		console.error( "createAudioPool: No sound source provided." );
 		return;
 	}
 	if( poolSize === undefined || isNaN( poolSize ) ) {
@@ -43,29 +49,65 @@ function loadSound( args ) {
 
 		// Create the audio item
 		audio = new Audio( src );
-		audioItem.pool.push( audio );
 
-		// Wait until audio item is loaded
-		m_qbWait();
-		audio.oncanplay = function () {
-			m_qbResume();
-		}
-
+		loadAudio( audioItem, audio );
 	}
 
 	// Add the audio item too the global object
-	m_audioPools[ m_nextAudioId ] = audioItem;
+	audioId = "audioPool_" + m_nextAudioId;
+	m_audioPools[ audioId ] = audioItem;
 
 	// Increment the last audio id
 	m_nextAudioId += 1;
 
 	// Return the id
-	return m_nextAudioId - 1;
+	return audioId;
+}
+
+function loadAudio( audioItem, audio ) {
+
+	function audioReady() {
+		m_qbResume();
+		audioItem.pool.push( {
+			"audio": audio,
+			"timeout": 0,
+		} );
+		audio.removeEventListener( "canplay", audioReady );
+	}
+
+	// Wait until audio item is loaded
+	m_qbWait();
+
+	// Wait until audio can play
+	audio.addEventListener( "canplay", audioReady );
+
+	// If audio has an error
+	audio.onerror = function () {
+		var errors, errorCode, index;
+		errors = [
+			"MEDIA_ERR_ABORTED - fetching process aborted by user",
+			"MEDIA_ERR_NETWORK - error occurred when downloading",
+			"MEDIA_ERR_DECODE - error occurred when decoding",
+			"MEDIA_ERR_SRC_NOT_SUPPORTED - audio/video not supported"
+		];
+
+		errorCode = audio.error.code;
+		index = errorCode - 1;
+		if( index > 0 && index < errors.length ) {
+			console.error( "createAudioPool: " + errors[ index ] );
+		} else {
+			console.error( "createAudioPool: unknown error - " + errorCode );
+		}
+		m_qbResume();
+	};
+
 }
 
 // Delete's the audio pool
-qbs._.addCommand( "deleteSound", deleteSound, false, false, [ "audioId" ] );
-function deleteSound( args ) {
+qbs._.addCommand( "deleteAudioPool", deleteAudioPool, false, false, [
+	"audioId"
+] );
+function deleteAudioPool( args ) {
 	var audioId, i;
 
 	audioId = args[ 0 ];
@@ -74,40 +116,144 @@ function deleteSound( args ) {
 	if( m_audioPools[ audioId ] ) {
 
 		// Stop all the players
-		for( i = 0; i < m_audioPools[audioId].pool.length; i++ ) {
-			m_audioPools[ audioId ].pool[ i ].pause();
+		for( i = 0; i < m_audioPools[ audioId ].pool.length; i++ ) {
+			m_audioPools[ audioId ].pool[ i ].audio.pause();
 		}
 
 		// Delete the audio item from the pools
 		delete m_audioPools[ audioId ];
 	} else {
-		console.error( "deleteSound: " + audioId + " not found." );
+		console.error( "deleteAudioPool: " + audioId + " not found." );
 	}
 }
 
 // Plays a sound from an audio id
-qbs._.addCommand( "playSound", playSound, false, false, [ "audioId" ] );
-function playSound( args ) {
-	var audioId, audioItem;
+qbs._.addCommand( "playAudioPool", playAudioPool, false, false, [
+	"audioId", "volume", "startTime", "duration"
+] );
+function playAudioPool( args ) {
+	var audioId, volume, startTime, duration, audioItem, audio, poolItem;
+
+	audioId = args[ 0 ];
+	volume = args[ 1 ];
+	startTime = args[ 2 ];
+	duration = args[ 3 ];
+
+	// Validate audioId
+	if( ! m_audioPools[ audioId ] ) {
+		console.error( "playAudioPool: sound ID " + audioId + " not found." );
+		return;
+	}
+
+	// Validate volume
+	if( volume == null ) {
+		volume = 1;
+	}
+
+	if( isNaN( volume ) || volume < 0 || volume > 1 ) {
+		console.error(
+			"playAudioPool: volume must be a number between 0 and " +
+			"1 (inclusive)."
+		);
+		return;
+	}
+
+	// Validate startTime
+	if( startTime == null ) {
+		startTime = 0;
+	}
+
+	if( isNaN( startTime ) || startTime < 0 ) {
+		console.error(
+			"playAudioPool: startTime must be a number greater than or " +
+			"equal to 0."
+		);
+		return;
+	}
+
+	// Validate duration
+	if( duration == null ) {
+		duration = 0;
+	}
+
+	if( isNaN( duration ) || duration < 0 ) {
+		console.error(
+			"playAudioPool: duration must be a number greater than or " +
+			"equal to 0."
+		);
+		return;
+	}
+
+	// Get the audio item
+	audioItem = m_audioPools[ audioId ];
+
+	// Make sure that there is at least one sound loaded
+	if( audioItem.pool.length === 0 ) {
+		console.error( "playAudioPool: sound pool has no sounds loaded." );
+		return;
+	}
+
+	// Get the audio player
+	poolItem = audioItem.pool[ audioItem.index ];
+	audio = poolItem.audio;
+
+	// Set the volume
+	audio.volume = m_qbData.volume * volume;
+
+	// If the audio is playing then reset the start time
+	if( ! audio.paused && startTime === 0 ) {
+		audio.currentTime = 0;
+	}
+
+	// Set the start time of the audio
+	if( startTime > 0 ) {
+		audio.currentTime = startTime;
+	}
+
+	// Stop the audio if duration specified
+	if( duration > 0 ) {
+		clearTimeout( poolItem.timeout );
+		poolItem.timeout = setTimeout( function () {
+			audio.pause();
+			audio.currentTime = 0;
+		}, duration * 1000 );
+	}
+
+	// Play the sound
+	audio.play();
+
+	// Increment to next sound in the pool
+	audioItem.index += 1;
+	if( audioItem.index >= audioItem.pool.length ) {
+		audioItem.index = 0;
+	}
+}
+
+qbs._.addCommand( "stopAudioPool", stopAudioPool, false, false, [ "audioId" ] );
+function stopAudioPool( args ) {
+	var audioId, i, j;
 
 	audioId = args[ 0 ];
 
-	// Validate parameters
-	if( m_audioPools[ audioId ] ) {
-
-		// Get the audio item
-		audioItem = m_audioPools[ audioId ];
-
-		// Play the sound
-		audioItem.pool[ audioItem.index ].play();
-
-		// Increment to next sound in the pool
-		audioItem.index += 1;
-		if( audioItem.index >= audioItem.pool.length ) {
-			audioItem.index = 0;
+	// If audioId not provided then stop all audio pools
+	if( audioId == null ) {
+		for( i in m_audioPools ) {
+			for( j = 0; j < m_audioPools[ i ].pool.length; j += 1 ) {
+				m_audioPools[ i ].pool[ j ].audio.pause();
+			}
 		}
-	} else {
-		console.error( "play: " + audioId + " not found." );
+		return;
+	}
+
+	// Validate audioId
+	if( ! m_audioPools[ audioId ] ) {
+		console.error( "stopAudioPool: audio ID " + audioId + " not found." );
+		return;
+	}
+
+	// Stop current audio pool
+	for( i = 0; i < m_audioPools[ audioId ].pool.length; i += 1 ) {
+		m_audioPools[ audioId ].pool[ i ].audio.pause();
 	}
 }
 
@@ -259,7 +405,7 @@ function sound( args ) {
 	// Calculate the stopTime
 	stopTime = attack + duration + decay;
 
-	m_qbData.commands.createSound(
+	return m_qbData.commands.createSound(
 		"sound", m_audioContext, frequency, volume, attack, duration,
 		decay, stopTime, oType, waveTables, delay
 	);
@@ -271,7 +417,8 @@ function createSound(
 	cmdName, audioContext, frequency, volume, attackTime, sustainTime,
 	decayTime, stopTime, oType, waveTables, delay
 ) {
-	var oscillator, envelope, wave, real, imag, currentTime, overlap;
+	var oscillator, envelope, wave, real, imag, currentTime, overlap,
+		soundId;
 
 	oscillator = audioContext.createOscillator();
 	envelope = audioContext.createGain();
@@ -337,9 +484,39 @@ function createSound(
 		oscillator.start( currentTime );
 		oscillator.stop( currentTime + stopTime );
 
+		soundId = "sound_" + m_nextSoundId;
+		m_nextSoundId += 1;
+		m_soundPool[ soundId ] = oscillator;
+
+		return soundId;
+
 	} catch( ex ) {
 		console.log( cmdName, ex );
 	}
+}
+
+qbs._.addCommand( "stopSound", stopSound, false, false, [ "soundId" ] );
+function stopSound( args ) {
+	var soundId, i;
+
+	soundId = args[ 0 ];
+
+	// If soundId not provided then stop all sounds
+	if( soundId == null ) {
+		for( i in m_soundPool ) {
+			m_soundPool[ i ].stop( 0 );
+		}
+		return;
+	}
+
+	// Validate soundId
+	if( ! m_soundPool[ soundId ] ) {
+		console.error( "stopSound: sound ID " + soundId + " not found." );
+		return;
+	}
+
+	// Stop current sound
+	m_soundPool[ soundId ].stop( 0 );
 }
 
 // End of File Encapsulation

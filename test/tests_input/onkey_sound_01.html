@@ -22,7 +22,7 @@
 <body>
 <script>
 	var sound;
-	sound = $.loadSound( "sounds/star.wav", 6 );
+	sound = $.createAudioPool( "sounds/star.wav", 6 );
 	$.ready( function () {
 		$.screen( "300x200" );
 		$.print( "Press any key to make a sound." );
@@ -30,7 +30,7 @@
 		$.onkey( "any", start );
 	} );
 	function start() {
-		$.playSound( sound );
+		$.playAudioPool( sound );
 		$.print( "Sound is playing" );
 		$.render();
 	}

@@ -37,13 +37,35 @@
 	<input type="button" value="Play - Sound 3" id="play3"></input>
 	<input type="button" value="Play - Bonnie" id="play4"></input>
 </div>
+<br />
+<div>
+	<input type="button" value="Play - Long Sound 1" id="playLong1"></input>
+	<input type="button" value="Play - Long Sound 2" id="playLong2"></input>
+	<br />
+	<input type="button" value="Stop - Long Sound 1" id="stopLong1"></input>
+	<input type="button" value="Stop - Long Sound 2" id="stopLong2"></input>
+	<br />
+	<input type="button" value="Stop - All Sounds" id="stopAll"></input>
+</div>
+
 <pre id="msg"></pre>
 
 <script>
+
+//First Row of buttons
 var playButton1 = document.getElementById( "play1" );
 var playButton2 = document.getElementById( "play2" );
 var playButton3 = document.getElementById( "play3" );
 var playButton4 = document.getElementById( "play4" );
+
+// Second Row of buttons
+var playLong1 = document.getElementById( "playLong1" );
+var playLong2 = document.getElementById( "playLong2" );
+var stopLong1 = document.getElementById( "stopLong1" );
+var stopLong2 = document.getElementById( "stopLong2" );
+var stopAll = document.getElementById( "stopAll" );
+
+var sound1, sound2;
 var msg = document.getElementById( "msg" );
 
 playButton1.onclick = function () {
@@ -125,6 +147,26 @@ playButton4.onclick = function () {
 		totalDuration += duration;
 	}
 };
+
+playLong1.onclick = function () {
+	sound1 = $.sound( 440, 15, 0.25, "sawtooth" );
+}
+
+playLong2.onclick = function () {
+	sound2 = $.sound( 220, 15, 0.25, "sawtooth" );
+}
+
+stopLong1.onclick = function () {
+	$.stopSound( sound1 );
+}
+
+stopLong2.onclick = function () {
+	$.stopSound( sound2 );
+}
+
+stopAll.onclick = function () {
+	$.stopSound();
+}
 
 function setWord( word, delay ) {
 	setTimeout( function () {
