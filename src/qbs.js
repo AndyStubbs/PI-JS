@@ -5,15 +5,15 @@
 window.qbs = ( function () {
 	"use strict";
 
-	var qbData, api, waiting, waitCount, readyList, commandList;
+	var m_qbData, m_api, m_waiting, m_waitCount, m_readyList, m_commandList;
 
-	waitCount = 0;
-	waiting = false;
-	readyList = [];
-	commandList = [];
+	m_waitCount = 0;
+	m_waiting = false;
+	m_readyList = [];
+	m_commandList = [];
 
 	// Initilize data
-	qbData = {
+	m_qbData = {
 		"nextScreenId": 0,
 		"screens": {},
 		"activeScreen": null,
@@ -35,14 +35,14 @@ window.qbs = ( function () {
 	};
 
 	// QBS api
-	api = {
+	m_api = {
 		"_": {
 			"addCommand": addCommand,
 			"addCommands": addCommands,
 			"addSetting": addSetting,
 			"processCommands": processCommands,
 			"addPen": addPen,
-			"data": qbData,
+			"data": m_qbData,
 			"resume": resume,
 			"wait": wait
 		}
@@ -50,10 +50,10 @@ window.qbs = ( function () {
 
 	// Add a command to the internal list
 	function addCommand( name, fn, isInternal, isScreen, parameters, isSet ) {
-		qbData.commands[ name ] = fn;
+		m_qbData.commands[ name ] = fn;
 
 		if( ! isInternal ) {
-			commandList.push( {
+			m_commandList.push( {
 				"name": name,
 				"fn": fn,
 				"isScreen": isScreen,
@@ -75,20 +75,20 @@ window.qbs = ( function () {
 	}
 
 	function addSetting( name, fn, isScreen, parameters ) {
-		qbData.settings[ name ] = {
+		m_qbData.settings[ name ] = {
 			"name": name,
 			"fn": fn,
 			"isScreen": isScreen,
 			"parameters": parameters
 		};
-		qbData.settingsList.push( name );
+		m_qbData.settingsList.push( name );
 	}
 
 	function processCommands() {
 		var i, cmd;
 
 		// Alphabetize commands
-		commandList = commandList.sort( function( a, b ) {
+		m_commandList = m_commandList.sort( function( a, b ) {
 			var nameA = a.name.toUpperCase();
 			var nameB = b.name.toUpperCase();
 			if( nameA < nameB ) {
@@ -100,38 +100,38 @@ window.qbs = ( function () {
 			return 0;
 		} );
 
-		for( i = 0; i < commandList.length; i++ ) {
-			cmd = commandList[ i ];
+		for( i = 0; i < m_commandList.length; i++ ) {
+			cmd = m_commandList[ i ];
 			processCommand( cmd );
 		}
 	}
 
 	function processCommand( cmd ) {
 		if( cmd.isSet ) {
-			qbData.screenCommands[ cmd.name ] = cmd;
-			api[ cmd.name ] = function () {
+			m_qbData.screenCommands[ cmd.name ] = cmd;
+			m_api[ cmd.name ] = function () {
 				var args;
 				args = parseOptions( cmd, [].slice.call( arguments ) );
-				return qbData.commands[ cmd.name ]( null, args );
+				return m_qbData.commands[ cmd.name ]( null, args );
 			};
 			return;
 		}
 
 		if( cmd.isScreen ) {
-			qbData.screenCommands[ cmd.name ] = cmd
-			api[ cmd.name ] = function () {
+			m_qbData.screenCommands[ cmd.name ] = cmd
+			m_api[ cmd.name ] = function () {
 				var args, screenData;
 				args = parseOptions( cmd, [].slice.call( arguments ) );
 				screenData = getScreenData( undefined, cmd.name );
 				if( screenData !== false ) {
-					return qbData.commands[ cmd.name ]( screenData, args );
+					return m_qbData.commands[ cmd.name ]( screenData, args );
 				}
 			};
 		} else {
-			api[ cmd.name ] = function () {
+			m_api[ cmd.name ] = function () {
 				var args;
 				args = parseOptions( cmd, [].slice.call( arguments ) );
-				return qbData.commands[ cmd.name ]( args );
+				return m_qbData.commands[ cmd.name ]( args );
 			};
 		}
 	}
@@ -176,8 +176,8 @@ window.qbs = ( function () {
 
 	// Add a pen to the internal list
 	function addPen( name, fn, cap ) {
-		qbData.penList.push( name );
-		qbData.pens[ name ] = {
+		m_qbData.penList.push( name );
+		m_qbData.pens[ name ] = {
 			"cmd": fn,
 			"cap": cap
 		};
@@ -186,7 +186,7 @@ window.qbs = ( function () {
 	// Gets the screen data
 	addCommand( "getScreenData", getScreenData, true, false, [] );
 	function getScreenData( screenId, commandName ) {
-		if( qbData.activeScreen === null ) {
+		if( m_qbData.activeScreen === null ) {
 			if( commandName === "set" ) {
 				return false;
 			}
@@ -194,18 +194,18 @@ window.qbs = ( function () {
 			return false;
 		}
 		if( screenId === undefined || screenId === null ) {
-			screenId = qbData.activeScreen.id;
+			screenId = m_qbData.activeScreen.id;
 		}
-		if( qbs.util.isInteger( screenId ) && ! qbData.screens[ screenId ] ) {
+		if( qbs.util.isInteger( screenId ) && ! m_qbData.screens[ screenId ] ) {
 			console.error( commandName + ": Invalid screen id." );
 			return false;
 		}
-		return qbData.screens[ screenId ];
+		return m_qbData.screens[ screenId ];
 	}
 
 	function resume() {
-		waitCount--;
-		if( waitCount === 0 ) {
+		m_waitCount--;
+		if( m_waitCount === 0 ) {
 			startReadyList();
 		}
 	}
@@ -213,9 +213,9 @@ window.qbs = ( function () {
 	function startReadyList() {
 		var i, temp;
 		if( document.readyState !== "loading" ) {
-			waiting = false;
-			temp = readyList.slice();
-			readyList = [];
+			m_waiting = false;
+			temp = m_readyList.slice();
+			m_readyList = [];
 			for( i = 0; i < temp.length; i++ ) {
 				temp[ i ]();
 			}
@@ -225,8 +225,8 @@ window.qbs = ( function () {
 	}
 
 	function wait() {
-		waitCount++;
-		waiting = true;
+		m_waitCount++;
+		m_waiting = true;
 	}
 
 	// This trigger a function once QBS is completely loaded
@@ -237,10 +237,10 @@ window.qbs = ( function () {
 		fn = args[ 0 ];
 
 		if( qbs.util.isFunction( fn ) ) {
-			if( waiting ) {
-				readyList.push( fn );
+			if( m_waiting ) {
+				m_readyList.push( fn );
 			} else if ( document.readyState === "loading" ) {
-				readyList.push( fn );
+				m_readyList.push( fn );
 				setTimeout( startReadyList, 10 );
 			} else {
 				fn();
@@ -261,19 +261,19 @@ window.qbs = ( function () {
 		} else if( screenObj && qbs.util.isInteger( screenObj.id ) ) {
 			screenId = screenObj.id;
 		}
-		if( ! qbData.screens[ screenId ] ) {
+		if( ! m_qbData.screens[ screenId ] ) {
 			console.error( "screen: Invalid screen." );
 			return;
 		}
-		qbData.activeScreen = qbData.screens[ screenId ];
+		m_qbData.activeScreen = m_qbData.screens[ screenId ];
 	}
 
 	// Remove all screens from the page and memory
 	addCommand( "removeAllScreens", removeAllScreens, false, false, [] );
 	function removeAllScreens() {
 		var i, screenData;
-		for( i in qbData.screens ) {
-			screenData = qbData.screens[ i ];
+		for( i in m_qbData.screens ) {
+			screenData = m_qbData.screens[ i ];
 			screenData.screenObj.removeScreen();
 		}
 	}
@@ -299,23 +299,23 @@ window.qbs = ( function () {
 			return;
 		}
 
-		qbData.defaultPalette = [];
+		m_qbData.defaultPalette = [];
 
 		for( i = 0; i < pal.length; i++ ) {
 			c = qbs.util.convertToColor( pal[ i ] );
 			if( c === null ) {
 				console.error( "setDefaultPal: invalid color value inside array pal." );
-				qbData.defaultPalette.push( qbs.util.convertToColor( "#000000" ) );
+				m_qbData.defaultPalette.push( qbs.util.convertToColor( "#000000" ) );
 			} else {
-				qbData.defaultPalette.push( qbs.util.convertToColor( pal[ i ] ) );
+				m_qbData.defaultPalette.push( qbs.util.convertToColor( pal[ i ] ) );
 			}
 		}
 
 		// Set color 0 to transparent
-		qbData.defaultPalette[ 0 ] = qbs.util.convertToColor( [
-			qbData.defaultPalette[ 0 ].r,
-			qbData.defaultPalette[ 0 ].g,
-			qbData.defaultPalette[ 0 ].b,
+		m_qbData.defaultPalette[ 0 ] = qbs.util.convertToColor( [
+			m_qbData.defaultPalette[ 0 ].r,
+			m_qbData.defaultPalette[ 0 ].g,
+			m_qbData.defaultPalette[ 0 ].b,
 			0
 		] );
 	}
@@ -325,21 +325,21 @@ window.qbs = ( function () {
 	function getDefaultPal( args ) {
 		var i, color, colors;
 		colors = [];
-		for( i = 0; i < qbData.defaultPalette.length; i++ ) {
+		for( i = 0; i < m_qbData.defaultPalette.length; i++ ) {
 			color = {
-				"r": qbData.defaultPalette[ i ].r,
-				"g": qbData.defaultPalette[ i ].g,
-				"b": qbData.defaultPalette[ i ].b,
-				"a": qbData.defaultPalette[ i ].a,
-				"s": qbData.defaultPalette[ i ].s
+				"r": m_qbData.defaultPalette[ i ].r,
+				"g": m_qbData.defaultPalette[ i ].g,
+				"b": m_qbData.defaultPalette[ i ].b,
+				"a": m_qbData.defaultPalette[ i ].a,
+				"s": m_qbData.defaultPalette[ i ].s
 			};
-			colors.push( qbData.defaultPalette[ i ] );
+			colors.push( m_qbData.defaultPalette[ i ] );
 		}
 		return colors;
 	}
 
 	// Global settings command
-	addCommand( "set", set, false, true, qbData.settingsList, true );
+	addCommand( "set", set, false, true, m_qbData.settingsList, true );
 	function set( screenData, args ) {
 		var options, optionName, setting, optionValues;
 
@@ -349,10 +349,10 @@ window.qbs = ( function () {
 		for( optionName in options ) {
 
 			// If the option is a valid setting
-			if( qbData.settings[ optionName ] ) {
+			if( m_qbData.settings[ optionName ] ) {
 
 				// Get the setting data
-				setting = qbData.settings[ optionName ];
+				setting = m_qbData.settings[ optionName ];
 
 				// Parse the options from the setting
 				optionValues = options[ optionName ];
@@ -380,6 +380,6 @@ window.qbs = ( function () {
 		}
 	}
 
-	return api;
+	return m_api;
 
 } )();

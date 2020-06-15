@@ -7,11 +7,11 @@
 
 "use strict";
 
-var qbData, qbWait, qbResume;
+var m_qbData, m_qbWait, m_qbResume;
 
-qbData = qbs._.data;
-qbWait = qbs._.wait;
-qbResume = qbs._.resume;
+m_qbData = qbs._.data;
+m_qbWait = qbs._.wait;
+m_qbResume = qbs._.resume;
 
 // Loads a font into memory
 qbs._.addCommand( "loadFont", loadFont, false, false,
@@ -46,22 +46,22 @@ function loadFont( args ) {
 
 	// Set the font data
 	font = {
-		"id": qbData.nextFontId,
+		"id": m_qbData.nextFontId,
 		"width": width,
 		"height": height,
 		"data": [],
 		"chars": chars,
 		"colorCount": 2,
 		"mode": "pixel",
-		"printFunction": qbData.commands.qbsPrint,
-		"calcWidth": qbData.commands.qbsCalcWidth
+		"printFunction": m_qbData.commands.qbsPrint,
+		"calcWidth": m_qbData.commands.qbsCalcWidth
 	};
 
 	// Add this to the font data
-	qbData.fonts[ font.id ] = font;
+	m_qbData.fonts[ font.id ] = font;
 
 	// Increment the next font id
-	qbData.nextFontId += 1;
+	m_qbData.nextFontId += 1;
 
 	if( isEncoded ) {
 		loadFontFromBase32Encoded( fontSrc, width, height, font );
@@ -166,16 +166,16 @@ function loadFontFromImg( fontSrc, width, height, font ) {
 
 	if( ! img.complete ) {
 		// Signal qbs to wait
-		qbWait();
+		m_qbWait();
 
 		// Need to wait until the image is loaded
 		img.onload = function () {
 			readImageData( img, width, height, font );
-			qbResume();
+			m_qbResume();
 		};
 		img.onerror = function ( err ) {
 			console.error( "loadFont: unable to load image for font." );
-			qbResume();
+			m_qbResume();
 		};
 	} else {
 		readImageData( img, width, height, font );
@@ -259,11 +259,11 @@ function setDefaultFont( args ) {
 	var fontId;
 
 	fontId = parseInt( args[ 0 ] );
-	if( isNaN( fontId ) || fontId < 0 || fontId < qbData.fonts.length ) {
+	if( isNaN( fontId ) || fontId < 0 || fontId < m_qbData.fonts.length ) {
 		console.error( "setDefaultFont: invalid fontId" );
 		return;
 	}
-	qbData.defaultFont = qbData.fonts[ fontId ];
+	m_qbData.defaultFont = m_qbData.fonts[ fontId ];
 
 }
 
@@ -277,10 +277,10 @@ function setFont( screenData, args ) {
 	fontId = args[ 0 ];
 
 	// Check if this is a valid font
-	if( qbData.fonts[ fontId ] ) {
+	if( m_qbData.fonts[ fontId ] ) {
 
 		// Set the font data for the current print cursor
-		font = qbData.fonts[ fontId ];
+		font = m_qbData.fonts[ fontId ];
 		screenData.printCursor.font = font;
 
 		// Set the rows and cols
@@ -306,8 +306,8 @@ function setFont( screenData, args ) {
 			"width": size.width,
 			"height": size.height,
 			"mode": "canvas",
-			"printFunction": qbData.commands.canvasPrint,
-			"calcWidth": qbData.commands.canvasCalcWidth
+			"printFunction": m_qbData.commands.canvasPrint,
+			"calcWidth": m_qbData.commands.canvasCalcWidth
 		};
 
 		// Set the rows and cols

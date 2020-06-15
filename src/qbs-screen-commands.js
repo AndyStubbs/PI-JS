@@ -7,9 +7,9 @@
 
 "use strict";
 
-var qbData;
+var m_qbData;
 
-qbData = qbs._.data;
+m_qbData = qbs._.data;
 
 // Remove the screen from the page and memory
 qbs._.addCommand( "removeScreen", removeScreen, false, true, [] );
@@ -30,7 +30,7 @@ function removeScreen( screenData ) {
 	screenData.canvas = null;
 
 	// Delete the screen from the screens container
-	delete qbData.screens[ screenId ];
+	delete m_qbData.screens[ screenId ];
 
 }
 

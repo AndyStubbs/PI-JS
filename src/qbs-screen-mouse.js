@@ -7,16 +7,19 @@
 
 "use strict";
 
-var qbData;
+var m_qbData;
 
-qbData = qbs._.data;
+m_qbData = qbs._.data;
 
 qbs._.addCommand( "startMouse", startMouse, false, true, [] );
 function startMouse( screenData ) {
-	screenData.canvas.addEventListener( "mousemove", mouseMove );
-	screenData.canvas.addEventListener( "mousedown", mouseDown );
-	screenData.canvas.addEventListener( "mouseup", mouseUp );
-	screenData.canvas.addEventListener( "contextmenu", onContextMenu );
+	if( ! screenData.mouseStarted ) {
+		screenData.canvas.addEventListener( "mousemove", mouseMove );
+		screenData.canvas.addEventListener( "mousedown", mouseDown );
+		screenData.canvas.addEventListener( "mouseup", mouseUp );
+		screenData.canvas.addEventListener( "contextmenu", onContextMenu );
+		screenData.mouseStarted = true;
+	}
 }
 
 qbs._.addCommand( "stopMouse", stopMouse, false, true, [] );
@@ -25,35 +28,36 @@ function stopMouse( screenData ) {
 	screenData.canvas.removeEventListener( "mousedown", mouseDown );
 	screenData.canvas.removeEventListener( "mouseup", mouseUp );
 	screenData.canvas.removeEventListener( "contextmenu", onContextMenu );
+	screenData.mouseStarted = false;
 }
 
 function mouseMove( e ) {
 	var screenData;
 
-	screenData = qbData.screens[ e.target.dataset.screenId ];
+	screenData = m_qbData.screens[ e.target.dataset.screenId ];
 
 	updateMouse( screenData, e );
-	qbData.commands.triggerEventListeners( "move", inmouse( screenData ),
+	m_qbData.commands.triggerEventListeners( "move", inmouse( screenData ),
 		screenData.onMouseEventListeners );
 }
 
 function mouseDown( e ) {
 	var screenData;
 
-	screenData = qbData.screens[ e.target.dataset.screenId ];
+	screenData = m_qbData.screens[ e.target.dataset.screenId ];
 
 	updateMouse( screenData, e );
-	qbData.commands.triggerEventListeners( "down", inmouse( screenData ),
+	m_qbData.commands.triggerEventListeners( "down", inmouse( screenData ),
 		screenData.onMouseEventListeners );
 }
 
 function mouseUp( e ) {
 	var screenData;
 
-	screenData = qbData.screens[ e.target.dataset.screenId ];
+	screenData = m_qbData.screens[ e.target.dataset.screenId ];
 
 	updateMouse( screenData, e );
-	qbData.commands.triggerEventListeners( "up", inmouse( screenData ),
+	m_qbData.commands.triggerEventListeners( "up", inmouse( screenData ),
 		screenData.onMouseEventListeners );
 
 }
@@ -61,7 +65,7 @@ function mouseUp( e ) {
 function onContextMenu( e ) {
 	var screenData;
 
-	screenData = qbData.screens[ e.target.dataset.screenId ];
+	screenData = m_qbData.screens[ e.target.dataset.screenId ];
 
 	if( ! screenData.isContextMenuEnabled ) {
 		e.preventDefault();
@@ -124,7 +128,7 @@ function onmouse( screenData, args ) {
 	once = args[ 2 ];
 	hitBox = args[ 3 ];
 
-	qbData.commands.onevent( mode, fn, once, hitBox, [ "down", "up", "move" ],
+	m_qbData.commands.onevent( mode, fn, once, hitBox, [ "down", "up", "move" ],
 		"onmouse", screenData.onMouseEventListeners
 	);
 }
@@ -137,7 +141,7 @@ function offmouse( screenData, args ) {
 	eventName = args[ 0 ];
 	fn = args[ 1 ];
 
-	qbData.commands.offevent( eventName, fn, [ "down", "up", "move" ],
+	m_qbData.commands.offevent( eventName, fn, [ "down", "up", "move" ],
 		"offmouse", screenData.onMouseEventListeners
 	);
 }
@@ -149,11 +153,8 @@ qbs._.addSetting( "enableContextMenu", setEnableContextMenu, true,
 	[ "isEnabled" ]
 );
 function setEnableContextMenu( screenData, args ) {
-	var isEnabled;
-
-	isEnabled = args[ 0 ];
-
-	screenData.isContextMenuEnabled = !!( isEnabled );
+	screenData.isContextMenuEnabled = !!( args[ 0 ] );
+	m_qbData.commands.startMouse( screenData );
 }
 
 // Setup events

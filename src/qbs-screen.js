@@ -7,9 +7,9 @@
 
 "use strict";
 
-var qbData;
+var m_qbData;
 
-qbData = qbs._.data;
+m_qbData = qbs._.data;
 
 // QBS Core API
 // State Function
@@ -77,9 +77,9 @@ function screen( args ) {
 	screenData.commands = {};
 
 	// Loop through all the screen commands
-	for( i in qbData.screenCommands ) {
+	for( i in m_qbData.screenCommands ) {
 
-		commandData = qbData.screenCommands[ i ];
+		commandData = m_qbData.screenCommands[ i ];
 		screenData.commands[ i ] = commandData.fn;
 
 		// Setup the api
@@ -100,7 +100,7 @@ function screen( args ) {
 
 function setupApiCommand( screenObj, name, screenData, cmd ) {
 	screenObj[ name ] = function () {
-		var args = qbData.commands.parseOptions( cmd, [].slice.call( arguments ) );
+		var args = m_qbData.commands.parseOptions( cmd, [].slice.call( arguments ) );
 		return screenData.commands[ name ]( screenData, args );
 	};
 }
@@ -265,9 +265,9 @@ function createScreenData(
 	var screenData = {};
 
 	// Set the screen id
-	screenData.id = qbData.nextScreenId;
-	qbData.nextScreenId += 1;
-	qbData.activeScreen = screenData;
+	screenData.id = m_qbData.nextScreenId;
+	m_qbData.nextScreenId += 1;
+	m_qbData.activeScreen = screenData;
 
 	// Set the screenId on the canvas
 	canvas.dataset.screenId = screenData.id;
@@ -289,18 +289,19 @@ function createScreenData(
 	screenData.x = 0;
 	screenData.y = 0;
 	screenData.angle = 0;
-	screenData.pal = qbData.defaultPalette.slice();
+	screenData.pal = m_qbData.defaultPalette.slice();
 	screenData.fColor = screenData.pal[ 7 ];
 	screenData.colors = [ screenData.fColor ];
 	screenData.context.fillStyle = screenData.fColor.s;
 	screenData.context.strokeStyle = screenData.fColor.s;
+	screenData.mouseStarted = false;
 	screenData.printCursor = {
 		"x": 0,
 		"y": 0,
-		"font": qbData.defaultFont,
-		"rows": Math.floor( canvas.width / qbData.defaultFont.width ),
-		"cols": Math.floor( canvas.height / qbData.defaultFont.height ),
-		"prompt": qbData.defaultPrompt,
+		"font": m_qbData.defaultFont,
+		"rows": Math.floor( canvas.width / m_qbData.defaultFont.width ),
+		"cols": Math.floor( canvas.height / m_qbData.defaultFont.height ),
+		"prompt": m_qbData.defaultPrompt,
 		"breakWord": true,
 	};
 	screenData.clientRect = canvas.getBoundingClientRect();
@@ -312,7 +313,7 @@ function createScreenData(
 	screenData.touches = {};
 	screenData.pixelMode = true;
 	screenData.pen = {
-		"draw": qbData.defaultPenDraw,
+		"draw": m_qbData.defaultPenDraw,
 		"size": 1
 	};
 
@@ -325,7 +326,7 @@ function createScreenData(
 	screenData.isContextMenuEnabled = true;
 
 	// Set this to the active screen
-	qbData.screens[ screenData.id ] = screenData;
+	m_qbData.screens[ screenData.id ] = screenData;
 
 	return screenData;
 }
@@ -430,8 +431,8 @@ function setCanvasSize( aspectData, canvas, maxWidth, maxHeight ) {
 function resizeScreens() {
 	var i, screenData, size;
 
-	for( i in qbData.screens ) {
-		screenData = qbData.screens[ i ];
+	for( i in m_qbData.screens ) {
+		screenData = m_qbData.screens[ i ];
 
 		if( ! ( screenData.isOffscreen || screenData.isNoStyles ) ) {
 

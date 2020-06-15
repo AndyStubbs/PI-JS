@@ -7,9 +7,9 @@
 
 "use strict";
 
-var qbData;
+var m_qbData;
 
-qbData = qbs._.data;
+m_qbData = qbs._.data;
 
 
 // Bezier curve
@@ -44,7 +44,7 @@ function pxBezier( screenData, args ) {
 	// Initialize the color for the line
 	color = screenData.fColor;
 
-	qbData.commands.getImageData( screenData );
+	m_qbData.commands.getImageData( screenData );
 	minDistance = screenData.pen.size;
 	points = [
 		{ "x": xStart, "y": yStart },
@@ -79,7 +79,7 @@ function pxBezier( screenData, args ) {
 	point = calcStep( 1, points );
 	screenData.pen.draw( screenData, point.x, point.y, color );
 
-	qbData.commands.setImageDirty( screenData );
+	m_qbData.commands.setImageDirty( screenData );
 }
 
 function calcDistance( p1, p2 ) {
@@ -126,11 +126,13 @@ function aaBezier( screenData, args ) {
 	y4 = args[ 7 ] + 0.5;
 
 	if(
-		isNaN( x ) || isNaN( y ) || isNaN( x2 ) || isNaN( y2 ) || isNaN( x3 ) ||
-		isNaN( y3 ) || isNaN( x4 ) || isNaN( y4 )
+		isNaN( x ) || isNaN( y ) || isNaN( x2 ) || isNaN( y2 ) ||
+		isNaN( x3 ) || isNaN( y3 ) || isNaN( x4 ) || isNaN( y4 )
 	) {
-		console.error("bezier: parameters x, y, x2, y2, x3, y3, x4, and y4 must " +
-			"be numbers." );
+		console.error(
+			"bezier: parameters x, y, x2, y2, x3, y3, x4, and y4 must " +
+			"be numbers."
+		);
 		return;
 	}
 

@@ -6,11 +6,11 @@
 ( function () {
 
 	"use strict";
-	var qbData, borderStyles;
+	var m_qbData, m_borderStyles;
 
-	qbData = qbs._.data;
+	m_qbData = qbs._.data;
 
-	borderStyles = {
+	m_borderStyles = {
 		"single": [
 			[ 218, 196, 194, 191 ],
 			[ 195, 196, 197, 180 ],
@@ -59,7 +59,7 @@
 		}
 
 		if( ! borderStyle ) {
-			borderStyle = borderStyles[ "single" ];
+			borderStyle = m_borderStyles[ "single" ];
 		}
 
 		if( tableFormat == null ) {
@@ -73,8 +73,8 @@
 			return;
 		}
 
-		if( typeof borderStyle === "string" && borderStyles[ borderStyle ] ) {
-			borderStyle = borderStyles[ borderStyle ];
+		if( typeof borderStyle === "string" && m_borderStyles[ borderStyle ] ) {
+			borderStyle = m_borderStyles[ borderStyle ];
 		} else if( ! qbs.util.isArray( borderStyle ) ) {
 			console.error(
 				"formatTable: borderStyle must be an integer or array"
@@ -87,7 +87,7 @@
 				screenData, items, borderStyle, tableFormat, isCentered
 			);
 		} else {
-			width = qbData.commands.getCols( screenData );
+			width = m_qbData.commands.getCols( screenData );
 			return buildStandardTable( screenData, items, width, borderStyle );
 		}
 	}
@@ -185,7 +185,7 @@
 		}
 
 		msg = msg.substr( 0, msg.length - 1 );
-		qbData.commands.print( screenData, [ msg ] );
+		m_qbData.commands.print( screenData, [ msg ] );
 	}
 
 	function buildFormatedTable(
@@ -195,11 +195,11 @@
 
 		msg = "";
 		boxes = [];
-		pos = qbData.commands.getPos( screenData );
+		pos = m_qbData.commands.getPos( screenData );
 
 		// Set padding for centered table
 		if( isCentered ) {
-			padWidth = Math.floor( ( qbData.commands.getCols( screenData ) -
+			padWidth = Math.floor( ( m_qbData.commands.getCols( screenData ) -
 				tableFormat[ 0 ].length ) / 2
 			);
 		} else {
@@ -208,7 +208,7 @@
 
 		// Create the padding
 		padding = qbs.util.pad( "", padWidth, " " );
-		qbData.commands.setPos( screenData, [ 0, pos.row ] );
+		m_qbData.commands.setPos( screenData, [ 0, pos.row ] );
 		for( row = 0; row < tableFormat.length; row += 1 ) {
 			msg += padding;
 			for( col = 0; col < tableFormat[ row ].length; col += 1 ) {
@@ -286,9 +286,9 @@
 
 		completeBoxes( boxes, tableFormat );
 
-		pos = qbData.commands.getPos( screenData );
-		qbData.commands.print( screenData, [ msg ] );
-		qbData.commands.setPos( screenData, [ pos.col, pos.row ] );
+		pos = m_qbData.commands.getPos( screenData );
+		m_qbData.commands.print( screenData, [ msg ] );
+		m_qbData.commands.setPos( screenData, [ pos.col, pos.row ] );
 		i = 0;
 		for( row = 0; row < items.length; row += 1 ) {
 			if( qbs.util.isArray( items[ row ] ) ) {
@@ -304,7 +304,7 @@
 			}
 		}
 
-		qbData.commands.setPos( screenData,
+		m_qbData.commands.setPos( screenData,
 			[ 0, pos.row + tableFormat.length ]
 		);
 	}
@@ -334,7 +334,7 @@
 			}
 		}
 
-		pos = qbData.commands.getPos( screenData );
+		pos = m_qbData.commands.getPos( screenData );
 		
 		if( isVertical ) {
 			index = 0;
@@ -342,8 +342,8 @@
 			row = pos.row + box.top + 1 +
 				Math.floor( ( height - msg.length ) / 2 );
 			for( ; row <= pos.row + height; row += 1 ) {
-				qbData.commands.setPos( screenData, [ col, row ] );
-				qbData.commands.print( screenData,
+				m_qbData.commands.setPos( screenData, [ col, row ] );
+				m_qbData.commands.print( screenData,
 					[ msg.charAt( index ), true ]
 				);
 				index += 1;
@@ -352,10 +352,10 @@
 			col = pos.col + box.left + 1 + padWidth +
 				Math.floor( ( width - msg.length ) / 2 );
 			row = pos.row + box.top + Math.round( height / 2 );
-			qbData.commands.setPos( screenData, [ col, row ] );
-			qbData.commands.print( screenData, [ msg, true ] );
+			m_qbData.commands.setPos( screenData, [ col, row ] );
+			m_qbData.commands.print( screenData, [ msg, true ] );
 		}
-		qbData.commands.setPos( screenData, [ pos.col, pos.row ] );
+		m_qbData.commands.setPos( screenData, [ pos.col, pos.row ] );
 	}
 
 	function createBox( row, col, boxes ) {

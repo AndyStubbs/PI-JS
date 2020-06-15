@@ -7,11 +7,11 @@
 
 	"use strict";
 	
-	var qbData, tracks, notesData, allNotes;
+	var m_qbData, m_tracks, m_notesData, m_allNotes;
 
-	qbData = qbs._.data;
+	m_qbData = qbs._.data;
 
-	notesData = {
+	m_notesData = {
 		"A": [ 27.50, 55.00,
 			110, 220, 440, 880, 1760, 3520, 7040, 14080
 		],
@@ -60,7 +60,7 @@
 			6644.876, 13289.752
 		]
 	};
-	allNotes = [
+	m_allNotes = [
 		0, 16.35, 17.32, 18.35, 19.45, 20.60, 21.83, 23.12, 24.50, 25.96, 27.50,
 		29.14, 30.87, 32.70, 34.65, 36.71, 38.89, 41.20, 43.65, 46.25, 49.00,
 		51.91, 55.00, 58.27, 61.74,
@@ -78,7 +78,7 @@
 		7902.132, 8372.018, 8869.844, 9397.272, 9956.064, 10548.084, 11175.304,
 		11839.82, 13289.752, 14080, 14917.24, 15804.264
 	];
-	tracks = [];
+	m_tracks = [];
 
 	qbs._.addCommand( "play", play, false, false, [ "playString" ] );
 	function play( args ) {
@@ -182,7 +182,7 @@
 			// Replace custom wave table
 			trackParts = tracksStrings[ i ].split( reg );
 
-			tracks.push( {
+			m_tracks.push( {
 				"audioContext": new AudioContext(),
 				"notes": [],
 				"noteId": 0,
@@ -204,7 +204,7 @@
 				"type": "triangle",
 				"waveTables": waveTables
 			} );
-			trackId = tracks.length - 1;
+			trackId = m_tracks.length - 1;
 			trackIds.push( trackId );
 			for( j = 0; j < trackParts.length; j++ ) {
 				index = trackParts[ j ].indexOf( "-" );
@@ -214,12 +214,12 @@
 					index > -1 && 
 					"ABCDEFG".indexOf( trackParts[ j ][ 0 ] ) === -1 
 				) {
-					tracks[ trackId ].notes.push( [
+					m_tracks[ trackId ].notes.push( [
 						trackParts[ j ].substr( 0, index ),
 						trackParts[ j ].substr( index )
 					] );
 				} else {
-					tracks[ trackId ].notes.push(
+					m_tracks[ trackId ].notes.push(
 						trackParts[ j ].split( /(\d+)/ )
 					);
 				}
@@ -237,22 +237,22 @@
 
 		trackId = args[ 0 ];
 
-		if( tracks[ trackId ] ) {
+		if( m_tracks[ trackId ] ) {
 
 			// Need to stop all sub tracks as well as main track
-			trackIds = tracks[ trackId ].trackIds;
+			trackIds = m_tracks[ trackId ].trackIds;
 			for( i = 0; i < trackIds.length; i++ ) {
-				clearTimeout( tracks[ trackIds[ i ] ].timeout );
-				tracks[ trackIds[ i ] ] = null;
+				clearTimeout( m_tracks[ trackIds[ i ] ].timeout );
+				m_tracks[ trackIds[ i ] ] = null;
 			}
 
 		} else if( trackId == null ) {
 
 			// Stop all tracks and substracks
-			for( i = 0; i < tracks.length; i++ ) {
-				clearTimeout( tracks[ i ].timeout );
+			for( i = 0; i < m_tracks.length; i++ ) {
+				clearTimeout( m_tracks[ i ].timeout );
 			}
-			tracks = [];
+			m_tracks = [];
 
 		}
 	}
@@ -261,7 +261,7 @@
 		var track, cmd, note, frequency, val, wait, octave;
 
 		frequency = 0;
-		track = tracks[ trackId ];
+		track = m_tracks[ trackId ];
 		if( track.noteId >= track.notes.length ) {
 			return;
 		}
@@ -304,10 +304,10 @@
 				note = note.replace( /\./g, "" );
 
 				// Get the note frequency
-				if( notesData[ note ] ) {
+				if( m_notesData[ note ] ) {
 					octave = track.octave + track.octaveExtra;
-					if( octave < notesData[ note ].length ) {
-						frequency = notesData[ note ][ octave ];
+					if( octave < m_notesData[ note ].length ) {
+						frequency = m_notesData[ note ][ octave ];
 					}
 				}
 
@@ -321,21 +321,21 @@
 				break;
 			case "N":
 				val = getInt( cmd[ 1 ], 0 );
-				if( val >= 0 && val < allNotes.length ) {
-					frequency = allNotes[ val ];
+				if( val >= 0 && val < m_allNotes.length ) {
+					frequency = m_allNotes[ val ];
 				}
 				wait = true;
 				break;
 			case "O":
 				val = getInt( cmd[ 1 ], 4 );
-				if( val >= 0 && val < notesData[ "A" ].length ) {
+				if( val >= 0 && val < m_notesData[ "A" ].length ) {
 					track.octave = val;
 				}
 				break;
 			case ">":
 				track.octave += 1;
-				if( track.octave >= notesData[ "A" ].length ) {
-					track.octave = notesData[ "A" ].length - 1;
+				if( track.octave >= m_notesData[ "A" ].length ) {
+					track.octave = m_notesData[ "A" ].length - 1;
 				}
 				break;
 			case "<":
@@ -466,7 +466,7 @@
 		var attackTime, sustainTime, decayTime, volume, waveTables, oType,
 			stopTime;
 
-		volume = qbData.volume * track.volume;
+		volume = m_qbData.volume * track.volume;
 		attackTime = track.interval * track.attackRate;
 		sustainTime = track.interval * track.sustainRate;
 		decayTime = track.interval * track.decayRate;
@@ -493,7 +493,7 @@
 			}
 		}
 
-		qbData.commands.createSound(
+		m_qbData.commands.createSound(
 			"play", track.audioContext, frequency, volume, attackTime,
 			sustainTime, decayTime, stopTime, oType, waveTables, 0
 		);

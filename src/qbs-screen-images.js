@@ -7,11 +7,11 @@
 
 "use strict";
 
-var qbData, qbWait, qbResume;
+var m_qbData, m_qbWait, m_qbResume;
 
-qbData = qbs._.data;
-qbWait = qbs._.wait;
-qbResume = qbs._.resume;
+m_qbData = qbs._.data;
+m_qbWait = qbs._.wait;
+m_qbResume = qbs._.resume;
 
 qbs._.addCommand( "loadImage", loadImage, false, false, [ "src", "name" ] );
 function loadImage( args ) {
@@ -33,18 +33,18 @@ function loadImage( args ) {
 	}
 
 	if( typeof name !== "string" ) {
-		name = "" + qbData.imageCount;
-		qbData.imageCount += 1;
+		name = "" + m_qbData.imageCount;
+		m_qbData.imageCount += 1;
 	}
 
 	if( ! image.complete ) {
-		qbWait();
+		m_qbWait();
 		image.onload = function () {
-			qbData.images[ name ] = image;
-			qbResume();
+			m_qbData.images[ name ] = image;
+			m_qbResume();
 		};
 	} else {
-		qbData.images[ name ] = image;
+		m_qbData.images[ name ] = image;
 	}
 
 	return name;
@@ -65,11 +65,11 @@ function drawImage( screenData, args ) {
 	alpha = args[ 6 ];
 
 	if( typeof name === "string" ) {
-		if( ! qbData.images[ name ] ) {
+		if( ! m_qbData.images[ name ] ) {
 			console.error( "drawImage: invalid image name" );
 			return;
 		}
-		img = qbData.images[ name ];
+		img = m_qbData.images[ name ];
 	} else {
 		if( ! name || ! name.canvas ) {
 			console.error(

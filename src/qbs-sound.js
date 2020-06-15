@@ -7,16 +7,18 @@
 
 "use strict";
 
-var m_audioPools, m_nextAudioId, m_audioContext, m_qbData;
+var m_audioPools, m_nextAudioId, m_audioContext, m_qbData, m_qbWait, m_qbResume;
 
-m_qbData = qbs._.data;
 m_audioPools = {};
 m_nextAudioId = 0;
+m_qbData = qbs._.data;
+m_qbWait = qbs._.wait;
+m_qbResume = qbs._.resume;
 
 // Loads a sound
 qbs._.addCommand( "loadSound", loadSound, false, false, [ "src", "poolSize" ] );
 function loadSound( args ) {
-	var src, poolSize, i, audioItem;
+	var src, poolSize, i, audioItem, audio;
 
 	src = args[ 0 ];
 	poolSize = args[ 1 ];
@@ -38,7 +40,17 @@ function loadSound( args ) {
 
 	// Create the audio pool
 	for( i = 0; i < poolSize; i++ ) {
-		audioItem.pool.push( new Audio( src ) );
+
+		// Create the audio item
+		audio = new Audio( src );
+		audioItem.pool.push( audio );
+
+		// Wait until audio item is loaded
+		m_qbWait();
+		audio.oncanplay = function () {
+			m_qbResume();
+		}
+
 	}
 
 	// Add the audio item too the global object
@@ -259,10 +271,11 @@ function createSound(
 	cmdName, audioContext, frequency, volume, attackTime, sustainTime,
 	decayTime, stopTime, oType, waveTables, delay
 ) {
-	var oscillator, envelope, wave, real, imag, currentTime;
+	var oscillator, envelope, wave, real, imag, currentTime, overlap;
 
 	oscillator = audioContext.createOscillator();
 	envelope = audioContext.createGain();
+	overlap = 0.0000001;
 
 	oscillator.frequency.value = frequency;
 	if( oType === "custom" ) {
@@ -297,7 +310,7 @@ function createSound(
 			);
 
 			// Add value to current time to prevent overlap of time curves
-			currentTime += 0.000000001;
+			currentTime += overlap;
 		}
 
 		// Set the sustain
@@ -309,14 +322,14 @@ function createSound(
 			);
 
 			// Add value to current time to prevent overlap of time curves
-			currentTime += 0.000000001;
+			currentTime += overlap;
 		}
 
 		// Set the decay
 		if( decayTime > 0 ) {
 			envelope.gain.setValueCurveAtTime(
 				[ 0.8 * volume, 0.1 * volume, 0 ],
-				currentTime + sustainTime + attackTime,
+				currentTime + attackTime + sustainTime,
 				decayTime
 			);
 		}

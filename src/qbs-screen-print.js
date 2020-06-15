@@ -7,9 +7,9 @@
 
 "use strict";
 
-var qbData;
+var m_qbData;
 
-qbData = qbs._.data;
+m_qbData = qbs._.data;
 
 // Print Command
 qbs._.addCommand( "print", print, false, true, [ "msg", "inLine" ] );
@@ -124,7 +124,7 @@ function shiftImageUp( screenData, yOffset ) {
 	}
 
 	// Get the image data
-	qbData.commands.getImageData( screenData );
+	m_qbData.commands.getImageData( screenData );
 
 	y = yOffset;
 
@@ -159,7 +159,7 @@ function shiftImageUp( screenData, yOffset ) {
 		}
 	}
 
-	qbData.commands.setImageDirty( screenData );
+	m_qbData.commands.setImageDirty( screenData );
 
 }
 

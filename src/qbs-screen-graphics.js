@@ -7,9 +7,9 @@
 
 "use strict";
 
-var qbData;
+var m_qbData;
 
-qbData = qbs._.data;
+m_qbData = qbs._.data;
 
 // Circle command
 qbs._.addCommands( "circle", pxCircle, aaCircle, [ "x", "y", "radius" ] );
@@ -18,7 +18,7 @@ function pxCircle( screenData, args ) {
 	x = args[ 0 ];
 	y = args[ 1 ];
 	radius = args[ 2 ];
-	qbData.commands.getImageData( screenData );
+	m_qbData.commands.getImageData( screenData );
 
 	// Make sure x and y are integers
 	if( isNaN( x ) || isNaN( y ) || isNaN( radius ) ) {
@@ -47,11 +47,11 @@ function pxCircle( screenData, args ) {
 		screenData.pen.draw( screenData, x - 1, y, color );
 		screenData.pen.draw( screenData, x, y + 1, color );
 		screenData.pen.draw( screenData, x, y - 1, color );
-		qbData.commands.setImageDirty( screenData );
+		m_qbData.commands.setImageDirty( screenData );
 		return;
 	} else if( radius === 0 ) {
 		screenData.pen.draw( screenData, x, y, color );
-		qbData.commands.setImageDirty( screenData );
+		m_qbData.commands.setImageDirty( screenData );
 		return;
 	}
 
@@ -90,7 +90,7 @@ function pxCircle( screenData, args ) {
 		}
 	}
 
-	qbData.commands.setImageDirty( screenData );
+	m_qbData.commands.setImageDirty( screenData );
 }
 
 function aaCircle( screenData, args ) {
@@ -147,7 +147,7 @@ function pxArc( screenData, args ) {
 	if( angle1 > angle2 ) {
 		winding = true;
 	}
-	qbData.commands.getImageData( screenData );
+	m_qbData.commands.getImageData( screenData );
 
 	// Make sure x and y are integers
 	if( isNaN( x ) || isNaN( y ) || isNaN( radius ) ) {
@@ -176,11 +176,11 @@ function pxArc( screenData, args ) {
 		set( x - 1, y, color );
 		set( x, y + 1, color );
 		set( x, y - 1, color );
-		qbData.commands.setImageDirty( screenData );
+		m_qbData.commands.setImageDirty( screenData );
 		return;
 	} else if( radius === 0 ) {
 		screenData.pen.draw( screenData, x, y, color );
-		qbData.commands.setImageDirty( screenData );
+		m_qbData.commands.setImageDirty( screenData );
 		return;
 	}
 
@@ -213,7 +213,7 @@ function pxArc( screenData, args ) {
 		}
 	}
 
-	qbData.commands.setImageDirty( screenData );
+	m_qbData.commands.setImageDirty( screenData );
 
 }
 
@@ -271,14 +271,14 @@ function pxEllipse( screenData, args ) {
 		return;
 	}
 
-	qbData.commands.getImageData( screenData );
+	m_qbData.commands.getImageData( screenData );
 
 	// Initialize the color for the circle
 	color = screenData.fColor;
 
 	if( radiusX === 0 && radiusY === 0 ) {
 		screenData.pen.draw( screenData, x, y, color );
-		qbData.commands.setImageDirty( screenData );
+		m_qbData.commands.setImageDirty( screenData );
 		return;
 	}
 
@@ -346,7 +346,7 @@ function pxEllipse( screenData, args ) {
 		}
 	}
 
-	qbData.commands.setImageDirty( screenData );
+	m_qbData.commands.setImageDirty( screenData );
 }
 
 function aaEllipse( screenData, args ) {
@@ -418,7 +418,7 @@ function put( screenData, args ) {
 		return;
 	}
 
-	qbData.commands.getImageData( screenData );
+	m_qbData.commands.getImageData( screenData );
 
 	//Loop through the data
 	for( dataY = startY; dataY < startY + height; dataY++ ) {
@@ -440,7 +440,7 @@ function put( screenData, args ) {
 		}
 	}
 
-	qbData.commands.setImageDirty( screenData );
+	m_qbData.commands.setImageDirty( screenData );
 }
 
 // Get command
@@ -478,7 +478,7 @@ function get( screenData, args ) {
 		return [ [] ];
 	}
 
-	qbData.commands.getImageData( screenData );
+	m_qbData.commands.getImageData( screenData );
 
 	imageData = screenData.imageData;
 
@@ -530,9 +530,9 @@ function pset( screenData, args ) {
 	// Get the fore color
 	color = screenData.fColor;
 
-	qbData.commands.getImageData( screenData );
+	m_qbData.commands.getImageData( screenData );
 	screenData.pen.draw( screenData, x, y, color );
-	qbData.commands.setImageDirty( screenData );
+	m_qbData.commands.setImageDirty( screenData );
 }
 
 // Line command
@@ -576,7 +576,7 @@ function pxLine( screenData, args ) {
 	err = dx - dy;
 
 	// Get the image data
-	qbData.commands.getImageData( screenData );
+	m_qbData.commands.getImageData( screenData );
 
 	// Set the first pixel
 	screenData.pen.draw( screenData, x1, y1, color );
@@ -599,7 +599,7 @@ function pxLine( screenData, args ) {
 		screenData.pen.draw( screenData, x1, y1, color );
 	}
 
-	qbData.commands.setImageDirty( screenData );
+	m_qbData.commands.setImageDirty( screenData );
 }
 
 function aaLine( screenData, args ) {
@@ -735,7 +735,7 @@ function setColor( screenData, args ) {
 
 	colorInput = args[ 0 ];
 	isAddToPalette = !!( args[ 1 ] );
-	colorValue = qbData.commands.findColorValue(
+	colorValue = m_qbData.commands.findColorValue(
 		screenData, colorInput, "color"
 	);
 
@@ -772,7 +772,7 @@ function setColors( screenData, args ) {
 			return;
 		}
 		for( i = 0; i < colorInput.length; i++ ) {
-			colorValue = qbData.commands.findColorValue(
+			colorValue = m_qbData.commands.findColorValue(
 				screenData, colorInput[ i ], "color"
 			);
 			if( colorValue === undefined ) {
@@ -823,7 +823,7 @@ function swapColor( screenData, args ) {
 		return;
 	}
 
-	qbData.commands.getImageData( screenData );
+	m_qbData.commands.getImageData( screenData );
 	data = screenData.imageData.data;
 
 	// Swap's all colors
@@ -843,7 +843,7 @@ function swapColor( screenData, args ) {
 		}
 	}
 
-	qbData.commands.setImageDirty( screenData );
+	m_qbData.commands.setImageDirty( screenData );
 
 	// Update the pal data
 	screenData.pal[ index ] = newColor;
@@ -864,7 +864,7 @@ function point( screenData, args ) {
 		return;
 	}
 
-	qbData.commands.getImageData( screenData );
+	m_qbData.commands.getImageData( screenData );
 	data = screenData.imageData.data;
 
 	// Calculate the index
@@ -901,7 +901,7 @@ function filterImg( screenData, args ) {
 		return;
 	}
 
-	qbData.commands.getImageData( screenData );
+	m_qbData.commands.getImageData( screenData );
 	data = screenData.imageData.data;
 
 	// Swap's all colors
@@ -931,7 +931,7 @@ function filterImg( screenData, args ) {
 		}
 	}
 
-	qbData.commands.setImageDirty( screenData );
+	m_qbData.commands.setImageDirty( screenData );
 }
 
 // Render command
@@ -953,10 +953,10 @@ function setPen( screenData, args ) {
 	size = args[ 1 ];
 	noise = args[ 2 ];
 
-	if( ! qbData.pens[ pen ] ) {
+	if( ! m_qbData.pens[ pen ] ) {
 		console.error(
 			"setPen: Argument pen is not a valid pen. Valid pens: " +
-			qbData.penList.join(", " )
+			m_qbData.penList.join(", " )
 		);
 		return;
 	}
@@ -993,14 +993,14 @@ function setPen( screenData, args ) {
 	if( size === 1 ) {
 
 		// Size is one so only draw one pixel
-		screenData.pen.draw = qbData.pens.pixel.cmd;
+		screenData.pen.draw = m_qbData.pens.pixel.cmd;
 
 		// Set the line width for context draw
 		screenData.context.lineWidth = 1;
 	} else {
 
 		// Set the draw mode for pixel draw
-		screenData.pen.draw = qbData.pens[ pen ].cmd;
+		screenData.pen.draw = m_qbData.pens[ pen ].cmd;
 
 		// Set the line width for context draw
 		screenData.context.lineWidth = size * 2 - 1;
@@ -1008,7 +1008,7 @@ function setPen( screenData, args ) {
 
 	screenData.pen.noise = noise;
 	screenData.pen.size = size;
-	screenData.context.lineCap = qbData.pens[ pen ].cap;
+	screenData.context.lineCap = m_qbData.pens[ pen ].cap;
 }
 
 // End of File Encapsulation

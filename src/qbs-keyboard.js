@@ -7,12 +7,13 @@
 
 "use strict";
 
-var qbData, keys, keyLookup, keyCodes, preventKeys, inputs, inputIndex, t,
-	promptInterval, blink, promptBackground, promptBackgroundWidth,
-	inputReadyList, onKeyEventListeners, anyKeyEventListeners, keyboard;
+var m_qbData, m_keys, m_keyLookup, m_keyCodes, m_preventKeys, m_inputs,
+	m_inputIndex, m_t, m_promptInterval, m_blink, m_promptBackground,
+	m_promptBackgroundWidth, m_inputReadyList, m_onKeyEventListeners,
+	m_anyKeyEventListeners, m_keyboard;
 
-qbData = qbs._.data;
-keyLookup = {
+m_qbData = qbs._.data;
+m_keyLookup = {
 	"Alt_1": "AltLeft",
 	"Alt_2": "AltRight",
 	"ArrowDown_0": "ArrowDown",
@@ -177,15 +178,15 @@ keyLookup = {
 	" _0": "Space",
 	"Tab_0": "Tab"
 };
-keys = {};
-keyCodes = {};
-preventKeys = {};
-inputs = [];
-inputIndex = 0;
-inputReadyList = [];
-onKeyEventListeners = {};
-anyKeyEventListeners = [];
-keyboard = {
+m_keys = {};
+m_keyCodes = {};
+m_preventKeys = {};
+m_inputs = [];
+m_inputIndex = 0;
+m_inputReadyList = [];
+m_onKeyEventListeners = {};
+m_anyKeyEventListeners = [];
+m_keyboard = {
 	"qwerty": "" + 
 		"`1234567890-={Backspace}\n" +
 		"{Tab}qwertyuiop[]\\\n" +
@@ -208,14 +209,14 @@ function keyup( event ) {
 	var key;
 
 	// Lookup the key by using key and location
-	key = keyLookup[ event.key + "_" + event.location ];
+	key = m_keyLookup[ event.key + "_" + event.location ];
 
 	// Reset the keys - no longer pressed
-	keys[ key ] = 0;
-	keyCodes[ event.keyCode ] = 0;
+	m_keys[ key ] = 0;
+	m_keyCodes[ event.keyCode ] = 0;
 
 	// If a key is registered then prevent the default behavior
-	if( preventKeys[ key ] || preventKeys[ event.keyCode ] ) {
+	if( m_preventKeys[ key ] || m_preventKeys[ event.keyCode ] ) {
 		event.preventDefault();
 		event.stopPropagation();
 	}
@@ -227,39 +228,39 @@ function keydown( event ) {
 	var key, keyVal, i, temp;
 
 	// If we are collecting any inputs
-	if( inputs.length > 0 ) {
+	if( m_inputs.length > 0 ) {
 		collectInput( event );
 		return;
 	}
 
 	// Lookup the key
-	key = keyLookup[ event.key + "_" + event.location ];
+	key = m_keyLookup[ event.key + "_" + event.location ];
 	keyVal = {
 		"key": event.key,
 		"location": event.location,
 		"code": key,
 		"keyCode": event.keyCode
 	};
-	keys[ key ] = keyVal;
-	keyCodes[ event.keyCode ] = keyVal;
+	m_keys[ key ] = keyVal;
+	m_keyCodes[ event.keyCode ] = keyVal;
 
 	// Prevent default behavior
-	if( preventKeys[ key ] || preventKeys[ event.keyCode ] ) {
+	if( m_preventKeys[ key ] || m_preventKeys[ event.keyCode ] ) {
 		event.preventDefault();
 		event.stopPropagation();
 	}
 
 	// trigger on key events
-	if( onKeyEventListeners[ key ] ) {
-		temp = onKeyEventListeners[ key ].slice();
+	if( m_onKeyEventListeners[ key ] ) {
+		temp = m_onKeyEventListeners[ key ].slice();
 		for( i = 0; i < temp.length; i++ ) {
 			temp[ i ]( keyVal );
 		}
 	}
 
 	// trigger any key events
-	if( anyKeyEventListeners.length > 0 ) {
-		temp = anyKeyEventListeners.slice();
+	if( m_anyKeyEventListeners.length > 0 ) {
+		temp = m_anyKeyEventListeners.slice();
 		for( i = 0; i < temp.length; i++ ) {
 			temp[ i ]( keyVal );
 		}
@@ -270,11 +271,11 @@ function keydown( event ) {
 window.addEventListener( "blur", clearKeys );
 function clearKeys() {
 	var i;
-	for( i in keys ) {
-		keys[ i ] = 0;
+	for( i in m_keys ) {
+		m_keys[ i ] = 0;
 	}
-	for( i in keyCodes ) {
-		keyCodes[ i ] = 0;
+	for( i in m_keyCodes ) {
+		m_keyCodes[ i ] = 0;
 	}
 }
 
@@ -287,9 +288,9 @@ function inkey( args ) {
 
 	// If the key is a number then lookup using keyCodes instead
 	if( ! isNaN( key ) ) {
-		keys2 = keyCodes;
+		keys2 = m_keyCodes;
 	} else {
-		keys2 = keys;
+		keys2 = m_keys;
 	}
 
 	// If the key is provided then return the key status
@@ -299,9 +300,9 @@ function inkey( args ) {
 
 	// If no key is provided then return all keys pressed status
 	keysReturn = {};
-	for( i in keys ) {
-		if( keys[ i ] ) {
-			keysReturn[ i ] = keys[ i ];
+	for( i in m_keys ) {
+		if( m_keys[ i ] ) {
+			keysReturn[ i ] = m_keys[ i ];
 		}
 	}
 	return keysReturn;
@@ -316,14 +317,17 @@ function onkey( args ) {
 	fn = args[ 1 ];
 	once = args[ 2 ];
 
-	// Prevent key from being triggered in case onkey is called in a keydown event
+	// Prevent key from being triggered in case onkey is called in a
+	// keydown event
 	setTimeout( function () {
 		var tempFn;
 
 		// Validate parameters
 		if( ! isNaN( key ) && typeof key !== "string" ) {
-			console.error( "onkey: key needs to be either an interger keyCode or " +
-				"a string key name." );
+			console.error(
+				"onkey: key needs to be either an interger keyCode or " +
+				"a string key name."
+			);
 			return;
 		}
 		if( ! qbs.util.isFunction( fn ) ) {
@@ -350,12 +354,12 @@ function onkey( args ) {
 
 		// Check for the infamous "any" key
 		if( typeof key === "string" && key.toLowerCase() === "any" ) {
-			anyKeyEventListeners.push( fn );
+			m_anyKeyEventListeners.push( fn );
 		} else {
-			if( ! onKeyEventListeners[ key ] ) {
-				onKeyEventListeners[ key ] = [];
+			if( ! m_onKeyEventListeners[ key ] ) {
+				m_onKeyEventListeners[ key ] = [];
 			}
-			onKeyEventListeners[ key ].push( fn );
+			m_onKeyEventListeners[ key ].push( fn );
 		}
 	}, 1 );
 }
@@ -363,20 +367,24 @@ function onkey( args ) {
 // Removes an event trigger for a keypress
 qbs._.addCommand( "offkey", offkey, false, false, [ "key", "fn" ] );
 function offkey( args ) {
-	var key, fn, isClear, i;
+	var key, fn, isClear, i, eventListeners;
 
 	key = args[ 0 ];
 	fn = args[ 1 ];
 
 	// Validate parameters
 	if( ! isNaN( key ) && typeof key !== "string" ) {
-		console.error( "offkey: key needs to be either an interger keyCode or a " +
-			"string." );
+		console.error(
+			"offkey: key needs to be either an interger keyCode or a " +
+			"string."
+		);
 		return;
 	}
 	if( ! qbs.util.isFunction( fn ) && fn !== undefined ) {
-		console.error( "offkey: fn is not a valid function.  Leave this undefined" +
-			" or set it to a function." );
+		console.error(
+			"offkey: fn is not a valid function.  Leave this undefined" +
+			" or set it to a function."
+		);
 		return;
 	}
 
@@ -387,22 +395,23 @@ function offkey( args ) {
 
 	if( typeof key === "string" && key.toLowerCase() === "any" ) {
 		if( isClear ) {
-			anyKeyEventListeners = [];
+			m_anyKeyEventListeners = [];
 		} else {
-			for( i = anyKeyEventListeners.length - 1; i >= 0; i-- ) {
-				if( anyKeyEventListeners[ i ] === fn ) {
-					anyKeyEventListeners.splice( i, 1 );
+			for( i = m_anyKeyEventListeners.length - 1; i >= 0; i-- ) {
+				if( m_anyKeyEventListeners[ i ] === fn ) {
+					m_anyKeyEventListeners.splice( i, 1 );
 				}
 			}
 		}
 	} else {
-		if( onKeyEventListeners[ key ] ) {
+		if( m_onKeyEventListeners[ key ] ) {
+			eventListeners = m_onKeyEventListeners[ key ];
 			if( isClear ) {
-				onKeyEventListeners[ key ] = [];
+				m_onKeyEventListeners[ key ] = [];
 			} else {
-				for( i = onKeyEventListeners[ key ].length - 1; i >= 0; i-- ) {
-					if( onKeyEventListeners[ key ][ i ] === fn ) {
-						onKeyEventListeners[ key ].splice( i, 1 );
+				for( i = eventListeners.length - 1; i >= 0; i-- ) {
+					if( eventListeners[ i ] === fn ) {
+						eventListeners.splice( i, 1 );
 					}
 				}
 			}
@@ -419,9 +428,13 @@ function setActionKey( args ) {
 	var key, isEnabled;
 
 	key = args[ 0 ];
-	isEnabled = !!( args[ 1 ] );
+	if( args[ 1 ] == null ) {
+		isEnabled = true;
+	} else {
+		isEnabled = !!( args[ 1 ] );
+	}
 
-	if( typeof key !== "string" && qbs.util.isInteger( key ) ) {
+	if( ! ( typeof key === "string" || qbs.util.isInteger( key ) ) ) {
 		console.error(
 			"setActionKey: key must be a string or integer"
 		);
@@ -429,9 +442,9 @@ function setActionKey( args ) {
 	}
 
 	if( isEnabled ) {
-		preventKeys[ key ] = true;
+		m_preventKeys[ key ] = true;
 	} else {
-		delete preventKeys[ key ];
+		delete m_preventKeys[ key ];
 	}
 }
 
@@ -440,63 +453,63 @@ function showPrompt( screenData, hideCursor ) {
 	var msg, pos, dt, posPx, width, height, input;
 
 	// If we are collecting any inputs
-	if( inputs.length > 0 && inputIndex < inputs.length ) {
-		input = inputs[ inputIndex ];
+	if( m_inputs.length > 0 && m_inputIndex < m_inputs.length ) {
+		input = m_inputs[ m_inputIndex ];
 		msg = input.prompt + input.val;
 
 		// Blink cursor every half second
-		dt = ( new Date() ).getTime() - t;
+		dt = ( new Date() ).getTime() - m_t;
 		if( dt > 500 ) {
-			blink = ! blink;
-			t = ( new Date() ).getTime();
+			m_blink = ! m_blink;
+			m_t = ( new Date() ).getTime();
 		}
 
-		if( blink && ! hideCursor ) {
+		if( m_blink && ! hideCursor ) {
 			msg += String.fromCharCode( screenData.printCursor.prompt );
 		}
 
 		// Get the background pixels
-		posPx = qbData.commands.getPosPx( input.screenData );
+		posPx = m_qbData.commands.getPosPx( input.screenData );
 		width = ( msg.length + 1 ) * screenData.printCursor.font.width;
 		height = screenData.printCursor.font.height;
 
 		// If there is no background
-		if( ! promptBackground ) {
-			promptBackground = qbData.commands.get( input.screenData,
+		if( ! m_promptBackground ) {
+			m_promptBackground = m_qbData.commands.get( input.screenData,
 				[ posPx.x, posPx.y, posPx.x + width, posPx.y + height ]
 			);
-		} else if( promptBackgroundWidth < width ) {
+		} else if( m_promptBackgroundWidth < width ) {
 			// We have a background but we need a bigger background
-			qbData.commands.put( input.screenData,
-				[ promptBackground, posPx.x, posPx.y, true ]
+			m_qbData.commands.put( input.screenData,
+				[ m_promptBackground, posPx.x, posPx.y, true ]
 			);
-			promptBackground = qbData.commands.get( input.screenData,
+			m_promptBackground = m_qbData.commands.get( input.screenData,
 				[ posPx.x, posPx.y, posPx.x + width, posPx.y + height ]
 			);
 		} else {
 			// Else redraw the background
-			qbData.commands.put( input.screenData,
-				[ promptBackground, posPx.x, posPx.y, true ]
+			m_qbData.commands.put( input.screenData,
+				[ m_promptBackground, posPx.x, posPx.y, true ]
 			);
 		}
 
 		// Store the background width for later use
-		promptBackgroundWidth = width;
+		m_promptBackgroundWidth = width;
 
 		// Print the prompt
-		pos = qbData.commands.getPos( input.screenData );
-		qbData.commands.print( input.screenData, [ msg, true ] );
-		qbData.commands.setPos( input.screenData, [ pos.col, pos.row ] );
-		qbData.commands.render( input.screenData );
+		pos = m_qbData.commands.getPos( input.screenData );
+		m_qbData.commands.print( input.screenData, [ msg, true ] );
+		m_qbData.commands.setPos( input.screenData, [ pos.col, pos.row ] );
+		m_qbData.commands.render( input.screenData );
 
 		// if( input.showKeyboard ) {
 		// 	showKeyboard( input );
 		// }
 	} else {
 		// There are no inputs then stop the interval and clear prompt data
-		clearInterval( promptInterval );
-		promptBackground = null;
-		promptBackgroundWidth = 0;
+		clearInterval( m_promptInterval );
+		m_promptBackground = null;
+		m_promptBackgroundWidth = 0;
 	}
 }
 
@@ -558,7 +571,7 @@ function input( screenData, args ) {
 
 	// If no name is provided then lets create one
 	if( ! name ) {
-		name = "input_" + inputs.length;
+		name = "input_" + m_inputs.length;
 	}
 	if( isNaN( Number( min ) ) ) {
 		min = null;
@@ -570,7 +583,7 @@ function input( screenData, args ) {
 	} else {
 		max = Number( max );
 	}
-	inputs.push( {
+	m_inputs.push( {
 		"prompt": prompt,
 		"name": name,
 		"isNumber": isNumber,
@@ -582,8 +595,8 @@ function input( screenData, args ) {
 		"screenData": screenData,
 		"showKeyboard": showKeyboard
 	} );
-	t = ( new Date() ).getTime();
-	promptInterval = setInterval( function() {
+	m_t = ( new Date() ).getTime();
+	m_promptInterval = setInterval( function() {
 		showPrompt( screenData );
 	}, 100 );
 }
@@ -592,15 +605,15 @@ function collectInput( event ) {
 	var input, removeLastChar;
 
 	removeLastChar = false;
-	input = inputs[ inputIndex ];
+	input = m_inputs[ m_inputIndex ];
 	if( event.keyCode === 13 ) {
 
 		// The enter key was pressed
 		showPrompt( input.screenData, true );
-		qbData.commands.print( input.screenData, [ "" ] );
+		m_qbData.commands.print( input.screenData, [ "" ] );
 		triggerReady( input );
-		inputIndex += 1;
-		if( inputIndex >= inputs.length ) {
+		m_inputIndex += 1;
+		if( m_inputIndex >= m_inputs.length ) {
 			closeInputs();
 		}
 	} else if( event.keyCode === 8 ) {
@@ -663,20 +676,21 @@ function closeInputs() {
 	data = {};
 
 	// Loop through all inputs and process the values
-	for( i = 0; i < inputs.length; i++ ) {
-		input = inputs[ i ];
+	for( i = 0; i < m_inputs.length; i++ ) {
+		input = m_inputs[ i ];
 		processInput( input );
 		data[ input.name ] = input.val;
 	}
 
-	inputs = [];
-	inputIndex = 0;
+	m_inputs = [];
+	m_inputIndex = 0;
 
 	// Make a copy of the input ready list for triggering ready functions
-	temp = inputReadyList.slice();
+	temp = m_inputReadyList.slice();
 
-	// Reset the input ready list in case new inputs are created while triggering ready functions
-	inputReadyList = [];
+	// Reset the input ready list in case new inputs are created while
+	// triggering ready functions
+	m_inputReadyList = [];
 	for( i = 0; i < temp.length; i++ ) {
 		temp[ i ]( data );
 	}
@@ -690,7 +704,7 @@ function inputReady( args ) {
 	fn = args[ 0 ];
 
 	if( qbs.util.isFunction( fn ) ) {
-		inputReadyList.push( fn );
+		m_inputReadyList.push( fn );
 	}
 }
 

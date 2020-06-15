@@ -7,9 +7,9 @@
 
 "use strict";
 
-var qbData;
+var m_qbData;
 
-qbData = qbs._.data;
+m_qbData = qbs._.data;
 
 qbs._.addCommand( "startTouch", startTouch, false, true, [] );
 function startTouch( screenData ) {
@@ -29,29 +29,29 @@ function stopTouch( screenData ) {
 
 function touchStart( e ) {
 	var screenData;
-	screenData = qbData.screens[ e.target.dataset.screenId ];
+	screenData = m_qbData.screens[ e.target.dataset.screenId ];
 
 	updateTouch( screenData, e );
-	qbData.commands.triggerEventListeners( "start", intouch( screenData ),
+	m_qbData.commands.triggerEventListeners( "start", intouch( screenData ),
 		screenData.onTouchEventListeners
 	);
 }
 
 function touchMove( e ) {
 	var screenData;
-	screenData = qbData.screens[ e.target.dataset.screenId ];
+	screenData = m_qbData.screens[ e.target.dataset.screenId ];
 
 	updateTouch( screenData, e );
-	qbData.commands.triggerEventListeners( "move", intouch( screenData ),
+	m_qbData.commands.triggerEventListeners( "move", intouch( screenData ),
 		screenData.onTouchEventListeners );
 }
 
 function touchEnd( e ) {
 	var screenData;
-	screenData = qbData.screens[ e.target.dataset.screenId ];
+	screenData = m_qbData.screens[ e.target.dataset.screenId ];
 
 	updateTouch( screenData, e );
-	qbData.commands.triggerEventListeners( "end", intouch( screenData ),
+	m_qbData.commands.triggerEventListeners( "end", intouch( screenData ),
 		screenData.onTouchEventListeners );
 }
 
@@ -118,7 +118,7 @@ function ontouch( screenData, args ) {
 	once = args[ 2 ];
 	hitBox = args[ 3 ];
 
-	qbData.commands.onevent( mode, fn, once, hitBox, [ "start", "end", "move" ],
+	m_qbData.commands.onevent( mode, fn, once, hitBox, [ "start", "end", "move" ],
 		"ontouch", screenData.onTouchEventListeners
 	);
 }
@@ -131,7 +131,7 @@ function offtouch( screenData, args ) {
 	mode = args[ 0 ];
 	fn = args[ 1 ];
 
-	qbData.commands.offevent( mode, fn, [ "start", "end", "move" ], "offtouch",
+	m_qbData.commands.offevent( mode, fn, [ "start", "end", "move" ], "offtouch",
 		screenData.onTouchEventListeners
 	);
 }

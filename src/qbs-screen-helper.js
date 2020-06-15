@@ -6,9 +6,9 @@
 ( function () {
 "use strict";
 
-var qbData;
+var m_qbData;
 
-qbData = qbs._.data;
+m_qbData = qbs._.data;
 
 qbs._.addCommand( "getImageData", getImageData, true, false );
 function getImageData( screenData ) {
@@ -62,7 +62,7 @@ function setPixelSafe( screenData, x, y, c ) {
 		return;
 	}
 
-	qbData.commands.getImageData( screenData );
+	m_qbData.commands.getImageData( screenData );
 
 	// Get the image data
 	data = screenData.imageData.data;
@@ -77,7 +77,7 @@ function setPixelSafe( screenData, x, y, c ) {
 	data[ i + 2 ] = c.b;
 	data[ i + 3 ] = c.a;
 
-	qbData.commands.setImageDirty( screenData );
+	m_qbData.commands.setImageDirty( screenData );
 }
 
 qbs._.addCommand( "getPixelColor", getPixelColor, true, false );
@@ -130,7 +130,7 @@ function drawSquarePen( screenData, x, y, c ) {
 	// Draw the square
 	for( y2 = 0; y2 < size; y2++ ) {
 		for( x2 = 0; x2 < size; x2++ ) {
-			qbData.commands.setPixelSafe(
+			m_qbData.commands.setPixelSafe(
 				screenData,
 				x2 + x - offset,
 				y2 + y - offset,
@@ -139,7 +139,7 @@ function drawSquarePen( screenData, x, y, c ) {
 		}
 	}
 
-	qbData.commands.setImageDirty( screenData );
+	m_qbData.commands.setImageDirty( screenData );
 }
 
 qbs._.addCommand( "drawCirclePen", drawCirclePen, true, false );
@@ -149,12 +149,12 @@ function drawCirclePen( screenData, x, y, c ) {
 
 	// Special case for pen size 2
 	if( screenData.pen.size === 2 ) {
-		qbData.commands.setPixelSafe( screenData, x, y, c );
-		qbData.commands.setPixelSafe( screenData, x + 1, y, c );
-		qbData.commands.setPixelSafe( screenData, x - 1, y, c );
-		qbData.commands.setPixelSafe( screenData, x, y + 1, c );
-		qbData.commands.setPixelSafe( screenData, x, y - 1, c );
-		qbData.commands.setImageDirty( screenData );
+		m_qbData.commands.setPixelSafe( screenData, x, y, c );
+		m_qbData.commands.setPixelSafe( screenData, x + 1, y, c );
+		m_qbData.commands.setPixelSafe( screenData, x - 1, y, c );
+		m_qbData.commands.setPixelSafe( screenData, x, y + 1, c );
+		m_qbData.commands.setPixelSafe( screenData, x, y - 1, c );
+		m_qbData.commands.setImageDirty( screenData );
 		return;
 	}
 
@@ -180,12 +180,12 @@ function drawCirclePen( screenData, x, y, c ) {
 
 			// Only draw the pixel if it is inside the circle
 			if( r < half ) {
-				qbData.commands.setPixelSafe( screenData, x3 + x, y3 + y, c );
+				m_qbData.commands.setPixelSafe( screenData, x3 + x, y3 + y, c );
 			}
 		}
 	}
 
-	qbData.commands.setImageDirty( screenData );
+	m_qbData.commands.setImageDirty( screenData );
 }
 
 qbs._.addCommand( "getPixel", getPixel, true, false );
@@ -209,7 +209,7 @@ function getPixel( screenData, x, y ) {
 qbs._.addCommand( "getPixelSafe", getPixelSafe, true, false );
 function getPixelSafe( screenData, x, y ) {
 
-	qbData.commands.getImageData( screenData );
+	m_qbData.commands.getImageData( screenData );
 
 	return getPixel( screenData, x, y );
 }
@@ -240,7 +240,7 @@ function findColorValue( screenData, colorInput, commandName ) {
 }
 
 // Set the default pen draw function
-qbData.defaultPenDraw = setPixelSafe;
+m_qbData.defaultPenDraw = setPixelSafe;
 
 // End of File Encapsulation
 } )();

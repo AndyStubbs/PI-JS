@@ -7,21 +7,21 @@
 
 "use strict";
 
-var g_qbData, g_Controllers, g_ControllerArr, g_Events, g_GamepadLoopId,
-		g_Modes, g_IsLooping, g_LoopInterval, g_axesSensitivity;
+var m_qbData, m_controllers, m_controllerArr, m_events, m_gamepadLoopId,
+	m_Modes, m_isLooping, m_loopInterval, m_axesSensitivity;
 
-g_qbData = qbs._.data;
+m_qbData = qbs._.data;
 
 // Object to track all controller data
-g_Controllers = {};
+m_controllers = {};
 
 // An array to return to user of all the controllers
 // This is used instead of the object because an array is easier to loop
-g_ControllerArr = [];
+m_controllerArr = [];
 
 // The event listener object
-g_Events = {};
-g_Modes = [
+m_events = {};
+m_Modes = [
 	"connect",
 	"disconnect",
 	"axis",
@@ -30,38 +30,40 @@ g_Modes = [
 	"pressReleased",
 	"touchReleased"
 ];
-g_IsLooping = false;
-g_LoopInterval = 8;
-g_axesSensitivity = 0.01;
+m_isLooping = false;
+m_loopInterval = 8;
+m_axesSensitivity = 0.01;
 
 window.addEventListener( "gamepadconnected", gamepadConnected );
 window.addEventListener( "gamepaddisconnected", gamepadDisconnected );
 
 function gamepadConnected( e ) {
-	g_Controllers[ e.gamepad.index ] = e.gamepad;
-	e.gamepad.controllerIndex = g_ControllerArr.length;
-	g_ControllerArr.push( e.gamepad );
+	m_controllers[ e.gamepad.index ] = e.gamepad;
+	e.gamepad.controllerIndex = m_controllerArr.length;
+	m_controllerArr.push( e.gamepad );
 }
 
 function gamepadDisconnected( e ) {
-	g_ControllerArr.splice( g_Controllers[ e.gamepad.index ].controllerIndex, 1 );
-	delete g_Controllers[ e.gamepad.index ];
+	m_controllerArr.splice(
+		m_controllers[ e.gamepad.index ].controllerIndex, 1
+	);
+	delete m_controllers[ e.gamepad.index ];
 }
 
 qbs._.addCommand( "stopGamepads", stopGamepads, false, false, [] );
 function stopGamepads() {
-	g_Events = {};
-	g_Controllers = {};
-	g_ControllerArr = [];
-	cancelAnimationFrame( g_GamepadLoopId );
+	m_events = {};
+	m_controllers = {};
+	m_controllerArr = [];
+	cancelAnimationFrame( m_gamepadLoopId );
 }
 
 qbs._.addCommand( "ingamepads", ingamepads, false, false, [ "gamePad" ] );
 function ingamepads( args ) {
-	if( g_Controllers ) {
+	if( m_controllers ) {
 		updateControllers();
 	}
-	return g_ControllerArr;
+	return m_controllerArr;
 }
 
 qbs._.addCommand( "ongamepad", ongamepad, false, false,
@@ -82,12 +84,12 @@ function ongamepad( args ) {
 	extraData.mode = mode;
 
 	// Add the event listener
-	g_qbData.commands.onevent( mode, fn, once, false, g_Modes, "ongamepad",
-		g_Events, extraData.extraId, extraData );
+	m_qbData.commands.onevent( mode, fn, once, false, m_Modes, "ongamepad",
+		m_events, extraData.extraId, extraData );
 
 	// Start the loop if it isn't already started
-	if( ! g_IsLooping ) {
-		g_GamepadLoopId = requestAnimationFrame( gamepadLoop );
+	if( ! m_isLooping ) {
+		m_gamepadLoopId = requestAnimationFrame( gamepadLoop );
 	}
 
 }
@@ -108,7 +110,7 @@ function offgamepad( args ) {
 	}
 
 	// Remove the event listener
-	g_qbData.commands.offevent( mode, fn, g_Modes, "offgamepad", g_Events,
+	m_qbData.commands.offevent( mode, fn, m_Modes, "offgamepad", m_events,
 		extraData.extraId );
 }
 
@@ -133,7 +135,9 @@ function getExtraData( name, items, gamepadIndex, mode ) {
 		items = [ items ];
 	} else {
 		if( typeof items === "string" && items.toLowerCase() === "any" ) {
-			items = [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 ];
+			items = [
+				0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16
+			];
 		} else if( ! isNaN( parseInt( items ) ) && items >= 0 ) {
 			items = [ items ];
 		}
@@ -144,7 +148,9 @@ function getExtraData( name, items, gamepadIndex, mode ) {
 		for( i = 0; i < items.length; i++ ) {
 			items[ i ] = parseInt( items[ i ] );
 			if( isNaN( items[ i ] ) || items[ i ] < 0 ) {
-				console.error( name + ": items contains an invalid button index." );
+				console.error(
+					name + ": items contains an invalid button index."
+				);
 				return;
 			}
 			items.sort( function ( a, b ) { return a - b; } );
@@ -161,24 +167,24 @@ function getExtraData( name, items, gamepadIndex, mode ) {
 }
 
 function gamepadLoop() {
-	g_IsLooping = true;
+	m_isLooping = true;
 
-	if( ! g_Controllers ) {
+	if( ! m_controllers ) {
 		return;
 	}
 
 	updateControllers();
 	triggerEvents();
 
-	g_GamepadLoopId = requestAnimationFrame( gamepadLoop );
+	m_gamepadLoopId = requestAnimationFrame( gamepadLoop );
 }
 
 function triggerEvents() {
 	var eventName, temp, gamepadIndex, items, mode, event, i;
 
 	// Loop through all the events
-	for( eventName in g_Events ) {
-		temp = g_Events[ eventName ].slice();
+	for( eventName in m_events ) {
+		temp = m_events[ eventName ].slice();
 		for( i = 0; i < temp.length; i++ ) {
 
 			event = temp[ i ];
@@ -192,7 +198,7 @@ function triggerEvents() {
 			gamepadIndex = event.extraData.gamepadIndex;
 
 			// Make sure gamepad exists
-			if( gamepadIndex >= g_ControllerArr.length ) {
+			if( gamepadIndex >= m_controllerArr.length ) {
 				continue;
 			}
 
@@ -212,15 +218,17 @@ function triggerAxes( gamepadIndex, axis, eventName ) {
 	var axes;
 
 	// Get reference to the axes in the gamepad
-	axes = g_ControllerArr[ gamepadIndex ].axes;
+	axes = m_controllerArr[ gamepadIndex ].axes;
 
 	if( axes.length > axis ) {
 		if(
-			axes[ axis ] > g_axesSensitivity ||
-			axes[ axis ] < -g_axesSensitivity
-			) {
-				g_qbData.commands.triggerEventListeners( eventName, axes[ axis ],
-					g_Events );
+			axes[ axis ] > m_axesSensitivity ||
+			axes[ axis ] < -m_axesSensitivity
+		) {
+			m_qbData.commands.triggerEventListeners(
+				eventName, axes[ axis ],
+				m_events
+			);
 		}
 	}
 
@@ -230,7 +238,7 @@ function triggerButtons( gamepadIndex, items, mode, eventName ) {
 	var buttons, i, button;
 
 	// Get reference to the buttons in the gamepad
-	buttons = g_ControllerArr[ gamepadIndex ].buttons;
+	buttons = m_controllerArr[ gamepadIndex ].buttons;
 
 	// Loop through all the mapped buttons
 	for( i = 0; i < items.length; i++ ) {
@@ -241,16 +249,24 @@ function triggerButtons( gamepadIndex, items, mode, eventName ) {
 		if( button ) {
 			button.index = items[ i ];
 			if( button.pressed && mode === "pressed" ) {
-				g_qbData.commands.triggerEventListeners( eventName, button, g_Events );
+				m_qbData.commands.triggerEventListeners(
+					eventName, button, m_events
+				);
 				break;
 			} else if( button.touched && mode === "touched" ) {
-				g_qbData.commands.triggerEventListeners( eventName, button, g_Events );
+				m_qbData.commands.triggerEventListeners(
+					eventName, button, m_events
+				);
 				break;
 			} else if( button.pressReleased && mode === "pressReleased" ) {
-				g_qbData.commands.triggerEventListeners( eventName, button, g_Events );
+				m_qbData.commands.triggerEventListeners(
+					eventName, button, m_events
+				);
 				break;
 			} else if( button.touchReleased && mode === "touchReleased" ) {
-				g_qbData.commands.triggerEventListeners( eventName, button, g_Events );
+				m_qbData.commands.triggerEventListeners(
+					eventName, button, m_events
+				);
 				break;
 			}
 		}
@@ -258,7 +274,7 @@ function triggerButtons( gamepadIndex, items, mode, eventName ) {
 }
 
 function updateControllers() {
-	var i, j, gamepads, controllerIndex, buttons, button1, button2;
+	var i, j, gamepads, controllerIndex, controller, buttons, button1, button2;
 
 	if( "getGamepads" in navigator ) {
 		gamepads = navigator.getGamepads();
@@ -269,14 +285,16 @@ function updateControllers() {
 	}
 
 	for( i = 0; i < gamepads.length; i++ ) {
-		if( gamepads[ i ] && gamepads[ i ].index in g_Controllers ) {
+		if( gamepads[ i ] && gamepads[ i ].index in m_controllers ) {
+
+			controller = m_controllers[ gamepads[ i ].index ];
 
 			// Get the index of the controller in the controller array
-			controllerIndex = g_Controllers[ gamepads[ i ].index ].controllerIndex;
+			controllerIndex = controller.controllerIndex;
 			gamepads[ i ].controllerIndex = controllerIndex;
 
 			// Update pressReleased and touchReleased for all buttons
-			buttons = g_Controllers[ gamepads[ i ].index ].buttons;
+			buttons = controller.buttons;
 			for( j = 0; j < buttons.length; j++ ) {
 				button1 = buttons[ j ];
 				button2 = gamepads[ i ].buttons[ j ];
@@ -293,10 +311,10 @@ function updateControllers() {
 			}
 
 			// Update the controller object
-			g_Controllers[ gamepads[ i ].index ] = gamepads[ i ];
+			m_controllers[ gamepads[ i ].index ] = gamepads[ i ];
 
 			// Update the controller array
-			g_ControllerArr[ controllerIndex ] = gamepads[ i ];
+			m_controllerArr[ controllerIndex ] = gamepads[ i ];
 		}
 	}
 }

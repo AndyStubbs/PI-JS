@@ -7,10 +7,10 @@
 
 "use strict";
 
-var qbData, maxDifference, setPixel, pixels;
+var m_qbData, m_maxDifference, m_setPixel, m_pixels;
 
-qbData = qbs._.data;
-maxDifference = 195075;		// 255^2 * 3
+m_qbData = qbs._.data;
+m_maxDifference = 195075;		// 255^2 * 3
 
 // Paint Command
 qbs._.addCommand( "paint", paint, false, true,
@@ -41,9 +41,9 @@ function paint( screenData, args ) {
 
 	// Soften the tolerance so closer to one it changes less
 	// closer to 0 changes more
-	tolerance = tolerance * ( 2 - tolerance ) * maxDifference;
+	tolerance = tolerance * ( 2 - tolerance ) * m_maxDifference;
 
-	if( navigator.brave && tolerance === maxDifference ) {
+	if( navigator.brave && tolerance === m_maxDifference ) {
 		tolerance -= 1;
 	}
 
@@ -54,9 +54,9 @@ function paint( screenData, args ) {
 
 	// Change the setPixel command if adding noise
 	if( screenData.pen.noise ) {
-		setPixel = setPixelNoise;
+		m_setPixel = setPixelNoise;
 	} else {
-		setPixel = qbData.commands.setPixel;
+		m_setPixel = m_qbData.commands.setPixel;
 	}
 
 	if( qbs.util.isInteger( fillColor ) ) {
@@ -75,11 +75,11 @@ function paint( screenData, args ) {
 		}
 	}
 
-	pixels = {};
-	qbData.commands.getImageData( screenData );
+	m_pixels = {};
+	m_qbData.commands.getImageData( screenData );
 
 	// Get the background color
-	backgroundColor = qbData.commands.getPixel( screenData, x, y );
+	backgroundColor = m_qbData.commands.getPixel( screenData, x, y );
 
 	// Loop until no fills left
 	while( fills.length > 0 ) {
@@ -87,7 +87,7 @@ function paint( screenData, args ) {
 		pixel = fills.pop();
 
 		// Set the current pixel
-		setPixel( screenData, pixel.x, pixel.y, fillColor );
+		m_setPixel( screenData, pixel.x, pixel.y, fillColor );
 
 		// Add fills to neighbors
 		addFill( screenData, pixel.x + 1, pixel.y, fills, fillColor,
@@ -101,22 +101,22 @@ function paint( screenData, args ) {
 	}
 
 	// Setup pixels for garbage collection
-	pixels = null;
-	qbData.commands.setImageDirty( screenData );
+	m_pixels = null;
+	m_qbData.commands.setImageDirty( screenData );
 }
 
 function setPixelNoise( screenData, x, y, fillColor ) {
-	fillColor = qbData.commands.getPixelColor( screenData, fillColor );
-	qbData.commands.setPixel( screenData, x, y, fillColor );
+	fillColor = m_qbData.commands.getPixelColor( screenData, fillColor );
+	m_qbData.commands.setPixel( screenData, x, y, fillColor );
 }
 
 function checkPixel( x, y ) {
 	var key;
 	key = x + " " + y;
-	if( pixels[ key ] ) {
+	if( m_pixels[ key ] ) {
 		return true;
 	}
-	pixels[ key ] = true;
+	m_pixels[ key ] = true;
 	return false;
 }
 
@@ -125,7 +125,7 @@ function addFill( screenData, x, y, fills, fillColor, backgroundColor,
 ) {
 	var fill;
 	if( floodCheck( screenData, x, y, fillColor, backgroundColor, tolerance ) ) {
-		setPixel( screenData, x, y, fillColor );
+		m_setPixel( screenData, x, y, fillColor );
 		fill = { x: x, y: y };
 		fills.push( fill );
 	}
@@ -137,7 +137,7 @@ function floodCheck( screenData, x, y, fillColor, backgroundColor, tolerance ) {
 	if( x < 0 || x >= screenData.width || y < 0 || y >= screenData.height ) {
 		return false;
 	}
-	pixelColor = qbData.commands.getPixel( screenData, x, y );
+	pixelColor = m_qbData.commands.getPixel( screenData, x, y );
 
 	// Make sure we haven't already filled this pixel
 	if( ! checkPixel( x, y ) ) {
@@ -147,7 +147,7 @@ function floodCheck( screenData, x, y, fillColor, backgroundColor, tolerance ) {
 		dg = ( pixelColor.g - backgroundColor.g );
 		db = ( pixelColor.b - backgroundColor.b );
 		difference = ( dr * dr + dg * dg + db * db );
-		simularity = maxDifference - difference;
+		simularity = m_maxDifference - difference;
 
 		return simularity >= tolerance;
 	}

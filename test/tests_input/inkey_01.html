@@ -21,31 +21,31 @@
 	</head>
 <body>
 <script>
-	$.ready(function () {
-		$.screen("200x200");
-		$.disableDefaultKey(17);
-		$.disableDefaultKey("KeyS");
-		setInterval(function () {
+	$.ready( function () {
+		$.screen( "200x200" );
+		$.setActionKey( 17 );
+		$.setActionKey( "KeyS" );
+		setInterval( function () {
 			var keys, key;
 			keys = $.inkey();
 			$.cls();
-			$.print("Press any key");
-			key = $.inkey(17);
-			if(key) {
-				$.print("Control key is pressed.");
+			$.print( "Press any key" );
+			key = $.inkey( 17 );
+			if( key ) {
+				$.print( "Control key is pressed." );
 			} else {
-				$.print("Control key is not pressed.");
+				$.print( "Control key is not pressed." );
 			}
-			for(key in keys) {
-				$.print("--------------------------");
-				$.print("key:      " + keys[key].key);
-				$.print("location: " + keys[key].location);
-				$.print("code:     " + keys[key].code);
-				$.print("keyCode:  " + keys[key].keyCode);
+			for( key in keys ) {
+				$.print( "--------------------------" );
+				$.print( "key:      " + keys[ key ].key );
+				$.print( "location: " + keys[ key ].location );
+				$.print( "code:     " + keys[ key ].code );
+				$.print( "keyCode:  " + keys[ key ].keyCode );
 			}
 			$.render();
-		}, 60);
-	});
+		}, 60 );
+	} );
 </script>
 </body>
 </html>

@@ -7,9 +7,9 @@
 
 "use strict";
 
-var qbData;
+var m_qbData;
 
-qbData = qbs._.data;
+m_qbData = qbs._.data;
 
 qbs._.addCommand( "draw", draw, false, true, [ "drawString" ] );
 function draw( screenData, args ) {
