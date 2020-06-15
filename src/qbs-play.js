@@ -147,16 +147,15 @@
 		tracksStrings = playString.split( "," );
 		trackIds = [];
 
-		// Regular expression for the draw commands
+		// Regular expression for the play command string
 		regString = "" + 
 			"(?=WS|WQ|WW|WT|W\\d[\\d]?|V\\d|Q\\d|O\\d|\\<|\\>|N\\d\\d?|" +
 			"L\\d\\d?|MS|MN|ML|MU\\d|MU\\-\\d|MK\\d[\\d]?[\\d]?|" +
 			"MZ\\d[\\d]?[\\d]?|MX\\d[\\d]?[\\d]?|MY\\d[\\d]?[\\d]?|" +
-			"MW\\d[\\d]?[\\d]?|P[\\d]?|T\\d|" + 
+			"MW|P[\\d]?|T\\d|" + 
 			"[[A|B|C|D|E|F|G][\\d]?[\\+|\\-|\\#|\\.\\.?]?)";
 		reg = new RegExp( regString );
 
-		//reg = /(?=WS|WQ|WW|WT|W\d[\d]?|V\d|Q\d|O\d|\<|\>|N\d\d?|L\d\d?|MS|MN|ML|MU\d|MU\-\d|MK\d[\d]?[\d]?|MZ\d[\d]?[\d]?|MX\d[\d]?[\d]?|MY\d[\d]?[\d]?|MW\d[\d]?[\d]?|P[\d]?|T\d|[[A|B|C|D|E|F|G][\d]?[\+|\-|\#|\.\.?]?)/;
 		for( i = 0; i < tracksStrings.length; i++ ) {
 
 			// Replace complex parts with small symbols
@@ -464,87 +463,40 @@
 	}
 
 	function playNote( track, frequency ) {
-		var audioContext, oscillator, envelope, duration, decayTime, volume,
-			waveTables, wave, real, imag, attackTime, sustainTime;
+		var attackTime, sustainTime, decayTime, volume, waveTables, oType,
+			stopTime;
 
 		volume = qbData.volume * track.volume;
-		audioContext = track.audioContext;
-		oscillator = audioContext.createOscillator();
-		envelope = audioContext.createGain();
-		duration = track.interval;
-
-		decayTime = track.interval * track.decayRate;
 		attackTime = track.interval * track.attackRate;
 		sustainTime = track.interval * track.sustainRate;
+		decayTime = track.interval * track.decayRate;
 
-		oscillator.frequency.value = frequency;
-		if( typeof track.type === "string" ) {
-			oscillator.type = track.type;
-		} else {
-			waveTables = track.waveTables[ track.type ];
-			if( qbs.util.isArray( waveTables ) ) {
-				real = waveTables[ 0 ];
-				imag = waveTables[ 1 ];
-				wave = audioContext.createPeriodicWave( real, imag );
-				oscillator.setPeriodicWave( wave );
-			} else {
-				oscillator.type = waveTables;
-			}
-		}
-
-		if( attackTime === 0 ) {
-			envelope.gain.value = 1 * volume;
-		} else {
-			envelope.gain.value = 0;
-		}
-
-		oscillator.connect( envelope);
-		envelope.connect( audioContext.destination );
-		// console.log( context.currentTime );
-
-		try {
-
-			// Set the attack
-			if( attackTime > 0 ) {
-				envelope.gain.setValueCurveAtTime(
-					[ 0, 1 * volume ],
-					audioContext.currentTime,
-					attackTime
-				);
-			}
-
-
-			// Set the sustain
-			if( sustainTime > 0 ) {
-				envelope.gain.setValueCurveAtTime(
-					[ 1 * volume, 0.8 * volume ],
-					audioContext.currentTime + attackTime,
-					sustainTime
-				);
-			}
-
-			// Set the decay
-			if( decayTime > 0 ) {
-				envelope.gain.setValueCurveAtTime(
-					[ 0.8 * volume, 0.1 * volume, 0 ],
-					audioContext.currentTime + sustainTime + attackTime,
-					decayTime
-				);
-			}
-		} catch( ex ) {
-			console.log( ex );
-		}
-		oscillator.start( audioContext.currentTime );
 		if(
 			track.fullNote && 
 			attackTime + sustainTime + decayTime > track.interval
 		) {
-			oscillator.stop( audioContext.currentTime + track.interval );
+			stopTime = track.interval;
 		} else {
-			oscillator.stop(
-				audioContext.currentTime + attackTime + sustainTime + decayTime
-			);
+			stopTime = attackTime + sustainTime + decayTime;
 		}
+
+		if( typeof track.type === "string" ) {
+			oType = track.type;
+			waveTables = null;
+		} else {
+			waveTables = track.waveTables[ track.type ];
+			if( qbs.util.isArray( waveTables ) ) {
+				oType = "custom";
+			} else {
+				oType = waveTables;
+				waveTables = null;
+			}
+		}
+
+		qbData.commands.createSound(
+			"play", track.audioContext, frequency, volume, attackTime,
+			sustainTime, decayTime, stopTime, oType, waveTables, 0
+		);
 	}
 
 	function getInt( val, val_default ) {

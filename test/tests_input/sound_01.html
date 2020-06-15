@@ -46,9 +46,12 @@ playButton1.onclick = function () {
 	var volume = 0.5;
 	var decay = 0.03;
 	var totalDuration = 0;
+	var i;
 	for( i = 0; i < 30; i++ ) {
-			$.sound(
-			240 + i * 8, duration, volume, decay, totalDuration, "sawtooth"
+		// "frequency", "duration", "volume", "oType", "delay", "attack", "decay"
+		$.sound(
+			240 + i * 8, duration, volume, "sawtooth", totalDuration, 0,
+			decay
 		);
 		totalDuration += duration + decay;
 	}
@@ -62,7 +65,8 @@ playButton2.onclick = function () {
 		[   0, 0.4, 0.4,   1,   1,   1, 0.3, 0.7, 0.6, 0.5, 0.9, 0.8 ],
 		[   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0 ]
 	];
-	$.sound( 440, duration, volume, decay, 0, waveTable	);
+	// "frequency", "duration", "volume", "oType", "delay", "attack", "decay"
+	$.sound( 440, duration, volume, waveTable, 0, 0, decay );
 };
 
 playButton3.onclick = function () {
@@ -76,7 +80,7 @@ playButton3.onclick = function () {
 	];
 	for( i = 0; i < 10; i++ ) {
 		$.sound(
-			240 + i * 8, duration, volume, decay, totalDuration, waveTable
+			240 + i * 8, duration, volume, waveTable, totalDuration, 0, decay
 		);
 		totalDuration += duration + decay;
 	}
