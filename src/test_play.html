@@ -58,7 +58,10 @@ MS - Each note plays 3/4 of length set by L (staccato)
 MN - Each note plays 7/8 of length set by L (normal)
 ML - Each note plays full length set by L (legato)
 MOn - Changes the octave for all subsequent notes.  Example: MO1 increases the octave by 1, so o2 becomes o3, etc.
-Mkn - Set the decay rate percentage
+MAn - Set the attack rate percentage 0 - 100%. If decay + attack + sustain is over 100% there will be overlap between notes
+MTn - Set the sustain rate percentage 0 - 100%.
+MDn - Set the decay rate percentage 0 - 100%.
+MF - Each note will play completely before plaiying the next note. If MA + MT + MD > 100 you may hear a clicking sound as the sound will be cutoff.
 Pn - Pause in the duration of n quarternotes (n can be 1 to 64) corresponding to L, Example: PLAY "P32"
 Tn - Tempo sets number of L4 quarter notes per minute (n can be 32 to 255 where 120 is the default). Example: PLAY "T180"
 .    - period after a note plays 1½ times the note length determined by L * T.
@@ -68,7 +71,8 @@ SQUARE - Sets the ocillator type to a square wave.
 SINE - Sets the ocillator type to a sine wave.
 TRIANGLE - Sets the ocillator type to a triangle wave.
 SAWTOOTH - Sets the ocillator type to a sawtooth wave.
-[[n,n],[n,n]] - Setup a custom wave table example: [[-1,0],[0,0]]
+[[n,n],[n,n]] - Setup a custom wave table example: [[0,0.8,0.2,1],[1,0,1,0]]. There must be two sets of numbers of equal length.
+	If the first set has 4 numbers the second set must also have four numbers.
 </pre>
 <div>
 	<input type="button" value="Play" id="play"></input>

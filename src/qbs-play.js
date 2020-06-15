@@ -83,8 +83,8 @@
 	qbs._.addCommand( "play", play, false, false, [ "playString" ] );
 	function play( args ) {
 	
-		var tracksStrings, playString, reg, trackParts, i, j, k, trackId, index,
-			trackIds, waveTables, start, end;
+		var tracksStrings, playString, regString, reg, trackParts, i, j, k,
+			trackId, index, trackIds, waveTables, start, end;
 	
 		playString = args[ 0 ];
 
@@ -148,15 +148,37 @@
 		trackIds = [];
 
 		// Regular expression for the draw commands
-		reg = /(?=WS|WQ|WW|WT|W\d[\d]?|V\d|Q\d|(?<!M)O\d|\<|\>|N\d\d?|L\d\d?|MS|MN|ML|MO\d|MO\-\d|MK\d[\d]?[\d]?|P[\d]?|T\d|[[A|B|C|D|E|F|G][\d]?[\+|\-|\#|\.\.?]?)/;
+		regString = "" + 
+			"(?=WS|WQ|WW|WT|W\\d[\\d]?|V\\d|Q\\d|O\\d|\\<|\\>|N\\d\\d?|" +
+			"L\\d\\d?|MS|MN|ML|MU\\d|MU\\-\\d|MK\\d[\\d]?[\\d]?|" +
+			"MZ\\d[\\d]?[\\d]?|MX\\d[\\d]?[\\d]?|MY\\d[\\d]?[\\d]?|" +
+			"MW\\d[\\d]?[\\d]?|P[\\d]?|T\\d|" + 
+			"[[A|B|C|D|E|F|G][\\d]?[\\+|\\-|\\#|\\.\\.?]?)";
+		reg = new RegExp( regString );
 
+		//reg = /(?=WS|WQ|WW|WT|W\d[\d]?|V\d|Q\d|O\d|\<|\>|N\d\d?|L\d\d?|MS|MN|ML|MU\d|MU\-\d|MK\d[\d]?[\d]?|MZ\d[\d]?[\d]?|MX\d[\d]?[\d]?|MY\d[\d]?[\d]?|MW\d[\d]?[\d]?|P[\d]?|T\d|[[A|B|C|D|E|F|G][\d]?[\+|\-|\#|\.\.?]?)/;
 		for( i = 0; i < tracksStrings.length; i++ ) {
 
 			// Replace complex parts with small symbols
-			tracksStrings[ i ] = tracksStrings[ i ].replace( /SINE/g, "WS" );
-			tracksStrings[ i ] = tracksStrings[ i ].replace( /SQUARE/g, "WQ" );
-			tracksStrings[ i ] = tracksStrings[ i ].replace( /SAWTOOTH/g, "WW" );
-			tracksStrings[ i ] = tracksStrings[ i ].replace( /TRIANGLE/g, "WT" );
+			tracksStrings[ i ] = tracksStrings[ i ].replace(
+				/SINE/g, "WS"
+			);
+			tracksStrings[ i ] = tracksStrings[ i ].replace(
+				/SQUARE/g, "WQ"
+			);
+			tracksStrings[ i ] = tracksStrings[ i ].replace(
+				/SAWTOOTH/g, "WW"
+			);
+			tracksStrings[ i ] = tracksStrings[ i ].replace(
+				/TRIANGLE/g, "WT"
+			);
+
+			// Replace symbols with conflicts
+			tracksStrings[ i ] = tracksStrings[ i ].replace( /MD/g, "MZ" );
+			tracksStrings[ i ] = tracksStrings[ i ].replace( /MA/g, "MY" );
+			tracksStrings[ i ] = tracksStrings[ i ].replace( /MT/g, "MX" );
+			tracksStrings[ i ] = tracksStrings[ i ].replace( /MF/g, "MW" );
+			tracksStrings[ i ] = tracksStrings[ i ].replace( /MO/g, "MU" );
 
 			// Replace custom wave table
 			trackParts = tracksStrings[ i ].split( reg );
@@ -165,7 +187,10 @@
 				"audioContext": new AudioContext(),
 				"notes": [],
 				"noteId": 0,
-				"decayRate": 0.25,
+				"decayRate": 0.20,
+				"attackRate": 0.15,
+				"sustainRate": 0.65,
+				"fullNote": false,
 				"extra": 1,
 				"space": "normal",
 				"interval": 0,
@@ -331,33 +356,43 @@
 				}
 				break;
 			case "M":
-				if( cmd[ 0 ].length > 1 ) {
-
-					if( cmd[ 0 ].charAt( 1 ) === "S" ) {
-
+				switch( cmd[ 0 ] ) {
+					case "MS":
 						// Staccato
 						track.pace = 0.75;
-
-					} else if( cmd[ 0 ].charAt( 1 ) === "N" ) {
-
+						break;
+					case "MN":
 						// Normal
 						track.pace = 0.875;
-
-					} else if( cmd[ 0 ].charAt( 1 ) === "L" ) {
-
+						break;
+					case "ML":
 						// Legato
 						track.pace = 1;
-
-					} else if ( cmd[ 0 ].charAt( 1 ) === "O" ) {
-
+						break;
+					case "MU":
 						// Modify Octave
 						val = getInt( cmd[ 1 ], 0 );
 						track.octaveExtra = val;
-					} else if( cmd[ 0 ].charAt( 1 ) === "K" ) {
+						break;
+					case "MY": 
+						// Modify Attack Rate
+						val = getInt( cmd[ 1 ], 25 );
+						track.attackRate = val / 100;
+						break;
+					case "MX": 
+						// Modify Sustain Rate
+						val = getInt( cmd[ 1 ], 25 );
+						track.sustainRate = val / 100;
+						break;
+					case "MZ":
 						// Modify Decay Rate
 						val = getInt( cmd[ 1 ], 25 );
 						track.decayRate = val / 100;
-					}
+						break;
+					case "MW":
+						// Play full note
+						track.fullNote = ! track.fullNote;
+						break;
 				}
 				break;
 			case "P":
@@ -429,53 +464,87 @@
 	}
 
 	function playNote( track, frequency ) {
-		var audioContext, oscillator, envelope, duration, decayRate, volume,
-			wave, real, imag;
+		var audioContext, oscillator, envelope, duration, decayTime, volume,
+			waveTables, wave, real, imag, attackTime, sustainTime;
 
 		volume = qbData.volume * track.volume;
 		audioContext = track.audioContext;
 		oscillator = audioContext.createOscillator();
 		envelope = audioContext.createGain();
 		duration = track.interval;
-		decayRate = track.interval * track.decayRate;
+
+		decayTime = track.interval * track.decayRate;
+		attackTime = track.interval * track.attackRate;
+		sustainTime = track.interval * track.sustainRate;
 
 		oscillator.frequency.value = frequency;
 		if( typeof track.type === "string" ) {
 			oscillator.type = track.type;
 		} else {
-			real = track.waveTables[ track.type ][ 0 ];
-			imag = track.waveTables[ track.type ][ 1 ];
-			wave = audioContext.createPeriodicWave( real, imag );
-			oscillator.setPeriodicWave( wave );
+			waveTables = track.waveTables[ track.type ];
+			if( qbs.util.isArray( waveTables ) ) {
+				real = waveTables[ 0 ];
+				imag = waveTables[ 1 ];
+				wave = audioContext.createPeriodicWave( real, imag );
+				oscillator.setPeriodicWave( wave );
+			} else {
+				oscillator.type = waveTables;
+			}
 		}
 
-		envelope.gain.value = 1 * volume;
+		if( attackTime === 0 ) {
+			envelope.gain.value = 1 * volume;
+		} else {
+			envelope.gain.value = 0;
+		}
+
 		oscillator.connect( envelope);
 		envelope.connect( audioContext.destination );
 		// console.log( context.currentTime );
+
 		try {
 
-			// TODO - Set the attack
+			// Set the attack
+			if( attackTime > 0 ) {
+				envelope.gain.setValueCurveAtTime(
+					[ 0, 1 * volume ],
+					audioContext.currentTime,
+					attackTime
+				);
+			}
+
 
 			// Set the sustain
-			envelope.gain.setValueCurveAtTime(
-				[ 1 * volume, 0.8 * volume ],
-				audioContext.currentTime,
-				duration
-			);
+			if( sustainTime > 0 ) {
+				envelope.gain.setValueCurveAtTime(
+					[ 1 * volume, 0.8 * volume ],
+					audioContext.currentTime + attackTime,
+					sustainTime
+				);
+			}
 
 			// Set the decay
-			envelope.gain.setValueCurveAtTime(
-				[ 0.8 * volume, 0.1 * volume, 0 ],
-				audioContext.currentTime + duration,
-				decayRate
-			);
-
+			if( decayTime > 0 ) {
+				envelope.gain.setValueCurveAtTime(
+					[ 0.8 * volume, 0.1 * volume, 0 ],
+					audioContext.currentTime + sustainTime + attackTime,
+					decayTime
+				);
+			}
 		} catch( ex ) {
 			console.log( ex );
 		}
 		oscillator.start( audioContext.currentTime );
-		oscillator.stop( audioContext.currentTime + duration + decayRate );
+		if(
+			track.fullNote && 
+			attackTime + sustainTime + decayTime > track.interval
+		) {
+			oscillator.stop( audioContext.currentTime + track.interval );
+		} else {
+			oscillator.stop(
+				audioContext.currentTime + attackTime + sustainTime + decayTime
+			);
+		}
 	}
 
 	function getInt( val, val_default ) {
