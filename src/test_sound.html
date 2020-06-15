@@ -45,14 +45,19 @@
 </head>
 <body>
 <div>
-	<input type="button" value="Play 1" id="play1"></input>
-	<input type="button" value="Play 2" id="play2"></input>
-	<input type="button" value="Play 3" id="play3"></input>
+	<input type="button" value="Play - Sound 1" id="play1"></input>
+	<input type="button" value="Play - Sound 2" id="play2"></input>
+	<input type="button" value="Play - Sound 3" id="play3"></input>
+	<input type="button" value="Play - Bonnie" id="play4"></input>
 </div>
+<pre id="msg"></pre>
+
 <script>
 var playButton1 = document.getElementById( "play1" );
 var playButton2 = document.getElementById( "play2" );
 var playButton3 = document.getElementById( "play3" );
+var playButton4 = document.getElementById( "play4" );
+var msg = document.getElementById( "msg" );
 
 playButton1.onclick = function () {
 	var duration = 0.05;
@@ -61,7 +66,6 @@ playButton1.onclick = function () {
 	var totalDuration = 0;
 	var i;
 	for( i = 0; i < 30; i++ ) {
-		// "frequency", "duration", "volume", "oType", "delay", "attack", "decay"
 		$.sound(
 			240 + i * 8, duration, volume, "sawtooth", totalDuration, 0,
 			decay
@@ -78,7 +82,6 @@ playButton2.onclick = function () {
 		[   0, 0.4, 0.4,   1,   1,   1, 0.3, 0.7, 0.6, 0.5, 0.9, 0.8 ],
 		[   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0 ]
 	];
-	// "frequency", "duration", "volume", "oType", "delay", "attack", "decay"
 	$.sound( 440, duration, volume, waveTable, 0, 0, decay );
 };
 
@@ -98,6 +101,45 @@ playButton3.onclick = function () {
 		totalDuration += duration + decay;
 	}
 };
+
+playButton4.onclick = function () {
+	var data = [
+		392, 8, "My ", 659, 8, "Bon-", 587, 8, "nie ", 523, 8, "lies ", 587, 8,
+		"o-", 523, 8, "ver ", 440, 8, "the ", 392, 8, "o-", 330, 32, "cean\n",
+		392, 8, "My ", 659, 8, "Bon-", 587, 8, "nie ", 523, 8, "lies ", 523, 8,
+		"o-", 494, 8, "ver ", 523,8, "the ", 587, 40, "sea\n", 392, 8, "My ",
+		659, 8, "Bon-", 587, 8, "nie", 523, 8, " lies ", 587, 8, "o-", 523, 8,
+		"ver ", 440, 8, "the ", 392, 8, "o-", 330, 32, "cean\n", 392, 8, "Oh ",
+		440, 8, "bring ", 587, 8, "back ", 523, 8, "my ", 494, 8, "Bon-", 440,
+		8, "nie ", 494, 8, "to ", 523, 32, "me"
+	];
+	var i;
+	var totalDuration = 0;
+	var volume = 0.25;
+	var attackRate = 0.05;
+	var decayRate = 0.4;
+	var sustainRate = 0.8;
+	msg.innerHTML = "";
+	for( i = 0; i < data.length; i += 3 ) {
+		var freq = data[ i ];
+		var duration = data[ i + 1 ] / 18;
+		var sustain = duration * sustainRate;
+		var attack = duration * attackRate;
+		var decay = duration * decayRate;
+		var word = data[ i + 2 ];
+		$.sound(
+			freq, sustain, volume, "sawtooth", totalDuration, attack, decay
+		);
+		setWord( word, totalDuration );
+		totalDuration += duration;
+	}
+};
+
+function setWord( word, delay ) {
+	setTimeout( function () {
+		msg.innerHTML += word;
+	}, delay * 1000 );
+}
 
 </script>
 </body>
