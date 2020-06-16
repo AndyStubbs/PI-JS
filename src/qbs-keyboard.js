@@ -10,7 +10,7 @@
 var m_qbData, m_keys, m_keyLookup, m_keyCodes, m_preventKeys, m_inputs,
 	m_inputIndex, m_t, m_promptInterval, m_blink, m_promptBackground,
 	m_promptBackgroundWidth, m_inputReadyList, m_onKeyEventListeners,
-	m_anyKeyEventListeners, m_keyboard;
+	m_anyKeyEventListeners, m_keyboard, m_isKeyEventsActive;
 
 m_qbData = qbs._.data;
 m_keyLookup = {
@@ -202,9 +202,20 @@ m_keyboard = {
 		"Space": "     "
 	}
 };
+m_isKeyEventsActive = false;
+
+// Set keyboard event listeners
+function initKeyboard() {
+	if( ! m_isKeyEventsActive ) {
+		document.addEventListener( "keyup", keyup );
+		document.addEventListener( "keydown", keydown );
+		window.addEventListener( "blur", clearKeys );
+	} else {
+		m_isKeyEventsActive = true;
+	}
+}
 
 // Key up event - document event
-document.addEventListener( "keyup", keyup );
 function keyup( event ) {
 	var key;
 
@@ -223,7 +234,6 @@ function keyup( event ) {
 }
 
 // Key down - document event
-document.addEventListener( "keydown", keydown );
 function keydown( event ) {
 	var key, keyVal, i, temp;
 
@@ -268,7 +278,6 @@ function keydown( event ) {
 }
 
 // Clear all keypresses in case we lose focus
-window.addEventListener( "blur", clearKeys );
 function clearKeys() {
 	var i;
 	for( i in m_keys ) {
@@ -293,8 +302,11 @@ function inkey( args ) {
 		keys2 = m_keys;
 	}
 
+	// Activate key events
+	initKeyboard();
+
 	// If the key is provided then return the key status
-	if( key !== undefined ) {
+	if( key != null ) {
 		return keys2[ key ];
 	}
 
@@ -315,25 +327,29 @@ function onkey( args ) {
 
 	key = args[ 0 ];
 	fn = args[ 1 ];
-	once = args[ 2 ];
+	once = !!( args[ 2 ] );
+
+	// Validate parameters
+	if( ! isNaN( key ) && typeof key !== "string" ) {
+		console.error(
+			"onkey: key needs to be either an interger keyCode or " +
+			"a string key name."
+		);
+		return;
+	}
+	if( ! qbs.util.isFunction( fn ) ) {
+		console.error( "onkey: fn is not a valid function." );
+		return;
+	}
+
+	// Activate key event listeners
+	initKeyboard();
 
 	// Prevent key from being triggered in case onkey is called in a
 	// keydown event
 	setTimeout( function () {
 		var tempFn;
 
-		// Validate parameters
-		if( ! isNaN( key ) && typeof key !== "string" ) {
-			console.error(
-				"onkey: key needs to be either an interger keyCode or " +
-				"a string key name."
-			);
-			return;
-		}
-		if( ! qbs.util.isFunction( fn ) ) {
-			console.error( "onkey: fn is not a valid function." );
-			return;
-		}
 		if( typeof key === "string" && key.length === 1 ) {
 			key = key.toUpperCase();
 			if( key >= "0" && key <= "9" ) {
@@ -560,7 +576,11 @@ function input( screenData, args ) {
 	}
 	if( typeof name !== "string" && name !== undefined ) {
 		console.error( "input: name must be a string or left blank." );
+		return;
 	}
+
+	// Activate key event listeners
+	initKeyboard();
 
 	// Create a list of functions to trigger
 	readyList = [];
