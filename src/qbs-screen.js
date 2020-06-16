@@ -284,7 +284,7 @@ function createScreenData(
 	screenData.bufferCanvas = bufferCanvas;
 	screenData.bufferContext = screenData.bufferCanvas.getContext( "2d" );
 	screenData.dirty = false;
-	screenData.isAutoRender = false;
+	screenData.isAutoRender = true;
 	screenData.autoRenderMicrotaskScheduled = false;
 	screenData.x = 0;
 	screenData.y = 0;
