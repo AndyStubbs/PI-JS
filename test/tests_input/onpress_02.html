@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Onpress 02</title>
+		<script type="text/toml">
+			[[TOML_START]]
+			test = "screenshot.js"
+			file = "onpress_02"
+			name = "onpress 02"
+			width = 600
+			height = 300
+			delay = 0
+			[[TOML_END]]
+		</script>
+		<script src="../../build/qbs.min.js"></script>
+		<style>
+			html, body {
+				color: white;
+				background-color: blue;
+				margin: 10px;
+			}
+			pre {
+				width: 100%;
+				color: white;
+				font-size: 14px;
+			}
+			textarea {
+				width: 800px;
+				height: 300px;
+			}
+			#screen {
+				width: 600px;
+				height: 300px;
+			}
+		</style>
+	</head>
+<body>
+
+<div id="screen"></div>
+<input type="button" value="Turn off Events" id="turn" />
+<script>
+	var isDrawing = false;
+	$.screen( "200x100", "screen" );
+	$.print( "Click button below to turn on/off press event listeners." );
+
+	function pressDown( data ) {
+		if( data.buttons > 0 ) {
+			$.pset( data.x, data.y );
+		}
+	}
+
+	function pressMove( data ) {
+		if( data.buttons > 0 ) {
+			$.pset( data.x, data.y );
+		}
+	}
+
+	function onPress() {
+		$.onpress( "down", pressDown );
+		$.onpress( "move", pressMove );
+	}
+
+	function offPress() {
+		$.offpress( "down", pressDown );
+		$.offpress( "move", pressMove );
+	}
+
+	var turn = document.getElementById( "turn" );
+	var isOn = true;
+
+	turn.onclick = function () {
+		if( isOn ) {
+			turn.value = "Turn on Events";
+			offPress();
+			$.print( "Events turned off." );
+		} else {
+			turn.value = "Turn off Events";
+			onPress();
+			$.print( "Events turned on." );
+		}
+		isOn = !( isOn );
+	};
+
+	onPress();
+
+</script>
+
+</body>
+</html>

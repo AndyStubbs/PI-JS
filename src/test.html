@@ -50,38 +50,52 @@
 <body>
 
 <div id="screen"></div>
-<input type="button" value="Turn off press" id="turn" />
+<input type="button" value="Turn off Events" id="turn" />
 <script>
 	var isDrawing = false;
 	$.screen( "200x100", "screen" );
 	$.print( "Click button below to turn on/off press event listeners." );
-	$.onpress( "down", function ( data ) {
+
+	function pressDown( data ) {
 		if( data.buttons > 0 ) {
 			$.pset( data.x, data.y );
 		}
-	} );
-	$.onpress( "move", function ( data ) {
+	}
+
+	function pressMove( data ) {
 		if( data.buttons > 0 ) {
 			$.pset( data.x, data.y );
 		}
-	} );
+	}
+
+	function onPress() {
+		$.onpress( "down", pressDown );
+		$.onpress( "move", pressMove );
+	}
+
+	function offPress() {
+		$.offpress( "down", pressDown );
+		$.offpress( "move", pressMove );
+	}
 
 	var turn = document.getElementById( "turn" );
 	var isOn = true;
+
 	turn.onclick = function () {
 		if( isOn ) {
-			turn.value = "Turn on press";
-			$.stopTouch();
-			$.stopMouse();
-			$.print( "Press turned off." );
+			turn.value = "Turn on Events";
+			offPress();
+			$.print( "Events turned off." );
 		} else {
-			turn.value = "Turn off press";
-			$.startTouch();
-			$.startMouse();
-			$.print( "Press turned on." );
+			turn.value = "Turn off Events";
+			onPress();
+			$.print( "Events turned on." );
 		}
 		isOn = !( isOn );
 	};
+
+	onPress();
+
 </script>
 
 </body>
