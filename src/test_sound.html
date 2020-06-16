@@ -57,14 +57,22 @@
 	<br />
 	<input type="button" value="Stop - Long Sound 1" id="stopLong1"></input>
 	<input type="button" value="Stop - Long Sound 2" id="stopLong2"></input>
-	<br />
-	<input type="button" value="Stop - All Sounds" id="stopAll"></input>
+</div>
+<br />
+<div>
+	<input type="button" value="Play - Audio File" id="playAudio"></input>
+	<input type="button" value="Stop - Audio File" id="stopAudio"></input>
 </div>
 <br />
 <div>
 	<label for="vol">Volume: </label>
 	<input type="number" value="75" min="0" max="100" id="vol" />
 </div>
+<br />
+<div>
+	<input type="button" value="Stop - All Sounds" id="stopAll"></input>
+</div>
+<br />
 <pre id="msg"></pre>
 
 <script>
@@ -82,7 +90,11 @@ var stopLong1 = document.getElementById( "stopLong1" );
 var stopLong2 = document.getElementById( "stopLong2" );
 var stopAll = document.getElementById( "stopAll" );
 
-// Third Row
+// Third Row of buttons
+var playAudio = document.getElementById( "playAudio" );
+var stopAudio = document.getElementById( "stopAudio" );
+
+// Volume Row
 var vol = document.getElementById( "vol" );
 
 var sound1, sound2;
@@ -186,6 +198,22 @@ stopLong2.onclick = function () {
 
 stopAll.onclick = function () {
 	$.stopSound();
+	$.stopAudioPool();
+}
+
+var sound1;
+
+playAudio.onclick = function () {
+	sound1 = $.createAudioPool(
+		"../test/tests_input/sounds/RECRUITS.wav", 1
+	);
+	$.ready( function () {
+		$.playAudioPool( sound1 );
+	} );
+}
+
+stopAudio.onclick = function () {
+	$.stopAudioPool( sound1 );
 }
 
 vol.onchange = function () {

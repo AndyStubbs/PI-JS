@@ -67,13 +67,13 @@ function createAudioPool( args ) {
 function loadAudio( audioItem, audio ) {
 
 	function audioReady() {
-		m_qbResume();
 		audioItem.pool.push( {
 			"audio": audio,
 			"timeout": 0,
 			"volume": 1
 		} );
 		audio.removeEventListener( "canplay", audioReady );
+		m_qbResume();
 	}
 
 	// Wait until audio item is loaded
