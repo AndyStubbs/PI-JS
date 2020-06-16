@@ -212,35 +212,57 @@ qbs._.addCommand( "onevent", onevent, true, true, [] );
 function onevent( mode, fn, once, hitBox, modes, name, listenerArr, extraId,
 	extraData ) {
 
+	var i, modeFound;
+
+	// Make sure mode is valid
+	modeFound = false;
+
+	for( i = 0; i < modes.length; i++ ) {
+		if( mode === modes[ i ] ) {
+			modeFound = true;
+			break;
+		}
+	}
+	if( ! modeFound ) {
+		console.error( name + ": mode needs to be on of the following " +
+			modes.join( ", " ) + ".");
+		return false;
+	}
+
+	// Make sure once is a boolean
+	once = !!( once );
+
+	// Make sure function is valid
+	if( ! qbs.util.isFunction( fn ) ) {
+		console.error( name + ": fn is not a valid function." );
+		return false;
+	}
+
+	// Validate hitbox
+	if( hitBox ) {
+		if(
+			! qbs.util.isInteger( hitBox.x ) ||
+			! qbs.util.isInteger( hitBox.y ) ||
+			! qbs.util.isInteger( hitBox.width ) ||
+			! qbs.util.isInteger( hitBox.height )
+		) {
+			console.error(
+				name + ": hitbox must have properties x, y, width, and " +
+				"height whose values are integers."
+			);
+			return false;
+		}
+	}
+
 	// Prevent event from being triggered in case event is called in an event
 	setTimeout( function () {
-		var tempFn, i, modeFound, newMode;
-
-		// Make sure mode is valid
-		modeFound = false;
-		for( i = 0; i < modes.length; i++ ) {
-			if( mode === modes[ i ] ) {
-				modeFound = true;
-				break;
-			}
-		}
-		if( ! modeFound ) {
-			console.error( name + ": mode needs to be on of the following " +
-				modes.join( ", " ) + ".");
-			return;
-		}
+		var tempFn, newMode;
 
 		// Add extraId to mode
 		if( typeof extraId === "string" ) {
 			newMode = mode + extraId;
 		} else {
 			newMode = mode;
-		}
-
-		// Make sure function is valid
-		if( ! qbs.util.isFunction( fn ) ) {
-			console.error( name + ": fn is not a valid function." );
-			return;
 		}
 
 		// If it's a one time function
@@ -262,6 +284,8 @@ function onevent( mode, fn, once, hitBox, modes, name, listenerArr, extraId,
 		} );
 
 	}, 1 );
+
+	return true;
 }
 
 qbs._.addCommand( "offevent", offevent, true, true, [] );

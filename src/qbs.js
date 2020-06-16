@@ -304,10 +304,16 @@ window.qbs = ( function () {
 		for( i = 0; i < pal.length; i++ ) {
 			c = qbs.util.convertToColor( pal[ i ] );
 			if( c === null ) {
-				console.error( "setDefaultPal: invalid color value inside array pal." );
-				m_qbData.defaultPalette.push( qbs.util.convertToColor( "#000000" ) );
+				console.error(
+					"setDefaultPal: invalid color value inside array pal."
+				);
+				m_qbData.defaultPalette.push(
+					qbs.util.convertToColor( "#000000" )
+				);
 			} else {
-				m_qbData.defaultPalette.push( qbs.util.convertToColor( pal[ i ] ) );
+				m_qbData.defaultPalette.push(
+					qbs.util.convertToColor( pal[ i ] )
+				);
 			}
 		}
 

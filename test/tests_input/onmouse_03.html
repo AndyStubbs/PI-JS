@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Onmouse 03</title>
+		<script type="text/toml">
+			[[TOML_START]]
+			test = "screenshot.js"
+			file = "onmouse_03"
+			name = "onmouse 03"
+			width = 600
+			height = 300
+			delay = 0
+			[[TOML_END]]
+		</script>
+		<script src="../../build/qbs.min.js"></script>
+		<style>
+			html, body {
+				color: white;
+				background-color: blue;
+				margin: 10px;
+			}
+			pre {
+				width: 100%;
+				color: white;
+				font-size: 14px;
+			}
+			textarea {
+				width: 800px;
+				height: 300px;
+			}
+			#screen {
+				width: 600px;
+				height: 300px;
+			}
+		</style>
+	</head>
+<body>
+
+<div id="screen"></div>
+<input type="button" value="Turn on mouse" id="turn" />
+<script>
+	var isDrawing = false;
+	$.screen( "200x100", "screen" );
+	$.print( "Click button below to turn on mouse event listeners." );
+	$.onmouse( "down", function ( mouse ) {
+		$.pset( mouse.x, mouse.y );
+	} );
+	$.onmouse( "move", function ( mouse ) {
+		if( mouse.buttons > 0 ) {
+			$.pset( mouse.x, mouse.y );
+		}
+	} );
+	$.stopMouse();
+
+	var turn = document.getElementById( "turn" );
+	var isOn = false;
+	turn.onclick = function () {
+		if( isOn ) {
+			turn.value = "Turn on mouse";
+			$.stopMouse();
+			$.print( "Mouse turned off." );
+		} else {
+			turn.value = "Turn off mouse";
+			$.startMouse();
+			$.print( "Mouse turned on." );
+		}
+		isOn = !( isOn );
+	}
+
+</script>
+</body>
+</html>

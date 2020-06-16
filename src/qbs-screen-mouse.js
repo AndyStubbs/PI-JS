@@ -24,11 +24,13 @@ function startMouse( screenData ) {
 
 qbs._.addCommand( "stopMouse", stopMouse, false, true, [] );
 function stopMouse( screenData ) {
-	screenData.canvas.removeEventListener( "mousemove", mouseMove );
-	screenData.canvas.removeEventListener( "mousedown", mouseDown );
-	screenData.canvas.removeEventListener( "mouseup", mouseUp );
-	screenData.canvas.removeEventListener( "contextmenu", onContextMenu );
-	screenData.mouseStarted = false;
+	if( screenData.mouseStarted ) {
+		screenData.canvas.removeEventListener( "mousemove", mouseMove );
+		screenData.canvas.removeEventListener( "mousedown", mouseDown );
+		screenData.canvas.removeEventListener( "mouseup", mouseUp );
+		screenData.canvas.removeEventListener( "contextmenu", onContextMenu );
+		screenData.mouseStarted = false;
+	}
 }
 
 function mouseMove( e ) {
@@ -113,6 +115,9 @@ function inmouse( screenData ) {
 	mouse.lastY = screenData.mouse.lastY;
 	mouse.buttons = screenData.mouse.buttons;
 
+	// Activate the mouse event listeners
+	startMouse( screenData );
+
 	return mouse;
 }
 
@@ -121,16 +126,22 @@ qbs._.addCommand( "onmouse", onmouse, false, true,
 	[ "mode", "fn", "once", "hitBox" ]
 );
 function onmouse( screenData, args ) {
-	var mode, fn, once, hitBox;
+	var mode, fn, once, hitBox, isValid;
 
 	mode = args[ 0 ];
 	fn = args[ 1 ];
 	once = args[ 2 ];
 	hitBox = args[ 3 ];
 
-	m_qbData.commands.onevent( mode, fn, once, hitBox, [ "down", "up", "move" ],
-		"onmouse", screenData.onMouseEventListeners
+	isValid = m_qbData.commands.onevent(
+		mode, fn, once, hitBox, [ "down", "up", "move" ], "onmouse",
+		screenData.onMouseEventListeners
 	);
+
+	// Activate the mouse event listeners
+	if( isValid ) {
+		startMouse( screenData );
+	}
 }
 
 // Removes an event trigger for a mouse event
@@ -154,10 +165,10 @@ qbs._.addSetting( "enableContextMenu", setEnableContextMenu, true,
 );
 function setEnableContextMenu( screenData, args ) {
 	screenData.isContextMenuEnabled = !!( args[ 0 ] );
+
+	// Activate the mouse event listeners
 	startMouse( screenData );
 }
-
-// Setup events
 
 // End of File Encapsulation
 } )();
