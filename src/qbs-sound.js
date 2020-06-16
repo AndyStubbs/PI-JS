@@ -293,7 +293,7 @@ function sound( args ) {
 
 	// Validate volume
 	if( volume == null ) {
-		volume = 0.75;
+		volume = 1;
 	}
 
 	if( isNaN( volume ) || volume < 0 || volume > 1 ) {
@@ -399,9 +399,6 @@ function sound( args ) {
 		m_audioContext = new AudioContext();
 	}
 
-	// Calculate the volume
-	volume = m_qbData.volume * volume;
-
 	// Calculate the stopTime
 	stopTime = attack + duration + decay;
 
@@ -418,10 +415,13 @@ function createSound(
 	decayTime, stopTime, oType, waveTables, delay
 ) {
 	var oscillator, envelope, wave, real, imag, currentTime, overlap,
-		soundId;
+		soundId, master;
 
 	oscillator = audioContext.createOscillator();
 	envelope = audioContext.createGain();
+	master = audioContext.createGain();
+	master.gain.value = m_qbData.volume;
+
 	overlap = 0.0000001;
 
 	oscillator.frequency.value = frequency;
@@ -435,13 +435,14 @@ function createSound(
 	}
 
 	if( attackTime === 0 ) {
-		envelope.gain.value = 1 * volume;
+		envelope.gain.value = volume;
 	} else {
 		envelope.gain.value = 0;
 	}
 
-	oscillator.connect( envelope);
-	envelope.connect( audioContext.destination );
+	oscillator.connect( envelope );
+	envelope.connect( master );
+	master.connect( audioContext.destination );
 	// console.log( context.currentTime );
 
 	try {
@@ -451,7 +452,7 @@ function createSound(
 		// Set the attack
 		if( attackTime > 0 ) {
 			envelope.gain.setValueCurveAtTime(
-				[ 0, 1 * volume ],
+				[ 0, volume ],
 				currentTime,
 				attackTime
 			);
@@ -463,7 +464,7 @@ function createSound(
 		// Set the sustain
 		if( sustainTime > 0 ) {
 			envelope.gain.setValueCurveAtTime(
-				[ 1 * volume, 0.8 * volume ],
+				[ volume, 0.8 * volume ],
 				currentTime + attackTime,
 				sustainTime
 			);
@@ -486,7 +487,11 @@ function createSound(
 
 		soundId = "sound_" + m_nextSoundId;
 		m_nextSoundId += 1;
-		m_soundPool[ soundId ] = oscillator;
+		m_soundPool[ soundId ] = {
+			"oscillator": oscillator,
+			"master": master,
+			"audioContext": audioContext
+		};
 
 		return soundId;
 
@@ -504,7 +509,7 @@ function stopSound( args ) {
 	// If soundId not provided then stop all sounds
 	if( soundId == null ) {
 		for( i in m_soundPool ) {
-			m_soundPool[ i ].stop( 0 );
+			m_soundPool[ i ].oscillator.stop( 0 );
 		}
 		return;
 	}
@@ -516,7 +521,40 @@ function stopSound( args ) {
 	}
 
 	// Stop current sound
-	m_soundPool[ soundId ].stop( 0 );
+	m_soundPool[ soundId ].oscillator.stop( 0 );
+}
+
+qbs._.addCommand( "setVolume", setVolume, false, false, [ "volume" ] );
+qbs._.addSetting( "volume", setVolume, false, [ "volume" ] );
+function setVolume( args ) {
+	var volume, i;
+
+	volume = args[ 0 ];
+
+	if( isNaN( volume ) || volume < 0 || volume > 1 ) {
+		console.error(
+			"setVolume: volume needs to be a number between 0 and 1."
+		);
+		return;
+	}
+
+	m_qbData.volume = volume;
+
+	// Update all active sounds
+	for( i in m_soundPool ) {
+		if( volume === 0 ) {
+			m_soundPool[ i ].master.gain.setValueAtTime( 0,
+				m_soundPool[ i ].audioContext.currentTime + 0.1
+			);
+			m_soundPool[ i ].master.gain.exponentialRampToValueAtTime(
+				0.01, m_soundPool[ i ].audioContext.currentTime + 0.1
+			);
+		} else {
+			m_soundPool[ i ].master.gain.exponentialRampToValueAtTime(
+				volume, m_soundPool[ i ].audioContext.currentTime + 0.1
+			);
+		}
+	}
 }
 
 // End of File Encapsulation

@@ -471,7 +471,7 @@
 		var attackTime, sustainTime, decayTime, volume, waveTables, oType,
 			stopTime;
 
-		volume = m_qbData.volume * track.volume;
+		volume = track.volume;
 		attackTime = track.interval * track.attackRate;
 		sustainTime = track.interval * track.sustainRate;
 		decayTime = track.interval * track.decayRate;

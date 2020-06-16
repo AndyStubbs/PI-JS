@@ -66,6 +66,10 @@ SAWTOOTH - Sets the ocillator type to a sawtooth wave.
 	<input type="button" value="Stop" id="stop"></input>
 </div>
 <div>
+	<label for="vol">Volume: </label>
+	<input type="number" value="75" min="0" max="100" id="vol" />
+</div>
+<div>
 Enter Music Below:
 </div>
 <textarea id="music">
@@ -92,8 +96,10 @@ t180g8g8g4g4g4a8g8g4g4g4g8g8g4a4b4o3c2c4p1
 <script>
 var playButton = document.getElementById( "play" );
 var stopButton = document.getElementById( "stop" );
+var vol = document.getElementById( "vol" );
 var music = document.getElementById( "music" );
 var trackId = 0;
+
 stopButton.onclick = function () {
 	$.stopPlay( trackId );
 };
@@ -102,6 +108,11 @@ playButton.onclick = function () {
 	var text = music.value;
 	trackId = $.play( text );
 };
+
+vol.onchange = function () {
+	$.setVolume( vol.value / 100 );
+}
+
 </script>
 </body>
 </html>

@@ -60,7 +60,11 @@
 	<br />
 	<input type="button" value="Stop - All Sounds" id="stopAll"></input>
 </div>
-
+<br />
+<div>
+	<label for="vol">Volume: </label>
+	<input type="number" value="75" min="0" max="100" id="vol" />
+</div>
 <pre id="msg"></pre>
 
 <script>
@@ -77,6 +81,9 @@ var playLong2 = document.getElementById( "playLong2" );
 var stopLong1 = document.getElementById( "stopLong1" );
 var stopLong2 = document.getElementById( "stopLong2" );
 var stopAll = document.getElementById( "stopAll" );
+
+// Third Row
+var vol = document.getElementById( "vol" );
 
 var sound1, sound2;
 var msg = document.getElementById( "msg" );
@@ -179,6 +186,10 @@ stopLong2.onclick = function () {
 
 stopAll.onclick = function () {
 	$.stopSound();
+}
+
+vol.onchange = function () {
+	$.setVolume( vol.value / 100 );
 }
 
 function setWord( word, delay ) {
