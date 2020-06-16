@@ -154,7 +154,7 @@ qbs._.addSetting( "enableContextMenu", setEnableContextMenu, true,
 );
 function setEnableContextMenu( screenData, args ) {
 	screenData.isContextMenuEnabled = !!( args[ 0 ] );
-	m_qbData.commands.startMouse( screenData );
+	startMouse( screenData );
 }
 
 // Setup events

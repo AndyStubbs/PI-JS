@@ -205,13 +205,24 @@ m_keyboard = {
 m_isKeyEventsActive = false;
 
 // Set keyboard event listeners
-function initKeyboard() {
+qbs._.addCommand( "startKeyboard", startKeyboard, false, false, [] );
+function startKeyboard() {
 	if( ! m_isKeyEventsActive ) {
 		document.addEventListener( "keyup", keyup );
 		document.addEventListener( "keydown", keydown );
 		window.addEventListener( "blur", clearKeys );
-	} else {
 		m_isKeyEventsActive = true;
+	}
+}
+
+// Command to stop event listeners on keyboard
+qbs._.addCommand( "stopKeyboard", stopKeyboard, false, false, [] );
+function stopKeyboard() {
+	if( m_isKeyEventsActive ) {
+		document.removeEventListener( "keyup", keyup );
+		document.removeEventListener( "keydown", keydown );
+		window.removeEventListener( "blur", blur );
+		m_isKeyEventsActive = false;
 	}
 }
 
@@ -303,7 +314,7 @@ function inkey( args ) {
 	}
 
 	// Activate key events
-	initKeyboard();
+	startKeyboard();
 
 	// If the key is provided then return the key status
 	if( key != null ) {
@@ -343,7 +354,7 @@ function onkey( args ) {
 	}
 
 	// Activate key event listeners
-	initKeyboard();
+	startKeyboard();
 
 	// Prevent key from being triggered in case onkey is called in a
 	// keydown event
@@ -580,7 +591,7 @@ function input( screenData, args ) {
 	}
 
 	// Activate key event listeners
-	initKeyboard();
+	startKeyboard();
 
 	// Create a list of functions to trigger
 	readyList = [];

@@ -41,20 +41,39 @@
 			width: 800px;
 			height: 300px;
 		}
+		#screen {
+			width: 600px;
+			height: 300px;
+		}
 	</style>
 </head>
 <body>
+
+<div id="screen"></div>
+<input type="button" value="Turn on keyboard" id="turn" />
 <script>
-	var font = $.loadFont( "fonts/font-block2.png", 10, 10, "ABCD" );
-	$.ready( function () {
-		$.screen( "100x100" );
-		$.setFont( font );
-		$.print( "CAB" );
-		$.print( "ABCD" );
-		$.print( "DACB" );
-		$.print( "BAD" );
-		$.print( "HELLO" );
+	$.screen( "200x100", "screen" );
+	$.print( "Click button below to turn on keyboard event listeners." );
+	$.onkey( "any", function ( key ) {
+		$.print( "You pressed " + key.key + "!" );
 	} );
+	$.stopKeyboard();
+
+	var turn = document.getElementById( "turn" );
+	var isOn = false;
+	turn.onclick = function () {
+		if( isOn ) {
+			turn.value = "Turn on keyboard";
+			$.stopKeyboard();
+			$.print( "Keyboard turned off." );
+		} else {
+			turn.value = "Turn off keyboard";
+			$.startKeyboard();
+			$.print( "Keyboard turned on." );
+		}
+		isOn = !( isOn );
+	}
+
 </script>
 </body>
 </html>
