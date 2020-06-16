@@ -304,7 +304,7 @@ function offevent( mode, fn, modes, name, listenerArr, extraId ) {
 	if( ! modeFound ) {
 		console.error( name + ": mode needs to be on of the following " +
 			modes.join( ", " ) + ".");
-		return;
+		return false;
 	}
 
 	// Add extraId to mode
@@ -313,14 +313,14 @@ function offevent( mode, fn, modes, name, listenerArr, extraId ) {
 	}
 
 	// Validate fn
-	if( ! qbs.util.isFunction( fn ) ) {
-		console.error( name + ": fn is not a valid function." );
-		return;
-	}
-
-	isClear = false;
-	if( ! qbs.util.isFunction( fn ) ) {
+	if( fn == null ) {
 		isClear = true;
+	} else {
+		isClear = false;
+		if( ! qbs.util.isFunction( fn ) ) {
+			console.error( name + ": fn is not a valid function." );
+			return false;
+		}
 	}
 
 	if( listenerArr[ mode ] ) {
@@ -336,6 +336,7 @@ function offevent( mode, fn, modes, name, listenerArr, extraId ) {
 				}
 			}
 		}
+		return true;
 	}
 }
 

@@ -324,6 +324,13 @@ function createScreenData(
 	// Event listeners
 	screenData.onMouseEventListeners = {};
 	screenData.onTouchEventListeners = {};
+	screenData.onPressEventListeners = {};
+	screenData.onClickEventListeners = {};
+	screenData.mouseEventListenersActive = 0;
+	screenData.touchEventListenersActive = 0;
+	screenData.pressEventListenersActive = 0;
+	screenData.clickEventListenersActive = 0;
+
 	screenData.isContextMenuEnabled = true;
 
 	// Set this to the active screen

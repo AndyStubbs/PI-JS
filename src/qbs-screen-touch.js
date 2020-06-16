@@ -38,9 +38,18 @@ function touchStart( e ) {
 	screenData = m_qbData.screens[ e.target.dataset.screenId ];
 
 	updateTouch( screenData, e );
-	m_qbData.commands.triggerEventListeners( "start", intouch( screenData ),
-		screenData.onTouchEventListeners
-	);
+
+	if( screenData.touchEventListenersActive > 0 ) {
+		m_qbData.commands.triggerEventListeners( "start",
+			getTouch( screenData ), screenData.onTouchEventListeners
+		);
+	}
+
+	if( screenData.pressEventListenersActive > 0 ) {
+		m_qbData.commands.triggerEventListeners( "down",
+			getTouchPress( screenData ), screenData.onPressEventListeners
+		);
+	}
 }
 
 function touchMove( e ) {
@@ -48,8 +57,18 @@ function touchMove( e ) {
 	screenData = m_qbData.screens[ e.target.dataset.screenId ];
 
 	updateTouch( screenData, e );
-	m_qbData.commands.triggerEventListeners( "move", intouch( screenData ),
-		screenData.onTouchEventListeners );
+
+	if( screenData.touchEventListenersActive > 0 ) {
+		m_qbData.commands.triggerEventListeners( "move",
+			getTouch( screenData ), screenData.onTouchEventListeners
+		);
+	}
+
+	if( screenData.pressEventListenersActive > 0 ) {
+		m_qbData.commands.triggerEventListeners( "move",
+			getTouchPress( screenData ), screenData.onPressEventListeners
+		);
+	}
 }
 
 function touchEnd( e ) {
@@ -57,8 +76,18 @@ function touchEnd( e ) {
 	screenData = m_qbData.screens[ e.target.dataset.screenId ];
 
 	updateTouch( screenData, e );
-	m_qbData.commands.triggerEventListeners( "end", intouch( screenData ),
-		screenData.onTouchEventListeners );
+
+	if( screenData.touchEventListenersActive > 0 ) {
+		m_qbData.commands.triggerEventListeners( "end", getTouch( screenData ),
+			screenData.onTouchEventListeners
+		);
+	}
+
+	if( screenData.pressEventListenersActive > 0 ) {
+		m_qbData.commands.triggerEventListeners( "up",
+			getTouchPress( screenData ), screenData.onPressEventListeners
+		);
+	}
 }
 
 function updateTouch( screenData, e ) {
@@ -90,8 +119,7 @@ function updateTouch( screenData, e ) {
 	}
 }
 
-qbs._.addCommand( "intouch", intouch, false, true, [] );
-function intouch( screenData ) {
+function getTouch( screenData ) {
 	var touchArr, i, touch, touchData;
 
 	touchArr = [];
@@ -109,9 +137,40 @@ function intouch( screenData ) {
 		touchArr.push( touchData );
 	}
 
+	return touchArr;
+}
+
+function getTouchPress( screenData ) {
+	var touchArr, i, touch, touchData;
+
+	touchArr = [];
+
+	// Make a local copy of touch Object
+	for( i in screenData.touches ) {
+		touch = screenData.touches[ i ];
+		touchData = {
+			"x": touch.x,
+			"y": touch.y,
+			"id": touch.id,
+			"lastX": touch.lastX,
+			"lastY": touch.lastY
+		};
+		touchArr.push( touchData );
+	}
+
+	touchData = touchArr[ 0 ];
+	touchData.buttons = 1;
+	touchData.touches = touchArr;
+
+	return touchData;
+}
+
+qbs._.addCommand( "intouch", intouch, false, true, [] );
+function intouch( screenData ) {
+
 	startTouch( screenData );
 
-	return touchArr;
+	return getTouch( screenData );
 }
 
 // Adds an event trigger for a mouse event
@@ -126,26 +185,40 @@ function ontouch( screenData, args ) {
 	once = args[ 2 ];
 	hitBox = args[ 3 ];
 
-	isValid = m_qbData.commands.onevent( mode, fn, once, hitBox, [ "start", "end", "move" ],
+	isValid = m_qbData.commands.onevent(
+		mode, fn, once, hitBox, [ "start", "end", "move" ],
 		"ontouch", screenData.onTouchEventListeners
 	);
 
 	if( isValid ) {
 		startTouch( screenData );
+		screenData.touchEventListenersActive += 1;
 	}
 }
 
 // Removes an event trigger for a touch event
 qbs._.addCommand( "offtouch", offtouch, false, true, [ "mode", "fn" ] );
 function offtouch( screenData, args ) {
-	var mode, fn;
+	var mode, fn, isValid;
 
 	mode = args[ 0 ];
 	fn = args[ 1 ];
 
-	m_qbData.commands.offevent( mode, fn, [ "start", "end", "move" ], "offtouch",
-		screenData.onTouchEventListeners
+
+	isValid = m_qbData.commands.offevent( mode, fn, [ "start", "end", "move" ],
+		"offtouch", screenData.onTouchEventListeners
 	);
+
+	if( isValid ) {
+		if( fn == null ) {
+			screenData.touchEventListenersActive = 0;
+		} else {
+			screenData.touchEventListenersActive -= 1;
+			if( screenData.touchEventListenersActive < 0 ) {
+				screenData.touchEventListenersActive = 0;
+			}
+		}
+	}
 }
 
 qbs._.addCommand( "setPinchZoom", setPinchZoom, false, false,
