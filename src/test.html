@@ -45,8 +45,16 @@
 </head>
 <body>
 <script>
-	$.screen( "100x100" );
-	$.print( "Hello World" );
+	var font = $.loadFont( "fonts/font-block2.png", 10, 10, "ABCD" );
+	$.ready( function () {
+		$.screen( "100x100" );
+		$.setFont( font );
+		$.print( "CAB" );
+		$.print( "ABCD" );
+		$.print( "DACB" );
+		$.print( "BAD" );
+		$.print( "HELLO" );
+	} );
 </script>
 </body>
 </html>

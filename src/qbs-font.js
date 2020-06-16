@@ -17,7 +17,7 @@ m_qbResume = qbs._.resume;
 qbs._.addCommand( "loadFont", loadFont, false, false,
 	[ "fontSrc", "width", "height", "charSet", "isEncoded" ] );
 function loadFont( args ) {
-	var fontSrc, width, height, charSet, isEncoded, font, chars, i;
+	var fontSrc, width, height, charSet, isEncoded, font, chars, i, temp;
 
 	fontSrc = args[ 0 ];
 	width = args[ 1 ];
@@ -33,9 +33,18 @@ function loadFont( args ) {
 		}
 	}
 
-	if( ! qbs.util.isArray( charSet ) ) {
-		console.error( "loadFont: charSet must be an array." );
+	if( ! ( qbs.util.isArray( charSet ) || typeof charSet === "string" ) ) {
+		console.error( "loadFont: charSet must be an array or a string." );
 		return;
+	}
+
+	// Convert charSet to array of integers
+	if( typeof charSet === "string" ) {
+		temp = [];
+		for( i = 0; i < charSet.length; i += 1 ) {
+			temp.push( charSet.charCodeAt( i ) );
+		}
+		charSet = temp;
 	}
 
 	// Load the chars
@@ -51,6 +60,7 @@ function loadFont( args ) {
 		"height": height,
 		"data": [],
 		"chars": chars,
+		"charSet": charSet,
 		"colorCount": 2,
 		"mode": "pixel",
 		"printFunction": m_qbData.commands.qbsPrint,
@@ -183,7 +193,7 @@ function loadFontFromImg( fontSrc, width, height, font ) {
 }
 
 function readImageData( img, width, height, font ) {
-	var canvas, context, data, i, x, y, index, xStart, yStart, cols,
+	var canvas, context, data, i, x, y, index, xStart, yStart, cols, rows,
 		r, g, b, a, colors, colorIndex;
 
 	// Create a new canvas to read the pixel data
@@ -203,9 +213,10 @@ function readImageData( img, width, height, font ) {
 	xStart = 0;
 	yStart = 0;
 	cols = img.width;
+	rows = img.height;
 
-	// Loop through all ascii characters
-	for( i = 0; i < 255; i++ ) {
+	// Loop through charset
+	for( i = 0; i < font.charSet.length; i++ ) {
 		font.data.push( [] );
 		for( y = yStart; y < yStart + height; y++ ) {
 			font.data[ i ].push( [] );
@@ -223,13 +234,17 @@ function readImageData( img, width, height, font ) {
 		if( xStart >= cols ) {
 			xStart = 0;
 			yStart += height;
+			if( yStart >= rows ) {
+				break;
+			}
 		}
 	}
+
 	font.colorCount = colors.length;
 }
 
 function findColorIndex( colors, r, g, b, a ) {
-	var i, dr, dg, db, d;
+	var i, dr, dg, db, da, d;
 
 	if( a === 0 ) {
 		r = 0;
@@ -240,13 +255,14 @@ function findColorIndex( colors, r, g, b, a ) {
 		dr = colors[ i ].r - r;
 		dg = colors[ i ].g - g;
 		db = colors[ i ].b - b;
-		d = dr * dr + dg * dg + db * db;
+		da = colors[ i ].a - a;
+		d = dr * dr + dg * dg + db * db + da * da;
 		if( d < 2 ) {
 			return i;
 		}
 	}
 	colors.push( {
-		"r": r, "g": g, "b": b
+		"r": r, "g": g, "b": b, "a": a
 	} );
 	return colors.length - 1;
 }
