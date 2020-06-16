@@ -71,6 +71,7 @@ function loadAudio( audioItem, audio ) {
 		audioItem.pool.push( {
 			"audio": audio,
 			"timeout": 0,
+			"volume": 1
 		} );
 		audio.removeEventListener( "canplay", audioReady );
 	}
@@ -199,6 +200,7 @@ function playAudioPool( args ) {
 
 	// Set the volume
 	audio.volume = m_qbData.volume * volume;
+	poolItem.volume = volume;
 
 	// If the audio is playing then reset the start time
 	if( ! audio.paused && startTime === 0 ) {
@@ -493,6 +495,11 @@ function createSound(
 			"audioContext": audioContext
 		};
 
+		// delete sound when done
+		setTimeout( function () {
+			delete m_soundPool[ soundId ];
+		}, ( currentTime + stopTime ) * 1000 );
+
 		return soundId;
 
 	} catch( ex ) {
@@ -527,7 +534,7 @@ function stopSound( args ) {
 qbs._.addCommand( "setVolume", setVolume, false, false, [ "volume" ] );
 qbs._.addSetting( "volume", setVolume, false, [ "volume" ] );
 function setVolume( args ) {
-	var volume, i;
+	var volume, i, j, poolItem;
 
 	volume = args[ 0 ];
 
@@ -543,16 +550,28 @@ function setVolume( args ) {
 	// Update all active sounds
 	for( i in m_soundPool ) {
 		if( volume === 0 ) {
-			m_soundPool[ i ].master.gain.setValueAtTime( 0,
-				m_soundPool[ i ].audioContext.currentTime + 0.1
-			);
+
+			// Set to near zero exponentially
 			m_soundPool[ i ].master.gain.exponentialRampToValueAtTime(
 				0.01, m_soundPool[ i ].audioContext.currentTime + 0.1
+			);
+
+			// Set to zero one milisecond later
+			m_soundPool[ i ].master.gain.setValueAtTime(
+				0, m_soundPool[ i ].audioContext.currentTime + 0.11
 			);
 		} else {
 			m_soundPool[ i ].master.gain.exponentialRampToValueAtTime(
 				volume, m_soundPool[ i ].audioContext.currentTime + 0.1
 			);
+		}
+	}
+
+	// Update all audio pools
+	for( i in m_audioPools ) {
+		for( j in m_audioPools[ i ].pool ) {
+			poolItem = m_audioPools[ i ].pool[ j ];
+			poolItem.audio.volume = m_qbData.volume * poolItem.volume;
 		}
 	}
 }
