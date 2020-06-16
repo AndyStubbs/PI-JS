@@ -13,18 +13,24 @@ m_qbData = qbs._.data;
 
 qbs._.addCommand( "startTouch", startTouch, false, true, [] );
 function startTouch( screenData ) {
-	screenData.canvas.addEventListener( "touchstart", touchStart );
-	screenData.canvas.addEventListener( "touchmove", touchMove );
-	screenData.canvas.addEventListener( "touchend", touchEnd );
-	screenData.canvas.addEventListener( "touchcancel", touchEnd );
+	if( ! screenData.touchStarted ) {
+		screenData.canvas.addEventListener( "touchstart", touchStart );
+		screenData.canvas.addEventListener( "touchmove", touchMove );
+		screenData.canvas.addEventListener( "touchend", touchEnd );
+		screenData.canvas.addEventListener( "touchcancel", touchEnd );
+		screenData.touchStarted = true;
+	}
 }
 
 qbs._.addCommand( "stopTouch", stopTouch, false, true, [] );
 function stopTouch( screenData ) {
-	screenData.canvas.removeEventListener( "touchstart", touchStart );
-	screenData.canvas.removeEventListener( "touchmove", touchMove );
-	screenData.canvas.removeEventListener( "touchend", touchEnd );
-	screenData.canvas.removeEventListener( "touchcancel", touchEnd );
+	if( screenData.touchStarted ) {
+		screenData.canvas.removeEventListener( "touchstart", touchStart );
+		screenData.canvas.removeEventListener( "touchmove", touchMove );
+		screenData.canvas.removeEventListener( "touchend", touchEnd );
+		screenData.canvas.removeEventListener( "touchcancel", touchEnd );
+		screenData.touchStarted = false;
+	}
 }
 
 function touchStart( e ) {
@@ -103,6 +109,8 @@ function intouch( screenData ) {
 		touchArr.push( touchData );
 	}
 
+	startTouch( screenData );
+
 	return touchArr;
 }
 
@@ -111,16 +119,20 @@ qbs._.addCommand( "ontouch", ontouch, false, true,
 	[ "mode", "fn", "once", "hitBox" ]
 );
 function ontouch( screenData, args ) {
-	var mode, fn, once, hitBox;
+	var mode, fn, once, hitBox, isValid;
 
 	mode = args[ 0 ];
 	fn = args[ 1 ];
 	once = args[ 2 ];
 	hitBox = args[ 3 ];
 
-	m_qbData.commands.onevent( mode, fn, once, hitBox, [ "start", "end", "move" ],
+	isValid = m_qbData.commands.onevent( mode, fn, once, hitBox, [ "start", "end", "move" ],
 		"ontouch", screenData.onTouchEventListeners
 	);
+
+	if( isValid ) {
+		startTouch( screenData );
+	}
 }
 
 // Removes an event trigger for a touch event

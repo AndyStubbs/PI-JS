@@ -295,6 +295,7 @@ function createScreenData(
 	screenData.context.fillStyle = screenData.fColor.s;
 	screenData.context.strokeStyle = screenData.fColor.s;
 	screenData.mouseStarted = false;
+	screenData.touchStarted = false;
 	screenData.printCursor = {
 		"x": 0,
 		"y": 0,
