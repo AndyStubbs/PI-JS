@@ -261,13 +261,13 @@ qbs._.addCommand( "offpress", offpress, false, true,
 	[ "mode", "fn", "once", "hitBox" ]
 );
 function offpress( screenData, args ) {
-	var eventName, fn, isValid;
+	var mode, fn, isValid;
 
-	eventName = args[ 0 ];
+	mode = args[ 0 ];
 	fn = args[ 1 ];
 
 	isValid = m_qbData.commands.offevent(
-		eventName, fn, [ "down", "up", "move" ], "offpress",
+		mode, fn, [ "down", "up", "move" ], "offpress",
 		screenData.onPressEventListeners
 	);
 
@@ -324,6 +324,31 @@ function onclick( screenData, args ) {
 		m_qbData.commands.startMouse( screenData );
 		m_qbData.commands.startTouch( screenData );
 		screenData.clickEventListenersActive += 1;
+	}
+}
+
+qbs._.addCommand( "offclick", offclick, false, true,
+	[ "fn", "once", "hitBox" ]
+);
+function offclick( screenData, args ) {
+	var fn, isValid;
+
+	fn = args[ 0 ];
+
+	isValid = m_qbData.commands.offevent(
+		"click", fn, [ "click" ], "offclick",
+		screenData.onClickEventListeners
+	);
+
+	if( isValid ) {
+		if( fn == null ) {
+			screenData.clickEventListenersActive = 0;
+		} else {
+			screenData.clickEventListenersActive -= 1;
+			if( screenData.clickEventListenersActive < 0 ) {
+				screenData.clickEventListenersActive = 0;
+			}
+		}
 	}
 }
 

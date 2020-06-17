@@ -329,7 +329,7 @@ function offevent( mode, fn, modes, name, listenerArr, extraId ) {
 		}
 	}
 	if( ! modeFound ) {
-		console.error( name + ": mode needs to be on of the following " +
+		console.error( name + ": mode needs to be one of the following " +
 			modes.join( ", " ) + ".");
 		return false;
 	}

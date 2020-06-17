@@ -66,32 +66,44 @@ var hitbox2 = {
 
 $.screen( "300x200" );
 
-drawBox( {
-	"x": 5,
-	"y": 5,
-	"width": 2,
-	"height": 2
-} );
+var hitbox3 = {
+	"x": 35,
+	"y": 150,
+	"width": 20,
+	"height": 20
+};
 
 drawBox( hitbox );
 drawBox( hitbox2 );
+drawBox( hitbox3 );
 
-$.onclick( function () {
-	$.setColor( 4 );
+$.onclick( clickOne, false, hitbox );
+$.onclick( clickTwo, false, hitbox2 );
+$.onclick( clickThree, true, hitbox3 );
+
+function clickOne() {
+	$.setColor( 2 );
 	drawBox( hitbox );
 
 	$.setColor( 7 );
 	drawBox( hitbox2 );
+}
 
-}, false, hitbox );
-
-$.onclick( function () {
+function clickTwo() {
 	$.setColor( 7 );
 	drawBox( hitbox );
 
 	$.setColor( 1 );
 	drawBox( hitbox2 );
-}, false, hitbox2 );
+}
+
+function clickThree() {
+	$.offclick( clickOne, false, hitbox );
+	$.offclick( clickTwo, false, hitbox2 );
+	$.setColor( 4 );
+	drawBox( hitbox3 );
+	$.print( "Click boxes are turned off!" );
+}
 
 function drawBox( box ) {
 	$.rect( box.x, box.y, box.width, box.height );
