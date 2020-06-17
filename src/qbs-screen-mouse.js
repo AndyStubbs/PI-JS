@@ -38,7 +38,7 @@ function mouseMove( e ) {
 
 	screenData = m_qbData.screens[ e.target.dataset.screenId ];
 
-	updateMouse( screenData, e );
+	updateMouse( screenData, e, "move" );
 
 	if( screenData.mouseEventListenersActive > 0 ) {
 		m_qbData.commands.triggerEventListeners( "move", getMouse( screenData ),
@@ -58,7 +58,7 @@ function mouseDown( e ) {
 
 	screenData = m_qbData.screens[ e.target.dataset.screenId ];
 
-	updateMouse( screenData, e );
+	updateMouse( screenData, e, "down" );
 
 	if( screenData.mouseEventListenersActive > 0 ) {
 		m_qbData.commands.triggerEventListeners( "down", getMouse( screenData ),
@@ -69,6 +69,12 @@ function mouseDown( e ) {
 	if( screenData.pressEventListenersActive > 0 ) {
 		m_qbData.commands.triggerEventListeners( "down", getMouse( screenData ),
 			screenData.onPressEventListeners
+		);
+	}
+
+	if( screenData.clickEventListenersActive > 0 ) {
+		m_qbData.commands.triggerEventListeners( "click", getMouse( screenData ),
+			screenData.onClickEventListeners, "down"
 		);
 	}
 }
@@ -78,7 +84,7 @@ function mouseUp( e ) {
 
 	screenData = m_qbData.screens[ e.target.dataset.screenId ];
 
-	updateMouse( screenData, e );
+	updateMouse( screenData, e, "up" );
 
 	if( screenData.mouseEventListenersActive > 0 ) {
 		m_qbData.commands.triggerEventListeners( "up", getMouse( screenData ),
@@ -89,6 +95,12 @@ function mouseUp( e ) {
 	if( screenData.pressEventListenersActive > 0 ) {
 		m_qbData.commands.triggerEventListeners( "up", getMouse( screenData ),
 			screenData.onPressEventListeners
+		);
+	}
+
+	if( screenData.clickEventListenersActive > 0 ) {
+		m_qbData.commands.triggerEventListeners( "click", getMouse( screenData ),
+			screenData.onClickEventListeners, "up"
 		);
 	}
 }
@@ -104,7 +116,7 @@ function onContextMenu( e ) {
 	}
 }
 
-function updateMouse( screenData, e ) {
+function updateMouse( screenData, e, action ) {
 	var rect, x, y, lastX, lastY;
 
 	rect = screenData.clientRect;
@@ -129,7 +141,8 @@ function updateMouse( screenData, e ) {
 		"y": y,
 		"lastX": lastX,
 		"lastY": lastY,
-		"buttons": e.buttons
+		"buttons": e.buttons,
+		"action": action
 	};
 	screenData.lastEvent = "mouse";
 }
@@ -144,6 +157,7 @@ function getMouse( screenData ) {
 	mouse.lastX = screenData.mouse.lastX;
 	mouse.lastY = screenData.mouse.lastY;
 	mouse.buttons = screenData.mouse.buttons;
+	mouse.action = screenData.mouse.action;
 
 	return mouse;
 }
@@ -280,6 +294,36 @@ function inpress( screenData ) {
 		return m_qbData.commands.getTouchPress( screenData );
 	} else {
 		return m_qbData.commands.getMouse( screenData );
+	}
+}
+
+qbs._.addCommand( "onclick", onclick, false, true,
+	[ "fn", "once", "hitBox" ]
+);
+function onclick( screenData, args ) {
+	var fn, once, hitBox, isValid;
+
+	fn = args[ 0 ];
+	once = args[ 1 ];
+	hitBox = args[ 2 ];
+
+	if( hitBox == null ) {
+		console.error(
+			"onclick: hitBox is required and must contain x, y," +
+			" width, and height."
+		);
+		return;
+	}
+	isValid = m_qbData.commands.onevent(
+		"click", fn, once, hitBox, [ "click" ], "onclick",
+		screenData.onClickEventListeners
+	);
+
+	// Activate the mouse event listeners
+	if( isValid ) {
+		m_qbData.commands.startMouse( screenData );
+		m_qbData.commands.startTouch( screenData );
+		screenData.clickEventListenersActive += 1;
 	}
 }
 

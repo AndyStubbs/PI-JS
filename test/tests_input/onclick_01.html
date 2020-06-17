@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Onclick 01</title>
+		<script type="text/toml">
+			[[TOML_START]]
+			test = "screenshot.js"
+			file = "onclick_01"
+			name = "onclick 01"
+			width = 300
+			height = 200
+			delay = 0
+			[[TOML_END]]
+		</script>
+		<script src="../../build/qbs.min.js"></script>
+		<style>
+			html, body {
+				background-color: grey;
+			}
+		</style>
+	</head>
+<body>
+<script>
+
+var hitbox = {
+	"x": 50,
+	"y": 50,
+	"width": 50,
+	"height": 50
+};
+
+var hitbox2 = {
+	"x": 110,
+	"y": 50,
+	"width": 50,
+	"height": 50
+};
+
+$.screen( "300x200" );
+
+drawBox( hitbox );
+drawBox( hitbox2 );
+
+$.onclick( function () {
+	$.setColor( 4 );
+	drawBox( hitbox );
+
+	$.setColor( 7 );
+	drawBox( hitbox2 );
+
+}, false, hitbox );
+
+$.onclick( function () {
+	$.setColor( 7 );
+	drawBox( hitbox );
+
+	$.setColor( 1 );
+	drawBox( hitbox2 );
+}, false, hitbox2 );
+
+function drawBox( box ) {
+	$.rect( box.x, box.y, box.width, box.height );
+}
+
+</script>
+</body>
+</html>

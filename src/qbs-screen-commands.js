@@ -167,8 +167,8 @@ function setPixelMode( screenData, args ) {
 
 qbs._.addCommand( "triggerEventListeners", triggerEventListeners, true, true,
 	[] );
-function triggerEventListeners( mode, data, listenerArr ) {
-	var temp, i, j, pos, newData;
+function triggerEventListeners( mode, data, listenerArr, clickStatus ) {
+	var temp, i, j, pos, newData, isHit;
 
 	if( listenerArr[ mode ] ) {
 
@@ -179,10 +179,19 @@ function triggerEventListeners( mode, data, listenerArr ) {
 		// Loop through all the event listeners
 		for( i = 0; i < temp.length; i++ ) {
 
+			// If click up but no click down then skip this
+			if( clickStatus === "up" ) {
+				if( ! temp[ i ].clickDown ) {
+					continue;
+				}
+			}
+
 			// If there is a hitbox then need to check if we are in range
 			if( temp[ i ].hitBox ) {
 
-				// If it's an array loop
+				isHit = false;
+
+				// If it's an array loop - touches
 				if( qbs.util.isArray ( data ) ) {
 					newData = [];
 					for( j = 0; j < data.length; j++ ) {
@@ -192,14 +201,28 @@ function triggerEventListeners( mode, data, listenerArr ) {
 						}
 					}
 					if( newData.length > 0 ) {
-						temp[ i ].fn( newData );
+						isHit = true;
 					}
 				} else {
+					newData = data;
+
 					// If it's not an array
 					if( qbs.util.inRange( data, temp[ i ].hitBox ) ) {
-						temp[ i ].fn( data );
+						isHit = true;
 					}
 				}
+
+				if( isHit ) {
+
+					// If click don't trigger event listener on down
+					if( clickStatus === "down" ) {
+						temp[ i ].clickDown = true;
+					} else {
+						temp[ i ].clickDown = false;
+						temp[ i ].fn( newData );
+					}
+				}
+
 			} else {
 				// if no hit box then just trigger the event
 				temp[ i ].fn( data );
@@ -210,7 +233,8 @@ function triggerEventListeners( mode, data, listenerArr ) {
 
 qbs._.addCommand( "onevent", onevent, true, true, [] );
 function onevent( mode, fn, once, hitBox, modes, name, listenerArr, extraId,
-	extraData ) {
+	extraData
+) {
 
 	var i, modeFound;
 
@@ -224,8 +248,10 @@ function onevent( mode, fn, once, hitBox, modes, name, listenerArr, extraId,
 		}
 	}
 	if( ! modeFound ) {
-		console.error( name + ": mode needs to be on of the following " +
-			modes.join( ", " ) + ".");
+		console.error(
+			name + ": mode needs to be on of the following " +
+			modes.join( ", " ) + "."
+		);
 		return false;
 	}
 
@@ -280,7 +306,8 @@ function onevent( mode, fn, once, hitBox, modes, name, listenerArr, extraId,
 		listenerArr[ newMode ].push( {
 			"fn": fn,
 			"hitBox": hitBox,
-			"extraData": extraData
+			"extraData": extraData,
+			"clickDown": false
 		} );
 
 	}, 1 );

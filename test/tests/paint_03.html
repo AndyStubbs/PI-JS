@@ -32,7 +32,7 @@ $.ready( function () {
 	for( i = 0; i < 128; i++ ) {
 		color[ 1 ] -= 2;
 		$.setColor( color );
-		$.rect( i, i, 255 - i * 2, 255 - i * 2 );
+		$.rect( i, i, 255 - i * 2 + 1, 255 - i * 2 + 1 );
 	}
 	$.paint( 127, 127, color2, 0.8 );
 	$.render();

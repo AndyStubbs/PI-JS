@@ -54,6 +54,13 @@ function touchStart( e ) {
 			getTouchPress( screenData ), screenData.onPressEventListeners
 		);
 	}
+
+	if( screenData.clickEventListenersActive > 0 ) {
+		m_qbData.commands.triggerEventListeners( "click",
+			getTouchPress( screenData ),
+			screenData.onClickEventListeners, "down"
+		);
+	}
 }
 
 function touchMove( e ) {
@@ -98,6 +105,13 @@ function touchEnd( e ) {
 	if( screenData.pressEventListenersActive > 0 ) {
 		m_qbData.commands.triggerEventListeners( "up",
 			getTouchPress( screenData ), screenData.onPressEventListeners
+		);
+	}
+
+	if( screenData.clickEventListenersActive > 0 ) {
+		m_qbData.commands.triggerEventListeners( "click",
+			getTouchPress( screenData ),
+			screenData.onClickEventListeners, "up"
 		);
 	}
 }

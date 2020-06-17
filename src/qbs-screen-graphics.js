@@ -633,8 +633,8 @@ function pxRect( screenData, args ) {
 	width = args[ 2 ];
 	height = args[ 3 ];
 
-	x2 = x1 + width;
-	y2 = y1 + height;
+	x2 = x1 + width - 1;
+	y2 = y1 + height - 1;
 
 	screenData.screenObj.line( x1, y1, x2, y1 );
 	screenData.screenObj.line( x2, y1, x2, y2 );

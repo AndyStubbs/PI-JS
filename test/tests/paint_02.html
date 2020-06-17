@@ -34,7 +34,7 @@ $.ready( function () {
 		color[ 1 ] -= 2;
 		color[ 2 ] -= 2;
 		$.setColor( color );
-		$.rect( i, i, 255 - i * 2, 255 - i * 2 );
+		$.rect( i, i, 255 - i * 2 + 1, 255 - i * 2 + 1 );
 	}
 	$.setPen( "pixel", 1 );
 	$.paint( 127, 127, color2, 0.5 );

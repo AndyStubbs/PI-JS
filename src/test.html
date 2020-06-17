@@ -48,36 +48,54 @@
 	</style>
 </head>
 <body>
-
-<div id="screen"></div>
-<input type="button" value="Turn off mouse" id="turn" />
 <script>
-	var isDrawing = false;
-	$.screen( "200x100", "screen" );
-	$.print( "Click button below to turn on/off mouse event listeners." );
-	$.onmouse( "down", function ( mouse ) {
-		$.pset( mouse.x, mouse.y );
-	} );
-	$.onmouse( "move", function ( mouse ) {
-		if( mouse.buttons > 0 ) {
-			$.pset( mouse.x, mouse.y );
-		}
-	} );
 
-	var turn = document.getElementById( "turn" );
-	var isOn = true;
-	turn.onclick = function () {
-		if( isOn ) {
-			turn.value = "Turn on mouse";
-			$.stopMouse();
-			$.print( "Mouse turned off." );
-		} else {
-			turn.value = "Turn off mouse";
-			$.startMouse();
-			$.print( "Mouse turned on." );
-		}
-		isOn = !( isOn );
-	}
+var hitbox = {
+	"x": 50,
+	"y": 50,
+	"width": 50,
+	"height": 50
+};
+
+var hitbox2 = {
+	"x": 110,
+	"y": 50,
+	"width": 50,
+	"height": 50
+};
+
+$.screen( "300x200" );
+
+drawBox( {
+	"x": 5,
+	"y": 5,
+	"width": 2,
+	"height": 2
+} );
+
+drawBox( hitbox );
+drawBox( hitbox2 );
+
+$.onclick( function () {
+	$.setColor( 4 );
+	drawBox( hitbox );
+
+	$.setColor( 7 );
+	drawBox( hitbox2 );
+
+}, false, hitbox );
+
+$.onclick( function () {
+	$.setColor( 7 );
+	drawBox( hitbox );
+
+	$.setColor( 1 );
+	drawBox( hitbox2 );
+}, false, hitbox2 );
+
+function drawBox( box ) {
+	$.rect( box.x, box.y, box.width, box.height );
+}
 
 </script>
 </body>
