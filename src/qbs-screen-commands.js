@@ -282,7 +282,7 @@ function onevent( mode, fn, once, hitBox, modes, name, listenerArr, extraId,
 
 	// Prevent event from being triggered in case event is called in an event
 	setTimeout( function () {
-		var tempFn, newMode;
+		var originalFn, newMode;
 
 		// Add extraId to mode
 		if( typeof extraId === "string" ) {
@@ -291,12 +291,13 @@ function onevent( mode, fn, once, hitBox, modes, name, listenerArr, extraId,
 			newMode = mode;
 		}
 
+		originalFn = fn;
+
 		// If it's a one time function
 		if( once ) {
-			tempFn = fn;
 			fn = function ( data ) {
 				offevent( mode, fn, modes, name, listenerArr, extraId );
-				tempFn( data );
+				originalFn( data );
 			};
 		}
 
@@ -307,7 +308,8 @@ function onevent( mode, fn, once, hitBox, modes, name, listenerArr, extraId,
 			"fn": fn,
 			"hitBox": hitBox,
 			"extraData": extraData,
-			"clickDown": false
+			"clickDown": false,
+			"originalFn": originalFn
 		} );
 
 	}, 1 );
@@ -355,7 +357,7 @@ function offevent( mode, fn, modes, name, listenerArr, extraId ) {
 			delete listenerArr[ mode ];
 		} else {
 			for( i = listenerArr[ mode ].length - 1; i >= 0; i-- ) {
-				if( listenerArr[ mode ][ i ].fn === fn ) {
+				if( listenerArr[ mode ][ i ].originalFn === fn ) {
 					listenerArr[ mode ].splice( i, 1 );
 				}
 				if( listenerArr[ mode ].length === 0 ) {

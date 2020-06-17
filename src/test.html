@@ -73,13 +73,29 @@ var hitbox3 = {
 	"height": 20
 };
 
+var hitbox4 = {
+	"x": 65,
+	"y": 150,
+	"width": 20,
+	"height": 20
+};
+
 drawBox( hitbox );
 drawBox( hitbox2 );
 drawBox( hitbox3 );
+drawBox( hitbox4 );
 
 $.onclick( clickOne, false, hitbox );
 $.onclick( clickTwo, false, hitbox2 );
 $.onclick( clickThree, true, hitbox3 );
+$.onclick( clickFour, true, hitbox4 );
+
+$.input( "Enter your name: ", function ( data ) {
+	$.print( data );
+}, "name" );
+$.input( "Enter your age: ", function ( data ) {
+	$.print( data );
+}, "age", true, true );
 
 function clickOne() {
 	$.setColor( 2 );
@@ -95,6 +111,8 @@ function clickTwo() {
 
 	$.setColor( 1 );
 	drawBox( hitbox2 );
+
+	$.setColor( 7 );
 }
 
 function clickThree() {
@@ -102,8 +120,24 @@ function clickThree() {
 	$.offclick( clickTwo, false, hitbox2 );
 	$.setColor( 4 );
 	drawBox( hitbox3 );
+	$.cancelInput( "name" );
+	$.print( "" );
 	$.print( "Click boxes are turned off!" );
+	$.print( "Name input has been cancelled" );
 }
+
+function clickFour() {
+	$.offclick( clickOne, false, hitbox );
+	$.offclick( clickTwo, false, hitbox2 );
+	$.offclick( clickThree, true, hitbox3 );
+	$.setColor( 4 );
+	drawBox( hitbox4 );
+	$.cancelInput();
+	$.print( "" );
+	$.print( "Click boxes are turned off!" );
+	$.print( "All inputs have been cancelled" );
+}
+
 
 function drawBox( box ) {
 	$.rect( box.x, box.y, box.width, box.height );

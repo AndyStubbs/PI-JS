@@ -565,7 +565,7 @@ function showPrompt( screenData, hideCursor ) {
 
 // Prompts the user to enter input through the keyboard.
 qbs._.addCommand( "input", input, false, true, [
-	"prompt", "name", "callback", "isNumber", "min", "max", "isInteger",
+	"prompt", "callback", "name", "isNumber", "min", "max", "isInteger",
 	"showKeyboard"
 ] );
 function input( screenData, args ) {
@@ -630,6 +630,27 @@ function input( screenData, args ) {
 	m_promptInterval = setInterval( function() {
 		showPrompt( screenData );
 	}, 100 );
+}
+
+qbs._.addCommand( "cancelInput", cancelInput, false, true, [ "name" ] );
+function cancelInput( screenData, args ) {
+	var name, i;
+
+	name = args[ 0 ];
+
+	if( name == null ) {
+		name = "";
+	}
+
+	if( typeof name !== "string" ) {
+		console.error( "cancelInput: name must be a string." );
+	}
+
+	for( i = m_inputs.length - 1; i >= 0; i-- ) {
+		if( m_inputs[ i ].name === name || name === "" ) {
+			m_inputs.splice( i, 1 );
+		}
+	}
 }
 
 function collectInput( event ) {
