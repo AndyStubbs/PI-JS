@@ -307,11 +307,14 @@ function createScreenData(
 	};
 	screenData.clientRect = canvas.getBoundingClientRect();
 	screenData.mouse = {
-		"x": 0,
-		"y": 0,
-		"buttons": 0
+		"x": -1,
+		"y": -1,
+		"buttons": 0,
+		"lastX": -1,
+		"lastY": -1
 	};
 	screenData.touches = {};
+	screenData.lastTouches = {};
 	screenData.pixelMode = true;
 	screenData.pen = {
 		"draw": m_qbData.defaultPenDraw,
@@ -330,6 +333,7 @@ function createScreenData(
 	screenData.touchEventListenersActive = 0;
 	screenData.pressEventListenersActive = 0;
 	screenData.clickEventListenersActive = 0;
+	screenData.lastEvent = null;
 
 	screenData.isContextMenuEnabled = true;
 

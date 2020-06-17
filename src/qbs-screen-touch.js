@@ -37,7 +37,11 @@ function touchStart( e ) {
 	var screenData;
 	screenData = m_qbData.screens[ e.target.dataset.screenId ];
 
-	updateTouch( screenData, e );
+	if( screenData == null ) {
+		return;
+	}
+
+	updateTouch( screenData, e, "start" );
 
 	if( screenData.touchEventListenersActive > 0 ) {
 		m_qbData.commands.triggerEventListeners( "start",
@@ -56,7 +60,11 @@ function touchMove( e ) {
 	var screenData;
 	screenData = m_qbData.screens[ e.target.dataset.screenId ];
 
-	updateTouch( screenData, e );
+	if( screenData == null ) {
+		return;
+	}
+
+	updateTouch( screenData, e, "move" );
 
 	if( screenData.touchEventListenersActive > 0 ) {
 		m_qbData.commands.triggerEventListeners( "move",
@@ -75,7 +83,11 @@ function touchEnd( e ) {
 	var screenData;
 	screenData = m_qbData.screens[ e.target.dataset.screenId ];
 
-	updateTouch( screenData, e );
+	if( screenData == null ) {
+		return;
+	}
+
+	updateTouch( screenData, e, "end" );
 
 	if( screenData.touchEventListenersActive > 0 ) {
 		m_qbData.commands.triggerEventListeners( "end", getTouch( screenData ),
@@ -90,7 +102,7 @@ function touchEnd( e ) {
 	}
 }
 
-function updateTouch( screenData, e ) {
+function updateTouch( screenData, e, action ) {
 	var rect, j, touch, touchData, newTouches;
 
 	if( screenData.clientRect ) {
@@ -113,9 +125,12 @@ function updateTouch( screenData, e ) {
 				touchData.lastX = null;
 				touchData.lastY = null;
 			}
+			touchData.action = action;
 			newTouches[ touchData.id ] = touchData;
 		}
+		screenData.lastTouches = screenData.touches;
 		screenData.touches = newTouches;
+		screenData.lastEvent = "touch";
 	}
 }
 
@@ -132,7 +147,8 @@ function getTouch( screenData ) {
 			"y": touch.y,
 			"id": touch.id,
 			"lastX": touch.lastX,
-			"lastY": touch.lastY
+			"lastY": touch.lastY,
+			"action": touch.action
 		};
 		touchArr.push( touchData );
 	}
@@ -140,29 +156,58 @@ function getTouch( screenData ) {
 	return touchArr;
 }
 
+qbs._.addCommand( "getTouchPress", getTouchPress, false, true, [] );
 function getTouchPress( screenData ) {
+
+	function copyTouches( touches, touchArr, action ) {
+		for( i in touches ) {
+			touch = touches[ i ];
+			touchData = {
+				"x": touch.x,
+				"y": touch.y,
+				"id": touch.id,
+				"lastX": touch.lastX,
+				"lastY": touch.lastY,
+				"action": touch.action
+			};
+			if( action !== null ) {
+				touch.action = action;
+			}
+			touchArr.push( touchData );
+		}
+	}
+
 	var touchArr, i, touch, touchData;
 
 	touchArr = [];
 
-	// Make a local copy of touch Object
-	for( i in screenData.touches ) {
-		touch = screenData.touches[ i ];
-		touchData = {
-			"x": touch.x,
-			"y": touch.y,
-			"id": touch.id,
-			"lastX": touch.lastX,
-			"lastY": touch.lastY
-		};
-		touchArr.push( touchData );
+	copyTouches( screenData.touches, touchArr );
+
+	if( touchArr.length === 0 ) {
+		copyTouches( screenData.lastTouches, touchArr, "up" );
 	}
 
-	touchData = touchArr[ 0 ];
-	touchData.buttons = 1;
-	touchData.touches = touchArr;
+	if( touchArr.length > 0 ) {
+		touchData = touchArr[ 0 ];
+		if( touchData.action === "up" ) {
+			touchData.buttons = 0;
+		} else {
+			touchData.buttons = 1;
+		}
+		touchData.touches = touchArr;
 
-	return touchData;
+		return touchData;
+	} else {
+		return {
+			"x": -1,
+			"y": -1,
+			"id": -1,
+			"lastX": -1,
+			"lastY": -1,
+			"action": "none",
+			"buttons": 0
+		};
+	}
 }
 
 qbs._.addCommand( "intouch", intouch, false, true, [] );

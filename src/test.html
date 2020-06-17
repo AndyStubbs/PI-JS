@@ -50,53 +50,35 @@
 <body>
 
 <div id="screen"></div>
-<input type="button" value="Turn off Events" id="turn" />
+<input type="button" value="Turn off mouse" id="turn" />
 <script>
 	var isDrawing = false;
 	$.screen( "200x100", "screen" );
-	$.print( "Click button below to turn on/off press event listeners." );
-
-	function pressDown( data ) {
-		if( data.buttons > 0 ) {
-			$.pset( data.x, data.y );
+	$.print( "Click button below to turn on/off mouse event listeners." );
+	$.onmouse( "down", function ( mouse ) {
+		$.pset( mouse.x, mouse.y );
+	} );
+	$.onmouse( "move", function ( mouse ) {
+		if( mouse.buttons > 0 ) {
+			$.pset( mouse.x, mouse.y );
 		}
-	}
-
-	function pressMove( data ) {
-		if( data.buttons > 0 ) {
-			$.pset( data.x, data.y );
-		}
-	}
-
-	function onPress() {
-		$.onpress( "down", pressDown );
-		$.onpress( "move", pressMove );
-	}
-
-	function offPress() {
-		$.offpress( "down", pressDown );
-		$.offpress( "move", pressMove );
-	}
+	} );
 
 	var turn = document.getElementById( "turn" );
 	var isOn = true;
-
 	turn.onclick = function () {
 		if( isOn ) {
-			turn.value = "Turn on Events";
-			offPress();
-			$.print( "Events turned off." );
+			turn.value = "Turn on mouse";
+			$.stopMouse();
+			$.print( "Mouse turned off." );
 		} else {
-			turn.value = "Turn off Events";
-			onPress();
-			$.print( "Events turned on." );
+			turn.value = "Turn off mouse";
+			$.startMouse();
+			$.print( "Mouse turned on." );
 		}
 		isOn = !( isOn );
-	};
-
-	onPress();
+	}
 
 </script>
-
 </body>
 </html>

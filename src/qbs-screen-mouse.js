@@ -131,8 +131,10 @@ function updateMouse( screenData, e ) {
 		"lastY": lastY,
 		"buttons": e.buttons
 	};
+	screenData.lastEvent = "mouse";
 }
 
+qbs._.addCommand( "getMouse", getMouse, true, true, [] );
 function getMouse( screenData ) {
 	var mouse;
 
@@ -264,6 +266,20 @@ function offpress( screenData, args ) {
 				screenData.pressEventListenersActive = 0;
 			}
 		}
+	}
+}
+
+qbs._.addCommand( "inpress", inpress, false, true, [] );
+function inpress( screenData ) {
+	
+	// Activate the mouse event listeners
+	m_qbData.commands.startMouse( screenData );
+	m_qbData.commands.startTouch( screenData );
+
+	if( screenData.lastEvent === "touch" ) {
+		return m_qbData.commands.getTouchPress( screenData );
+	} else {
+		return m_qbData.commands.getMouse( screenData );
 	}
 }
 
