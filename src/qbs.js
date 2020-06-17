@@ -19,7 +19,7 @@ window.qbs = ( function () {
 		"activeScreen": null,
 		"images": {},
 		"imageCount": 0,
-		"defaultPrompt": 219,
+		"defaultPrompt": String.fromCharCode( 219 ),
 		"defaultFont": {},
 		"nextFontId": 0,
 		"fonts": {},

@@ -492,7 +492,7 @@ function showPrompt( screenData, hideCursor ) {
 		}
 
 		if( m_blink && ! hideCursor ) {
-			msg += String.fromCharCode( screenData.printCursor.prompt );
+			msg += screenData.printCursor.prompt;
 		}
 
 		// Get the background pixels
@@ -745,25 +745,35 @@ qbs._.addCommand( "setInputCursor", setInputCursor, false, true,
 );
 qbs._.addSetting( "inputCursor", setInputCursor, true, [ "cursor" ] );
 function setInputCursor( screenData, args ) {
-	var cursor, font;
+	var cursor, font, i, badChar;
 
 	cursor = args[ 0 ];
+
+	if( qbs.util.isInteger( cursor ) ) {
+		cursor = String.fromCharCode( cursor );
+	}
+
+	if( typeof cursor !== "string" ) {
+		console.error( "setInputCursor: cursor must be a string or integer." );
+		return;
+	}
+
 	font = screenData.printCursor.font;
 
-	if( typeof cursor === "string" ) {
-		cursor = cursor.charCodeAt( 0 );
-	}
-
-	if( ! qbs.util.isInteger( cursor ) ) {
-		console.error( "setInputCursor: cursor must be a string or integer" );
-		return;
-	}
-
-	if( font.mode === "pixel" && ! font.chars.indexOf( cursor ) ) {
-		console.error( 
-			"setInputCursor: font does not contain the cursor character"
-		);
-		return;
+	if( font.mode === "pixel" ) {
+		badChar = false;
+		for( i = 0; i < font.chars.length; i++ ) {
+			if( font.chars.indexOf( cursor.charCodeAt( i ) ) === -1 ) {
+				badChar = true;
+				break;
+			}
+		}
+		if( badChar ) {
+			console.error( 
+				"setInputCursor: font does not contain the cursor character"
+			);
+			return;
+		}
 	}
 
 	screenData.printCursor.prompt = cursor;
