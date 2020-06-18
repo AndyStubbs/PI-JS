@@ -49,32 +49,16 @@
 </head>
 <body>
 <script>
-	var font1 = $.loadFont( "fonts/font-block.png", 10, 10, "ABCDFGHI", false );
-	var font2 = $.loadFont( "fonts/font-block2.png", 10, 10, "ABCDFGHI", false );
-	$.ready( function () {
-		$.screen( "100x100" );
-		$.setColors( [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ] );
-		$.setFont( font1 );
-		$.print( "CAB" );
-		$.print( "ABCD" );
-		$.print( "DACB" );
-		$.print( "BAD" );
-		$.print( "FIGHAB" );
-		$.setFontSize( 20, 20 );
-		$.print( "FIGHAB" );
 
-		$.setColor( 2 );
-		$.setFont( font2 );
-		$.setPos( 6, 0 );
-		$.print( "CAB" );
-		$.setPos( 6, 1 );
-		$.print( "ABCD" );
-		$.setPos( 6, 2 );
-		$.print( "DACB" );
-		$.setPos( 6, 3 );
-		$.print( "BAD" );
+$.setErrorMode( "throw" );
+$.screen( "200x200" );
+try {
+	$.draw( 75 );
+} catch( ex ) {
+	$.print( ex );
+}
+$.draw( "b r1 b d20 c5 r43 u11 r116 u8" );
 
-	} );
 </script>
 </body>
 </html>

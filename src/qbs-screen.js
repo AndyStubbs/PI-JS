@@ -37,14 +37,14 @@ function screen( args ) {
 
 	if( isOffscreen ) {
 		if( ! aspectData ) {
-			console.error(
+			m_qbData.log(
 				"screen: You must supply an aspect ratio with exact dimensions for " +
 				"offscreen screens."
 			);
 			return;
 		}
 		if( aspectData.splitter !== "x" ) {
-			console.error(
+			m_qbData.log(
 				"screen: You must use aspect ratio with e(x)act pixel dimensions such" +
 				" as 320x200 offscreen screens."
 			);
@@ -56,7 +56,7 @@ function screen( args ) {
 			container = document.getElementById( container );
 		}
 		if( container && ! qbs.util.isDomElement( container ) ) {
-			console.error( "screen: Invalid argument container. Container must be a" +
+			m_qbData.log( "screen: Invalid argument container. Container must be a" +
 				" DOM element or a string id of a DOM element."
 			);
 			return;

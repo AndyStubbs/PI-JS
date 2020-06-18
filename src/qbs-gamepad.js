@@ -120,7 +120,7 @@ function getExtraData( name, items, gamepadIndex, mode ) {
 	// Validate gamepadIndex
 	gamepadIndex = parseInt( gamepadIndex );
 	if( isNaN( gamepadIndex ) || gamepadIndex < 0 ) {
-		console.error( name + ": gamepadIndex is not a valid index number." );
+		m_qbData.log( name + ": gamepadIndex is not a valid index number." );
 		return;
 	}
 
@@ -129,7 +129,7 @@ function getExtraData( name, items, gamepadIndex, mode ) {
 		items = null;
 	} else if ( mode === "axis" ) {
 		if( ! qbs.util.isInteger( items ) || items < 0 ) {
-			console.error( name + ": items is not a valid axis index." );
+			m_qbData.log( name + ": items is not a valid axis index." );
 			return;
 		}
 		items = [ items ];
@@ -142,13 +142,13 @@ function getExtraData( name, items, gamepadIndex, mode ) {
 			items = [ items ];
 		}
 		if( ! qbs.util.isArray( items ) ) {
-			console.error( name + ": items is not a valid array." );
+			m_qbData.log( name + ": items is not a valid array." );
 			return;
 		}
 		for( i = 0; i < items.length; i++ ) {
 			items[ i ] = parseInt( items[ i ] );
 			if( isNaN( items[ i ] ) || items[ i ] < 0 ) {
-				console.error(
+				m_qbData.log(
 					name + ": items contains an invalid button index."
 				);
 				return;

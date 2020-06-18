@@ -22,7 +22,7 @@ function pxCircle( screenData, args ) {
 
 	// Make sure x and y are integers
 	if( isNaN( x ) || isNaN( y ) || isNaN( radius ) ) {
-		console.error( "circle: Argument's cx, cy, r must be numbers." );
+		m_qbData.log( "circle: Argument's cx, cy, r must be numbers." );
 		return;
 	}
 
@@ -101,7 +101,7 @@ function aaCircle( screenData, args ) {
 	r = args[ 2 ] - 0.9;
 
 	if( isNaN( x ) || isNaN( y ) || isNaN( r ) ) {
-		console.error("circle: parameters cx, cy, r must be numbers.");
+		m_qbData.log("circle: parameters cx, cy, r must be numbers.");
 		return;
 	}
 
@@ -151,7 +151,7 @@ function pxArc( screenData, args ) {
 
 	// Make sure x and y are integers
 	if( isNaN( x ) || isNaN( y ) || isNaN( radius ) ) {
-		console.error( "circle: Argument's cx, cy, r must be numbers." );
+		m_qbData.log( "circle: Argument's cx, cy, r must be numbers." );
 		return;
 	}
 
@@ -230,7 +230,7 @@ function aaArc( screenData, args ) {
 			isNaN( x ) || isNaN( y ) || isNaN( radius ) ||
 			isNaN( angle1 ) || isNaN( angle2 )
 		) {
-			console.error( "arc: parameters cx, cy, r, a1, a2 must be numbers." );
+			m_qbData.log( "arc: parameters cx, cy, r, a1, a2 must be numbers." );
 		return;
 	}
 
@@ -267,7 +267,7 @@ function pxEllipse( screenData, args ) {
 	radiusY = args[ 3 ];
 
 	if( isNaN( x ) || isNaN( y ) || isNaN( radiusX ) || isNaN( radiusY ) ) {
-		console.error("ellipse: parameters cx, cy, rx, ry must be numbers.");
+		m_qbData.log("ellipse: parameters cx, cy, rx, ry must be numbers.");
 		return;
 	}
 
@@ -358,7 +358,7 @@ function aaEllipse( screenData, args ) {
 	ry = args[ 3 ];
 
 	if( isNaN( cx ) || isNaN( cy ) || isNaN( rx ) || isNaN( ry ) ) {
-		console.error( "ellipse: parameters cx, cy, rx, ry must be numbers." );
+		m_qbData.log( "ellipse: parameters cx, cy, rx, ry must be numbers." );
 		return;
 	}
 	if( screenData.dirty ) {
@@ -513,7 +513,7 @@ function pset( screenData, args ) {
 
 	// Make sure x and y are integers
 	if( ! qbs.util.isInteger( x ) || ! qbs.util.isInteger( y ) ) {
-		console.error( "pset: Argument's x and y must be integers." );
+		m_qbData.log( "pset: Argument's x and y must be integers." );
 		return;
 	}
 
@@ -523,7 +523,7 @@ function pset( screenData, args ) {
 
 	// Make sure x and y are on the screen
 	if( ! qbs.util.inRange2( x, y, 0, 0, screenData.width, screenData.height ) ) {
-		//console.error( "pset: Argument's x and y are not on the screen." );
+		//m_qbData.log( "pset: Argument's x and y are not on the screen." );
 		return;
 	}
 
@@ -548,7 +548,7 @@ function pxLine( screenData, args ) {
 	// Make sure x and y are integers
 	if( ! qbs.util.isInteger( x1 ) || ! qbs.util.isInteger( y1 ) ||
 		! qbs.util.isInteger( x2 ) || ! qbs.util.isInteger( y2 ) ) {
-		console.error( "line: Argument's x1, y1, x2, and y2 must be integers." );
+		m_qbData.log( "line: Argument's x1, y1, x2, and y2 must be integers." );
 		return;
 	}
 
@@ -611,7 +611,7 @@ function aaLine( screenData, args ) {
 	y2 = args[ 3 ];
 
 	if( isNaN( x1 ) || isNaN( y1 ) || isNaN( x2 ) || isNaN( y2 ) ) {
-		console.error("line: parameters x1, y1, x2, y2 must be numbers.");
+		m_qbData.log("line: parameters x1, y1, x2, y2 must be numbers.");
 		return;
 	}
 
@@ -652,7 +652,7 @@ function aaRect( screenData, args ) {
 	height = args[ 3 ];
 
 	if( isNaN(x) || isNaN(y) || isNaN(width) || isNaN(height) ) {
-		console.error( "rect: parameters x, y, width, height must be numbers." );
+		m_qbData.log( "rect: parameters x, y, width, height must be numbers." );
 		return;
 	}
 
@@ -681,12 +681,12 @@ function setPalColor( screenData, args ) {
 		index < 0 ||
 		index > screenData.pal.length
 	) {
-		console.error( "setPalColor: index is not a valid integer value." );
+		m_qbData.log( "setPalColor: index is not a valid integer value." );
 		return;
 	}
 	colorValue = qbs.util.convertToColor( color );
 	if( colorValue === null ) {
-		console.error(
+		m_qbData.log(
 			"setPalColor: parameter color is not a valid color format."
 		);
 		return;
@@ -768,7 +768,7 @@ function setColors( screenData, args ) {
 	colors = [];
 	if( qbs.util.isArray( colorInput ) ) {
 		if( colorInput.length === 0 ) {
-			console.error( "color: color array cannot be empty." );
+			m_qbData.log( "color: color array cannot be empty." );
 			return;
 		}
 		for( i = 0; i < colorInput.length; i++ ) {
@@ -782,7 +782,7 @@ function setColors( screenData, args ) {
 		}
 		colorValue = colors[ 0 ];
 	} else {
-		console.error( "color: colors must be an array." );
+		m_qbData.log( "color: colors must be an array." );
 		return;
 	}
 
@@ -804,10 +804,10 @@ function swapColor( screenData, args ) {
 
 	// Validate oldColor
 	if( ! qbs.util.isInteger( oldColor ) ) {
-		console.error( "swapColor: parameter oldColor must be an integer." );
+		m_qbData.log( "swapColor: parameter oldColor must be an integer." );
 		return;
 	} else if( oldColor < 0 || oldColor > screenData.pal.length ) {
-		console.error( "swapColor: parameter oldColor is an invalid integer." );
+		m_qbData.log( "swapColor: parameter oldColor is an invalid integer." );
 		return;
 	}
 
@@ -817,7 +817,7 @@ function swapColor( screenData, args ) {
 	// Validate newColor
 	newColor = qbs.util.convertToColor( newColor );
 	if( newColor === null ) {
-		console.error(
+		m_qbData.log(
 			"swapColor: parameter newColor is not a valid color format."
 		);
 		return;
@@ -860,7 +860,7 @@ function point( screenData, args ) {
 
 	// Make sure x and y are integers
 	if( ! qbs.util.isInteger( x ) || ! qbs.util.isInteger( y ) ) {
-		console.error("point: Argument's x and y must be integers.");
+		m_qbData.log("point: Argument's x and y must be integers.");
 		return;
 	}
 
@@ -897,7 +897,7 @@ function filterImg( screenData, args ) {
 	filter = args[ 0 ];
 
 	if( ! qbs.util.isFunction( filter ) ) {
-		console.error("filter: Argument filter must be a callback function.");
+		m_qbData.log("filter: Argument filter must be a callback function.");
 		return;
 	}
 
@@ -954,25 +954,25 @@ function setPen( screenData, args ) {
 	noise = args[ 2 ];
 
 	if( ! m_qbData.pens[ pen ] ) {
-		console.error(
+		m_qbData.log(
 			"setPen: Argument pen is not a valid pen. Valid pens: " +
 			m_qbData.penList.join(", " )
 		);
 		return;
 	}
 	if( ! qbs.util.isInteger( size ) ) {
-		console.error( "setPen: Argument size is not a valid number." );
+		m_qbData.log( "setPen: Argument size is not a valid number." );
 		return;
 	}
 	if( noise && ( ! qbs.util.isArray( noise ) && Number.isNaN( noise ) ) ) {
-		console.error( "setPen: Argument noise is not an array or number." );
+		m_qbData.log( "setPen: Argument noise is not an array or number." );
 		return;
 	}
 	if( qbs.util.isArray( noise ) ) {
 		noise = noise.slice();
 		for( i = 0; i < noise.length; i++ ) {
 			if( Number.isNaN( noise[ i ] ) ) {
-				console.error(
+				m_qbData.log(
 					"setPen: Argument noise array contains an invalid value."
 				);
 				return;

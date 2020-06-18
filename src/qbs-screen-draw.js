@@ -20,6 +20,11 @@ function draw( screenData, args ) {
 
 	drawString = args[ 0 ];
 
+	if( typeof drawString !== "string" ) {
+		m_qbData.log( "draw: drawString must be a string." );
+		return;
+	}
+
 	//Conver to uppercase
 	drawString = drawString.toUpperCase();
 

@@ -25,7 +25,7 @@ function paint( screenData, args ) {
 	tolerance = args[ 3 ];
 
 	if( ! qbs.util.isInteger( x ) || ! qbs.util.isInteger( y ) ) {
-		console.error( "paint: Argument's x and y must be integers." );
+		m_qbData.log( "paint: Argument's x and y must be integers." );
 		return;
 	}
 
@@ -35,7 +35,7 @@ function paint( screenData, args ) {
 	}
 
 	if( isNaN( tolerance ) ) {
-		console.error( "paint: Argument tolerance must be a number." );
+		m_qbData.log( "paint: Argument tolerance must be a number." );
 		return;
 	}
 
@@ -61,7 +61,7 @@ function paint( screenData, args ) {
 
 	if( qbs.util.isInteger( fillColor ) ) {
 		if( fillColor > screenData.pal.length ) {
-			console.error(
+			m_qbData.log(
 				"paint: Argument fillColor is not a color in the palette."
 			);
 			return;
@@ -70,7 +70,7 @@ function paint( screenData, args ) {
 	} else {
 		fillColor = qbs.util.convertToColor( fillColor );
 		if( fillColor === null ) {
-			console.error( "paint: Argument fillColor is not a valid color format." );
+			m_qbData.log( "paint: Argument fillColor is not a valid color format." );
 			return;
 		}
 	}

@@ -54,7 +54,7 @@
 		borderStyle = args[ 2 ];
 		isCentered = !!( args[ 3 ] );
 		if( ! qbs.util.isArray( items ) ) {
-			console.error( "formatTable: items must be an array" );
+			m_qbData.log( "formatTable: items must be an array" );
 			return;
 		}
 
@@ -67,7 +67,7 @@
 		} else if( qbs.util.isArray( tableFormat ) ) {
 			isFormatted = true;
 		} else {
-			console.error(
+			m_qbData.log(
 				"formatTable: tableFormat must be an array"
 			);
 			return;
@@ -76,7 +76,7 @@
 		if( typeof borderStyle === "string" && m_borderStyles[ borderStyle ] ) {
 			borderStyle = m_borderStyles[ borderStyle ];
 		} else if( ! qbs.util.isArray( borderStyle ) ) {
-			console.error(
+			m_qbData.log(
 				"formatTable: borderStyle must be an integer or array"
 			);
 			return;

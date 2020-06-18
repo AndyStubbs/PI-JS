@@ -342,14 +342,14 @@ function onkey( args ) {
 
 	// Validate parameters
 	if( ! isNaN( key ) && typeof key !== "string" ) {
-		console.error(
+		m_qbData.log(
 			"onkey: key needs to be either an interger keyCode or " +
 			"a string key name."
 		);
 		return;
 	}
 	if( ! qbs.util.isFunction( fn ) ) {
-		console.error( "onkey: fn is not a valid function." );
+		m_qbData.log( "onkey: fn is not a valid function." );
 		return;
 	}
 
@@ -401,14 +401,14 @@ function offkey( args ) {
 
 	// Validate parameters
 	if( ! isNaN( key ) && typeof key !== "string" ) {
-		console.error(
+		m_qbData.log(
 			"offkey: key needs to be either an interger keyCode or a " +
 			"string."
 		);
 		return;
 	}
 	if( ! qbs.util.isFunction( fn ) && fn !== undefined ) {
-		console.error(
+		m_qbData.log(
 			"offkey: fn is not a valid function.  Leave this undefined" +
 			" or set it to a function."
 		);
@@ -462,7 +462,7 @@ function setActionKey( args ) {
 	}
 
 	if( ! ( typeof key === "string" || qbs.util.isInteger( key ) ) ) {
-		console.error(
+		m_qbData.log(
 			"setActionKey: key must be a string or integer"
 		);
 		return;
@@ -582,11 +582,11 @@ function input( screenData, args ) {
 	showKeyboard = !!( args[ 7 ] );
 
 	if( typeof prompt !== "string" ) {
-		console.error( "input: prompt is required and must be a string." );
+		m_qbData.log( "input: prompt is required and must be a string." );
 		return;
 	}
 	if( typeof name !== "string" && name !== undefined ) {
-		console.error( "input: name must be a string or left blank." );
+		m_qbData.log( "input: name must be a string or left blank." );
 		return;
 	}
 
@@ -643,7 +643,7 @@ function cancelInput( screenData, args ) {
 	}
 
 	if( typeof name !== "string" ) {
-		console.error( "cancelInput: name must be a string." );
+		m_qbData.log( "cancelInput: name must be a string." );
 	}
 
 	for( i = m_inputs.length - 1; i >= 0; i-- ) {
@@ -775,7 +775,7 @@ function setInputCursor( screenData, args ) {
 	}
 
 	if( typeof cursor !== "string" ) {
-		console.error( "setInputCursor: cursor must be a string or integer." );
+		m_qbData.log( "setInputCursor: cursor must be a string or integer." );
 		return;
 	}
 
@@ -790,7 +790,7 @@ function setInputCursor( screenData, args ) {
 			}
 		}
 		if( badChar ) {
-			console.error( 
+			m_qbData.log( 
 				"setInputCursor: font does not contain the cursor character"
 			);
 			return;

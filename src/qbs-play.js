@@ -89,7 +89,7 @@
 		playString = args[ 0 ];
 
 		if( typeof playString !== "string" ) {
-			console.error( "play: playString needs to be a string." );
+			m_qbData.log( "play: playString needs to be a string." );
 			return;
 		}
 
@@ -122,7 +122,7 @@
 			) {
 				
 				waveTables[ i ] = "triangle";
-				console.error( "play: wavetables in playstring must have 2 " +
+				m_qbData.log( "play: wavetables in playstring must have 2 " +
 					"arrays of the same length. Defaulting to triangle wave."
 				);
 				continue;
@@ -249,7 +249,7 @@
 
 		// Validate soundId
 		if( ! m_tracks[ trackId ] ) {
-			console.error( "stopPlay: track ID " + trackId + " not found." );
+			m_qbData.log( "stopPlay: track ID " + trackId + " not found." );
 			return;
 		}
 

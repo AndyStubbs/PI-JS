@@ -66,13 +66,13 @@ function drawImage( screenData, args ) {
 
 	if( typeof name === "string" ) {
 		if( ! m_qbData.images[ name ] ) {
-			console.error( "drawImage: invalid image name" );
+			m_qbData.log( "drawImage: invalid image name" );
 			return;
 		}
 		img = m_qbData.images[ name ];
 	} else {
 		if( ! name || ! name.canvas ) {
-			console.error(
+			m_qbData.log(
 				"drawImage: image source object type. Must be an image already " +
 				"loaded by the loadImage command or a screen."
 			);

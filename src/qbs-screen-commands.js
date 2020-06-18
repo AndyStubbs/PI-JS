@@ -50,7 +50,7 @@ function setBgColor( screenData, args ) {
 	if( bc && typeof bc.s === "string" ) {
 		screenData.canvas.style.backgroundColor = bc.s;
 	} else {
-		console.error( "bgColor: invalid color value for parameter c." );
+		m_qbData.log( "bgColor: invalid color value for parameter c." );
 		return;
 	}
 }
@@ -77,7 +77,7 @@ function setContainerBgColor( screenData, args ) {
 			screenData.container.style.backgroundColor = bc.s;
 			return;
 		} else {
-			console.error( "containerBgColor: invalid color value for parameter c." );
+			m_qbData.log( "containerBgColor: invalid color value for parameter c." );
 			return;
 		}
 	}
@@ -248,7 +248,7 @@ function onevent( mode, fn, once, hitBox, modes, name, listenerArr, extraId,
 		}
 	}
 	if( ! modeFound ) {
-		console.error(
+		m_qbData.log(
 			name + ": mode needs to be on of the following " +
 			modes.join( ", " ) + "."
 		);
@@ -260,7 +260,7 @@ function onevent( mode, fn, once, hitBox, modes, name, listenerArr, extraId,
 
 	// Make sure function is valid
 	if( ! qbs.util.isFunction( fn ) ) {
-		console.error( name + ": fn is not a valid function." );
+		m_qbData.log( name + ": fn is not a valid function." );
 		return false;
 	}
 
@@ -272,7 +272,7 @@ function onevent( mode, fn, once, hitBox, modes, name, listenerArr, extraId,
 			! qbs.util.isInteger( hitBox.width ) ||
 			! qbs.util.isInteger( hitBox.height )
 		) {
-			console.error(
+			m_qbData.log(
 				name + ": hitbox must have properties x, y, width, and " +
 				"height whose values are integers."
 			);
@@ -331,7 +331,7 @@ function offevent( mode, fn, modes, name, listenerArr, extraId ) {
 		}
 	}
 	if( ! modeFound ) {
-		console.error( name + ": mode needs to be one of the following " +
+		m_qbData.log( name + ": mode needs to be one of the following " +
 			modes.join( ", " ) + ".");
 		return false;
 	}
@@ -347,7 +347,7 @@ function offevent( mode, fn, modes, name, listenerArr, extraId ) {
 	} else {
 		isClear = false;
 		if( ! qbs.util.isFunction( fn ) ) {
-			console.error( name + ": fn is not a valid function." );
+			m_qbData.log( name + ": fn is not a valid function." );
 			return false;
 		}
 	}

@@ -31,7 +31,7 @@ function createAudioPool( args ) {
 
 	// Validate parameters
 	if( ! src ) {
-		console.error( "createAudioPool: No sound source provided." );
+		m_qbData.log( "createAudioPool: No sound source provided." );
 		return;
 	}
 	if( poolSize === undefined || isNaN( poolSize ) ) {
@@ -95,9 +95,9 @@ function loadAudio( audioItem, audio ) {
 		errorCode = audio.error.code;
 		index = errorCode - 1;
 		if( index > 0 && index < errors.length ) {
-			console.error( "createAudioPool: " + errors[ index ] );
+			m_qbData.log( "createAudioPool: " + errors[ index ] );
 		} else {
-			console.error( "createAudioPool: unknown error - " + errorCode );
+			m_qbData.log( "createAudioPool: unknown error - " + errorCode );
 		}
 		m_qbResume();
 	};
@@ -124,7 +124,7 @@ function deleteAudioPool( args ) {
 		// Delete the audio item from the pools
 		delete m_audioPools[ audioId ];
 	} else {
-		console.error( "deleteAudioPool: " + audioId + " not found." );
+		m_qbData.log( "deleteAudioPool: " + audioId + " not found." );
 	}
 }
 
@@ -142,7 +142,7 @@ function playAudioPool( args ) {
 
 	// Validate audioId
 	if( ! m_audioPools[ audioId ] ) {
-		console.error( "playAudioPool: sound ID " + audioId + " not found." );
+		m_qbData.log( "playAudioPool: sound ID " + audioId + " not found." );
 		return;
 	}
 
@@ -152,7 +152,7 @@ function playAudioPool( args ) {
 	}
 
 	if( isNaN( volume ) || volume < 0 || volume > 1 ) {
-		console.error(
+		m_qbData.log(
 			"playAudioPool: volume must be a number between 0 and " +
 			"1 (inclusive)."
 		);
@@ -165,7 +165,7 @@ function playAudioPool( args ) {
 	}
 
 	if( isNaN( startTime ) || startTime < 0 ) {
-		console.error(
+		m_qbData.log(
 			"playAudioPool: startTime must be a number greater than or " +
 			"equal to 0."
 		);
@@ -178,7 +178,7 @@ function playAudioPool( args ) {
 	}
 
 	if( isNaN( duration ) || duration < 0 ) {
-		console.error(
+		m_qbData.log(
 			"playAudioPool: duration must be a number greater than or " +
 			"equal to 0."
 		);
@@ -190,7 +190,7 @@ function playAudioPool( args ) {
 
 	// Make sure that there is at least one sound loaded
 	if( audioItem.pool.length === 0 ) {
-		console.error( "playAudioPool: sound pool has no sounds loaded." );
+		m_qbData.log( "playAudioPool: sound pool has no sounds loaded." );
 		return;
 	}
 
@@ -249,7 +249,7 @@ function stopAudioPool( args ) {
 
 	// Validate audioId
 	if( ! m_audioPools[ audioId ] ) {
-		console.error( "stopAudioPool: audio ID " + audioId + " not found." );
+		m_qbData.log( "stopAudioPool: audio ID " + audioId + " not found." );
 		return;
 	}
 
@@ -277,7 +277,7 @@ function sound( args ) {
 
 	// Validate frequency
 	if( ! qbs.util.isInteger( frequency ) ) {
-		console.error( "sound: frequency needs to be an integer." );
+		m_qbData.log( "sound: frequency needs to be an integer." );
 		return;
 	}
 
@@ -287,7 +287,7 @@ function sound( args ) {
 	}
 
 	if( isNaN( duration ) || duration < 0 ) {
-		console.error(
+		m_qbData.log(
 			"sound: duration needs to be a number equal to or greater than 0."
 		);
 		return;
@@ -299,7 +299,7 @@ function sound( args ) {
 	}
 
 	if( isNaN( volume ) || volume < 0 || volume > 1 ) {
-		console.error( "sound: volume needs to be a number between 0 and 1." );
+		m_qbData.log( "sound: volume needs to be a number between 0 and 1." );
 		return;
 	}
 
@@ -309,7 +309,7 @@ function sound( args ) {
 	}
 
 	if( isNaN( attack ) || attack < 0 ) {
-		console.error(
+		m_qbData.log(
 			"sound: attack needs to be a number equal to or greater than 0."
 		);
 		return;
@@ -321,7 +321,7 @@ function sound( args ) {
 	}
 
 	if( isNaN( delay ) || delay < 0 ) {
-		console.error(
+		m_qbData.log(
 			"sound: delay needs to be a number equal to or greater than 0."
 		);
 		return;
@@ -333,7 +333,7 @@ function sound( args ) {
 	}
 
 	if( isNaN( decay ) ) {
-		console.error( "sound: decay needs to be a number." );
+		m_qbData.log( "sound: decay needs to be a number." );
 		return;
 	}
 
@@ -352,7 +352,7 @@ function sound( args ) {
 			oType[ 1 ].length === 0 ||
 			oType[ 0 ].length != oType[ 1 ].length
 		) {
-			console.error(
+			m_qbData.log(
 				"sound: oType array must be an array with two non empty " +
 				"arrays of equal length."
 			);
@@ -364,7 +364,7 @@ function sound( args ) {
 			for( j = 0; j < oType[ i ].length; j++ ) {
 				for( k = 0; k < oType[ i ][ j ].length; k++ ) {
 					if( isNaN( oType[ i ][ j ][ k ] ) ) {
-						console.error(
+						m_qbData.log(
 							"sound: oType array must only contain numbers."
 						);
 						return;
@@ -378,7 +378,7 @@ function sound( args ) {
 	} else {
 
 		if( typeof oType !== "string" ) {
-			console.error( "sound: oType needs to be a string or an array." );
+			m_qbData.log( "sound: oType needs to be a string or an array." );
 			return;
 		}
 
@@ -388,7 +388,7 @@ function sound( args ) {
 		];
 
 		if( types.indexOf( oType ) === -1 ) {
-			console.error(
+			m_qbData.log(
 				"sound: oType is not a valid type. oType must be " +
 				"one of the following: triangle, sine, square, sawtooth."
 			);
@@ -523,7 +523,7 @@ function stopSound( args ) {
 
 	// Validate soundId
 	if( ! m_soundPool[ soundId ] ) {
-		console.error( "stopSound: sound ID " + soundId + " not found." );
+		m_qbData.log( "stopSound: sound ID " + soundId + " not found." );
 		return;
 	}
 
@@ -539,7 +539,7 @@ function setVolume( args ) {
 	volume = args[ 0 ];
 
 	if( isNaN( volume ) || volume < 0 || volume > 1 ) {
-		console.error(
+		m_qbData.log(
 			"setVolume: volume needs to be a number between 0 and 1."
 		);
 		return;

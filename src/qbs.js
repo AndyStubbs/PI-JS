@@ -31,7 +31,8 @@ window.qbs = ( function () {
 		"penList": [],
 		"settings": {},
 		"settingsList": [],
-		"volume": 0.75
+		"volume": 0.75,
+		"log": logError
 	};
 
 	// QBS api
@@ -190,14 +191,14 @@ window.qbs = ( function () {
 			if( commandName === "set" ) {
 				return false;
 			}
-			console.error( commandName + ": No screens available for command." );
+			m_qbData.log( commandName + ": No screens available for command." );
 			return false;
 		}
 		if( screenId === undefined || screenId === null ) {
 			screenId = m_qbData.activeScreen.id;
 		}
 		if( qbs.util.isInteger( screenId ) && ! m_qbData.screens[ screenId ] ) {
-			console.error( commandName + ": Invalid screen id." );
+			m_qbData.log( commandName + ": Invalid screen id." );
 			return false;
 		}
 		return m_qbData.screens[ screenId ];
@@ -262,7 +263,7 @@ window.qbs = ( function () {
 			screenId = screenObj.id;
 		}
 		if( ! m_qbData.screens[ screenId ] ) {
-			console.error( "screen: Invalid screen." );
+			m_qbData.log( "screen: Invalid screen." );
 			return;
 		}
 		m_qbData.activeScreen = m_qbData.screens[ screenId ];
@@ -295,7 +296,7 @@ window.qbs = ( function () {
 
 		pal = args[ 0 ];
 		if( ! qbs.util.isArray( pal ) ) {
-			console.error( "setDefaultPal: parameter pal is not an array." );
+			m_qbData.log( "setDefaultPal: parameter pal is not an array." );
 			return;
 		}
 
@@ -304,7 +305,7 @@ window.qbs = ( function () {
 		for( i = 0; i < pal.length; i++ ) {
 			c = qbs.util.convertToColor( pal[ i ] );
 			if( c === null ) {
-				console.error(
+				m_qbData.log(
 					"setDefaultPal: invalid color value inside array pal."
 				);
 				m_qbData.defaultPalette.push(
@@ -385,6 +386,38 @@ window.qbs = ( function () {
 			}
 		}
 	}
+
+	addCommand( "setErrorMode", setErrorMode, false, false, [ "mode" ] );
+	addSetting( "errorMode", setErrorMode, false, [ "mode" ] );
+	function setErrorMode( args ) {
+		var mode;
+
+		mode = args[ 0 ];
+
+		if( mode === "log" ) {
+			m_qbData.log = logError;
+		} else if( mode === "throw" ) {
+			m_qbData.log = throwError;
+		} else if( mode === "none" ) {
+			m_qbData.log = noError;
+		} else {
+			m_qbData.log(
+				"setErrorMode: mode must be one of the following strings: " +
+				"log, throw, none."
+			);
+			return;
+		}
+	}
+
+	function logError( msg ) {
+		console.error( msg );
+	}
+
+	function throwError( msg ) {
+		throw msg;
+	}
+
+	function noError() {}
 
 	return m_api;
 

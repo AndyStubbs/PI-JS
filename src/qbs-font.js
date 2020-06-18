@@ -36,7 +36,7 @@ function loadFont( args ) {
 	}
 
 	if( ! ( qbs.util.isArray( charSet ) || typeof charSet === "string" ) ) {
-		console.error( "loadFont: charSet must be an array or a string." );
+		m_qbData.log( "loadFont: charSet must be an array or a string." );
 		return;
 	}
 
@@ -125,7 +125,7 @@ function decompressFont( numStr, width, height ) {
 	// Loop through all the bits
 	i = 0;
 	if( bin.length % size > 0 ) {
-		console.error( "loadFont: Invalid font data." );
+		m_qbData.log( "loadFont: Invalid font data." );
 		return;
 	}
 	while( i < bin.length ) {
@@ -147,13 +147,13 @@ function decompressFont( numStr, width, height ) {
 
 				if( i >= bin.length ) {
 					num = 0;
-					//console.error( "Invalid font data" );
+					//m_qbData.log( "Invalid font data" );
 					//return;
 				} else {
 					num = parseInt( bin[ i ] );
 					if( isNaN( num ) ) {
 						num = 0;
-						//console.error( "Invalid font data" );
+						//m_qbData.log( "Invalid font data" );
 						//return;
 					}
 				}
@@ -183,7 +183,7 @@ function loadFontFromImg( fontSrc, width, height, font, isBitmap ) {
 	} else if( fontSrc instanceof HTMLImageElement ){
 		img = fontSrc;
 	} else {
-		console.error(
+		m_qbData.log(
 			"loadFont: fontSrc must be a string, image or canvas. "
 		);
 		return;
@@ -203,7 +203,7 @@ function loadFontFromImg( fontSrc, width, height, font, isBitmap ) {
 			m_qbResume();
 		};
 		img.onerror = function ( err ) {
-			console.error( "loadFont: unable to load image for font." );
+			m_qbData.log( "loadFont: unable to load image for font." );
 			m_qbResume();
 		};
 	} else {
@@ -299,7 +299,7 @@ function setDefaultFont( args ) {
 
 	fontId = parseInt( args[ 0 ] );
 	if( isNaN( fontId ) || fontId < 0 || fontId < m_qbData.fonts.length ) {
-		console.error( "setDefaultFont: invalid fontId" );
+		m_qbData.log( "setDefaultFont: invalid fontId" );
 		return;
 	}
 	m_qbData.defaultFont = m_qbData.fonts[ fontId ];
@@ -430,17 +430,17 @@ function setFontSize( screenData, args ) {
 	height = args[ 1 ];
 
 	if( isNaN( width ) ) {
-		console.error( "setFontSize: width must be a number." );
+		m_qbData.log( "setFontSize: width must be a number." );
 		return;
 	}
 
 	if( isNaN( height ) ) {
-		console.error( "setFontSize: height must be a number." );
+		m_qbData.log( "setFontSize: height must be a number." );
 		return;
 	}
 
 	if( screenData.printCursor.font.mode !== "bitmap" ) {
-		console.error( "setFontSize: only bitmap fonts can change sizes." );
+		m_qbData.log( "setFontSize: only bitmap fonts can change sizes." );
 		return;
 	}
 

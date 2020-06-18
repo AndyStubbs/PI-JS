@@ -35,7 +35,7 @@ function pxBezier( screenData, args ) {
 		isNaN( xControlPoint1 ) || isNaN( yControlPoint1 ) ||
 		isNaN( xControlPoint2 ) || isNaN( yControlPoint2 ) ||
 		isNaN( xEnd ) || isNaN( yEnd ) ) {
-		console.error( "pset: Argument's xStart, yStart, xControlPoint1," +
+		m_qbData.log( "pset: Argument's xStart, yStart, xControlPoint1," +
 			"yControlPoint1, xControlPoint2, yControlPoint2, xEnd, and yEnd" +
 			" must be numbers." );
 		return;
@@ -129,7 +129,7 @@ function aaBezier( screenData, args ) {
 		isNaN( x ) || isNaN( y ) || isNaN( x2 ) || isNaN( y2 ) ||
 		isNaN( x3 ) || isNaN( y3 ) || isNaN( x4 ) || isNaN( y4 )
 	) {
-		console.error(
+		m_qbData.log(
 			"bezier: parameters x, y, x2, y2, x3, y3, x4, and y4 must " +
 			"be numbers."
 		);

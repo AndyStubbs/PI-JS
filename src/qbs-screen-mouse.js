@@ -308,7 +308,7 @@ function onclick( screenData, args ) {
 	hitBox = args[ 2 ];
 
 	if( hitBox == null ) {
-		console.error(
+		m_qbData.log(
 			"onclick: hitBox is required and must contain x, y," +
 			" width, and height."
 		);

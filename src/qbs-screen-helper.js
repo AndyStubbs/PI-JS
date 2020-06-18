@@ -221,7 +221,7 @@ function findColorValue( screenData, colorInput, commandName ) {
 
 	if( qbs.util.isInteger( colorInput ) ) {
 		if( colorInput > screenData.pal.length ) {
-			console.error(
+			m_qbData.log(
 				commandName + ": parameter color is not a color in the palette."
 			);
 			return;
@@ -230,7 +230,7 @@ function findColorValue( screenData, colorInput, commandName ) {
 	} else {
 		colorValue = qbs.util.convertToColor( colorInput );
 		if( colorValue === null ) {
-			console.error( commandName +
+			m_qbData.log( commandName +
 				": parameter color is not a valid color format."
 			);
 			return;
