@@ -93,10 +93,14 @@
 	}
 
 	function buildStandardTable( screenData, items, width, borders ) {
-		var row, col, msg, msgTop, msgMid, msgBot, cellWidth, rowWidth, rowPad,
-			bottomRow;
+		var row, col, msg, msgTop, msgMid, msgBot, cellWidth, cellHeight,
+			rowWidth, rowPad, bottomRow, boxes, font, startPos, box;
 
 		msg = "";
+		boxes = [];
+		font = screenData.printCursor.font;
+		startPos = m_qbData.commands.getPos( screenData );
+		cellHeight = 2;
 
 		for( row = 0; row < items.length; row += 1 ) {
 
@@ -116,8 +120,26 @@
 			// Format all the cells
 			for( col = 0; col < items[ row ].length; col += 1 ) {
 
+				createBox(
+					( col * ( cellWidth - 1 ) ) + rowPad,
+					( row * 2 ) + startPos.row, boxes, font
+				);
+				box = boxes[ boxes.length - 1 ];
+				box.pos.width = cellWidth - 1;
+				box.pos.height = 2;
+				box.pixels.width = box.pos.width * font.width;
+				box.pixels.height = box.pos.height * font.height;
+
+				if( col === items[ row ].length - 1 ) {
+					box.pixels.width += 1;
+				}
+
+				if( row === items.length - 1 ) {
+					box.pixels.height += 1;
+				}
+
 				// Middle cell
-				msgMid += String.fromCharCode( borders[ 3 ][ 0 ] ) + 
+				msgMid += String.fromCharCode( borders[ 3 ][ 0 ] ) +
 					qbs.util.pad(
 						items[ row ][ col ],
 						cellWidth - 2,
@@ -186,29 +208,32 @@
 
 		msg = msg.substr( 0, msg.length - 1 );
 		m_qbData.commands.print( screenData, [ msg ] );
+
+		return boxes;
 	}
 
 	function buildFormatedTable(
 		screenData, items, borders, tableFormat, isCentered
 	) {
-		var row, col, msg, cell, cellDirs, boxes, i, pos, padding, padWidth;
+		var row, col, msg, cell, cellDirs, boxes, i, pos, posAfter, padding,
+			font;
 
 		msg = "";
 		boxes = [];
 		pos = m_qbData.commands.getPos( screenData );
+		font = screenData.printCursor.font;
 
 		// Set padding for centered table
 		if( isCentered ) {
-			padWidth = Math.floor( ( m_qbData.commands.getCols( screenData ) -
+			pos.col = Math.floor( ( m_qbData.commands.getCols( screenData ) -
 				tableFormat[ 0 ].length ) / 2
 			);
-		} else {
-			padWidth = pos.col;
 		}
 
 		// Create the padding
-		padding = qbs.util.pad( "", padWidth, " " );
+		padding = qbs.util.pad( "", pos.col, " " );
 		m_qbData.commands.setPos( screenData, [ 0, pos.row ] );
+
 		for( row = 0; row < tableFormat.length; row += 1 ) {
 			msg += padding;
 			for( col = 0; col < tableFormat[ row ].length; col += 1 ) {
@@ -227,13 +252,13 @@
 
 						// Top Left Section
 						msg += String.fromCharCode( borders[ 0 ][ 0 ] );
-						createBox( row, col, boxes );
-						
+						createBox( pos.col + col, pos.row + row, boxes, font );
+
 					} else if( cellDirs === "-- |" ) {
-						
+
 						// Top Middle Section
 						msg += String.fromCharCode( borders[ 0 ][ 2 ] );
-						createBox( row, col, boxes );
+						createBox( pos.col + col, pos.row + row, boxes, font );
 
 					} else if( cellDirs === "-  |" ) {
 
@@ -244,13 +269,13 @@
 
 						// Middle Left Section
 						msg += String.fromCharCode( borders[ 1 ][ 0 ] );
-						createBox( row, col, boxes );
+						createBox( pos.col + col, pos.row + row, boxes, font );
 	
 					} else if( cellDirs === "--||" ) {
 
 						// Middle Middle
 						msg += String.fromCharCode( borders[ 1 ][ 2 ] );
-						createBox( row, col, boxes );
+						createBox( pos.col + col, pos.row + row, boxes, font );
 
 					} else if( cellDirs === "- ||" ) {
 
@@ -284,41 +309,47 @@
 			msg += "\n";
 		}
 
-		completeBoxes( boxes, tableFormat );
+		posAfter = m_qbData.commands.getPos( screenData );
+		completeBoxes( boxes, tableFormat, font, pos );
 
-		pos = m_qbData.commands.getPos( screenData );
 		m_qbData.commands.print( screenData, [ msg ] );
-		m_qbData.commands.setPos( screenData, [ pos.col, pos.row ] );
+		//m_qbData.commands.setPos( screenData, [ pos.col, pos.row ] );
+
 		i = 0;
 		for( row = 0; row < items.length; row += 1 ) {
 			if( qbs.util.isArray( items[ row ] ) ) {
 				for( col = 0; col < items[ row ].length; col += 1 ) {
-					printItem(
-						screenData, boxes[ i ], items[ row ][ col ], padWidth
-					);
-					i += 1;
+					if( i < boxes.length - 1 ) {
+						printItem(
+							screenData, boxes[ i ], items[ row ][ col ],
+							pos.col
+						);
+						i += 1;
+					}
 				}
 			} else {
-				printItem( screenData, boxes[ i ], items[ row ], padWidth );
+				printItem( screenData, boxes[ i ], items[ row ], pos.col );
 				i += 1;
 			}
 		}
 
 		m_qbData.commands.setPos( screenData,
-			[ 0, pos.row + tableFormat.length ]
+			[ 0, posAfter.row + tableFormat.length ]
 		);
+
+		return boxes;
 	}
 
-	function printItem( screenData, box, msg, padWidth ) {
-		var pos, width, height, isVertical, col, row, index;
+	function printItem( screenData, box, msg ) {
+		var pos, width, height, isVertical, col, row, startRow, index;
 
 		if( ! box ) {
 			return;
 		}
 
 		// Calculate dimensions
-		width = box.right - ( box.left + 1 );
-		height = box.bottom - ( box.top + 1 );
+		width = box.pos.width;
+		height = box.pos.height;
 
 		if( box.format.toLowerCase() === "v" ) {
 			isVertical = true;
@@ -338,10 +369,10 @@
 		
 		if( isVertical ) {
 			index = 0;
-			col = pos.col + box.left + Math.round( width / 2 ) + padWidth;
-			row = pos.row + box.top + 1 +
+			col = box.pos.col + Math.round( width / 2 );
+			startRow = box.pos.row + 1 +
 				Math.floor( ( height - msg.length ) / 2 );
-			for( ; row <= pos.row + height; row += 1 ) {
+			for( row = startRow; row <= height + startRow; row += 1 ) {
 				m_qbData.commands.setPos( screenData, [ col, row ] );
 				m_qbData.commands.print( screenData,
 					[ msg.charAt( index ), true ]
@@ -349,68 +380,95 @@
 				index += 1;
 			}
 		} else {
-			col = pos.col + box.left + 1 + padWidth +
-				Math.floor( ( width - msg.length ) / 2 );
-			row = pos.row + box.top + Math.round( height / 2 );
+			col = box.pos.col + 1 + Math.floor( ( width - msg.length ) / 2 );
+			row = box.pos.row + Math.round( height / 2 );
 			m_qbData.commands.setPos( screenData, [ col, row ] );
 			m_qbData.commands.print( screenData, [ msg, true ] );
 		}
 		m_qbData.commands.setPos( screenData, [ pos.col, pos.row ] );
 	}
 
-	function createBox( row, col, boxes ) {
-		var boxName;
-
-		boxName = col + "_" + row;
+	function createBox( col, row, boxes, font ) {
 		boxes.push( {
-			"left": col,
-			"top": row,
-			"right": null,
-			"bottom": null,
+			"pos": {
+				"col": col,
+				"row": row,
+				"width": null,
+				"height": null
+			},
+			"pixels": {
+				"x": ( col * font.width ) + Math.round( font.width / 2 ) - 1,
+				"y": ( row * font.height ) + Math.round( font.height / 2 ),
+				"width": null,
+				"height": null
+			},
 			"format": " "
 		} );
 	}
 
-	function completeBoxes( boxes, tableFormat ) {
-		var i, box, x, y, cell;
+	function completeBoxes( boxes, tableFormat, font, pos ) {
+		var i, box, xt, yt, cell;
 
 		for( i = 0; i < boxes.length; i += 1 ) {
 			box = boxes[ i ];
 
+			// Compute table coordiantes for formating character
+			xt = box.pos.col + 1 - pos.col;
+			yt = box.pos.row + 1 - pos.row;
+
 			// Find the formating character
-			x = box.left + 1;
-			y = box.top + 1;
-			if( y < tableFormat.length && x < tableFormat[ y ].length ) {
-				box.format = tableFormat[ y ].charAt( x );
+			if( yt < tableFormat.length && xt < tableFormat[ yt ].length ) {
+				box.format = tableFormat[ yt ].charAt( xt );
 			}
 
-			// Find box.right
-			x = box.left;
-			y = box.top;
-			while( x < tableFormat[ y ].length - 1 ) {
-				x += 1;
-				if( tableFormat[ y ].charAt( x ) === "*" ) {
-					cell = lookCell( x, y, "down", tableFormat );
+			// Compute table coordiantes
+			xt = box.pos.col - pos.col;
+			yt = box.pos.row - pos.row;
+
+			// Find box.width
+			while( xt < tableFormat[ yt ].length - 1 ) {
+				xt += 1;
+				if( tableFormat[ yt ].charAt( xt ) === "*" ) {
+					cell = lookCell( xt, yt, "down", tableFormat );
 					if( cell === "|" ) {
-						box.right = x;
+						box.pos.width = ( pos.col + ( xt - 1 ) ) - box.pos.col;
+						box.pixels.width = ( box.pos.width + 1 ) * font.width;
+						if( xt === tableFormat[ yt ].length - 1 ) {
+							box.pixels.width += 1;
+						}
 						break;
 					}
 				}
 			}
-			if( box.right === null ) {
-				box.right = x - 1;
+
+			// Box ends at table end
+			if( box.pos.width === null ) {
+				box.pos.width = ( pos.col + ( xt - 1 ) ) - box.pos.col;
+				box.pixels.width = ( box.pos.width + 1 ) * font.width + 1;
 			}
 
-			// Find box.bottom
-			while( y < tableFormat.length - 1 ) {
-				y += 1;
-				if( tableFormat[ y ].charAt( x ) === "*" ) {
-					box.bottom = y;
-					break;
+			// Find box.height
+			while( yt < tableFormat.length - 1 ) {
+				yt += 1;
+				if( tableFormat[ yt ].charAt( xt ) === "*" ) {
+					cell = lookCell( xt, yt, "left", tableFormat );
+					if( cell === "-" ) {
+						box.pos.height = ( pos.row + ( yt - 1 ) ) -
+							box.pos.row;
+						box.pixels.height = ( box.pos.height + 1 ) *
+							font.height;
+						if( yt === tableFormat.length - 1 ) {
+							box.pixels.height += 1;
+						}
+						break;
+					}
 				}
 			}
-			if( box.bottom === null ) {
-				box.bottom = y - 1;
+
+			// Box ends at table end
+			if( box.pos.height === null ) {
+				box.pos.height = ( pos.row + ( yt - 1 ) ) - box.pos.row;
+				box.pixels.height = ( box.pos.height + 1 ) * font.height + 1;
 			}
 		}
 	}
