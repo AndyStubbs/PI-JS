@@ -96,7 +96,7 @@ function writeCompressedFont() {
 		font = g_Fonts[ i ];
 		fontStr = compressFont( font.data );
 		msg += "qbs._.data.commands.loadFont( [ \n\"" + fontStr + "\",\n" + 
-			font.width + ", " + font.height + ", null, true \n] );\n\n";
+			font.width + ", " + font.height + ", null, false, true \n] );\n\n";
 	}
 	msg += "qbs._.data.commands.setDefaultFont( [ 1 ] );\n";
 	msg += "\n} )();\n";

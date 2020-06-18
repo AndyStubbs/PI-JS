@@ -15,15 +15,17 @@ m_qbResume = qbs._.resume;
 
 // Loads a font into memory
 qbs._.addCommand( "loadFont", loadFont, false, false,
-	[ "fontSrc", "width", "height", "charSet", "isEncoded" ] );
+	[ "fontSrc", "width", "height", "charSet", "isBitmap", "isEncoded" ] );
 function loadFont( args ) {
-	var fontSrc, width, height, charSet, isEncoded, font, chars, i, temp;
+	var fontSrc, width, height, charSet, isBitmap, isEncoded, font, chars, i,
+		temp;
 
 	fontSrc = args[ 0 ];
 	width = args[ 1 ];
 	height = args[ 2 ];
 	charSet = args[ 3 ];
-	isEncoded = !!( args[ 4 ] );
+	isBitmap = !!( args[ 4 ] );
+	isEncoded = !!( args[ 5 ] );
 
 	// Default charset to 0 to 255
 	if( ! charSet ) {
@@ -64,8 +66,16 @@ function loadFont( args ) {
 		"colorCount": 2,
 		"mode": "pixel",
 		"printFunction": m_qbData.commands.qbsPrint,
-		"calcWidth": m_qbData.commands.qbsCalcWidth
+		"calcWidth": m_qbData.commands.qbsCalcWidth,
+		"image": null,
+		"sWidth": width,
+		"sHeight": height
 	};
+
+	if( isBitmap ) {
+		font.mode = "bitmap";
+		font.printFunction = m_qbData.commands.bitmapPrint;
+	}
 
 	// Add this to the font data
 	m_qbData.fonts[ font.id ] = font;
@@ -76,7 +86,7 @@ function loadFont( args ) {
 	if( isEncoded ) {
 		loadFontFromBase32Encoded( fontSrc, width, height, font );
 	} else {
-		loadFontFromImg( fontSrc, width, height, font );
+		loadFontFromImg( fontSrc, width, height, font, isBitmap );
 	}
 
 	return font.id;
@@ -115,7 +125,7 @@ function decompressFont( numStr, width, height ) {
 	// Loop through all the bits
 	i = 0;
 	if( bin.length % size > 0 ) {
-		console.error( "Invalid font data." );
+		console.error( "loadFont: Invalid font data." );
 		return;
 	}
 	while( i < bin.length ) {
@@ -160,7 +170,7 @@ function decompressFont( numStr, width, height ) {
 	return data;
 }
 
-function loadFontFromImg( fontSrc, width, height, font ) {
+function loadFontFromImg( fontSrc, width, height, font, isBitmap ) {
 
 	var img;
 
@@ -170,8 +180,13 @@ function loadFontFromImg( fontSrc, width, height, font ) {
 
 		// Set the source
 		img.src = fontSrc;
-	} else {
+	} else if( fontSrc instanceof HTMLImageElement ){
 		img = fontSrc;
+	} else {
+		console.error(
+			"loadFont: fontSrc must be a string, image or canvas. "
+		);
+		return;
 	}
 
 	if( ! img.complete ) {
@@ -180,7 +195,11 @@ function loadFontFromImg( fontSrc, width, height, font ) {
 
 		// Need to wait until the image is loaded
 		img.onload = function () {
-			readImageData( img, width, height, font );
+			if( isBitmap ) {
+				font.image = img;
+			} else {
+				readImageData( img, width, height, font );
+			}
 			m_qbResume();
 		};
 		img.onerror = function ( err ) {
@@ -188,7 +207,11 @@ function loadFontFromImg( fontSrc, width, height, font ) {
 			m_qbResume();
 		};
 	} else {
-		readImageData( img, width, height, font );
+		if( isBitmap ) {
+			font.image = img;
+		} else {
+			readImageData( img, width, height, font );
+		}
 	}
 }
 
@@ -283,7 +306,6 @@ function setDefaultFont( args ) {
 
 }
 
-
 // Set Font Command
 qbs._.addCommand( "setFont", setFont, false, true, [ "fontId" ] );
 qbs._.addSetting( "font", setFont, true, [ "fontId" ] );
@@ -366,7 +388,8 @@ function calcFontSize( context ) {
 
 	// Set a blank size object
 	size = {
-		"width": 0, "height": 0
+		"width": 0,
+		"height": 0
 	};
 
 	// Fill text with some characters at the same spot to read data
@@ -392,6 +415,37 @@ function calcFontSize( context ) {
 	}
 
 	return size;
+}
+
+qbs._.addCommand(
+	"setFontSize", setFontSize, false, true, [ "width", "height" ]
+);
+qbs._.addSetting(
+	"fontSize", setFontSize, true, [ "width", "height" ]
+);
+function setFontSize( screenData, args ) {
+	var width, height;
+
+	width = args[ 0 ];
+	height = args[ 1 ];
+
+	if( isNaN( width ) ) {
+		console.error( "setFontSize: width must be a number." );
+		return;
+	}
+
+	if( isNaN( height ) ) {
+		console.error( "setFontSize: height must be a number." );
+		return;
+	}
+
+	if( screenData.printCursor.font.mode !== "bitmap" ) {
+		console.error( "setFontSize: only bitmap fonts can change sizes." );
+		return;
+	}
+
+	screenData.printCursor.font.width = width;
+	screenData.printCursor.font.height = height;
 }
 
 // End of File Encapsulation

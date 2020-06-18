@@ -303,7 +303,7 @@ function createScreenData(
 		"rows": Math.floor( canvas.width / m_qbData.defaultFont.width ),
 		"cols": Math.floor( canvas.height / m_qbData.defaultFont.height ),
 		"prompt": m_qbData.defaultPrompt,
-		"breakWord": true,
+		"breakWord": true
 	};
 	screenData.clientRect = canvas.getBoundingClientRect();
 	screenData.mouse = {

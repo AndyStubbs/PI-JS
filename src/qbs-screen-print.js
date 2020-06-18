@@ -24,20 +24,23 @@ function print( screenData, args ) {
 		return;
 	}
 
-	// Grab the colors from the screenData
-	colors = screenData.colors.slice();
+	if( screenData.printCursor.font.mode !== "bitmap" ) {
 
-	// Set the first color to the background color
-	colors.unshift( screenData.pal[ 0 ] );
+		// Grab the colors from the screenData
+		colors = screenData.colors.slice();
 
-	// Make sure there are enough colors -- if not then rotate colors
-	colorCount = colors.length;
-	for( i = 0; i < screenData.printCursor.font.colorCount; i ++ ) {
-		if( i >= colors.length ) {
+		// Set the first color to the background color
+		colors.unshift( screenData.pal[ 0 ] );
 
-			// Rotate colors -- skip 0
-			i2 = ( i % ( colorCount - 1 ) ) + 1;
-			colors.push( colors[ i2 ] );
+		// Make sure there are enough colors -- if not then rotate colors
+		colorCount = colors.length;
+		for( i = 0; i < screenData.printCursor.font.colorCount; i ++ ) {
+			if( i >= colors.length ) {
+
+				// Rotate colors -- skip 0
+				i2 = ( i % ( colorCount - 1 ) ) + 1;
+				colors.push( colors[ i2 ] );
+			}
 		}
 	}
 
@@ -214,6 +217,35 @@ qbs._.addCommand( "canvasPrint", canvasPrint, true, false );
 function canvasPrint( screenData, msg, x, y ) {
 	screenData.screenObj.render();
 	screenData.context.fillText( msg, x, y );
+}
+
+qbs._.addCommand( "bitmapPrint", bitmapPrint, true, false );
+function bitmapPrint( screenData, msg, x, y ) {
+	screenData.screenObj.render();
+	var i, charIndex, sx, sy, width, columns, font;
+
+	// Get reference to font data
+	font = screenData.printCursor.font;
+
+	width = font.image.width;
+	columns = Math.floor( width / font.sWidth );
+
+	//Loop through each character in the message and put it on the screen
+	for( i = 0; i < msg.length; i++ ) {
+
+		// Get the character index for the character data
+		charIndex = font.chars[ msg.charCodeAt( i ) ];
+
+		// Get the source x & y coordinates
+		sx = ( charIndex % columns ) * font.sWidth;
+		sy = Math.floor( charIndex / columns ) * font.sHeight;
+
+		// Draw the character on the screen
+		screenData.context.drawImage(
+			font.image, sx, sy, font.sWidth, font.sHeight,
+			x + font.width * i, y, font.width, font.height
+		);
+	}
 }
 
 // Locate Command

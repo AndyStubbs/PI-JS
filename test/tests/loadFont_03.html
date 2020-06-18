@@ -27,15 +27,29 @@
 	</head>
 <body>
 <script>
-	var font = $.loadFont( "images/font-block2.png", 10, 10, "ABCD" );
+	var font1 = $.loadFont( "images/font-block.png", 10, 10, "ABCDFGHI", true );
+	var font2 = $.loadFont( "images/font-block2.png", 10, 10, "ABCDFGHI", false );
 	$.ready( function () {
 		$.screen( "100x100" );
-		$.setFont( font );
+		$.setFont( font1 );
 		$.print( "CAB" );
 		$.print( "ABCD" );
 		$.print( "DACB" );
 		$.print( "BAD" );
-		$.print( "HELLO" );
+		$.print( "FIGHAB" );
+		$.setFontSize( 20, 20 );
+		$.print( "FIGHAB" );
+
+		$.setFont( font2 );
+		$.setPos( 6, 0 );
+		$.print( "CAB" );
+		$.setPos( 6, 1 );
+		$.print( "ABCD" );
+		$.setPos( 6, 2 );
+		$.print( "DACB" );
+		$.setPos( 6, 3 );
+		$.print( "BAD" );
+
 	} );
 </script>
 </body>
