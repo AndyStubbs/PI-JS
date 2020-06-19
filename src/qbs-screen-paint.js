@@ -30,7 +30,7 @@ function paint( screenData, args ) {
 	}
 
 	// Set the default tolerance to 1
-	if( tolerance !== 0 && ! tolerance ) {
+	if( tolerance == null || tolerance === false ) {
 		tolerance = 1;
 	}
 

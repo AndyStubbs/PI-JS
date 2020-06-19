@@ -20,7 +20,6 @@ const IMG_URL_ROOT = "tests/screenshots/";
 const TESTS_FOLDER = "test/tests";
 const ROOT_DIR = __dirname.substring( 0, __dirname.lastIndexOf( "\\" ) ) + "\\";
 const TEST_HTML_ID = "test_";
-const TESTS_PER_SECOND = 10;
 
 // Global variables
 let g_ImgHtml = [];
@@ -46,30 +45,33 @@ if( process.argv.length > 2 ) {
 // Run the first 10 tests without delay
 // then add 100 millisecond delay between each test run
 for( let i = 0; i < g_Files.length; i++ ) {
-	if( i < 10 ) {
-		run_test( i );
-	} else {
-		trigger_test( i, i * 100 );
-	}
-}
-
-function trigger_test( i, delay ) {
-	setTimeout( function () {
-		run_test( i );
-	}, delay );
-}
-
-function run_test( i ) {
 
 	let file = g_Files[ i ];
 
+	//console.log( file, "1" );
 	//Make the html look nice
-	g_ImgHtml.push( "\n\t" );
 
-	if( ! isHtmlFile( file ) ) {
-		//next_test(i + 1);
-		return;
+	if( isHtmlFile( file ) ) {
+		//console.log( file, "2" );
+		g_ImgHtml.push( "\n\t" );
+		g_totalTestsCount += 1;
+		if( i < 10 ) {
+			run_test( file, i );
+		} else {
+			trigger_test( file, i, i * 500 );
+		}
 	}
+}
+
+function trigger_test( file, i, delay ) {
+	setTimeout( function () {
+		run_test( file );
+	}, delay );
+}
+
+function run_test( file, i ) {
+
+	//console.log( file, "run_test" );
 
 	//Get current test
 	let test = getTestInfo( file );
@@ -108,7 +110,7 @@ function run_test( i ) {
 	console.log( cmdStr );
 
 	// Increment the count of totalTestsCounted
-	g_totalTestsCount += 1;
+	//g_totalTestsCount += 1;
 
 	//run the command
 	CMD.get( cmdStr, function ( err, data, stderr ) {
@@ -182,6 +184,7 @@ function run_test( i ) {
 
 function updateCounts() {
 	g_totalTestsParsedCount += 1;
+	console.log( g_totalTestsParsedCount, g_totalTestsCount );
 	if( g_totalTestsParsedCount === g_totalTestsCount ) {
 		setTimeout( function () {
 			writeFinalHtml();
@@ -249,6 +252,7 @@ function writeFinalHtml() {
 }
 
 function getTestInfo( filename ) {
+	console.log( filename, "getTestInfo" );
 	let text = FS.readFileSync( TESTS_FOLDER + "/" + filename ).toString();
 	let tomlText = text.substring( text.indexOf( "[[TOML_START]]" ) + 14, text.indexOf( "[[TOML_END]]" ) ).replace( /\t/g, "" );
 	let data = TOML.parse( tomlText );
@@ -256,13 +260,14 @@ function getTestInfo( filename ) {
 }
 
 function isHtmlFile( filename ) {
+	//console.log( filename, "3" );
 	let parts = filename.split( "." );
 	if( parts.length < 2 ) {
 		return false;
 	}
+	//console.log( filename, "4" );
 	return parts[ 1 ] === "html";
 }
-
 
 function compare_images( img1, img2 ) {
 

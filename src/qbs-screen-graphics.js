@@ -12,18 +12,53 @@ var m_qbData;
 m_qbData = qbs._.data;
 
 // Circle command
-qbs._.addCommands( "circle", pxCircle, aaCircle, [ "x", "y", "radius" ] );
+qbs._.addCommands( "circle", pxCircle, aaCircle,
+	[ "x", "y", "radius", "fillColor" ]
+);
 function pxCircle( screenData, args ) {
-	var x, y, radius, x2, y2, midPoint, color;
+	var x, y, radius, fillColor, i, x2, y2, midPoint, color, isFill,
+		tempData;
+
 	x = args[ 0 ];
 	y = args[ 1 ];
 	radius = args[ 2 ];
+	fillColor = args[ 3 ];
+
+	isFill = false;
+
+	if(
+		! qbs.util.isInteger( x ) ||
+		! qbs.util.isInteger( y ) ||
+		! qbs.util.isInteger( radius )
+	) {
+		m_qbData.log( "circle: x, y, r must be integers." );
+		return;
+	}
+
+	if( fillColor != null ) {
+		fillColor = m_qbData.commands.findColorValue(
+			screenData, fillColor, "circle"
+		);
+		if( fillColor === undefined ) {
+			return;
+		}
+		isFill = true;
+	}
+
 	m_qbData.commands.getImageData( screenData );
 
-	// Make sure x and y are integers
-	if( isNaN( x ) || isNaN( y ) || isNaN( radius ) ) {
-		m_qbData.log( "circle: Argument's cx, cy, r must be numbers." );
-		return;
+	if( isFill ) {
+		m_qbData.commands.setImageDirty( screenData );
+		tempData = screenData.imageData;
+		tempData.name = "main";
+
+		screenData.bufferContext.clearRect(
+			0, 0, screenData.width, screenData.height
+		);
+		screenData.imageData = screenData.bufferContext.getImageData(
+			0, 0, screenData.width, screenData.height
+		);
+		screenData.imageData.name = "buffer";
 	}
 
 	// Initialize the color for the circle
@@ -47,12 +82,10 @@ function pxCircle( screenData, args ) {
 		screenData.pen.draw( screenData, x - 1, y, color );
 		screenData.pen.draw( screenData, x, y + 1, color );
 		screenData.pen.draw( screenData, x, y - 1, color );
-		m_qbData.commands.setImageDirty( screenData );
-		return;
+		y2 = x2 + 1;
 	} else if( radius === 0 ) {
 		screenData.pen.draw( screenData, x, y, color );
-		m_qbData.commands.setImageDirty( screenData );
-		return;
+		y2 = x2 + 1;
 	}
 
 	// Initialize p
@@ -69,11 +102,72 @@ function pxCircle( screenData, args ) {
 			midPoint = midPoint + 2 * y2 - 2 * x2 + 1;
 		}
 
-		// All the perimeter points have already been printed
-		//if( x < y ) {
-		// ???Unreachable code???
-		//	break;
-		//}
+		// if( isFill ) {
+
+		// 	xFill = x2 + x;
+		// 	yFill = y2 + y;
+		// 	for( rFill = 1; rFill < x2; rFill += 1 ) {
+		// 		m_qbData.commands.setPixel(
+		// 			screenData, xFill - rFill, yFill, fillColor
+		// 		);
+		// 	}
+	
+		// 	xFill = y2 + x;
+		// 	yFill = x2 + y;
+		// 	for( rFill = 1; rFill < y2; rFill += 1 ) {
+		// 		m_qbData.commands.setPixel(
+		// 			screenData, xFill - rFill, yFill, fillColor
+		// 		);
+		// 	}
+
+		// 	xFill = -x2 + x;
+		// 	yFill = y2 + y;
+		// 	for( rFill = 1; rFill < x2; rFill += 1 ) {
+		// 		m_qbData.commands.setPixel(
+		// 			screenData, xFill + rFill, yFill, fillColor
+		// 		);
+		// 	}
+
+		// 	xFill = -y2 + x;
+		// 	yFill = x2 + y;
+		// 	for( rFill = 1; rFill < y2; rFill += 1 ) {
+		// 		m_qbData.commands.setPixel(
+		// 			screenData, xFill + rFill, yFill, fillColor
+		// 		);
+		// 	}
+
+		// 	xFill = x2 + x;
+		// 	yFill = -y2 + y;
+		// 	for( rFill = 1; rFill < x2; rFill += 1 ) {
+		// 		m_qbData.commands.setPixel(
+		// 			screenData, xFill - rFill, yFill, fillColor
+		// 		);
+		// 	}
+
+		// 	xFill = y2 + x;
+		// 	yFill = -x2 + y;
+		// 	for( rFill = 1; rFill < y2; rFill += 1 ) {
+		// 		m_qbData.commands.setPixel(
+		// 			screenData, xFill - rFill, yFill, fillColor
+		// 		);
+		// 	}
+
+		// 	xFill = -x2 + x;
+		// 	yFill = -y2 + y;
+		// 	for( rFill = 1; rFill < x2; rFill += 1 ) {
+		// 		m_qbData.commands.setPixel(
+		// 			screenData, xFill + rFill, yFill, fillColor
+		// 		);
+		// 	}
+
+		// 	xFill = -y2 + x;
+		// 	yFill = -x2 + y;
+		// 	for( rFill = 1; rFill < y2; rFill += 1 ) {
+		// 		m_qbData.commands.setPixel(
+		// 			screenData, xFill + rFill, yFill, fillColor
+		// 		);
+		// 	}
+		// }
 
 		// Set pixels around point and reflection in other octants
 		screenData.pen.draw( screenData, x2 + x, y2 + y, color );
@@ -88,21 +182,57 @@ function pxCircle( screenData, args ) {
 			screenData.pen.draw( screenData, y2 + x, -x2 + y, color );
 			screenData.pen.draw( screenData, -y2 + x, -x2 + y, color );
 		}
+
+	}
+
+	if( isFill ) {
+
+		// Paint the center of the shape
+		m_qbData.commands.paint( screenData, [ x, y, fillColor ] );
+
+		// Copy the data back onto the main canvas
+		radius += screenData.pen.size;
+		for( y2 = -radius; y2 <= radius; y2 += 1 ) {
+			for( x2 = -radius; x2 <= radius; x2 += 1 ) {
+				i = ( ( y2 + y ) * screenData.width + ( x2 + x ) ) * 4;
+				if( screenData.imageData.data[ i + 3 ] > 0 ) {
+					tempData.data[ i ] = screenData.imageData.data[ i ];
+					tempData.data[ i + 1 ] = screenData.imageData.data[ i + 1 ];
+					tempData.data[ i + 2 ] = screenData.imageData.data[ i + 2 ];
+					tempData.data[ i + 3 ] = screenData.imageData.data[ i + 3 ];
+				}
+			}
+		}
+		screenData.imageData = tempData;
+
 	}
 
 	m_qbData.commands.setImageDirty( screenData );
 }
 
 function aaCircle( screenData, args ) {
-	var x, y, r, angle1, angle2;
+	var x, y, r, fillColor, isFill, angle1, angle2;
 
 	x = args[ 0 ] + 0.5;
 	y = args[ 1 ] + 0.5;
 	r = args[ 2 ] - 0.9;
+	fillColor = args[ 3 ];
 
 	if( isNaN( x ) || isNaN( y ) || isNaN( r ) ) {
 		m_qbData.log("circle: parameters cx, cy, r must be numbers.");
 		return;
+	}
+
+	if( fillColor != null ) {
+		fillColor = m_qbData.commands.findColorValue(
+			screenData, fillColor, "rect"
+		);
+		if( fillColor === undefined ) {
+			return;
+		}
+		isFill = true;
+	} else {
+		isFill = false;
 	}
 
 	screenData.screenObj.render();
@@ -113,6 +243,10 @@ function aaCircle( screenData, args ) {
 	screenData.context.moveTo( x + Math.cos( angle1 ) * r, y +
 		Math.sin( angle1 ) * r );
 	screenData.context.arc( x, y, r, angle1, angle2 );
+	if( isFill ) {
+		screenData.context.fillStyle = fillColor.s;
+		screenData.context.fill();
+	}
 	screenData.context.stroke();
 }
 
