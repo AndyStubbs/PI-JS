@@ -319,7 +319,7 @@
 		for( row = 0; row < items.length; row += 1 ) {
 			if( qbs.util.isArray( items[ row ] ) ) {
 				for( col = 0; col < items[ row ].length; col += 1 ) {
-					if( i < boxes.length - 1 ) {
+					if( i < boxes.length ) {
 						printItem(
 							screenData, boxes[ i ], items[ row ][ col ],
 							pos.col

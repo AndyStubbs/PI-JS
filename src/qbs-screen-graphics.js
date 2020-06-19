@@ -624,22 +624,89 @@ function aaLine( screenData, args ) {
 }
 
 // Rect command
-qbs._.addCommands( "rect", pxRect, aaRect, [ "x1", "y1", "width", "height" ] );
+qbs._.addCommands( "rect", pxRect, aaRect,
+	[ "x1", "y1", "width", "height", "fillColor" ]
+);
 function pxRect( screenData, args ) {
-	var x1, y1, width, height, x2, y2;
+	var x1, y1, width, height, fillColor, isFill, x2, y2, tempColor, x;
 
 	x1 = args[ 0 ];
 	y1 = args[ 1 ];
 	width = args[ 2 ];
 	height = args[ 3 ];
+	fillColor = args[ 4 ];
+
+	if(
+		! qbs.util.isInteger( x1 ) ||
+		! qbs.util.isInteger( y1 ) ||
+		! qbs.util.isInteger( width ) ||
+		! qbs.util.isInteger( height )
+	) {
+		m_qbData.log( "rect: x1, y1, width, and height must be integers." );
+		return;
+	}
+
+	if( fillColor != null ) {
+		fillColor = m_qbData.commands.findColorValue(
+			screenData, fillColor, "rect"
+		);
+		if( fillColor === undefined ) {
+			return;
+		}
+		isFill = true;
+	}
 
 	x2 = x1 + width - 1;
 	y2 = y1 + height - 1;
 
-	screenData.screenObj.line( x1, y1, x2, y1 );
-	screenData.screenObj.line( x2, y1, x2, y2 );
-	screenData.screenObj.line( x2, y2, x1, y2 );
-	screenData.screenObj.line( x1, y2, x1, y1 );
+	m_qbData.commands.line( screenData, [ x1, y1, x2, y1 ] );
+	m_qbData.commands.line( screenData, [ x2, y1, x2, y2 ] );
+	m_qbData.commands.line( screenData, [ x2, y2, x1, y2 ] );
+	m_qbData.commands.line( screenData, [ x1, y2, x1, y1 ] );
+
+	if(
+		isFill &&
+		width > screenData.pen.size &&
+		height > screenData.pen.size &&
+		width > 2 &&
+		height > 2
+	) {
+
+		tempColor = screenData.fColor;
+		screenData.fColor = fillColor;
+
+		y1 = y1 + screenData.pen.size;
+		y2 = y2 - screenData.pen.size + 1;
+		x1 = x1 + screenData.pen.size;
+		x2 = x2 - screenData.pen.size + 1;
+
+		// if( screenData.pen.size === 1 ) {
+		// 	y2 += 1;
+		// }
+
+		if( x1 < 0 ) {
+			x1 = 0;
+		}
+		if( x2 > screenData.width ) {
+			x2 = screenData.width;
+		}
+
+		if( y1 < 0 ) {
+			y1 = 0;
+		}
+		if( y2 > screenData.height ) {
+			y2 = screenData.height;
+		}
+
+		// Draw line by line
+		for( ; y1 < y2; y1 += 1 ) {
+			for( x = x1; x < x2; x += 1 ) {
+				m_qbData.commands.setPixel( screenData, x, y1, fillColor );
+			}
+		}
+
+		screenData.fColor = tempColor;
+	}
 
 }
 
@@ -982,6 +1049,10 @@ function setPen( screenData, args ) {
 		for(; i < 4; i++ ) {
 			noise.push( 0 );
 		}
+	}
+
+	if( pen === "pixel" ) {
+		size = 1;
 	}
 
 	// Set the minimum pen size to 1;

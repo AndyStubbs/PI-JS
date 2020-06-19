@@ -52,51 +52,27 @@
 
 Math.seedrandom( 'constant' );
 
-var $screen, data, format;
+Math.random();
 
-data = [
-	[ "One", "2", "3", "FourSandwhiches", "EggMcMuffins", "6a" ],
-	[ "Hotdogs", "Five", "Six", "7", "8", "9" ],
-	[ "Seven", "Eight", "Nine", "a", "b", "c" ]
-];
-format = [
-	"*-----------*---*---*---*----*",
-	"|           |   |   |V  |V   |",
-	"*----*------*---*---*   |    |",
-	"|    |      |       |   |    |",
-	"|    *------*       |   |    |",
-	"*----*      |       |   |    |",
-	"|    |      |       |   |    |",
-	"*----*------*-------*---*----*"
-];
+var $screen;
+
 $screen = $.screen( { "aspect": "300x210", "isMultiple": true } );
-$screen.setColor( 2 );
-$screen.setFont( 1 );
-$screen.print( "12345678901234567890123456789012345678901234567890" );
-$screen.setPos( 18, 2 );
+$screen.setPen( "circle", 6 );
+var pens = [ "circle", "pixel", "square" ];
 
-var boxes = $screen.printTable( data, format, null, false );
-drawBoxes( boxes );
-$screen.setColor( 2 );
+for( var i = 0; i < 30; i++ ) {
+	$.setPen(
+		pens[ Math.floor( Math.random() * pens.length ) ],
+		Math.floor( Math.random() * 10 )
+	);
+	var c = Math.floor( Math.random() * 14 ) + 1;
+	var x = Math.floor( Math.random() * 200 ) + 10;
+	var y = Math.floor( Math.random() * 110 ) + 10;
+	var width = Math.floor( Math.random() * 100 ) + 1;
+	var height = Math.floor( Math.random() * 80 ) + 1;
 
-boxes = $screen.printTable( data, format, null, true );
-drawBoxes( boxes );
-$screen.setColor( 2 );
-
-boxes = $screen.printTable( data, null, null );
-drawBoxes( boxes );
-console.log( boxes );
-
-function drawBoxes( boxes ) {
-	for( var i = 0; i < boxes.length; i++ ) {
-		var box = boxes[ i ];
-		var c = i + 1;
-		if( c > 15 ) {
-			c += 20;
-		}
-		$.setColor( c );
-		$.rect( box.pixels.x, box.pixels.y, box.pixels.width, box.pixels.height );
-	}
+	$.setColor( c + 1 );
+	$screen.rect( x, y, width, height, c );
 }
 
 </script>

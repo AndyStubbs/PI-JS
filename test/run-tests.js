@@ -20,6 +20,7 @@ const IMG_URL_ROOT = "tests/screenshots/";
 const TESTS_FOLDER = "test/tests";
 const ROOT_DIR = __dirname.substring( 0, __dirname.lastIndexOf( "\\" ) ) + "\\";
 const TEST_HTML_ID = "test_";
+const TESTS_PER_SECOND = 10;
 
 // Global variables
 let g_ImgHtml = [];
@@ -42,8 +43,20 @@ if( process.argv.length > 2 ) {
 	g_indexFile = "test/test-" + g_Files[ 0 ];
 }
 
+// Run the first 10 tests without delay
+// then add 100 millisecond delay between each test run
 for( let i = 0; i < g_Files.length; i++ ) {
-	run_test( i );
+	if( i < 10 ) {
+		run_test( i );
+	} else {
+		trigger_test( i, i * 100 );
+	}
+}
+
+function trigger_test( i, delay ) {
+	setTimeout( function () {
+		run_test( i );
+	}, delay );
 }
 
 function run_test( i ) {
