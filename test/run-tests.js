@@ -58,7 +58,7 @@ for( let i = 0; i < g_Files.length; i++ ) {
 		if( i < 10 ) {
 			run_test( file, i );
 		} else {
-			trigger_test( file, i, i * 500 );
+			trigger_test( file, i, i * 100 );
 		}
 	}
 }
@@ -188,7 +188,7 @@ function updateCounts() {
 	if( g_totalTestsParsedCount === g_totalTestsCount ) {
 		setTimeout( function () {
 			writeFinalHtml();
-		}, 2000 );
+		}, 500 );
 	}
 }
 
