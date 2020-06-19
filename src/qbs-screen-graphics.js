@@ -680,10 +680,6 @@ function pxRect( screenData, args ) {
 		x1 = x1 + screenData.pen.size;
 		x2 = x2 - screenData.pen.size + 1;
 
-		// if( screenData.pen.size === 1 ) {
-		// 	y2 += 1;
-		// }
-
 		if( x1 < 0 ) {
 			x1 = 0;
 		}
@@ -711,22 +707,40 @@ function pxRect( screenData, args ) {
 }
 
 function aaRect( screenData, args ) {
-	var x, y, width, height;
+	var x, y, width, height, fillColor, isFill;
 
 	x = args[ 0 ];
 	y = args[ 1 ];
 	width = args[ 2 ];
 	height = args[ 3 ];
+	fillColor = args[ 4 ];
+	isFill = false;
 
-	if( isNaN(x) || isNaN(y) || isNaN(width) || isNaN(height) ) {
-		m_qbData.log( "rect: parameters x, y, width, height must be numbers." );
+	if( isNaN( x ) || isNaN( y ) || isNaN( width ) || isNaN( height ) ) {
+		m_qbData.log(
+			"rect: parameters x, y, width, height must be numbers."
+		);
 		return;
+	}
+
+	if( fillColor != null ) {
+		fillColor = m_qbData.commands.findColorValue(
+			screenData, fillColor, "rect"
+		);
+		if( fillColor === undefined ) {
+			return;
+		}
+		isFill = true;
 	}
 
 	screenData.screenObj.render();
 	screenData.context.beginPath();
 	screenData.context.strokeStyle = screenData.fColor.s;
 	screenData.context.rect( x, y, width, height );
+	if( isFill ) {
+		screenData.context.fillStyle = fillColor.s;
+		screenData.context.fill();
+	}
 	screenData.context.stroke();
 }
 
