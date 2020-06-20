@@ -390,22 +390,50 @@ function aaArc( screenData, args ) {
 
 // Ellipse command
 qbs._.addCommands( "ellipse", pxEllipse, aaEllipse,
-	[ "x", "y", "radiusX", "radiusY" ]
+	[ "x", "y", "radiusX", "radiusY", "fillColor" ]
 );
 function pxEllipse( screenData, args ) {
-	var x, y, radiusX, radiusY, color, dx, dy, d1, d2, x2, y2;
+	var x, y, radiusX, radiusY, fillColor, tempData, color, dx, dy, d1, d2, x2,
+		y2, isFill, i;
 
 	x = args[ 0 ];
 	y = args[ 1 ];
 	radiusX = args[ 2 ];
 	radiusY = args[ 3 ];
+	fillColor = args[ 4 ];
 
 	if( isNaN( x ) || isNaN( y ) || isNaN( radiusX ) || isNaN( radiusY ) ) {
-		m_qbData.log("ellipse: parameters cx, cy, rx, ry must be numbers.");
+		m_qbData.log(
+			"ellipse: parameters x, y, radiusX, radiusY must be numbers."
+		);
 		return;
 	}
 
+	if( fillColor != null ) {
+		fillColor = m_qbData.commands.findColorValue(
+			screenData, fillColor, "circle"
+		);
+		if( fillColor === undefined ) {
+			return;
+		}
+		isFill = true;
+	}
+
 	m_qbData.commands.getImageData( screenData );
+
+	if( isFill ) {
+		m_qbData.commands.setImageDirty( screenData );
+		tempData = screenData.imageData;
+		tempData.name = "main";
+
+		screenData.bufferContext.clearRect(
+			0, 0, screenData.width, screenData.height
+		);
+		screenData.imageData = screenData.bufferContext.getImageData(
+			0, 0, screenData.width, screenData.height
+		);
+		screenData.imageData.name = "buffer";
+	}
 
 	// Initialize the color for the circle
 	color = screenData.fColor;
@@ -480,21 +508,60 @@ function pxEllipse( screenData, args ) {
 		}
 	}
 
+	if( isFill ) {
+
+		// Paint the center of the shape
+		m_qbData.commands.paint( screenData, [ x, y, fillColor ] );
+
+		// Copy the data back onto the main canvas
+		radiusX += screenData.pen.size;
+		radiusY += screenData.pen.size;
+		for( y2 = -radiusY; y2 <= radiusY; y2 += 1 ) {
+			for( x2 = -radiusX; x2 <= radiusX; x2 += 1 ) {
+				i = ( ( y2 + y ) * screenData.width + ( x2 + x ) ) * 4;
+				if( screenData.imageData.data[ i + 3 ] > 0 ) {
+					tempData.data[ i ] = screenData.imageData.data[ i ];
+					tempData.data[ i + 1 ] = screenData.imageData.data[ i + 1 ];
+					tempData.data[ i + 2 ] = screenData.imageData.data[ i + 2 ];
+					tempData.data[ i + 3 ] = screenData.imageData.data[ i + 3 ];
+				}
+			}
+		}
+		screenData.imageData = tempData;
+
+	}
+
 	m_qbData.commands.setImageDirty( screenData );
 }
 
 function aaEllipse( screenData, args ) {
-	var cx, cy, rx, ry;
+	var cx, cy, rx, ry, fillColor, isFill;
 
 	cx = args[ 0 ];
 	cy = args[ 1 ];
 	rx = args[ 2 ];
 	ry = args[ 3 ];
+	fillColor = args[ 4 ];
 
 	if( isNaN( cx ) || isNaN( cy ) || isNaN( rx ) || isNaN( ry ) ) {
-		m_qbData.log( "ellipse: parameters cx, cy, rx, ry must be numbers." );
+		m_qbData.log(
+			"ellipse: parameters x, y, radiusX, radiusY must be numbers."
+		);
 		return;
 	}
+
+	if( fillColor != null ) {
+		fillColor = m_qbData.commands.findColorValue(
+			screenData, fillColor, "rect"
+		);
+		if( fillColor === undefined ) {
+			return;
+		}
+		isFill = true;
+	} else {
+		isFill = false;
+	}
+
 	if( screenData.dirty ) {
 		screenData.screenObj.render();
 	}
@@ -502,7 +569,13 @@ function aaEllipse( screenData, args ) {
 	screenData.context.beginPath();
 	screenData.context.strokeStyle = screenData.fColor.s;
 	screenData.context.moveTo( cx + rx, cy );
-	screenData.context.ellipse( cx, cy, rx, ry, 0, qbs.util.math.deg360, false );
+	screenData.context.ellipse(
+		cx, cy, rx, ry, 0, qbs.util.math.deg360, false
+	);
+	if( isFill ) {
+		screenData.context.fillStyle = fillColor.s;
+		screenData.context.fill();
+	}
 	screenData.context.stroke();
 }
 

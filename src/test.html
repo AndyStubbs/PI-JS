@@ -65,19 +65,17 @@ for( var i = 0; i < 7; i++ ) {
 		Math.floor( Math.random() * 10 ) + 1
 	);
 	var c = Math.floor( Math.random() * 14 ) + 1;
-	var c2 = Math.floor( Math.random() * 14 ) + 1;
+	var c2 = Math.floor( Math.random() * 14 ) + 45;
 	var x = Math.floor( Math.random() * 80 ) + 10;
 	var y = Math.floor( Math.random() * 150 ) + 10;
 	var radius = Math.floor( Math.random() * 50 ) + 1;
-	var height = Math.floor( Math.random() * 80 ) + 1;
+	var radius2 = Math.floor( Math.random() * 50 ) + 1;
 
 	$.setColor( c2 );
 	$screen.setPixelMode( false );
-	$screen.circle( x + 50, y, radius, c );
-	$.render();
+	$screen.ellipse( x + 50, y, radius, radius2, c );
 	$screen.setPixelMode( true );
-	$screen.circle( x + 180, y, radius, c );
-	$.render();
+	$screen.ellipse( x + 180, y, radius, radius2, c );
 }
 
 </script>

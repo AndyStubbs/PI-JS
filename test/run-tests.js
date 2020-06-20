@@ -58,14 +58,14 @@ for( let i = 0; i < g_Files.length; i++ ) {
 		if( i < 10 ) {
 			run_test( file, i );
 		} else {
-			trigger_test( file, i, i * 100 );
+			trigger_test( file, i, i * 300 );
 		}
 	}
 }
 
 function trigger_test( file, i, delay ) {
 	setTimeout( function () {
-		run_test( file );
+		run_test( file, i );
 	}, delay );
 }
 
@@ -252,7 +252,6 @@ function writeFinalHtml() {
 }
 
 function getTestInfo( filename ) {
-	console.log( filename, "getTestInfo" );
 	let text = FS.readFileSync( TESTS_FOLDER + "/" + filename ).toString();
 	let tomlText = text.substring( text.indexOf( "[[TOML_START]]" ) + 14, text.indexOf( "[[TOML_END]]" ) ).replace( /\t/g, "" );
 	let data = TOML.parse( tomlText );
