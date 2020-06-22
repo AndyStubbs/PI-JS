@@ -219,13 +219,13 @@ function triggerEventListeners( mode, data, listenerArr, clickStatus ) {
 						temp[ i ].clickDown = true;
 					} else {
 						temp[ i ].clickDown = false;
-						temp[ i ].fn( newData );
+						temp[ i ].fn( newData, temp[ i ].customData );
 					}
 				}
 
 			} else {
 				// if no hit box then just trigger the event
-				temp[ i ].fn( data );
+				temp[ i ].fn( data, temp[ i ].customData );
 			}
 		}
 	}
@@ -233,7 +233,7 @@ function triggerEventListeners( mode, data, listenerArr, clickStatus ) {
 
 qbs._.addCommand( "onevent", onevent, true, true, [] );
 function onevent( mode, fn, once, hitBox, modes, name, listenerArr, extraId,
-	extraData
+	extraData, customData
 ) {
 
 	var i, modeFound;
@@ -295,9 +295,9 @@ function onevent( mode, fn, once, hitBox, modes, name, listenerArr, extraId,
 
 		// If it's a one time function
 		if( once ) {
-			fn = function ( data ) {
-				offevent( mode, fn, modes, name, listenerArr, extraId );
-				originalFn( data );
+			fn = function ( data, customData ) {
+				offevent( mode, originalFn, modes, name, listenerArr, extraId );
+				originalFn( data, customData );
 			};
 		}
 
@@ -309,7 +309,8 @@ function onevent( mode, fn, once, hitBox, modes, name, listenerArr, extraId,
 			"hitBox": hitBox,
 			"extraData": extraData,
 			"clickDown": false,
-			"originalFn": originalFn
+			"originalFn": originalFn,
+			"customData": customData
 		} );
 
 	}, 1 );

@@ -57,10 +57,10 @@ drawBox( hitbox2 );
 drawBox( hitbox3 );
 drawBox( hitbox4 );
 
-$.onclick( clickOne, false, hitbox );
-$.onclick( clickTwo, false, hitbox2 );
-$.onclick( clickThree, true, hitbox3 );
-$.onclick( clickFour, true, hitbox4 );
+$.onclick( clickOne, false, hitbox, "button1" );
+$.onclick( clickTwo, false, hitbox2, { "name": "button2", "val": 7 } );
+$.onclick( clickThree, true, hitbox3, "button3" );
+$.onclick( clickFour, true, hitbox4, "button4" );
 
 $.input( "Enter your name: ", function ( data ) {
 	$.print( data );
@@ -69,7 +69,8 @@ $.input( "Enter your age: ", function ( data ) {
 	$.print( data );
 }, "age", true, true );
 
-function clickOne() {
+function clickOne( data, customData ) {
+	console.log( data, customData );
 	$.setColor( 2 );
 	drawBox( hitbox );
 
@@ -77,7 +78,8 @@ function clickOne() {
 	drawBox( hitbox2 );
 }
 
-function clickTwo() {
+function clickTwo( data, customData ) {
+	console.log( data, customData );
 	$.setColor( 7 );
 	drawBox( hitbox );
 
@@ -87,7 +89,8 @@ function clickTwo() {
 	$.setColor( 7 );
 }
 
-function clickThree() {
+function clickThree( data, customData ) {
+	console.log( data, customData );
 	$.offclick( clickOne, false, hitbox );
 	$.offclick( clickTwo, false, hitbox2 );
 	$.setColor( 4 );
@@ -98,7 +101,8 @@ function clickThree() {
 	$.print( "Name input has been cancelled" );
 }
 
-function clickFour() {
+function clickFour( data, customData ) {
+	console.log( data, customData );
 	$.offclick( clickOne, false, hitbox );
 	$.offclick( clickTwo, false, hitbox2 );
 	$.offclick( clickThree, true, hitbox3 );

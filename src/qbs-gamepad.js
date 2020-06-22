@@ -59,7 +59,7 @@ function stopGamepads() {
 }
 
 qbs._.addCommand( "ingamepads", ingamepads, false, false, [ "gamePad" ] );
-function ingamepads( args ) {
+function ingamepads() {
 	if( m_controllers ) {
 		updateControllers();
 	}
@@ -67,15 +67,16 @@ function ingamepads( args ) {
 }
 
 qbs._.addCommand( "ongamepad", ongamepad, false, false,
-	[ "gamepadIndex", "mode", "item", "fn", "once" ] );
+	[ "gamepadIndex", "mode", "item", "fn", "once", "customData" ] );
 function ongamepad( args ) {
-	var mode, item, fn, gamepadIndex, extraData, once;
+	var mode, item, fn, once, gamepadIndex, extraData, customData;
 
 	gamepadIndex = args[ 0 ];
 	mode = args[ 1 ];
 	item = args[ 2 ];
 	fn = args[ 3 ];
 	once = !!args[ 4 ];
+	customData = args[ 5 ];
 
 	extraData = getExtraData( "ongamepad", item, gamepadIndex, mode );
 	if( ! extraData ) {
@@ -85,7 +86,7 @@ function ongamepad( args ) {
 
 	// Add the event listener
 	m_qbData.commands.onevent( mode, fn, once, false, m_Modes, "ongamepad",
-		m_events, extraData.extraId, extraData );
+		m_events, extraData.extraId, extraData, customData );
 
 	// Start the loop if it isn't already started
 	if( ! m_isLooping ) {

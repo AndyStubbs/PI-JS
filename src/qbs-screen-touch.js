@@ -234,19 +234,21 @@ function intouch( screenData ) {
 
 // Adds an event trigger for a mouse event
 qbs._.addCommand( "ontouch", ontouch, false, true,
-	[ "mode", "fn", "once", "hitBox" ]
+	[ "mode", "fn", "once", "hitBox", "customData" ]
 );
 function ontouch( screenData, args ) {
-	var mode, fn, once, hitBox, isValid;
+	var mode, fn, once, hitBox, isValid, customData;
 
 	mode = args[ 0 ];
 	fn = args[ 1 ];
 	once = args[ 2 ];
 	hitBox = args[ 3 ];
+	customData = args[ 4 ];
 
 	isValid = m_qbData.commands.onevent(
 		mode, fn, once, hitBox, [ "start", "end", "move" ],
-		"ontouch", screenData.onTouchEventListeners
+		"ontouch", screenData.onTouchEventListeners, null, null,
+		customData
 	);
 
 	if( isValid ) {

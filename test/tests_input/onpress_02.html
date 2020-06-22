@@ -43,7 +43,8 @@
 	$.screen( "200x100", "screen" );
 	$.print( "Click button below to turn on/off press event listeners." );
 
-	function pressDown( data ) {
+	function pressDown( data, customData ) {
+		console.log( customData );
 		if( data.buttons > 0 ) {
 			$.pset( data.x, data.y );
 		}
@@ -56,7 +57,7 @@
 	}
 
 	function onPress() {
-		$.onpress( "down", pressDown );
+		$.onpress( "down", pressDown, null, null, "Press Down" );
 		$.onpress( "move", pressMove );
 	}
 

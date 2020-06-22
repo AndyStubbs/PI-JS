@@ -33,14 +33,15 @@ $.ready( function () {
 	$.render();
 	$.setColor( 2 );
 	
-	$.ontouch( "start", function ( touches ) {
+	$.ontouch( "start", function ( touches, customData ) {
 		var i, touch;
+		console.log( customData );
 		for( i = 0; i < touches.length; i++ ) {
 			touch = touches[ i ];
 			$.pset( touch.x, touch.y );
 		}
 		$.render();
-	}, false, hitbox );
+	}, false, hitbox, "Touch Start" );
 	$.ontouch( "move", function ( touches ) {
 		var i, touch;
 		for( i = 0; i < touches.length; i++ ) {

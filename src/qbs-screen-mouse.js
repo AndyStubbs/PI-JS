@@ -173,19 +173,20 @@ function inmouse( screenData ) {
 
 // Adds an event trigger for a mouse event
 qbs._.addCommand( "onmouse", onmouse, false, true,
-	[ "mode", "fn", "once", "hitBox" ]
+	[ "mode", "fn", "once", "hitBox", "customData" ]
 );
 function onmouse( screenData, args ) {
-	var mode, fn, once, hitBox, isValid;
+	var mode, fn, once, hitBox, isValid, customData;
 
 	mode = args[ 0 ];
 	fn = args[ 1 ];
 	once = args[ 2 ];
 	hitBox = args[ 3 ];
+	customData = args[ 4 ];
 
 	isValid = m_qbData.commands.onevent(
 		mode, fn, once, hitBox, [ "down", "up", "move" ], "onmouse",
-		screenData.onMouseEventListeners
+		screenData.onMouseEventListeners, null, null, customData
 	);
 
 	// Activate the mouse event listeners
@@ -234,19 +235,20 @@ function setEnableContextMenu( screenData, args ) {
 }
 
 qbs._.addCommand( "onpress", onpress, false, true,
-	[ "mode", "fn", "once", "hitBox" ]
+	[ "mode", "fn", "once", "hitBox", "customData" ]
 );
 function onpress( screenData, args ) {
-	var mode, fn, once, hitBox, isValid;
+	var mode, fn, once, hitBox, isValid, customData;
 
 	mode = args[ 0 ];
 	fn = args[ 1 ];
 	once = args[ 2 ];
 	hitBox = args[ 3 ];
+	customData = args[ 4 ];
 
 	isValid = m_qbData.commands.onevent(
 		mode, fn, once, hitBox, [ "down", "up", "move" ], "onpress",
-		screenData.onPressEventListeners
+		screenData.onPressEventListeners, null, null, customData
 	);
 
 	// Activate the mouse event listeners
@@ -298,14 +300,15 @@ function inpress( screenData ) {
 }
 
 qbs._.addCommand( "onclick", onclick, false, true,
-	[ "fn", "once", "hitBox" ]
+	[ "fn", "once", "hitBox", "customData" ]
 );
 function onclick( screenData, args ) {
-	var fn, once, hitBox, isValid;
+	var fn, once, hitBox, isValid, customData;
 
 	fn = args[ 0 ];
 	once = args[ 1 ];
 	hitBox = args[ 2 ];
+	customData = args[ 3 ];
 
 	if( hitBox == null ) {
 		m_qbData.log(
@@ -316,7 +319,7 @@ function onclick( screenData, args ) {
 	}
 	isValid = m_qbData.commands.onevent(
 		"click", fn, once, hitBox, [ "click" ], "onclick",
-		screenData.onClickEventListeners
+		screenData.onClickEventListeners, null, null, customData
 	);
 
 	// Activate the mouse event listeners

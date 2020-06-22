@@ -42,9 +42,10 @@
 	var isDrawing = false;
 	$.screen( "200x100", "screen" );
 	$.print( "Click button below to turn on/off mouse event listeners." );
-	$.onmouse( "down", function ( mouse ) {
+	$.onmouse( "down", function ( mouse, customData ) {
+		console.log( customData );
 		$.pset( mouse.x, mouse.y );
-	} );
+	}, null, null, "My Mouse Down" );
 	$.onmouse( "move", function ( mouse ) {
 		if( mouse.buttons > 0 ) {
 			$.pset( mouse.x, mouse.y );
