@@ -49,7 +49,7 @@ function gotoInput2() {
 			$.print( "Your number is " + val + "." );
 			$.render();
 			$.input( "What is x? ", null, "x" );
-		}, "num", true, 1, 10, true
+		}, "num", true, 10, false
 	);
 	$.inputReady( function ( data ) {
 		$.print( data.num + " is a good number." );

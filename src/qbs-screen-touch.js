@@ -35,6 +35,9 @@ function stopTouch( screenData ) {
 
 function touchStart( e ) {
 	var screenData;
+
+	m_qbData.isTouchScreen = true;
+
 	screenData = m_qbData.screens[ e.target.dataset.screenId ];
 
 	if( screenData == null ) {
@@ -49,11 +52,11 @@ function touchStart( e ) {
 		);
 	}
 
-	if( screenData.pressEventListenersActive > 0 ) {
-		m_qbData.commands.triggerEventListeners( "down",
-			getTouchPress( screenData ), screenData.onPressEventListeners
-		);
-	}
+	// if( screenData.pressEventListenersActive > 0 ) {
+	// 	m_qbData.commands.triggerEventListeners( "down",
+	// 		getTouchPress( screenData ), screenData.onPressEventListeners
+	// 	);
+	// }
 
 	if( screenData.clickEventListenersActive > 0 ) {
 		m_qbData.commands.triggerEventListeners( "click",

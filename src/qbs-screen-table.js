@@ -433,9 +433,10 @@
 					if( cell === "|" ) {
 						box.pos.width = ( pos.col + ( xt - 1 ) ) - box.pos.col;
 						box.pixels.width = ( box.pos.width + 1 ) * font.width;
-						if( xt === tableFormat[ yt ].length - 1 ) {
-							box.pixels.width += 1;
-						}
+						//box.pixels.width += 1;
+						// if( xt === tableFormat[ yt ].length - 1 ) {
+						// 	box.pixels.width += 1;
+						// }
 						break;
 					}
 				}
@@ -457,9 +458,10 @@
 							box.pos.row;
 						box.pixels.height = ( box.pos.height + 1 ) *
 							font.height;
-						if( yt === tableFormat.length - 1 ) {
-							box.pixels.height += 1;
-						}
+						//box.pixels.height += 1;
+						// if( yt === tableFormat.length - 1 ) {
+						// 	box.pixels.height += 1;
+						// }
 						break;
 					}
 				}

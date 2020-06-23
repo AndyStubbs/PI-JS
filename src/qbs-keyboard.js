@@ -187,22 +187,137 @@ m_inputReadyList = [];
 m_onKeyEventListeners = {};
 m_anyKeyEventListeners = [];
 m_keyboard = {
-	"qwerty": "" + 
-		"`1234567890-={Backspace}\n" +
-		"{Tab}qwertyuiop[]\\\n" +
-		"asdfghjkl;'{Enter}\n" +
-		"{Shift}zxcvbnm,./{Shift}\n" +
-		"{Space}",
-	"gap": 1,
-	"symbols": {
-		"Backspace": "<-",
-		"Tab": "Tab",
-		"Enter": "Enter",
-		"Shift": "Shift",
-		"Space": "     "
-	}
+	"lookup": {
+		"BS": { "val": String.fromCharCode( 27 ) + " BACK" },
+		"CP": { "val": String.fromCharCode( 24 ) + " CAPS" },
+		"CP2": { "val": String.fromCharCode( 25 ) + " CAPS" },
+		//"ENTER": { "val": String.fromCharCode( 17 ) + "ENTER" },
+		"ENTER": {
+			"val": 
+				String.fromCharCode( 17 ) +
+				String.fromCharCode( 217 ) + "RET" 
+		},
+		"SY": { "val": " SYMBOLS" },
+		"NU": { "val": "" },
+		"PM": { "val": "+/-" }
+	},
+	"keys": {
+		"lowercase":
+			( "1 2 3 4 5 6 7 8 9 0 BS " +
+			"q w e r t y u i o p CP " +
+			"a s d f g h j k l SY " +
+			"z x c SPACE v b n m ENTER" ).split( /\s+/ )
+		,
+		"uppercase":
+			( "1 2 3 4 5 6 7 8 9 0 BS " +
+			"Q W E R T Y U I O P CP2 " +
+			"A S D F G H J K L SY " +
+			"Z X C SPACE V B N M ENTER" ).split( /\s+/ )
+		,
+		"symbol":
+			( "~ ! @ # $ % ^ & * | BS " +
+			"( ) { } [ ] < > \\ / CP " +
+			"` \" ' , . ; : ? _ SY " +
+			"+ - NU NU NU NU NU NU ENTER" ).split( /\s+/ ),
+		"numbers":
+			( "1  2 3  4  5  6  7  8  9  0     BS " +
+			  "PM . ENTER ").split( /\s+/ )
+	},
+	"keys2": [],
+	"formats": [
+		[
+			"*-*-*-*-*-*-*-*-*-*-*------*",
+			"| | | | | | | | | | |      |",
+			"*-*-*-*-*-*-*-*-*-*-*------*",
+			"| | | | | | | | | | |      |",
+			"*-*-*-*-*-*-*-*-*-*-*------*",
+			"| | | | | | | | | |        |",
+			"*-*-*-*-*-*-*-*-*-*-*------*",
+			"| | | |     | | | | |      |",
+			"*-*-*-*-----*-*-*-*-*------*"
+		], [
+			"*-*-*-*-*-*-*-*-*-*-*------*",
+			"| | | | | | | | | | |      |",
+			"*-*-*-*-*-*-*-*-*-*-*------*",
+			"|     | |                  |",
+			"*-----*-*------------------*"
+		]
+	],
+	"keyCase": "lowercase",
+	"background": null,
+	"eventsLoaded": false,
+	"isLowerCase": true,
+	"format": null
 };
+m_keyboard.format = m_keyboard.formats[ 0 ];
 m_isKeyEventsActive = false;
+
+initOnscreenKeyboard();
+
+function initOnscreenKeyboard() {
+	var caseTypes, keys, key, i, j, lCase, uCase, symbol, numbers;
+
+	caseTypes = [ "lowercase", "uppercase", "symbol", "numbers" ];
+
+	// Convert lookup values
+	for( i = 0; i < caseTypes.length; i++ ) {
+		for( j = 0; j < m_keyboard.keys[ caseTypes[ i ] ].length; j++ ) {
+			keys = m_keyboard.keys[ caseTypes[ i ] ];
+			key = keys[ j ];
+			if( m_keyboard.lookup[ key ] ) {
+				keys[ j ] = m_keyboard.lookup[ key ].val;
+			}
+		}
+	}
+
+	// Special Cases
+	m_keyboard.lookup[ String.fromCharCode( 27 ) + " BACK" ] = {
+		"key": "Backspace",
+		"keyCode": 8
+	};
+	m_keyboard.lookup[ String.fromCharCode( 24 ) + " CAPS" ] = {
+		"key": "CapsLock",
+		"keyCode": 20
+	};
+	m_keyboard.lookup[ String.fromCharCode( 25 ) + " CAPS" ] = {
+		"key": "CapsLock",
+		"keyCode": 20
+	};
+	m_keyboard.lookup[
+		String.fromCharCode( 17 ) + String.fromCharCode( 217 ) + "RET"
+	] = {
+		"key": "Enter",
+		"keyCode": 13
+	};
+	m_keyboard.lookup[ " SYMBOLS" ] = {
+		"key": "SYMBOLS",
+		"keyCode": 0
+	};
+	m_keyboard.lookup[ "SPACE" ] = {
+		"key": " ",
+		"keyCode": 32
+	};
+
+	// Create keys2 object
+	for( i = 0; i < m_keyboard.keys[ "lowercase" ].length; i++ ) {
+		lCase = m_keyboard.keys[ "lowercase" ][ i ];
+		uCase = m_keyboard.keys[ "uppercase" ][ i ];
+		symbol = m_keyboard.keys[ "symbol" ][ i ];
+
+		if( i < m_keyboard.keys[ "numbers" ].length ) {
+			numbers = m_keyboard.keys[ "numbers" ][ i ];
+		} else {
+			numbers = null;
+		}
+
+		m_keyboard.keys2.push( {
+			"lowercase": lCase,
+			"uppercase": uCase,
+			"symbol": symbol,
+			"numbers": numbers
+		} );
+	}
+}
 
 // Set keyboard event listeners
 qbs._.addCommand( "startKeyboard", startKeyboard, false, false, [] );
@@ -482,6 +597,17 @@ function showPrompt( screenData, hideCursor ) {
 	// If we are collecting any inputs
 	if( m_inputs.length > 0 && m_inputIndex < m_inputs.length ) {
 		input = m_inputs[ m_inputIndex ];
+
+		detectOnscreenKeyboard( input );
+
+		// If only negative numbers
+		if(
+			input.val === "" && input.isNumber && input.isNegative &&
+			! input.isPositive
+		) {
+			input.val = "-";
+		}
+
 		msg = input.prompt + input.val;
 
 		// Blink cursor every half second
@@ -529,65 +655,282 @@ function showPrompt( screenData, hideCursor ) {
 		m_qbData.commands.setPos( input.screenData, [ pos.col, pos.row ] );
 		m_qbData.commands.render( input.screenData );
 
-		// if( input.showKeyboard ) {
-		// 	showKeyboard( input );
-		// }
+		if( input.showKeyboard && input.keyboardHidden ) {
+			showOnscreenKeyboard( screenData, input );
+			input.keyboardHidden = false;
+		}
+
 	} else {
+
 		// There are no inputs then stop the interval and clear prompt data
 		clearInterval( m_promptInterval );
 		m_promptBackground = null;
 		m_promptBackgroundWidth = 0;
+
 	}
 }
 
-// function showKeyboard( input ) {
-// 	var pos, i, end, word;
+function showOnscreenKeyboard( screenData, input ) {
+	var pos, hitBoxes, i, keys, x, y, width, height, font;
 
-// 	pos = qbData.commands.getPos( input.screenData );
-// 	qbData.commands.print( input.screenData, [ "" ] );
-// 	i = 0;
-// 	while( i < keyboard.qwerty.length ) {
-// 		word = keyboard.qwerty[ i ];
-// 		if( keyboard.qwerty[ i ] === "{" ) {
-// 			end = keyboard.qwerty.indexOf( "}", i + 1 );
-// 			if( end !== -1 ) {
-// 				word = keyboard.qwerty.substring( i, end );
-// 				if( ! keyboard.symbols[ word ] ) {
-// 					word = keyboard.qwerty[ i ];
-// 				}
-// 			}
-// 		}
-// 		word = qbs.util.pad( word, keyboard.gap, " " );
-// 		i += 1;
-// 	}
-// 	qbData.commands.setPos( input.screenData, [ pos.col, pos.row ] );
-// }
+	if( input.isNumber ) {
+		m_keyboard.keyCase = "numbers";
+		m_keyboard.format = m_keyboard.formats[ 1 ];
+	} else if( m_keyboard.keyCase === "numbers" ) {
+		m_keyboard.keyCase = "lowercase";
+		m_keyboard.format = m_keyboard.formats[ 0 ];
+	}
+
+	keys = m_keyboard.keys[ m_keyboard.keyCase ];
+	pos = m_qbData.commands.getPos( screenData );
+	m_qbData.commands.setPos( screenData, [ 0, pos.row + 1 ] );
+	font = screenData.printCursor.font;
+	x = pos.col * font.width;
+	y = ( pos.row + 1 ) * font.height;
+	width = m_keyboard.format[ 0 ].length * font.width;
+	height = ( m_keyboard.format.length ) * font.height;
+
+	if( m_keyboard.background ) {
+		m_qbData.commands.put(
+			screenData, [
+				m_keyboard.background, x, y, true
+			]
+		);
+	} else {
+		m_keyboard.background = m_qbData.commands.get(
+			screenData, [ x, y, x + width, y + height ]
+		);
+	}
+
+	// Print the keyboard
+	hitBoxes = m_qbData.commands.printTable(
+		screenData, [
+			keys,
+			m_keyboard.format
+		]
+	);
+	m_qbData.commands.setPos( screenData, [ pos.col, pos.row ] );
+
+	if( ! m_keyboard.eventsLoaded ) {
+
+		if( m_qbData.isTouchScreen ) {
+			input.keyboardDetected = false;
+		}
+
+		// Add OnPress Events
+		for( i = 0; i < hitBoxes.length; i++ ) {
+			m_qbData.commands.onpress( screenData, [
+				"down",
+				onscreenKeyboardOnPress,
+				false,
+				hitBoxes[ i ].pixels, {
+					"index": i,
+					"screenData": screenData,
+					"pixels": hitBoxes[ i ].pixels,
+					"input": input
+				}
+			] );
+		}
+
+		m_keyboard.eventsLoaded = true;
+		m_keyboard.hitBoxes = hitBoxes;
+	}
+}
+
+function clearOnscreenKeyboardEvents( screenData ) {
+	var hitBoxes, i;
+
+	hitBoxes = m_keyboard.hitBoxes;
+
+	if( m_keyboard.eventsLoaded ) {
+
+		// Add OnPress Events
+		for( i = 0; i < hitBoxes.length; i++ ) {
+			m_qbData.commands.offpress( screenData, [
+				"down",
+				onscreenKeyboardOnPress,
+				false,
+				hitBoxes[ i ].pixels
+			] );
+		}
+
+	}
+
+	m_keyboard.eventsLoaded = false;
+}
+
+function hideOnscreenKeyboard( screenData ) {
+	var pos, font, x, y;
+
+	pos = m_qbData.commands.getPos( screenData );
+	font = screenData.printCursor.font;
+	x = pos.col * font.width;
+	y = ( pos.row + 1 ) * font.height;
+	m_qbData.commands.put(
+		screenData, [
+			m_keyboard.background, x, y, true
+		]
+	);
+}
+
+function onscreenKeyboardOnPress( data, keyData ) {
+	var key, keyCode, index;
+
+	if( keyData.input.keyboardDetected ) {
+		keyData.input.keyboardDetected = false;
+		return;
+	}
+
+	index = keyData.index;
+	key = m_keyboard.keys2[ index ][ m_keyboard.keyCase ];
+
+	if( m_keyboard.lookup[ key ] ) {
+		keyCode = m_keyboard.lookup[ key ].keyCode;
+		key = m_keyboard.lookup[ key ].key;
+	} else {
+		keyCode = 0;
+	}
+
+	if( key === "+/-" ) {
+		if(
+			keyData.input.val.length === 0 ||
+			keyData.input.val.charAt( 0 ) !== "-"
+		) {
+			key = "-";
+		} else {
+			key = "+";
+		}
+	}
+
+	if( key === "SYMBOLS" ) {
+		m_keyboard.keyCase = "symbol";
+	} else if( key === "CapsLock" ) {
+		if( m_keyboard.isLowerCase ) {
+			m_keyboard.keyCase = "uppercase";
+			m_keyboard.isLowerCase = false;
+		} else {
+			m_keyboard.isLowerCase = true;
+			m_keyboard.keyCase = "lowercase";
+		}
+	} else {
+		collectInput( { "key": key, "keyCode": keyCode } );
+	}
+
+	if( key === "Enter" ) {
+		showPrompt( keyData.screenData, true );
+	} else {
+		showOnscreenKeyboard( keyData.screenData, keyData.input );
+		m_qbData.commands.setColor( keyData.screenData, [ 15 ] );
+		m_qbData.commands.rect( keyData.screenData, [
+			keyData.pixels.x, keyData.pixels.y,
+			keyData.pixels.width + 1, keyData.pixels.height + 1
+		] );
+		m_qbData.commands.setColor( keyData.screenData, [ 7 ] );
+	}
+}
 
 // Prompts the user to enter input through the keyboard.
 qbs._.addCommand( "input", input, false, true, [
-	"prompt", "callback", "name", "isNumber", "min", "max", "isInteger",
-	"showKeyboard"
+	"prompt", "callback", "name", "isNumber", "isInteger", "allowNegative",
+	"onscreenKeyboard"
 ] );
 function input( screenData, args ) {
-	var prompt, callback, name, isNumber, min, max, isInteger, showKeyboard,
-		readyList;
+	var prompt, callback, name, isNumber, isInteger, onscreenKeyboard, 
+		readyList, inputData, onscreenKeyboardOptions, allowNegative,
+		min, max, isNegative, isPositive;
 
 	prompt = args[ 0 ];
 	callback = args[ 1 ];
 	name = args[ 2 ];
 	isNumber = !!( args[ 3 ] );
-	min = args[ 4 ];
-	max = args[ 5 ];
-	isInteger = !!( args[ 6 ] );
-	showKeyboard = !!( args[ 7 ] );
+	isInteger = !!( args[ 4 ] );
+	allowNegative = args[ 5 ];
+	onscreenKeyboard = args[ 6 ];
+
+	// Validate prompt
+	if( prompt == null ) {
+		prompt = "";
+	}
 
 	if( typeof prompt !== "string" ) {
-		m_qbData.log( "input: prompt is required and must be a string." );
+		m_qbData.log( "input: prompt must be a string." );
 		return;
 	}
-	if( typeof name !== "string" && name !== undefined ) {
-		m_qbData.log( "input: name must be a string or left blank." );
+
+	// Validate callback
+	if( callback != null && ! qbs.util.isFunction( callback ) ) {
+		m_qbData.log( "input: callback must be a function." );
 		return;
+	}
+
+	// Validate name
+	if( name == null ) {
+		name = "input_" + m_inputs.length;
+	}
+
+	if( typeof name !== "string" ) {
+		m_qbData.log( "input: name must be a string." );
+		return;
+	}
+
+	// Validate allowNegative
+	if( allowNegative == null ) {
+		allowNegative = true;
+	} else {
+		allowNegative = !!( allowNegative );
+	}
+
+	// Validate onscreenKeyboard
+	if( onscreenKeyboard == null ) {
+		onscreenKeyboard = "none";
+	}
+
+	if( typeof onscreenKeyboard !== "string" ) {
+		m_qbData.log( "input: onscreenKeyboard must be a string." );
+		return;
+	}
+
+	onscreenKeyboardOptions = [ "auto", "always", "none" ];
+	if( onscreenKeyboardOptions.indexOf( onscreenKeyboard ) === -1 ) {
+		m_qbData.log(
+			"input: onscreenKeyboard must be " + 
+			onscreenKeyboardOptions.slice( 0, 2 ).join( ", " ) + 
+			" or none."
+		);
+		return;
+	}
+
+	max = null;
+
+	if( allowNegative ) {
+		min = null;
+	} else {
+		min = 0;
+	}
+
+	// Integer is a number
+	if( isInteger ) {
+		isNumber = true;
+	}
+
+	// Check if negative numbers are allowed
+	if( min === null || min < 0 ) {
+		isNegative = true;
+	} else {
+		isNegative = false;
+	}
+
+	// Check if positive numbers are allowed
+	isPositive = true;
+	// if( max === null || max > 0 ) {
+	// 	isPositive = true;
+	// } else {
+	// 	isPositive = false;
+	// }
+
+	// Turn on touch to detect if we need to use onscreen keyboard
+	if( onscreenKeyboard === "auto" ) {
+		m_qbData.commands.startTouch( screenData );
 	}
 
 	// Activate key event listeners
@@ -600,36 +943,46 @@ function input( screenData, args ) {
 		readyList.push( callback );
 	}
 
-	// If no name is provided then lets create one
-	if( ! name ) {
-		name = "input_" + m_inputs.length;
-	}
-	if( isNaN( Number( min ) ) ) {
-		min = null;
-	} else {
-		min = Number( min );
-	}
-	if( isNaN( Number( max ) ) ) {
-		max = null;
-	} else {
-		max = Number( max );
-	}
-	m_inputs.push( {
+	inputData = {
 		"prompt": prompt,
 		"name": name,
 		"isNumber": isNumber,
 		"isInteger": isInteger,
+		"isPositive": isPositive,
+		"isNegative": isNegative,
 		"min": min,
 		"max": max,
 		"val": "",
 		"readyList": readyList,
 		"screenData": screenData,
-		"showKeyboard": showKeyboard
-	} );
+		"onscreenKeyboard": onscreenKeyboard,
+		"keyboardHidden": true,
+		"showKeyboard": false,
+		"keyboardDetected": false
+	};
+
+	if( onscreenKeyboard === "always" ) {
+		inputData.showKeyboard = true;
+	} else {
+		detectOnscreenKeyboard( inputData );
+	}
+
+	m_inputs.push( inputData );
 	m_t = ( new Date() ).getTime();
 	m_promptInterval = setInterval( function() {
-		showPrompt( screenData );
+		showPrompt( screenData, false );
 	}, 100 );
+}
+
+function detectOnscreenKeyboard( input ) {
+	if(
+		m_qbData.isTouchScreen &&
+		input.onscreenKeyboard === "auto" &&
+		input.showKeyboard === false
+	) {
+		input.showKeyboard = true;
+		input.keyboardDetected = true;
+	}
 }
 
 qbs._.addCommand( "cancelInput", cancelInput, false, true, [ "name" ] );
@@ -662,6 +1015,11 @@ function collectInput( event ) {
 
 		// The enter key was pressed
 		showPrompt( input.screenData, true );
+		if( input.showKeyboard ) {
+			hideOnscreenKeyboard( input.screenData );
+			clearOnscreenKeyboardEvents( input.screenData );
+		}
+
 		m_qbData.commands.print( input.screenData, [ "" ] );
 		triggerReady( input );
 		m_inputIndex += 1;
@@ -669,11 +1027,34 @@ function collectInput( event ) {
 			closeInputs();
 		}
 	} else if( event.keyCode === 8 ) {
+
 		// The backspace key was pressed
 		if( input.val.length > 0 ) {
 			removeLastChar = true;
 		}
+
 	} else if( event.key && event.key.length === 1 ) {
+
+		// Handle +/-
+		if( input.isNumber && input.isPositive && input.isNegative ) {
+
+			if(
+				event.key === "-" &&
+				( input.val.length === 0 || input.val.charAt( 0 ) !== "-" )
+			) {
+				input.val = "-" + input.val;
+				return;
+			} else if(
+				event.key === "+" &&
+				input.val.length > 0 &&
+				input.val.charAt( 0 ) === "-"
+			) {
+				input.val = input.val.substr( 1 );
+				return;
+			}
+
+		}
+
 		// A character key was pressed
 		input.val += event.key;
 
@@ -681,15 +1062,16 @@ function collectInput( event ) {
 		if( input.isNumber ) {
 			if( isNaN( Number( input.val ) ) ) {
 				removeLastChar = true;
-			} else if( input.max && Number( input.val ) > input.max ) {
+			} else if( input.max !== null && Number( input.val ) > input.max ) {
 				removeLastChar = true;
-			} else if( input.min && Number( input.val ) < input.min ) {
+			} else if( input.min !== null && Number( input.val ) < input.min ) {
 				removeLastChar = true;
 			} else if( input.isInteger && event.key === "." ) {
 				removeLastChar = true;
 			}
 		}
 	}
+
 	// Remove one character from the end of the string
 	if( removeLastChar ) {
 		input.val = input.val.substring( 0, input.val.length - 1 );

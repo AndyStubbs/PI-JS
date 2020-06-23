@@ -32,7 +32,8 @@ window.qbs = ( function () {
 		"settings": {},
 		"settingsList": [],
 		"volume": 0.75,
-		"log": logError
+		"log": logError,
+		"isTouchScreen": false
 	};
 
 	// QBS api
