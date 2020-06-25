@@ -8,6 +8,7 @@
   },
   "scripts": {
     "test": "node test/run-tests.js",
+    "test2": "node test/run-tests-2.js",
     "server": "start node server.js",
     "server2": "node server.js",
     "build": "node build.js",
@@ -28,6 +29,7 @@
     "connect": "^3.7.0",
     "node-cmd": "^3.0.0",
     "pngjs": "^3.4.0",
+    "puppeteer": "^4.0.1",
     "serve-static": "^1.14.1",
     "uglify-js": "^3.8.0"
   }

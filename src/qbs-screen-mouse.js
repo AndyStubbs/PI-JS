@@ -120,8 +120,12 @@ function updateMouse( screenData, e, action ) {
 	var rect, x, y, lastX, lastY;
 
 	rect = screenData.clientRect;
-	x = Math.floor( ( e.clientX - rect.left ) / rect.width * screenData.width );
-	y = Math.floor( ( e.clientY - rect.top ) / rect.height * screenData.height );
+	x = Math.floor(
+		( e.clientX - rect.left ) / rect.width * screenData.width
+	);
+	y = Math.floor(
+		( e.clientY - rect.top ) / rect.height * screenData.height
+	);
 
 	if( screenData.mouse ) {
 		if( screenData.mouse.x ) {

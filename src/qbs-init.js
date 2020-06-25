@@ -10,7 +10,7 @@
 // Create the API
 qbs._.processCommands();
 
-if(window.$ === undefined) {
+if( window.$ === undefined ) {
 	window.$ = window.qbs;
 }
 
