@@ -4,12 +4,25 @@
 		<title>Onclick 01</title>
 		<script type="text/toml">
 			[[TOML_START]]
-			test = "screenshot.js"
 			file = "onclick_01"
 			name = "onclick 01"
 			width = 300
 			height = 200
-			delay = 0
+			commands = """
+				KT "Hello"
+				MV 60, 60
+				MC
+				MV 120, 60
+				MC
+				MV 45, 160
+				MC
+				KT "41"
+				MV 75, 160
+				MC
+				KT "Test"
+				MV 60, 60
+				MC
+			"""
 			[[TOML_END]]
 		</script>
 		<script src="../../build/qbs.min.js"></script>

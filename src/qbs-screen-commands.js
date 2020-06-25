@@ -224,8 +224,10 @@ function triggerEventListeners( mode, data, listenerArr, clickStatus ) {
 				}
 
 			} else {
+
 				// if no hit box then just trigger the event
 				temp[ i ].fn( data, temp[ i ].customData );
+
 			}
 		}
 	}

@@ -4,12 +4,20 @@
 		<title>Onmouse 01</title>
 		<script type="text/toml">
 			[[TOML_START]]
-			test = "screenshot.js"
 			file = "onmouse_01"
 			name = "onmouse 01"
 			width = 160
 			height = 100
-			delay = 0
+			commands = """
+				MV 10, 10
+				MD
+				MV 150, 90
+				MU
+				MV 10, 90
+				MD
+				MV 150, 10
+				MU
+			"""
 			[[TOML_END]]
 		</script>
 		<script src="../../build/qbs.min.js"></script>

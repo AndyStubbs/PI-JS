@@ -7,6 +7,7 @@ var m_scriptIndex = 0;
 var m_commandScriptsTimeout;
 var g_page;
 var g_resolve;
+var g_startTime;
 
 const test = function ( commandString, page ) {
 	var regString, reg, commands, conflicts;
@@ -14,22 +15,29 @@ const test = function ( commandString, page ) {
 	m_commandScripts = [];
 	m_scriptIndex = 0;
 	g_page = page;
-
-	// Remove spaces and convert to upper case
-	commandString = commandString.split( /\s+/ ).join( "" );
+	g_startTime = ( new Date ).getTime();
 
 	// Remove potential conflicts
 	conflicts = removeQuotes( commandString );
-	commandString = conflicts.str.toUpperCase();
+
+	// Remove spaces and convert to upper case
+	commandString = conflicts.str.split( /\s+/ ).join( "" ).toUpperCase();
+
+	//console.log( commandString );
 
 	// Regex String
 	regString = "(?=" +
 		"MD|" +
+		"MD\\d+|" +
 		"MV\\d+\\,\\d+|" +
 		"MV\\d+\\,\\d+,\\d+|" +
 		"MU|" +
+		"MU\\d+|" +
+		"MC|" +
+		"MC\\d+|" +
 		"TS|" +
-		"TV\d+\\,\\d+|" +
+		"TM\\d+\\,\\d+|" +
+		"TM\\d+\\,\\d+,\\d+|" +
 		"TE|" +
 		"KD\\d+|" +
 		"KU\\d+|" +
@@ -54,9 +62,14 @@ const test = function ( commandString, page ) {
 		"index": 0,
 		"target": "",
 		"mouse": {
-			"clientX": 0,
-			"clientY": 0,
+			"x": 0,
+			"y": 0,
 			"buttons": 0
+		},
+		"touch": {
+			"x": 0,
+			"y": 0,
+			"id": 0
 		}
 	} );
 
@@ -73,7 +86,7 @@ const test = function ( commandString, page ) {
 function processCommands( commands, conflictData ) {
 	var i, cmd, data, conflictItems;
 
-	conflictItems = [ "KD", "KU", "KP", "KT", "SL" ];
+	conflictItems = [ "KD", "KU", "KP", "KT", "SL", "MC", "MD", "MU" ];
 	for( i = 0; i < commands.length; i++ ) {
 		cmd = commands[ i ].substring( 0, 2 );
 		data = commands[ i ].substr( 2 ).split( "," );
@@ -130,7 +143,7 @@ function removeQuotes( commandString ) {
 }
 
 // Run the command scripts
-function runCommandScripts() {
+async function runCommandScripts() {
 	var commandScript;
 	//console.log( "Running Script" );
 	//console.log( m_scriptIndex );
@@ -140,7 +153,7 @@ function runCommandScripts() {
 
 		// If a delay of 0, loop without setting a timeout
 		do {
-			runCommand( commandScript );
+			await runCommand( commandScript );
 		} while(
 			commandScript.delay === 0 &&
 			commandScript.index < commandScript.commands.length
@@ -156,7 +169,9 @@ function runCommandScripts() {
 
 		} else {
 			//console.log( "Script completed" );
+			m_scriptIndex += 1;
 			g_resolve( "Completed" );
+			//runCommandScripts();
 		}
 	} else {
 		//console.log( "Events Completed" );
@@ -165,7 +180,7 @@ function runCommandScripts() {
 }
 
 async function runCommand( commandScript ) {
-	var command;
+	var command, time, button;
 
 	//console.log( "Running Command" );
 	//console.log( commandScript.index );
@@ -176,8 +191,14 @@ async function runCommand( commandScript ) {
 		return;
 	}
 
+	time = ( new Date ).getTime();
+
 	command = commandScript.commands[ commandScript.index ];
-	//console.log( command.cmd );
+	commandScript.index += 1;
+
+	//console.log( command );
+	//console.log( time - g_startTime );
+	//console.log( command.cmd, commandScript.index, command.data );
 
 	switch( command.cmd ) {
 		case "DL":
@@ -188,29 +209,66 @@ async function runCommand( commandScript ) {
 			break;
 		case "MV":
 			if( command.data.length === 3 ) {
-				addSteps( commandScript, command );
+				addSteps(
+					commandScript, command,
+					commandScript.mouse.x, commandScript.mouse.y
+				);
 			} else {
-				commandScript.mouse.clientX = parseInt( command.data[ 0 ] );
-				commandScript.mouse.clientY = parseInt( command.data[ 1 ] );
+				commandScript.mouse.x = parseInt( command.data[ 0 ] );
+				commandScript.mouse.y = parseInt( command.data[ 1 ] );
 				await g_page.mouse.move(
-					commandScript.mouse.clientX,
-					commandScript.mouse.clientY
+					commandScript.mouse.x,
+					commandScript.mouse.y
 				);
 			}
 			break;
 		case "MD":
+			if( command.data ) {
+				button = command.data;
+			} else {
+				button = "left";
+			}
 			commandScript.mouse.buttons = 1;
-			await g_page.mouse.down();
+			await g_page.mouse.down( { "button": button } );
 			break;
 		case "MU":
+			if( command.data ) {
+				button = command.data;
+			} else {
+				button = "left";
+			}
 			commandScript.mouse.buttons = 0;
-			await g_page.mouse.up();
+			await g_page.mouse.up( { "button": button } );
+			break;
+		case "MC":
+			if( command.data ) {
+				button = command.data;
+			} else {
+				button = "left";
+			}
+			if( commandScript.target ) {
+				await g_page.click(
+					commandScript.target, { "button": button }
+				);
+			} else {
+				await g_page.mouse.click(
+					commandScript.mouse.x, commandScript.mouse.y,
+					{ "button": button }
+				);
+			}
 			break;
 		case "KT":
 			//console.log( "Typing: " + command.data );
-			await g_page.keyboard.type( command.data );
+			if( commandScript.target ) {
+				await g_page.type(
+					commandScript.target, command.data
+				);
+			} else {
+				await g_page.keyboard.type( command.data );
+			}
 			break;
 		case "KD":
+			//console.log( "KeyDown", command.data );
 			await g_page.keyboard.down( command.data );
 			break;
 		case "KU":
@@ -220,19 +278,93 @@ async function runCommand( commandScript ) {
 			//console.log( "KeyPress: " + command.data );
 			await g_page.keyboard.press( command.data );
 			break;
+		case "TS":
+			commandScript.touch.x = parseInt( command.data[ 0 ] );
+			commandScript.touch.y = parseInt( command.data[ 1 ] );
+			await dispatchTouch(
+				commandScript.target, "touchstart", command.data,
+				commandScript.touch.id
+			);
+			break;
+		case "TM":
+			if( command.data.length === 3 ) {
+				addSteps(
+					commandScript,
+					command,
+					commandScript.touch.x,
+					commandScript.touch.y
+				);
+			} else {
+				commandScript.touch.x = parseInt( command.data[ 0 ] );
+				commandScript.touch.y = parseInt( command.data[ 1 ] );
+				await dispatchTouch(
+					commandScript.target, "touchmove", command.data,
+					commandScript.touch.id
+				);
+			}
+			break;
+		case "TE":
+			await dispatchTouch(
+				commandScript.target, "touchend", [], commandScript.touch.id
+			);
+			commandScript.touch.id += 1;
+			break;
 	}
 
-	commandScript.index += 1;
+	//console.log( "step completed" );
 }
 
-function addSteps( commandScript, command ) {
-	var i, steps, x1, y1, x2, y2, dx, dy;
+async function dispatchTouch( target, name, data, id ) {
+	if( data.length > 1 ) {
+		data[ 0 ] = parseInt( data[ 0 ] );
+		data[ 1 ] = parseInt( data[ 1 ] );
+	}
+	//console.log( target, name, data );
+	return await g_page.evaluate(
+		function ( selector, name, data, id ) {
+			var target, touch, touchConfig;
+			if( selector ) {
+				target = document.querySelector( selector );
+			} else {
+				target = document.body;
+			}
+			touchConfig = {
+				"cancelable": true,
+				"bubbles": true,
+				"touches": [],
+				"targetTouches": [],
+				"changedTouches": [],
+				"shiftKey": true
+			};
+			if( data.length > 1 ) {
+				touch = new Touch( {
+					"identifier": id,
+					"target": target,
+					"clientX": data[ 0 ],
+					"clientY": data[ 1 ],
+					"pageX": data[ 0 ],
+					"pageY": data[ 1 ],
+					"radiusX": 2.5,
+					"radiusY": 2.5,
+					"rotationAngle": 10,
+					"force": 0.5
+				} );
+				touchConfig.touches.push( touch );
+				touchConfig.changedTouches.push( touch );
+			}
+			event = new TouchEvent( name, touchConfig );
+			target.dispatchEvent( event );
+		}, target, name, data, id
+	);
 
-	x2 = command.data[ 0 ];
-	y2 = command.data[ 1 ];
-	steps = command.data[ 2 ];
-	x1 = commandScript.mouse.clientX;
-	y1 = commandScript.mouse.clientY;
+}
+
+function addSteps( commandScript, command, x1, y1 ) {
+	var i, steps, x2, y2, dx, dy;
+
+	x2 = parseInt( command.data[ 0 ] );
+	y2 = parseInt( command.data[ 1 ] );
+	steps = parseInt( command.data[ 2 ] );
 	dx = ( x2 - x1 ) / steps;
 	dy = ( y2 - y1 ) / steps;
 
@@ -249,24 +381,11 @@ function addSteps( commandScript, command ) {
 		"cmd": command.cmd,
 		"data": [ Math.round( x2 ), Math.round( y2 ) ]
 	} );
-}
 
-function dispatchMouseEvent( target, name, data ) {
-	var event, rect, customData;
-
-	rect = target.getBoundingClientRect();
-
-	customData = {
-		"clientX": rect.left + data.clientX,
-		"clientY": rect.top + data.clientY,
-		"buttons": data.buttons
-	};
-
-	//console.log( "Dispatching Event" );
-	//console.log( name, customData );
-
-	event = new MouseEvent( name, customData );
-	target.dispatchEvent( event );
+	// console.log( commandScript.index );
+	// for( i = 0; i < commandScript.commands.length; i++ ) {
+	// 	console.log( i, commandScript.commands[ i ] );
+	// }
 }
 
 module.exports = test;

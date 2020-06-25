@@ -4,12 +4,24 @@
 		<title>Input 03</title>
 		<script type="text/toml">
 			[[TOML_START]]
-			test = "screenshot.js"
 			file = "input_03"
 			name = "input 03"
 			width = 300
 			height = 210
-			delay = 0
+			commands = """
+				KT "Andy Stubbs"
+				KD "Enter"
+				SL "canvas"
+				TS 150, 105
+				TE
+				TS 45, 37
+				TE
+				TS 8, 37
+				TE
+				TS 119, 54
+				TE
+				KT "-800"
+			"""
 			[[TOML_END]]
 		</script>
 		<script src="../../build/qbs.min.js"></script>

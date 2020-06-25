@@ -4,12 +4,14 @@
 		<title>Input 02</title>
 		<script type="text/toml">
 			[[TOML_START]]
-			test = "screenshot.js"
 			file = "input_02"
 			name = "input 02"
-			width = 200
+			width = 300
 			height = 200
-			delay = 0
+			commands = """
+				KT "Andy Stubbs"
+				KD "Enter"
+			"""
 			[[TOML_END]]
 		</script>
 		<script src="../../build/qbs.min.js"></script>

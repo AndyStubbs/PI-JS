@@ -4,12 +4,22 @@
 		<title>Onkey 01</title>
 		<script type="text/toml">
 			[[TOML_START]]
-			test = "screenshot.js"
 			file = "onkey_01"
 			name = "onkey 01"
-			width = 600
-			height = 300
-			delay = 0
+			width = 220
+			height = 200
+			commands = """
+				KP "A"
+				SL "#turn"
+				MC
+				SL ""
+				KP "B"
+				KP "C"
+				SL "#turn"
+				MC
+				SL ""
+				KP "D"
+			"""
 			[[TOML_END]]
 		</script>
 		<script src="../../build/qbs.min.js"></script>
@@ -19,8 +29,8 @@
 			}
 
 			#screen {
-				width: 600px;
-				height: 300px;
+				width: 200px;
+				height: 100px;
 			}
 		</style>
 	</head>

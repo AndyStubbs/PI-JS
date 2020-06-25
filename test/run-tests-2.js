@@ -126,9 +126,10 @@ async function runTest( file, i ) {
 	// 	saveFile + " --window-size=" + test.width + "," + test.height + " " + test.url;
 
 	await g_page.setViewport( {
-		width: test.width,
-		height: test.height,
-		deviceScaleFactor: 1
+		"width": test.width,
+		"height": test.height,
+		"deviceScaleFactor": 1,
+		"hasTouch": true
 	} );
 
 	await g_page.goto( test.url );

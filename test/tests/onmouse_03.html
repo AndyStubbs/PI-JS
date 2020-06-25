@@ -4,12 +4,24 @@
 		<title>Onmouse 03</title>
 		<script type="text/toml">
 			[[TOML_START]]
-			test = "screenshot.js"
 			file = "onmouse_03"
 			name = "onmouse 03"
-			width = 600
-			height = 300
-			delay = 0
+			width = 240
+			height = 200
+			commands = """
+				DL 10
+				MV 40, 40
+				MD
+				MV 205, 105, 50
+				MU
+				SL "#turn"
+				MC
+				SL ""
+				MV 40, 105
+				MD
+				MV 205, 40, 50
+				MU
+			"""
 			[[TOML_END]]
 		</script>
 		<script src="../../build/qbs.min.js"></script>
@@ -19,18 +31,9 @@
 				background-color: blue;
 				margin: 10px;
 			}
-			pre {
-				width: 100%;
-				color: white;
-				font-size: 14px;
-			}
-			textarea {
-				width: 800px;
-				height: 300px;
-			}
 			#screen {
-				width: 600px;
-				height: 300px;
+				width: 200px;
+				height: 100px;
 			}
 		</style>
 	</head>

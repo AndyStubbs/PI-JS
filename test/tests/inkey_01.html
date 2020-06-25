@@ -4,12 +4,14 @@
 		<title>Inkey 01</title>
 		<script type="text/toml">
 			[[TOML_START]]
-			test = "screenshot.js"
 			file = "inkey_01"
 			name = "inkey 01"
 			width = 200
 			height = 200
-			delay = 0
+			commands = """
+				KD "Control"
+				KD "s"
+			"""
 			[[TOML_END]]
 		</script>
 		<script src="../../build/qbs.min.js"></script>

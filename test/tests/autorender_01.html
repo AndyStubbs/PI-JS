@@ -4,14 +4,16 @@
 		<title>Autorender 01</title>
 		<script type="text/toml">
 			[[TOML_START]]
-			test = "screenshot.js"
 			file = "autorender_01"
 			name = "AutoRender 01"
-			width = 300
-			height = 300
-			delay = 0
+			width = 1220
+			height = 660
+			commands = """
+				DL 100
+			"""
 			[[TOML_END]]
 		</script>
+		<script src="../libs/seedrandom.js"></script>
 		<script src="../../build/qbs.min.js"></script>
 		<style>
 			html, body {
@@ -29,6 +31,7 @@
 <div id="myDiv1"></div>
 <div id="myDiv2"></div>
 <script>
+	Math.seedrandom( "constant" );
 	var total1 = 0;
 	var total2 = 0;
 	$.ready( function () {

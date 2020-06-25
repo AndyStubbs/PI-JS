@@ -52,11 +52,14 @@ function touchStart( e ) {
 		);
 	}
 
-	// if( screenData.pressEventListenersActive > 0 ) {
-	// 	m_qbData.commands.triggerEventListeners( "down",
-	// 		getTouchPress( screenData ), screenData.onPressEventListeners
-	// 	);
-	// }
+	if( screenData.pressEventListenersActive > 0 ) {
+		m_qbData.commands.triggerEventListeners( "down",
+			getTouchPress( screenData ), screenData.onPressEventListeners
+		);
+
+		// This will prevent mouse down event start event from firing
+		e.preventDefault();
+	}
 
 	if( screenData.clickEventListenersActive > 0 ) {
 		m_qbData.commands.triggerEventListeners( "click",
