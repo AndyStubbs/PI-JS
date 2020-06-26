@@ -1267,9 +1267,9 @@ function setPen( screenData, args ) {
 			}
 		}
 		// Make sure that noise array contains at least 4 values
-		for(; i < 4; i++ ) {
-			noise.push( 0 );
-		}
+//		for(; i < 4; i++ ) {
+//			noise.push( 0 );
+//		}
 	}
 
 	if( pen === "pixel" ) {
