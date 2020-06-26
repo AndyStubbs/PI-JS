@@ -10,7 +10,10 @@
 var m_qbData, m_maxDifference, m_setPixel, m_pixels;
 
 m_qbData = qbs._.data;
-m_maxDifference = 195075;		// 255^2 * 3
+//m_maxDifference = 195075;		// 255^2 * 3
+//m_maxDifference = 260100;		// 255^2 * 4
+//m_maxDifference = 227587.5;		// 255^2 * 3.5
+m_maxDifference = ( 255 * 255 ) * 3.25;
 
 // Paint Command
 qbs._.addCommand( "paint", paint, false, true,
@@ -132,7 +135,7 @@ function addFill( screenData, x, y, fills, fillColor, backgroundColor,
 }
 
 function floodCheck( screenData, x, y, fillColor, backgroundColor, tolerance ) {
-	var pixelColor, dr, dg, db, simularity, difference;
+	var pixelColor, dr, dg, db, da, simularity, difference;
 
 	if( x < 0 || x >= screenData.width || y < 0 || y >= screenData.height ) {
 		return false;
@@ -146,7 +149,8 @@ function floodCheck( screenData, x, y, fillColor, backgroundColor, tolerance ) {
 		dr = ( pixelColor.r - backgroundColor.r );
 		dg = ( pixelColor.g - backgroundColor.g );
 		db = ( pixelColor.b - backgroundColor.b );
-		difference = ( dr * dr + dg * dg + db * db );
+		da = ( pixelColor.a - backgroundColor.a );
+		difference = ( dr * dr + dg * dg + db * db + da * da * 0.25 );
 		simularity = m_maxDifference - difference;
 
 		return simularity >= tolerance;

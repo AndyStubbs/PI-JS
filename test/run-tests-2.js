@@ -21,11 +21,14 @@ const TEMPLATE_FILE = "test/index-template.html";
 const TEMP_TESTS = "test/temp/";
 const LOG_FILE = "test/log.log";
 const SCREENSHOTS_FOLDER = "test/tests/screenshots/";
+const SCREENSHOTS_FOLDER_WIN = "test\\tests\\screenshots\\";
 const TESTS_URL = HOME + TESTS_FOLDER;
 const IMG_URL_ROOT = "tests/screenshots/";
 const IMG_URL_ROOT_TEMP = "../tests/screenshots/";
 const ROOT_DIR = __dirname.substring( 0, __dirname.lastIndexOf( "\\" ) ) + "\\";
 const TEST_HTML_ID = "test_";
+const LAST_TEST_BATCHFILE = "test/dtest.bat";
+const LAST_TEST_BATCHFILE2 = "test/dtest2.bat";
 
 // Global Variables
 let g_ImgHtml = [];
@@ -42,6 +45,8 @@ let g_browser;
 let g_page;
 let g_BrowserUrl = BROWSER2;
 let g_imgUrlRoot = IMG_URL_ROOT;
+let g_lastTest = "";
+let g_lastTestScreenshotFiles = {};
 
 startTests();
 
@@ -54,12 +59,8 @@ async function startTests() {
 		g_Files = [ process.argv[ 2 ] ];
 		g_indexFile = TEMP_TESTS + "test-" + g_Files[ 0 ];
 		g_imgUrlRoot = IMG_URL_ROOT_TEMP;
+		g_lastTest = g_Files[ 0 ];
 	}
-
-	// Temporary
-	// g_Files = [ "inmouse_01.html" ];
-	// g_indexFile = TEMP_TESTS + "test-" + g_Files[ 0 ];
-	// g_imgUrlRoot = IMG_URL_ROOT_TEMP;
 
 	if( process.platform === "win32" ) {
 		g_BrowserUrl = BROWSER1;
@@ -101,6 +102,13 @@ async function runTest( file, i ) {
 	} else {
 		saveFile = SCREENSHOTS_FOLDER + test.file + ".png";
 		test.new_img_file = false;
+	}
+
+	if( g_lastTest !== "" ) {
+		g_lastTestScreenshotFiles = {
+			"new": SCREENSHOTS_FOLDER_WIN + test.file + "_new.png",
+			"old": SCREENSHOTS_FOLDER_WIN + test.file + ".png"
+		};
 	}
 
 	//Set the test url
@@ -216,7 +224,6 @@ function updateCounts() {
 }
 
 function writeFinalHtml() {
-
 	//Update the stats
 	let statsHtml = "<div id='stats'></div>";
 	if( g_MismatchCount === 0 && g_NewTestsCount === 0 ) {
@@ -258,6 +265,27 @@ function writeFinalHtml() {
 	FS.writeFile( g_indexFile, g_StrHtml, function () {
 		console.log( "Tests completed" );
 	} );
+
+	if( g_lastTest ) {
+		let script, script2;
+		script = "" +
+			"@echo off\n" +
+			"echo Deleting " + g_lastTestScreenshotFiles.old + "\n" +
+			"del " + ROOT_DIR + g_lastTestScreenshotFiles.old + "\n" +
+			"echo Renaming " + ROOT_DIR + g_lastTestScreenshotFiles.new + "\n" +
+			"move " + ROOT_DIR + g_lastTestScreenshotFiles.new + " " +
+				ROOT_DIR + g_lastTestScreenshotFiles.old;
+
+		script2 = "" +
+			"@echo off\n" +
+			"echo Deleting " + ROOT_DIR + g_lastTestScreenshotFiles.old + "\n" +
+			"del " + ROOT_DIR + g_lastTestScreenshotFiles.new + "\n" +
+			"echo Deleting " + ROOT_DIR + g_lastTestScreenshotFiles.new + "\n" +
+			"del " + ROOT_DIR + g_lastTestScreenshotFiles.old + "\n";
+		
+		FS.writeFile( LAST_TEST_BATCHFILE, script, function () {} );
+		FS.writeFile( LAST_TEST_BATCHFILE2, script2, function () {} );
+	}
 
 	//Set the command to startup chrome and point to the home page
 	let cmdStr = g_BrowserUrl + " " + HOME + g_indexFile;
