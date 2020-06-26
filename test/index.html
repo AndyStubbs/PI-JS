@@ -29,9 +29,13 @@
 </head>
 <body>
 	<h1>Test Results</h1>
-	<div id="test_stats">
-			<span class='good'>All images match!</span>
-		</div>
+	<div id="test_stats"><div id='stats'></div>
+			<span class='error'>Discrepancies Found</span>
+			<span class='error'>1 mismatched images.</span>
+		
+			<ol>
+				<li><a href='#test_37'>onclick 01 - Not Matched</a></li>
+			</ol></div>
 	<hr />
 	<div id="unit_tests"></div>
 	<div id="web_tests">
@@ -298,7 +302,7 @@
 		<div id='test_37'></div>
 		<h2>onclick 01</h2>
 		<div class='link'><a href='http://localhost:8080/test/tests/onclick_01.html' target='_blank'>http://localhost:8080/test/tests/onclick_01.html</a>&nbsp;&nbsp;-&nbsp;&nbsp;<a href='#stats'>Go back</a></div>
-		<span class='good'>MATCHED</span><br />
+		<span class='error'>NOT MATCHED - Difference: 10.67</span><br />
 		<img src='tests/screenshots/onclick_01.png' />
 		<img src='tests/screenshots/onclick_01_new.png' />
 	

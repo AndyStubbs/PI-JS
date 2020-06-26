@@ -24,7 +24,9 @@ function removeScreen( screenData ) {
 	}
 
 	// Remove the canvas from the page
-	screenData.canvas.parentElement.removeChild( screenData.canvas );
+    if( screenData.canvas.parentElement ) {
+	   screenData.canvas.parentElement.removeChild( screenData.canvas );
+    }
 
 	// Set the canvas to null
 	screenData.canvas = null;
