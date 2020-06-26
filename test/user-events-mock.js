@@ -206,6 +206,11 @@ async function runCommand( commandScript ) {
 			break;
 		case "SL":
 			commandScript.target = command.data;
+			if( commandScript.target !== "" ) {
+				g_page.focus( commandScript.target );
+			} else {
+				g_page.focus( "*" );
+			}
 			break;
 		case "MV":
 			if( command.data.length === 3 ) {
