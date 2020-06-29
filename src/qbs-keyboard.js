@@ -185,7 +185,10 @@ m_inputs = [];
 m_inputIndex = 0;
 m_inputReadyList = [];
 m_onKeyEventListeners = {};
-m_anyKeyEventListeners = [];
+m_anyKeyEventListeners = {
+	"down": [],
+	"up": []
+};
 m_keyboard = {
 	"lookup": {
 		"BS": { "val": String.fromCharCode( 27 ) + " BACK" },
@@ -343,7 +346,7 @@ function stopKeyboard() {
 
 // Key up event - document event
 function keyup( event ) {
-	var key;
+	var key, modeKey, i, temp, keyVal;
 
 	// Lookup the key by using key and location
 	key = m_keyLookup[ event.key + "_" + event.location ];
@@ -357,11 +360,39 @@ function keyup( event ) {
 		event.preventDefault();
 		event.stopPropagation();
 	}
+
+	// Lookup the key
+	key = m_keyLookup[ event.key + "_" + event.location ];
+	keyVal = {
+		"key": event.key,
+		"location": event.location,
+		"code": key,
+		"keyCode": event.keyCode
+	};
+
+	// Create the modeKey
+	modeKey = "up_" + key;
+
+	// trigger on key events
+	if( m_onKeyEventListeners[ modeKey ] ) {
+		temp = m_onKeyEventListeners[ modeKey ].slice();
+		for( i = 0; i < temp.length; i++ ) {
+			temp[ i ]( keyVal );
+		}
+	}
+
+	// trigger any key events
+	if( m_anyKeyEventListeners[ "up" ] ) {
+		temp = m_anyKeyEventListeners[ "up" ].slice();
+		for( i = 0; i < temp.length; i++ ) {
+			temp[ i ]( keyVal );
+		}
+	}
 }
 
 // Key down - document event
 function keydown( event ) {
-	var key, keyVal, i, temp;
+	var key, keyVal, i, temp, modeKey;
 
 	// If we are collecting any inputs
 	if( m_inputs.length > 0 ) {
@@ -386,17 +417,20 @@ function keydown( event ) {
 		event.stopPropagation();
 	}
 
+	// Create the modeKey
+	modeKey = "down_" + key;
+
 	// trigger on key events
-	if( m_onKeyEventListeners[ key ] ) {
-		temp = m_onKeyEventListeners[ key ].slice();
+	if( m_onKeyEventListeners[ modeKey ] ) {
+		temp = m_onKeyEventListeners[ modeKey ].slice();
 		for( i = 0; i < temp.length; i++ ) {
 			temp[ i ]( keyVal );
 		}
 	}
 
 	// trigger any key events
-	if( m_anyKeyEventListeners.length > 0 ) {
-		temp = m_anyKeyEventListeners.slice();
+	if( m_anyKeyEventListeners[ "down" ] ) {
+		temp = m_anyKeyEventListeners[ "down" ].slice();
 		for( i = 0; i < temp.length; i++ ) {
 			temp[ i ]( keyVal );
 		}
@@ -447,15 +481,18 @@ function inkey( args ) {
 }
 
 // Adds an event trigger for a keypress
-qbs._.addCommand( "onkey", onkey, false, false, [ "key", "fn", "once" ] );
+qbs._.addCommand( "onkey", onkey, false, false,
+	[ "key", "mode", "fn", "once" ]
+);
 function onkey( args ) {
-	var key, fn, once;
+	var key, mode, fn, once, modeKey;
 
 	key = args[ 0 ];
-	fn = args[ 1 ];
-	once = !!( args[ 2 ] );
+	mode = args[ 1 ];
+	fn = args[ 2 ];
+	once = !!( args[ 3 ] );
 
-	// Validate parameters
+	// Validate key
 	if( ! isNaN( key ) && typeof key !== "string" ) {
 		m_qbData.log(
 			"onkey: key needs to be either an interger keyCode or " +
@@ -463,6 +500,20 @@ function onkey( args ) {
 		);
 		return;
 	}
+
+	// Validate mode
+	if( mode == null ) {
+		mode = "down";
+	}
+
+	if( mode !== "down" && mode !== "up" ) {
+		m_qbData.log(
+			"onkey: mode needs to be down or up. "
+		);
+		return;
+	}
+
+	// Validate fn
 	if( ! qbs.util.isFunction( fn ) ) {
 		m_qbData.log( "onkey: fn is not a valid function." );
 		return;
@@ -476,59 +527,83 @@ function onkey( args ) {
 	setTimeout( function () {
 		var tempFn;
 
-		if( typeof key === "string" && key.length === 1 ) {
-			key = key.toUpperCase();
-			if( key >= "0" && key <= "9" ) {
-				key = "Digit" + key;
-			} else if( key >= "A" && key <= "Z" ) {
-				key = "Key" + key;
-			}
-		}
+		key = lookupKey( key );
+
+		modeKey = mode + "_" + key;
 
 		// If it's a one time function
 		if( once ) {
 			tempFn = fn;
 			fn = function () {
-				offkey( [ key, fn ] );
+				offkey( [ modeKey, fn ] );
 				tempFn();
 			};
 		}
 
 		// Check for the infamous "any" key
 		if( typeof key === "string" && key.toLowerCase() === "any" ) {
-			m_anyKeyEventListeners.push( fn );
+			m_anyKeyEventListeners[ mode ].push( fn );
 		} else {
-			if( ! m_onKeyEventListeners[ key ] ) {
-				m_onKeyEventListeners[ key ] = [];
+			if( ! m_onKeyEventListeners[ modeKey ] ) {
+				m_onKeyEventListeners[ modeKey ] = [];
 			}
-			m_onKeyEventListeners[ key ].push( fn );
+			m_onKeyEventListeners[ modeKey ].push( fn );
 		}
+
 	}, 1 );
 }
 
+function lookupKey( key ) {
+	if( typeof key === "string" && key.length === 1 ) {
+		key = key.toUpperCase();
+		if( key >= "0" && key <= "9" ) {
+			key = "Digit" + key;
+		} else if( key >= "A" && key <= "Z" ) {
+			key = "Key" + key;
+		}
+	}
+
+	return key;
+}
+
 // Removes an event trigger for a keypress
-qbs._.addCommand( "offkey", offkey, false, false, [ "key", "fn" ] );
+qbs._.addCommand( "offkey", offkey, false, false, [ "key", "mode", "fn" ] );
 function offkey( args ) {
-	var key, fn, isClear, i, eventListeners;
+	var key, mode, fn, isClear, i, eventListeners, modeKey;
 
 	key = args[ 0 ];
-	fn = args[ 1 ];
+	mode = args[ 1 ];
+	fn = args[ 2 ];
 
-	// Validate parameters
+	// Validate key
 	if( ! isNaN( key ) && typeof key !== "string" ) {
 		m_qbData.log(
-			"offkey: key needs to be either an interger keyCode or a " +
-			"string."
+			"offkey: key needs to be either an interger keyCode or " +
+			"a string key name."
 		);
 		return;
 	}
-	if( ! qbs.util.isFunction( fn ) && fn !== undefined ) {
+
+	// Validate mode
+	if( mode == null ) {
+		mode = "down";
+	}
+
+	if( mode !== "down" && mode !== "up" ) {
 		m_qbData.log(
-			"offkey: fn is not a valid function.  Leave this undefined" +
-			" or set it to a function."
+			"offkey: mode needs to be down or up. "
 		);
 		return;
 	}
+
+	// Validate fn
+	if( ! qbs.util.isFunction( fn ) ) {
+		m_qbData.log( "offkey: fn is not a valid function." );
+		return;
+	}
+
+	key = lookupKey( key );
+	modeKey = mode + "_" + key;
 
 	isClear = false;
 	if( ! qbs.util.isFunction( fn ) ) {
@@ -537,19 +612,19 @@ function offkey( args ) {
 
 	if( typeof key === "string" && key.toLowerCase() === "any" ) {
 		if( isClear ) {
-			m_anyKeyEventListeners = [];
+			m_anyKeyEventListeners[ mode ] = [];
 		} else {
-			for( i = m_anyKeyEventListeners.length - 1; i >= 0; i-- ) {
-				if( m_anyKeyEventListeners[ i ] === fn ) {
-					m_anyKeyEventListeners.splice( i, 1 );
+			for( i = m_anyKeyEventListeners[ mode ].length - 1; i >= 0; i-- ) {
+				if( m_anyKeyEventListeners[ mode ][ i ] === fn ) {
+					m_anyKeyEventListeners[ mode ].splice( i, 1 );
 				}
 			}
 		}
 	} else {
-		if( m_onKeyEventListeners[ key ] ) {
-			eventListeners = m_onKeyEventListeners[ key ];
+		if( m_onKeyEventListeners[ modeKey ] ) {
+			eventListeners = m_onKeyEventListeners[ modeKey ];
 			if( isClear ) {
-				m_onKeyEventListeners[ key ] = [];
+				m_onKeyEventListeners[ modeKey ] = [];
 			} else {
 				for( i = eventListeners.length - 1; i >= 0; i-- ) {
 					if( eventListeners[ i ] === fn ) {

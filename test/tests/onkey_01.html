@@ -42,7 +42,7 @@
 <script>
 	$.screen( "200x100", "screen" );
 	$.print( "Click button below to turn on keyboard event listeners." );
-	$.onkey( "any", function ( key ) {
+	$.onkey( "any", "down", function ( key ) {
 		$.print( "You pressed " + key.key + "!" );
 	} );
 	$.stopKeyboard();

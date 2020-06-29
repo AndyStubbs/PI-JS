@@ -38,7 +38,7 @@ $.ready( function () {
 	$.ongamepad( 0, "axis", 1, moveY, false );
 	$.ongamepad( 0, "axis", 2, colorChange1, false );
 	$.ongamepad( 0, "axis", 3, colorChange2, false );
-	$.onkey( "s", function () {
+	$.onkey( "s", "down", function () {
 		$.stopGamepads();
 		$.cls();
 		$.setColor( 15 );

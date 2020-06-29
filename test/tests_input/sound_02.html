@@ -53,7 +53,7 @@ $.ready( function () {
 	$.print( "3. Any subsequent steps will play the first sound pool." );
 	$.print( "Press any key to start." );
 	$.render();
-	$.onkey( "any", start );
+	$.onkey( "any", "down", start );
 } );
 function start() {
 	if( step === 1 ) {

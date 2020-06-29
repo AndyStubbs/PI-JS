@@ -45,7 +45,7 @@ $.ready( function () {
 	$.onmouse( "down", mouseDown );
 	$.onmouse( "move", mouseMove );
 	$.onmouse( "up", mouseUp );
-	$.onkey( "any", anyKey );
+	$.onkey( "any", "down", anyKey );
 
 	function anyKey( key ) {
 		var digit;
@@ -59,7 +59,7 @@ $.ready( function () {
 		} else {
 			if( key.code === "Escape" ) {
 				// Clear all event listeners
-				$.offkey( "any", anyKey );
+				$.offkey( "any", "down", anyKey );
 				$.offmouse( "down", mouseDown );
 				$.offmouse( "move", mouseMove );
 				$.offmouse( "up", mouseUp );

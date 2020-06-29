@@ -27,7 +27,7 @@
 		$.screen( "300x200" );
 		$.print( "Press any key to make a sound." );
 		$.render();
-		$.onkey( "any", start );
+		$.onkey( "any", "down", start );
 	} );
 	function start() {
 		$.playAudioPool( sound );
