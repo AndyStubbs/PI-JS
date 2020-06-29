@@ -10,7 +10,7 @@
 var m_qbData, m_keys, m_keyLookup, m_keyCodes, m_preventKeys, m_inputs,
 	m_inputIndex, m_t, m_promptInterval, m_blink, m_promptBackground,
 	m_promptBackgroundWidth, m_inputReadyList, m_onKeyEventListeners,
-	m_anyKeyEventListeners, m_keyboard, m_isKeyEventsActive;
+	m_anyKeyEventListeners, m_keyboard, m_isKeyEventsActive, m_onKeyCombos;
 
 m_qbData = qbs._.data;
 m_keyLookup = {
@@ -189,6 +189,7 @@ m_anyKeyEventListeners = {
 	"down": [],
 	"up": []
 };
+m_onKeyCombos = {};
 m_keyboard = {
 	"lookup": {
 		"BS": { "val": String.fromCharCode( 27 ) + " BACK" },
@@ -371,7 +372,7 @@ function keyup( event ) {
 	};
 
 	// Create the modeKey
-	modeKey = "up_" + key;
+	modeKey = "up_" + lookupKey( keyVal.key );
 
 	// trigger on key events
 	if( m_onKeyEventListeners[ modeKey ] ) {
@@ -418,7 +419,7 @@ function keydown( event ) {
 	}
 
 	// Create the modeKey
-	modeKey = "down_" + key;
+	modeKey = "down_" + lookupKey( keyVal.key );
 
 	// trigger on key events
 	if( m_onKeyEventListeners[ modeKey ] ) {
@@ -492,6 +493,18 @@ function onkey( args ) {
 	fn = args[ 2 ];
 	once = !!( args[ 3 ] );
 
+	// Check for key combo
+	if( qbs.util.isArray( key ) ) {
+		if( mode !== "down" ) {
+			m_qbData.log(
+				"onkey: mode must be up when using a key combo."
+			);
+			return;
+		}
+		onkeyCombo( key, fn, once );
+		return;
+	}
+
 	// Validate key
 	if( ! isNaN( key ) && typeof key !== "string" ) {
 		m_qbData.log(
@@ -553,6 +566,64 @@ function onkey( args ) {
 	}, 1 );
 }
 
+function onkeyCombo( keys, fn, once ) {
+	var i, allKeys, comboData, comboId;
+
+	comboId = keys.join( "" );
+
+	comboData = {
+		"keys": keys.slice(),
+		"keyData": [],
+		"fn": fn
+	};
+
+	// If the key combo doesn't exist add it
+	if( ! m_onKeyCombos[ comboId ] ) {
+		m_onKeyCombos[ comboId ] = [];
+	}
+	m_onKeyCombos[ comboId ].push( comboData );
+
+	allKeys = [];
+	for( i = 0; i < keys.length; i++ ) {
+		addKeyCombo( keys[ i ], i, allKeys, fn, once, comboData );
+	}
+}
+
+function addKeyCombo( key, i, allKeys, fn, once, comboData ) {
+
+	// Store the functions so that can run offkey later
+	comboData.keyData.push( {
+		"key": key,
+		"keyComboDown": keyComboDown,
+		"keyComboUp": keyComboUp
+	} );
+
+	// Default state is not pressed
+	allKeys.push( false );
+
+	// on key down
+	onkey( [ key, "down", keyComboDown, false ] );
+
+	// on key up
+	onkey( [ key, "up", keyComboUp, false ] );
+
+	function keyComboDown( e ) {
+		allKeys[ i ] = true;
+		console.log( allKeys );
+		if( allKeys.indexOf( false ) === -1 ) {
+			if( once ) {
+				offkey( [ key, "down", keyComboDown ] );
+				offkey( [ key, "up", keyComboUp ] );
+			}
+			fn( e );
+		}
+	}
+
+	function keyComboUp( e ) {
+		allKeys[ i ] = false;
+	}
+}
+
 function lookupKey( key ) {
 	if( typeof key === "string" && key.length === 1 ) {
 		key = key.toUpperCase();
@@ -574,6 +645,18 @@ function offkey( args ) {
 	key = args[ 0 ];
 	mode = args[ 1 ];
 	fn = args[ 2 ];
+
+	// Check for key combo
+	if( qbs.util.isArray( key ) ) {
+		if( mode !== "down" ) {
+			m_qbData.log(
+				"onkey: mode must be up when using a key combo."
+			);
+			return;
+		}
+		offkeyCombo( key, fn );
+		return;
+	}
 
 	// Validate key
 	if( ! isNaN( key ) && typeof key !== "string" ) {
@@ -634,6 +717,37 @@ function offkey( args ) {
 			}
 		}
 	}
+}
+
+function offkeyCombo( keys, fn ) {
+	var comboId, combos, comboData, i, j, keyData;
+
+	comboId = keys.join( "" );
+	combos = m_onKeyCombos[ comboId ];
+
+	// Loop through all the key combos
+	for( i = combos.length - 1; i >= 0; i-- ) {
+		comboData = combos[ i ];
+		if( comboData.fn === fn ) {
+			for( j = 0; j < comboData.keyData.length; j++ ) {
+
+				keyData = comboData.keyData[ j ];
+
+				// on key down
+				offkey(
+					[ keyData.key, "down", keyData.keyComboDown, false ]
+				);
+
+				// on key up
+				offkey(
+					[ keyData.key, "up", keyData.keyComboUp, false ]
+				);
+
+			}
+			combos.splice( i, 1 );
+		}
+	}
+
 }
 
 // Disables the default behavior for a key
