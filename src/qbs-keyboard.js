@@ -440,12 +440,28 @@ function keydown( event ) {
 
 // Clear all keypresses in case we lose focus
 function clearKeys() {
-	var i;
+	var i, j, k;
 	for( i in m_keys ) {
 		m_keys[ i ] = 0;
 	}
 	for( i in m_keyCodes ) {
 		m_keyCodes[ i ] = 0;
+	}
+
+	// Loop through all key combos
+	for( i in m_onKeyCombos ) {
+
+		// Loop through specific key combos
+		for( j = 0; j < m_onKeyCombos[ i ].length; j++ ) {
+
+			// Loop through allKeys array
+			for( k = 0; k < m_onKeyCombos[ i ][ j ].allKeys.length; k++ ) {
+
+				// Reset the array to false
+				m_onKeyCombos[ i ][ j ].allKeys[ k ] = false;
+
+			}
+		}
 	}
 }
 
@@ -570,11 +586,13 @@ function onkeyCombo( keys, fn, once ) {
 	var i, allKeys, comboData, comboId;
 
 	comboId = keys.join( "" );
+	allKeys = [];
 
 	comboData = {
 		"keys": keys.slice(),
 		"keyData": [],
-		"fn": fn
+		"fn": fn,
+		"allKeys": allKeys
 	};
 
 	// If the key combo doesn't exist add it
@@ -583,7 +601,6 @@ function onkeyCombo( keys, fn, once ) {
 	}
 	m_onKeyCombos[ comboId ].push( comboData );
 
-	allKeys = [];
 	for( i = 0; i < keys.length; i++ ) {
 		addKeyCombo( keys[ i ], i, allKeys, fn, once, comboData );
 	}
