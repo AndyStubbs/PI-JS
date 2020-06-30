@@ -71,14 +71,18 @@ function drawImage( screenData, args ) {
 		}
 		img = m_qbData.images[ name ];
 	} else {
-		if( ! name || ! name.canvas ) {
+		if( ! name && ! name.canvas && ! name.getContext ) {
 			m_qbData.log(
 				"drawImage: image source object type. Must be an image already " +
 				"loaded by the loadImage command or a screen."
 			);
 			return;
 		}
-		img = name.canvas();
+		if( qbs.util.isFunction( name.canvas ) ) {
+			img = name.canvas();
+		} else {
+			img = name;
+		}
 	}
 
 	drawItem( screenData, img, x, y, angle, anchorX, anchorY, alpha );

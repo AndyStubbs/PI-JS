@@ -609,7 +609,6 @@ function addKeyCombo( key, i, allKeys, fn, once, comboData ) {
 
 	function keyComboDown( e ) {
 		allKeys[ i ] = true;
-		console.log( allKeys );
 		if( allKeys.indexOf( false ) === -1 ) {
 			if( once ) {
 				offkey( [ key, "down", keyComboDown ] );
