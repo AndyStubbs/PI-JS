@@ -15,12 +15,13 @@ m_qbData = qbs._.data;
 // State Function
 // Creates a new screen object
 qbs._.addCommand( "screen", screen, false, false,
-	[ "aspect", "container", "isOffscreen", "noStyles", "isMultiple" ]
+	[ "aspect", "container", "isOffscreen", "noStyles", "isMultiple",
+	"resizeCallback" ]
 );
 function screen( args ) {
 
-	var aspect, container, isOffscreen, noStyles, isMultiple, aspectData,
-		screenObj, screenData, i, commandData;
+	var aspect, container, isOffscreen, noStyles, isMultiple, resizeCallback,
+		aspectData, screenObj, screenData, i, commandData;
 
 	// Input from args
 	aspect = args[ 0 ];
@@ -28,11 +29,19 @@ function screen( args ) {
 	isOffscreen = args[ 2 ];
 	noStyles = args[ 3 ];
 	isMultiple = args[ 4 ];
+	resizeCallback = args[ 5 ];
+
+	if( resizeCallback != null && qbs.util.isFunction( resizeCallback ) ) {
+		m_qbData.log(
+			"screen: resizeCallback must be a function."
+		);
+		return;
+	}
 
 	if( typeof aspect === "string" && aspect !== "" ) {
 		aspect = aspect.toLowerCase();
 		aspectData = parseAspect( aspect );
-		aspectData.isMultiple = !!isMultiple;
+		aspectData.isMultiple = !!( isMultiple );
 	}
 
 	if( isOffscreen ) {
@@ -64,7 +73,7 @@ function screen( args ) {
 		if( noStyles ) {
 			screenData = createNoStyleScreen( aspectData, container );
 		} else {
-			screenData = createScreen( aspectData, container );
+			screenData = createScreen( aspectData, container, resizeCallback );
 		}
 	}
 
@@ -152,12 +161,12 @@ function createOffscreenScreen( aspectData ) {
 	bufferCanvas.height = aspectData.height;
 
 	return createScreenData( canvas, bufferCanvas, null, aspectData, true,
-		false
+		false, null
 	);
 }
 
 // Create a new canvas
-function createScreen( aspectData, container ) {
+function createScreen( aspectData, container, resizeCallback ) {
 	var canvas, bufferCanvas, size, isContainer;
 
 	// Create the canvas
@@ -221,7 +230,7 @@ function createScreen( aspectData, container ) {
 		bufferCanvas.height = size.height;
 	}
 	return createScreenData( canvas, bufferCanvas, container, aspectData, false,
-		false
+		false, resizeCallback
 	);
 }
 
@@ -254,13 +263,14 @@ function createNoStyleScreen( aspectData, container ) {
 		bufferCanvas.height = size.height;
 	}
 	return createScreenData( canvas, bufferCanvas, container, aspectData, false,
-		true
+		true, null
 	);
 }
 
 // Create the screen data
 function createScreenData(
-	canvas, bufferCanvas, container, aspectData, isOffscreen, isNoStyles
+	canvas, bufferCanvas, container, aspectData, isOffscreen, isNoStyles,
+	resizeCallback
 ) {
 	var screenData = {};
 
@@ -335,7 +345,11 @@ function createScreenData(
 	screenData.clickEventListenersActive = 0;
 	screenData.lastEvent = null;
 
+	// Right click is enabled
 	screenData.isContextMenuEnabled = true;
+
+	// Resize callback
+	screenData.resizeCallback = resizeCallback;
 
 	// Set this to the active screen
 	m_qbData.screens[ screenData.id ] = screenData;
@@ -441,12 +455,18 @@ function setCanvasSize( aspectData, canvas, maxWidth, maxHeight ) {
 
 // Resizes all screens
 function resizeScreens() {
-	var i, screenData, size;
+	var i, screenData, size, fromSize, toSize;
 
 	for( i in m_qbData.screens ) {
 		screenData = m_qbData.screens[ i ];
 
 		if( ! ( screenData.isOffscreen || screenData.isNoStyles ) ) {
+
+			// Store the previous size
+			fromSize = {
+				"width": screenData.canvas.offsetWidth,
+				"height": screenData.canvas.offsetHeight
+			};
 
 			// Draw the canvas to the buffer
 			screenData.bufferContext.clearRect( 0, 0, screenData.width,
@@ -458,7 +478,8 @@ function resizeScreens() {
 
 				// Update the canvas to the new size
 				size = getSize( screenData.container );
-				setCanvasSize( screenData.aspectData, screenData.canvas, size.width,
+				setCanvasSize(
+					screenData.aspectData, screenData.canvas, size.width,
 					size.height
 				);
 
@@ -486,6 +507,20 @@ function resizeScreens() {
 			// Set the new screen size
 			screenData.width = screenData.canvas.width;
 			screenData.height = screenData.canvas.height;
+
+			// Send the resize data to the client
+			if( screenData.resizeCallback ) {
+				toSize = {
+					"width": screenData.canvas.offsetWidth,
+					"height": screenData.canvas.offsetHeight
+				};
+				if(
+					fromSize.width !== toSize.width ||
+					fromSize.height !== toSize.height
+				) {
+					screenData.resizeCallback( fromSize, toSize );
+				}
+			}
 		}
 	}
 }
