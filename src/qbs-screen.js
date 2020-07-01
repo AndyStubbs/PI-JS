@@ -31,7 +31,7 @@ function screen( args ) {
 	isMultiple = args[ 4 ];
 	resizeCallback = args[ 5 ];
 
-	if( resizeCallback != null && qbs.util.isFunction( resizeCallback ) ) {
+	if( resizeCallback != null && ! qbs.util.isFunction( resizeCallback ) ) {
 		m_qbData.log(
 			"screen: resizeCallback must be a function."
 		);
