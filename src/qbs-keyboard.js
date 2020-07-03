@@ -7,8 +7,8 @@
 
 "use strict";
 
-var m_qbData, m_keys, m_keyLookup, m_keyCodes, m_preventKeys, m_inputs,
-	m_inputIndex, m_t, m_promptInterval, m_blink, m_promptBackground,
+var m_qbData, m_keys, m_keyKeys, m_keyLookup, m_keyCodes, m_preventKeys,
+	m_inputs, m_inputIndex, m_t, m_promptInterval, m_blink, m_promptBackground,
 	m_promptBackgroundWidth, m_inputReadyList, m_onKeyEventListeners,
 	m_anyKeyEventListeners, m_keyboard, m_isKeyEventsActive, m_onKeyCombos;
 
@@ -180,6 +180,7 @@ m_keyLookup = {
 };
 m_keys = {};
 m_keyCodes = {};
+m_keyKeys = {};
 m_preventKeys = {};
 m_inputs = [];
 m_inputIndex = 0;
@@ -353,8 +354,9 @@ function keyup( event ) {
 	key = m_keyLookup[ event.key + "_" + event.location ];
 
 	// Reset the keys - no longer pressed
-	m_keys[ key ] = 0;
-	m_keyCodes[ event.keyCode ] = 0;
+	m_keys[ key ] = false;
+	m_keyKeys[ event.key ] = false;
+	m_keyCodes[ event.keyCode ] = false;
 
 	// If a key is registered then prevent the default behavior
 	if( m_preventKeys[ key ] || m_preventKeys[ event.keyCode ] ) {
@@ -410,6 +412,7 @@ function keydown( event ) {
 		"keyCode": event.keyCode
 	};
 	m_keys[ key ] = keyVal;
+	m_keyKeys[ keyVal.key ] = keyVal;
 	m_keyCodes[ event.keyCode ] = keyVal;
 
 	// Prevent default behavior
@@ -442,10 +445,13 @@ function keydown( event ) {
 function clearKeys() {
 	var i, j, k;
 	for( i in m_keys ) {
-		m_keys[ i ] = 0;
+		m_keys[ i ] = false;
+	}
+	for( i in m_keyKeys ) {
+		m_keyKeys[ i ] = false;
 	}
 	for( i in m_keyCodes ) {
-		m_keyCodes[ i ] = 0;
+		m_keyCodes[ i ] = false;
 	}
 
 	// Loop through all key combos
@@ -468,23 +474,22 @@ function clearKeys() {
 // Gets the status of a specific key or all keys currently pressed
 qbs._.addCommand( "inkey", inkey, false, false, [ "key" ] );
 function inkey( args ) {
-	var key, keysReturn, i, keys2;
+	var key, keysReturn, i;
 
 	key = args[ 0 ];
-
-	// If the key is a number then lookup using keyCodes instead
-	if( ! isNaN( key ) ) {
-		keys2 = m_keyCodes;
-	} else {
-		keys2 = m_keys;
-	}
 
 	// Activate key events
 	startKeyboard();
 
 	// If the key is provided then return the key status
 	if( key != null ) {
-		return keys2[ key ];
+		if( m_keys[ key ] ) {
+			return m_keys[ key ];
+		}
+		if( m_keyKeys[ key ] ) {
+			return m_keyKeys[ key ];
+		}
+		return m_keyCodes[ key ];
 	}
 
 	// If no key is provided then return all keys pressed status
