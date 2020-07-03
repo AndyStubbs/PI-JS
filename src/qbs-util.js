@@ -62,6 +62,17 @@ window.qbs.util = ( function () {
 		return hexToRgb( rgbToHex( r, g, b, a ) );
 	}
 
+	function colorStringToHex( colorStr ) {
+		var canvas, context, data;
+
+		canvas = document.createElement( "canvas" );
+		context = canvas.getContext( "2d" );
+		context.fillStyle = colorStr;
+		context.fillRect( 0, 0, 1 , 1 );
+		data = context.getImageData( 0, 0, 1, 1 ).data;
+		return rgbToColor( data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ] ).s2;
+	}
+
 	function convertToColor( color ) {
 		var check_hex_color;
 		if( color === undefined ) {
@@ -216,11 +227,14 @@ window.qbs.util = ( function () {
 		"isDomElement": isDomElement,
 		"isInteger": Number.isInteger,
 		"isArray": Array.isArray,
-		"queueMicrotask": function( callback ) { window.queueMicrotask( callback ) },
+		"queueMicrotask": function( callback ) {
+			window.queueMicrotask( callback )
+		},
 		"hexToRgb": hexToRgb,
 		"cToHex": cToHex,
 		"rgbToHex": rgbToHex,
 		"rgbToColor": rgbToColor,
+		"colorStringToHex": colorStringToHex,
 		"convertToColor": convertToColor,
 		"checkColor": checkColor,
 		"compareColors": compareColors,
