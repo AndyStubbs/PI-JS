@@ -359,7 +359,11 @@ function keyup( event ) {
 	m_keyCodes[ event.keyCode ] = false;
 
 	// If a key is registered then prevent the default behavior
-	if( m_preventKeys[ key ] || m_preventKeys[ event.keyCode ] ) {
+	if(
+		m_preventKeys[ key ] ||
+		m_preventKeys[ event.keyCode ] ||
+		m_preventKeys[ event.key ]
+	) {
 		event.preventDefault();
 		event.stopPropagation();
 	}
@@ -416,7 +420,11 @@ function keydown( event ) {
 	m_keyCodes[ event.keyCode ] = keyVal;
 
 	// Prevent default behavior
-	if( m_preventKeys[ key ] || m_preventKeys[ event.keyCode ] ) {
+	if(
+		m_preventKeys[ key ] ||
+		m_preventKeys[ event.keyCode ] ||
+		m_preventKeys[ event.key ]
+	) {
 		event.preventDefault();
 		event.stopPropagation();
 	}
@@ -514,11 +522,16 @@ function onkey( args ) {
 	fn = args[ 2 ];
 	once = !!( args[ 3 ] );
 
+	// Validate mode
+	if( mode == null ) {
+		mode = "down";
+	}
+
 	// Check for key combo
 	if( qbs.util.isArray( key ) ) {
 		if( mode !== "down" ) {
 			m_qbData.log(
-				"onkey: mode must be up when using a key combo."
+				"onkey: mode must be down when using a key combo."
 			);
 			return;
 		}
@@ -533,11 +546,6 @@ function onkey( args ) {
 			"a string key name."
 		);
 		return;
-	}
-
-	// Validate mode
-	if( mode == null ) {
-		mode = "down";
 	}
 
 	if( mode !== "down" && mode !== "up" ) {
