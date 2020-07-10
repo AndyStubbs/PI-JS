@@ -153,10 +153,10 @@ function setPixelMode( screenData, args ) {
 	isEnabled = args[ 0 ];
 
 	if( isEnabled ) {
-		screenData.context.imageSmoothingEnabled = true;
+		screenData.context.imageSmoothingEnabled = false;
 		screenData.pixelMode = true;
 	} else {
-		screenData.context.imageSmoothingEnabled = false;
+		screenData.context.imageSmoothingEnabled = true;
 		screenData.pixelMode = false;
 	}
 }
