@@ -36,17 +36,23 @@ function processFiles(build) {
 	// Log success method
 	console.log("Success");
 
-	// Write output to file
-	fs.writeFile("build/" + fileOut, result, function (err) {
+	writeFile( "build/" + fileOut );
+	writeFile( "../qbs-pixel/qbs/" + fileOut );
 
-		// If unable to write to file throw error
-		if(err) {
-			throw err;
-		}
+	function writeFile( fileName ) {
 
-		// Log file created message
-		console.log("Created new file " + fileOut);
-	});
+		// Write output to file
+		fs.writeFile( fileName, result, function (err) {
+
+			// If unable to write to file throw error
+			if(err) {
+				throw err;
+			}
+
+			// Log file created message
+			console.log( "Created new file " + fileName );
+		} );
+	}
 }
 
 // Read all the files

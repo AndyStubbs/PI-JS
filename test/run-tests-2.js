@@ -29,6 +29,7 @@ const ROOT_DIR = __dirname.substring( 0, __dirname.lastIndexOf( "\\" ) ) + "\\";
 const TEST_HTML_ID = "test_";
 const LAST_TEST_BATCHFILE = "test/dtest.bat";
 const LAST_TEST_BATCHFILE2 = "test/dtest2.bat";
+const IMAGE_COMPARE_URL = "image-compare.html";
 
 // Global Variables
 let g_ImgHtml = [];
@@ -125,11 +126,22 @@ async function runTest( file, i ) {
 		"' target='_blank'>" + test.url +
 		"</a>&nbsp;&nbsp;-&nbsp;&nbsp;<a href='#stats'>Go back</a></div>";
 	g_ImgHtml[ i ] += "\n\t\t[" + test.file + "]<br />";
-	g_ImgHtml[ i ] += "\n\t\t<img src='" + g_imgUrlRoot + test.file + 
-		".png' />";
-	g_ImgHtml[ i ] += "\n\t\t<img src='" + g_imgUrlRoot + test.file + 
-		"_new.png' />";
+	//g_ImgHtml[ i ] += "\n\t\t<img src='" + g_imgUrlRoot + test.file + 
+	//	".png' />";
+	//g_ImgHtml[ i ] += "\n\t\t<img src='" + g_imgUrlRoot + test.file + 
+	//	"_new.png' />";
 
+	let fileNameOld = g_imgUrlRoot + test.file + ".png";
+	let fileNameNew = g_imgUrlRoot + test.file + "_new.png";
+	let f1 = encodeURIComponent( fileNameOld );
+	let f2 = encodeURIComponent( fileNameNew );
+	let imageCompareUrl = IMAGE_COMPARE_URL + "?file1=" + f1 +
+		"&file2=" + f2;
+	g_ImgHtml[ i ] += "\n\t\t<a href='" + imageCompareUrl + "' target='_blank'>" +
+		"<img src='" + fileNameOld + "' /></a>";
+	g_ImgHtml[ i ] += "\n\t\t<a href='" + imageCompareUrl + "' target='_blank'>" + 
+		"<img src='" + fileNameNew + "' /></a>";
+	
 	// let cmdStr = g_BrowserUrl + " --headless --screenshot=" + ROOT_DIR +
 	// 	saveFile + " --window-size=" + test.width + "," + test.height + " " + test.url;
 

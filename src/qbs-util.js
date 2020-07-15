@@ -13,7 +13,7 @@ window.qbs.util = ( function () {
 		return el instanceof Element;
 	}
 
-	function hexToRgb( hex ) {
+	function hexToColor( hex ) {
 		var r, g, b, a, s2;
 		s2 = hex;
 		if( hex.length === 4 ) {
@@ -37,14 +37,15 @@ window.qbs.util = ( function () {
 			"g": g,
 			"b": b,
 			"a": a,
-			"s": "rgba(" + r + "," + g + "," + b + "," + a + ")",
+			"s": "rgba(" + r + "," + g + "," + b + "," +
+				Math.round( a / 255 * 1000 ) / 1000 + ")",
 			"s2": s2
 		};
 	}
 
 	function cToHex( c ) {
 		if( ! qbs.util.isInteger( c ) ) {
-			c = 255;
+			c = Math.round( c );
 		}
 		c = clamp( c, 0, 255 );
 		var hex = Number( c ).toString( 16 );
@@ -55,14 +56,17 @@ window.qbs.util = ( function () {
 	}
 
 	function rgbToHex( r, g, b, a ) {
+		if( isNaN( a ) ) {
+			a = 255;
+		}
 		return "#" + cToHex( r ) + cToHex( g ) + cToHex( b ) + cToHex( a );
 	}
 
 	function rgbToColor( r, g, b, a ) {
-		return hexToRgb( rgbToHex( r, g, b, a ) );
+		return hexToColor( rgbToHex( r, g, b, a ) );
 	}
 
-	function colorStringToHex( colorStr ) {
+	function colorStringToColor( colorStr ) {
 		var canvas, context, data;
 
 		canvas = document.createElement( "canvas" );
@@ -70,7 +74,11 @@ window.qbs.util = ( function () {
 		context.fillStyle = colorStr;
 		context.fillRect( 0, 0, 1 , 1 );
 		data = context.getImageData( 0, 0, 1, 1 ).data;
-		return rgbToColor( data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ] ).s2;
+		return rgbToColor( data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ] );
+	}
+
+	function colorStringToHex( colorStr ) {
+		return colorStringToColor( colorStr ).s2;
 	}
 
 	function convertToColor( color ) {
@@ -88,9 +96,13 @@ window.qbs.util = ( function () {
 		) {
 			return rgbToColor( color.r, color.g, color.b, color.a );
 		}
+
+		if( typeof color !== "string" ) {
+			return null;
+		}
 		check_hex_color = /(^#[0-9A-F]{8}$)|(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i;
 		if( check_hex_color.test( color ) ) {
-			return hexToRgb( color );
+			return hexToColor( color );
 		}
 		if( color.indexOf( "rgb" ) === 0 ) {
 			color = splitRgb( color );
@@ -99,16 +111,21 @@ window.qbs.util = ( function () {
 			}
 			return rgbToColor( color[ 0 ], color[ 1 ], color[ 2 ], color[ 3 ] );
 		}
-		return null;
+		return colorStringToColor( color );
 	}
 
 	function splitRgb( s ) {
-		var parts, i, colors;
+		var parts, i, colors, val;
 		s = s.slice( s.indexOf( "(" ) + 1, s.indexOf( ")" ) );
 		parts = s.split( "," );
 		colors = [];
 		for( i = 0; i < parts.length; i++ ) {
-			colors.push( parseInt( parts[ i ] ) );
+			if( i === 3 ) {
+				val = parseFloat( parts[ i ].trim() ) * 255;
+			} else {
+				val = parseInt( parts[ i ].trim() );
+			}
+			colors.push( val );
 		}
 		return colors;
 	}
@@ -230,7 +247,7 @@ window.qbs.util = ( function () {
 		"queueMicrotask": function( callback ) {
 			window.queueMicrotask( callback )
 		},
-		"hexToRgb": hexToRgb,
+		"hexToColor": hexToColor,
 		"cToHex": cToHex,
 		"rgbToHex": rgbToHex,
 		"rgbToColor": rgbToColor,

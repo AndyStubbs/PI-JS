@@ -64,7 +64,7 @@
 		let $primary = $("#switchPrimary");
 		$primary.on("change", function () {
 			compareImages();
-		});
+		} );
 		$diffSlider.on("change", function () {
 			compareImages();
 		} );
@@ -99,11 +99,31 @@
 			showImage(e.target.files[0], $(this));
 		});
 
-		function showImage(imgFile, $imgBox) {
+		let file1 = getQueryVariable( "file1" );
+		let file2 = getQueryVariable( "file2" );
+		showImage( file1, $( $fileBox[ 0 ] ), true );
+		showImage( file2, $( $fileBox[ 1 ] ), true );
+
+		function getQueryVariable(variable) {
+			var query = window.location.search.substring(1);
+			var vars = query.split('&');
+			for (var i = 0; i < vars.length; i++) {
+				var pair = vars[i].split('=');
+				if (decodeURIComponent(pair[0]) == variable) {
+					return decodeURIComponent(pair[1]);
+				}
+			}
+		}
+	
+		function showImage(imgFile, $imgBox, isSrc) {
 			let img = new Image();
 			let canvas = document.createElement("canvas");
 			let context = canvas.getContext("2d");
-			img.src = URL.createObjectURL(imgFile);
+			if( isSrc ) {
+				img.src = imgFile;
+			} else {
+				img.src = URL.createObjectURL(imgFile);
+			}
 			img.onload = function() {
 				canvas.width = img.width;
 				canvas.height = img.height;
@@ -111,7 +131,14 @@
 				compareImages();
 				//$("#data-url").val(canvas.toDataURL("image/webp"));
 			};
-			$imgBox.css("background-image", "url('" + URL.createObjectURL(imgFile) + "')");
+			if( isSrc ) {
+				$imgBox.css("background-image", "url('" + imgFile + "')");	
+			} else {
+				$imgBox.css(
+					"background-image",
+					"url('" + URL.createObjectURL(imgFile) + "')"
+				);
+			}
 			$imgBox.data("canvas", canvas);
 		}
 

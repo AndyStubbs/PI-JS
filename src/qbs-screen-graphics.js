@@ -711,7 +711,7 @@ function get( screenData, args ) {
 }
 
 // PSET command
-qbs._.addCommand( "pset", pset, false, true, [ "x", "y" ] );
+qbs._.addCommands( "pset", pset, aaPset, [ "x", "y" ] );
 function pset( screenData, args ) {
 	var x, y, color;
 
@@ -740,6 +740,36 @@ function pset( screenData, args ) {
 	m_qbData.commands.getImageData( screenData );
 	screenData.pen.draw( screenData, x, y, color );
 	m_qbData.commands.setImageDirty( screenData );
+}
+
+function aaPset( screenData, args ) {
+	var x, y;
+
+	x = args[ 0 ];
+	y = args[ 1 ];
+
+	// Make sure x and y are integers
+	if( ! qbs.util.isInteger( x ) || ! qbs.util.isInteger( y ) ) {
+		m_qbData.log( "pset: Argument's x and y must be integers." );
+		return;
+	}
+
+	// Set the cursor
+	screenData.x = x;
+	screenData.y = y;
+
+	// Make sure x and y are on the screen
+	if( ! qbs.util.inRange2( x, y, 0, 0, screenData.width, screenData.height ) ) {
+		//m_qbData.log( "pset: Argument's x and y are not on the screen." );
+		return;
+	}
+
+	screenData.screenObj.render();
+	screenData.context.strokeStyle = screenData.fColor.s;
+	screenData.context.beginPath();
+	screenData.context.moveTo( x, y );
+	screenData.context.lineTo( x, y );
+	screenData.context.stroke();
 }
 
 // Line command
