@@ -238,35 +238,41 @@ window.qbs.util = ( function () {
 		return str;
 	}
 
+	function getWindowSize() {
+		var width, height;
+
+		width = window.innerWidth || document.documentElement.clientWidth ||
+			document.body.clientWidth;
+
+		height = window.innerHeight || document.documentElement.clientHeight ||
+			document.body.clientHeight;
+
+		return {
+			"width": width,
+			"height": height
+		};
+	}
+
 	// Setup commands that will run only in the qbs api
 	var api = {
-		"isFunction": isFunction,
-		"isDomElement": isDomElement,
-		"isInteger": Number.isInteger,
-		"isArray": Array.isArray,
-		"queueMicrotask": function( callback ) {
-			window.queueMicrotask( callback )
-		},
-		"hexToColor": hexToColor,
-		"cToHex": cToHex,
-		"rgbToHex": rgbToHex,
-		"rgbToColor": rgbToColor,
-		"colorStringToHex": colorStringToHex,
-		"convertToColor": convertToColor,
 		"checkColor": checkColor,
-		"compareColors": compareColors,
-		"copyProperties": copyProperties,
-		"convertToArray": convertToArray,
-		"deleteProperties": deleteProperties,
 		"clamp": clamp,
+		"colorStringToHex": colorStringToHex,
+		"compareColors": compareColors,
+		"convertToArray": convertToArray,
+		"convertToColor": convertToColor,
+		"copyProperties": copyProperties,
+		"cToHex": cToHex,
+		"degreesToRadian": degreesToRadian,
+		"deleteProperties": deleteProperties,
+		"getWindowSize": getWindowSize,
+		"hexToColor": hexToColor,
 		"inRange": inRange,
 		"inRange2": inRange2,
-		"rndRange": rndRange,
-		"degreesToRadian": degreesToRadian,
-		"radiansToDegrees": radiansToDegrees,
-		"padL": padL,
-		"padR": padR,
-		"pad": pad,
+		"isArray": Array.isArray,
+		"isDomElement": isDomElement,
+		"isFunction": isFunction,
+		"isInteger": Number.isInteger,
 		"math": {
 			"deg30": Math.PI / 6,
 			"deg45": Math.PI / 4,
@@ -284,7 +290,17 @@ window.qbs.util = ( function () {
 			"deg315": ( 7 * Math.PI ) / 4,
 			"deg330": ( 11 * Math.PI ) / 6,
 			"deg360": Math.PI * 2
-		}
+		},
+		"pad": pad,
+		"padL": padL,
+		"padR": padR,
+		"queueMicrotask": function( callback ) {
+			window.queueMicrotask( callback )
+		},
+		"radiansToDegrees": radiansToDegrees,
+		"rgbToColor": rgbToColor,
+		"rgbToHex": rgbToHex,
+		"rndRange": rndRange
 	};
 
 	// Number.isInteger polyfill
