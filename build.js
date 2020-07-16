@@ -24,11 +24,23 @@ function processFiles(build) {
 	console.log("");
 	console.log("* Minifying Code *");
 
+	let fileFull = build.name + ".js";
 	let fileOut = build.name + ".min.js";
 	let fileMap = build.name + ".min.js.map";
 
 	// Minify the code
-	let result = ug.minify(build.fileData, {warnings: true, sourceMap: {filename: fileOut, url: fileMap, root: "../"}});
+	let result = "";
+
+	for(let i = 0; i < build.files.length; i++) {
+		result += build.fileData[build.files[i]];
+	}
+
+	// Write output to file
+	writeFile( "build/" + fileFull, result );
+	writeFile( "../qbs-pixel/qbs/" + fileFull, result );
+
+	// Minify the code
+	result = ug.minify(build.fileData, {warnings: true, sourceMap: {filename: fileOut, url: fileMap, root: "../"}});
 
 	// Throw an error if not successful
 	if(result.error) {
@@ -44,28 +56,26 @@ function processFiles(build) {
 	console.log("Success");
 
 	// Write output to file
-	fs.writeFile("build/" + fileOut, result.code, function (err) {
-
-		// If unable to write to file throw error
-		if(err) {
-			throw err;
-		}
-
-		// Log file created message
-		console.log("Created new file " + fileOut);
-	});
+	writeFile( "build/" + fileOut, result.code );
 
 	// Write output to file
-	fs.writeFile("build/" + fileMap, result.map, function (err) {
+	writeFile( "build/" + fileMap, result.map );
 
-		// If unable to write to file throw error
-		if(err) {
-			throw err;
-		}
+	function writeFile( fileName, data ) {
 
-		// Log file created message
-		console.log("Created new file " + fileMap);
-	});
+		// Write output to file
+		fs.writeFile( fileName, data, function (err) {
+
+			// If unable to write to file throw error
+			if(err) {
+				throw err;
+			}
+
+			// Log file created message
+			console.log( "Created new file " + fileName );
+		} );
+
+	}
 }
 
 // Read all the files
