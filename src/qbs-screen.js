@@ -460,66 +460,72 @@ function resizeScreens() {
 	for( i in m_qbData.screens ) {
 		screenData = m_qbData.screens[ i ];
 
-		if( ! ( screenData.isOffscreen || screenData.isNoStyles ) ) {
+		// Skip if screen is not visible
+		if(
+			screenData.isOffscreen ||
+			screenData.isNoStyles ||
+			screenData.canvas.offsetParent === null
+		) {
+			continue;
+		}
 
-			// Store the previous size
-			fromSize = {
+		// Store the previous size
+		fromSize = {
+			"width": screenData.canvas.offsetWidth,
+			"height": screenData.canvas.offsetHeight
+		};
+
+		// Draw the canvas to the buffer
+		screenData.bufferContext.clearRect( 0, 0, screenData.width,
+			screenData.height
+		);
+		screenData.bufferContext.drawImage( screenData.canvas, 0, 0 );
+
+		if( screenData.aspectData ) {
+
+			// Update the canvas to the new size
+			size = getSize( screenData.container );
+			setCanvasSize(
+				screenData.aspectData, screenData.canvas, size.width,
+				size.height
+			);
+
+		} else {
+
+			// Update canvas to fullscreen absolute pixels
+			size = getSize( screenData.canvas );
+			screenData.canvas.width = size.width;
+			screenData.canvas.height = size.height;
+
+		}
+
+		// Resize the client rectangle
+		screenData.clientRect = screenData.canvas.getBoundingClientRect();
+
+		// Draw the buffer back onto the canvas
+		screenData.context.drawImage( screenData.bufferCanvas, 0, 0,
+			screenData.width, screenData.height
+		);
+
+		// Set the new buffer size
+		screenData.bufferCanvas.width = screenData.canvas.width;
+		screenData.bufferCanvas.height = screenData.canvas.height;
+
+		// Set the new screen size
+		screenData.width = screenData.canvas.width;
+		screenData.height = screenData.canvas.height;
+
+		// Send the resize data to the client
+		if( screenData.resizeCallback ) {
+			toSize = {
 				"width": screenData.canvas.offsetWidth,
 				"height": screenData.canvas.offsetHeight
 			};
-
-			// Draw the canvas to the buffer
-			screenData.bufferContext.clearRect( 0, 0, screenData.width,
-				screenData.height
-			);
-			screenData.bufferContext.drawImage( screenData.canvas, 0, 0 );
-
-			if( screenData.aspectData ) {
-
-				// Update the canvas to the new size
-				size = getSize( screenData.container );
-				setCanvasSize(
-					screenData.aspectData, screenData.canvas, size.width,
-					size.height
-				);
-
-			} else {
-
-				// Update canvas to fullscreen absolute pixels
-				size = getSize( screenData.canvas );
-				screenData.canvas.width = size.width;
-				screenData.canvas.height = size.height;
-
-			}
-
-			// Resize the client rectangle
-			screenData.clientRect = screenData.canvas.getBoundingClientRect();
-
-			// Draw the buffer back onto the canvas
-			screenData.context.drawImage( screenData.bufferCanvas, 0, 0,
-				screenData.width, screenData.height
-			);
-
-			// Set the new buffer size
-			screenData.bufferCanvas.width = screenData.canvas.width;
-			screenData.bufferCanvas.height = screenData.canvas.height;
-
-			// Set the new screen size
-			screenData.width = screenData.canvas.width;
-			screenData.height = screenData.canvas.height;
-
-			// Send the resize data to the client
-			if( screenData.resizeCallback ) {
-				toSize = {
-					"width": screenData.canvas.offsetWidth,
-					"height": screenData.canvas.offsetHeight
-				};
-				if(
-					fromSize.width !== toSize.width ||
-					fromSize.height !== toSize.height
-				) {
-					screenData.resizeCallback( fromSize, toSize );
-				}
+			if(
+				fromSize.width !== toSize.width ||
+				fromSize.height !== toSize.height
+			) {
+				screenData.resizeCallback( fromSize, toSize );
 			}
 		}
 	}
