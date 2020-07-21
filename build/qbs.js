@@ -4771,6 +4771,7 @@ function getPixel( screenData, args ) {
 	y = args[ 1 ];
 
 	// Get the image data
+	m_qbData.commands.getImageData( screenData );
 	data = screenData.imageData.data;
 
 	// Calculate the index of the color
