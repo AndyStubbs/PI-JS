@@ -439,7 +439,9 @@ function pxEllipse( screenData, args ) {
 	color = screenData.fColor;
 
 	if( radiusX === 0 && radiusY === 0 ) {
-		screenData.pen.draw( screenData, x, y, color );
+		screenData.pen.draw(
+			screenData, Math.floor( x ), Math.floor( y ), color
+		);
 		m_qbData.commands.setImageDirty( screenData );
 		return;
 	}
@@ -459,10 +461,18 @@ function pxEllipse( screenData, args ) {
 	while( dx < dy ) {
 
 		// 4-way symmetry
-		screenData.pen.draw( screenData, x2 + x, y2 + y, color );
-		screenData.pen.draw( screenData, -x2 + x, y2 + y, color );
-		screenData.pen.draw( screenData, x2 + x, -y2 + y, color );
-		screenData.pen.draw( screenData, -x2 + x, -y2 + y, color );
+		screenData.pen.draw(
+			screenData, Math.floor( x2 + x ), Math.floor( y2 + y ), color
+		);
+		screenData.pen.draw(
+			screenData, Math.floor( -x2 + x ), Math.floor( y2 + y ), color
+		);
+		screenData.pen.draw(
+			screenData, Math.floor( x2 + x ), Math.floor( -y2 + y ), color
+		);
+		screenData.pen.draw(
+			screenData, Math.floor( -x2 + x ), Math.floor( -y2 + y ), color
+		);
 
 		// Checking and updating value of
 		// decision parameter based on algorithm
@@ -488,10 +498,18 @@ function pxEllipse( screenData, args ) {
 	while( y2 >= 0 ) {
 
 		// 4-way symmetry
-		screenData.pen.draw( screenData, x2 + x, y2 + y, color );
-		screenData.pen.draw( screenData, -x2 + x, y2 + y, color );
-		screenData.pen.draw( screenData, x2 + x, -y2 + y, color );
-		screenData.pen.draw( screenData, -x2 + x, -y2 + y, color );
+		screenData.pen.draw(
+			screenData, Math.floor( x2 + x ), Math.floor( y2 + y ), color
+		);
+		screenData.pen.draw(
+			screenData, Math.floor( -x2 + x ), Math.floor( y2 + y ), color
+		);
+		screenData.pen.draw(
+			screenData, Math.floor( x2 + x ), Math.floor( -y2 + y ), color
+		);
+		screenData.pen.draw(
+			screenData, Math.floor( -x2 + x ), Math.floor( -y2 + y ), color
+		);
 
 		// Checking and updating parameter
 		// value based on algorithm
