@@ -54,7 +54,7 @@ qbs._.addCommand( "drawImage", drawImage, false, true,
 	[ "name", "x", "y", "angle", "anchorX", "anchorY", "img", "alpha" ]
 );
 function drawImage( screenData, args ) {
-	var name, x, y, angle, anchorX, anchorY, img, alpha;
+	var name, x, y, angle, anchorX, anchorY, alpha, img;
 
 	name = args[ 0 ];
 	x = args[ 1 ];

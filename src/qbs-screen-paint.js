@@ -82,7 +82,7 @@ function paint( screenData, args ) {
 	m_qbData.commands.getImageData( screenData );
 
 	// Get the background color
-	backgroundColor = m_qbData.commands.getPixel( screenData, x, y );
+	backgroundColor = m_qbData.commands.getPixelInternal( screenData, x, y );
 
 	// Loop until no fills left
 	while( fills.length > 0 ) {
@@ -140,7 +140,7 @@ function floodCheck( screenData, x, y, fillColor, backgroundColor, tolerance ) {
 	if( x < 0 || x >= screenData.width || y < 0 || y >= screenData.height ) {
 		return false;
 	}
-	pixelColor = m_qbData.commands.getPixel( screenData, x, y );
+	pixelColor = m_qbData.commands.getPixelInternal( screenData, x, y );
 
 	// Make sure we haven't already filled this pixel
 	if( ! checkPixel( x, y ) ) {

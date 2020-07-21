@@ -700,8 +700,10 @@ function get( screenData, args ) {
 			g = imageData.data[ i + 1 ];
 			b = imageData.data[ i + 2 ];
 			a = imageData.data[ i + 3 ];
-			c = screenData.screenObj.findColor( qbs.util.rgbToColor( r, g, b, a ),
-				tolerance );
+			c = screenData.screenObj.findColor(
+				qbs.util.rgbToColor( r, g, b, a ),
+				tolerance
+			);
 			data[ row ].push( c );
 		}
 		row += 1;

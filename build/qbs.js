@@ -4745,8 +4745,8 @@ function drawCirclePen( screenData, x, y, c ) {
 	m_qbData.commands.setImageDirty( screenData );
 }
 
-qbs._.addCommand( "getPixel", getPixel, true, false );
-function getPixel( screenData, x, y ) {
+qbs._.addCommand( "getPixelInternal", getPixelInternal, true, false );
+function getPixelInternal( screenData, x, y ) {
 	var data, i;
 
 	// Get the image data
@@ -4756,11 +4756,32 @@ function getPixel( screenData, x, y ) {
 	i = ( ( screenData.width * y ) + x ) * 4;
 
 	return {
-		r: data[i],
-		g: data[i + 1],
-		b: data[i + 2],
-		a: data[i + 3]
+		r: data[ i ],
+		g: data[ i + 1 ],
+		b: data[ i + 2 ],
+		a: data[ i + 3 ]
 	};
+}
+
+qbs._.addCommand( "getPixel", getPixel, false, true, [ "x", "y" ] );
+function getPixel( screenData, args ) {
+	var x, y, data, i;
+
+	x = args[ 0 ];
+	y = args[ 1 ];
+
+	// Get the image data
+	data = screenData.imageData.data;
+
+	// Calculate the index of the color
+	i = ( ( screenData.width * y ) + x ) * 4;
+
+	return qbs.util.convertToColor( {
+		r: data[ i ],
+		g: data[ i + 1 ],
+		b: data[ i + 2 ],
+		a: data[ i + 3 ]
+	} );
 }
 
 qbs._.addCommand( "getPixelSafe", getPixelSafe, true, false );
@@ -4768,7 +4789,7 @@ function getPixelSafe( screenData, x, y ) {
 
 	m_qbData.commands.getImageData( screenData );
 
-	return getPixel( screenData, x, y );
+	return getPixelInternal( screenData, x, y );
 }
 
 // Finds a color from the palette and returns it's value.
@@ -5503,8 +5524,10 @@ function get( screenData, args ) {
 			g = imageData.data[ i + 1 ];
 			b = imageData.data[ i + 2 ];
 			a = imageData.data[ i + 3 ];
-			c = screenData.screenObj.findColor( qbs.util.rgbToColor( r, g, b, a ),
-				tolerance );
+			c = screenData.screenObj.findColor(
+				qbs.util.rgbToColor( r, g, b, a ),
+				tolerance
+			);
 			data[ row ].push( c );
 		}
 		row += 1;
@@ -6222,7 +6245,7 @@ function paint( screenData, args ) {
 	m_qbData.commands.getImageData( screenData );
 
 	// Get the background color
-	backgroundColor = m_qbData.commands.getPixel( screenData, x, y );
+	backgroundColor = m_qbData.commands.getPixelInternal( screenData, x, y );
 
 	// Loop until no fills left
 	while( fills.length > 0 ) {
@@ -6280,7 +6303,7 @@ function floodCheck( screenData, x, y, fillColor, backgroundColor, tolerance ) {
 	if( x < 0 || x >= screenData.width || y < 0 || y >= screenData.height ) {
 		return false;
 	}
-	pixelColor = m_qbData.commands.getPixel( screenData, x, y );
+	pixelColor = m_qbData.commands.getPixelInternal( screenData, x, y );
 
 	// Make sure we haven't already filled this pixel
 	if( ! checkPixel( x, y ) ) {
@@ -6505,7 +6528,7 @@ qbs._.addCommand( "drawImage", drawImage, false, true,
 	[ "name", "x", "y", "angle", "anchorX", "anchorY", "img", "alpha" ]
 );
 function drawImage( screenData, args ) {
-	var name, x, y, angle, anchorX, anchorY, img, alpha;
+	var name, x, y, angle, anchorX, anchorY, alpha, img;
 
 	name = args[ 0 ];
 	x = args[ 1 ];

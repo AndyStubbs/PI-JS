@@ -188,8 +188,8 @@ function drawCirclePen( screenData, x, y, c ) {
 	m_qbData.commands.setImageDirty( screenData );
 }
 
-qbs._.addCommand( "getPixel", getPixel, true, false );
-function getPixel( screenData, x, y ) {
+qbs._.addCommand( "getPixelInternal", getPixelInternal, true, false );
+function getPixelInternal( screenData, x, y ) {
 	var data, i;
 
 	// Get the image data
@@ -199,11 +199,32 @@ function getPixel( screenData, x, y ) {
 	i = ( ( screenData.width * y ) + x ) * 4;
 
 	return {
-		r: data[i],
-		g: data[i + 1],
-		b: data[i + 2],
-		a: data[i + 3]
+		r: data[ i ],
+		g: data[ i + 1 ],
+		b: data[ i + 2 ],
+		a: data[ i + 3 ]
 	};
+}
+
+qbs._.addCommand( "getPixel", getPixel, false, true, [ "x", "y" ] );
+function getPixel( screenData, args ) {
+	var x, y, data, i;
+
+	x = args[ 0 ];
+	y = args[ 1 ];
+
+	// Get the image data
+	data = screenData.imageData.data;
+
+	// Calculate the index of the color
+	i = ( ( screenData.width * y ) + x ) * 4;
+
+	return qbs.util.convertToColor( {
+		r: data[ i ],
+		g: data[ i + 1 ],
+		b: data[ i + 2 ],
+		a: data[ i + 3 ]
+	} );
 }
 
 qbs._.addCommand( "getPixelSafe", getPixelSafe, true, false );
@@ -211,7 +232,7 @@ function getPixelSafe( screenData, x, y ) {
 
 	m_qbData.commands.getImageData( screenData );
 
-	return getPixel( screenData, x, y );
+	return getPixelInternal( screenData, x, y );
 }
 
 // Finds a color from the palette and returns it's value.
