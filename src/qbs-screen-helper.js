@@ -29,7 +29,9 @@ function setImageDirty( screenData ) {
 		) {
 			screenData.autoRenderMicrotaskScheduled = true;
 			qbs.util.queueMicrotask( function () {
-				screenData.screenObj.render();
+				if( screenData.screenObj ) {
+					screenData.screenObj.render();
+				}
 				screenData.autoRenderMicrotaskScheduled = false;
 			} );
 		}

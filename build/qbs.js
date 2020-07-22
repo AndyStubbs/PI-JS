@@ -4196,12 +4196,18 @@ function removeScreen( screenData ) {
 	}
 
 	// Remove the canvas from the page
-    if( screenData.canvas.parentElement ) {
-	   screenData.canvas.parentElement.removeChild( screenData.canvas );
-    }
+	if( screenData.canvas.parentElement ) {
+		screenData.canvas.parentElement.removeChild( screenData.canvas );
+	}
 
-	// Set the canvas to null
+	// Set the values to null
 	screenData.canvas = null;
+	screenData.bufferCanvas = null;
+	screenData.pal = null;
+	screenData.commands = null;
+	screenData.context = null;
+	screenData.imageData = null;
+	screenData.screenObj = null;
 
 	// Delete the screen from the screens container
 	delete m_qbData.screens[ screenId ];
@@ -4586,7 +4592,9 @@ function setImageDirty( screenData ) {
 		) {
 			screenData.autoRenderMicrotaskScheduled = true;
 			qbs.util.queueMicrotask( function () {
-				screenData.screenObj.render();
+				if( screenData.screenObj ) {
+					screenData.screenObj.render();
+				}
 				screenData.autoRenderMicrotaskScheduled = false;
 			} );
 		}
