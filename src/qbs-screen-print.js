@@ -12,12 +12,15 @@ var m_qbData;
 m_qbData = qbs._.data;
 
 // Print Command
-qbs._.addCommand( "print", print, false, true, [ "msg", "inLine" ] );
+qbs._.addCommand(
+	"print", print, false, true, [ "msg", "inLine", "isCentered" ]
+);
 function print( screenData, args ) {
-	var msg, inLine, colors, parts, i, i2, colorCount;
+	var msg, inLine, isCentered, colors, parts, i, i2, colorCount;
 
 	msg = args[ 0 ];
 	inLine = args[ 1 ];
+	isCentered = args[ 2 ];
 
 	// bail if not possible to print an entire line on a screen
 	if( screenData.printCursor.font.height > screenData.height ) {
@@ -56,11 +59,11 @@ function print( screenData, args ) {
 	// Split messages by \n
 	parts = msg.split( /\n/ );
 	for( i = 0; i < parts.length; i++ ) {
-		startPrint( screenData, parts[ i ], inLine, colors );
+		startPrint( screenData, parts[ i ], inLine, isCentered, colors );
 	}
 }
 
-function startPrint( screenData, msg, inLine, colors ) {
+function startPrint( screenData, msg, inLine, isCentered, colors ) {
 	var width, overlap, onScreen, onScreenPct, msgSplit, index, msg1, msg2,
 		printCursor;
 
@@ -68,7 +71,17 @@ function startPrint( screenData, msg, inLine, colors ) {
 
 	//Adjust if the text is too wide for the screen
 	width = printCursor.font.calcWidth( screenData, msg );
-	if( width + printCursor.x > screenData.width && ! inLine && msg.length > 1 ) {
+	if( isCentered ) {
+		printCursor.x = Math.floor(
+			( printCursor.rows - msg.length ) / 2
+		) * screenData.printCursor.font.width;
+	}
+	if(
+		! inLine &&
+		! isCentered &&
+		width + printCursor.x > screenData.width && 
+		msg.length > 1
+	) {
 		overlap = ( width + printCursor.x ) - screenData.width;
 		onScreen = width - overlap;
 		onScreenPct = onScreen / width;
@@ -82,8 +95,8 @@ function startPrint( screenData, msg, inLine, colors ) {
 				msg1 = msg1.substring( 0, index );
 			}
 		}
-		startPrint( screenData, msg1, inLine, colors );
-		startPrint( screenData, msg2, inLine, colors );
+		startPrint( screenData, msg1, inLine, isCentered, colors );
+		startPrint( screenData, msg2, inLine, isCentered, colors );
 		return;
 	}
 
