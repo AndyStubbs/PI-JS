@@ -73,7 +73,7 @@ function startPrint( screenData, msg, inLine, isCentered, colors ) {
 	width = printCursor.font.calcWidth( screenData, msg );
 	if( isCentered ) {
 		printCursor.x = Math.floor(
-			( printCursor.rows - msg.length ) / 2
+			( printCursor.cols - msg.length ) / 2
 		) * screenData.printCursor.font.width;
 	}
 	if(
