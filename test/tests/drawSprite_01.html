@@ -36,12 +36,19 @@
 		$.ready( function () {
 			$.screen( "320x200" );
 			$.setColor( 1 );
-			$.rect( 10, 84, 32, 32 );
-			$.drawSprite( "thief", 0, 26, 100, 0, 0.5, 0.5 );
-			$.rect( 50, 84, 32, 32 );
-			$.drawSprite( "thief", 1, 66, 100, 45, 0.5, 0.5 );
-			$.rect( 90, 84, 32, 32 );
-			$.drawSprite( "thief", 2, 106, 100, 90, 0.5, 0.5 );
+			var x = 5;
+			var y = 5;
+			var a = 0;
+			for( var i = 0; i < 40; i += 1 ) {
+				$.rect( x, y, 32, 32 );
+				$.drawSprite( "thief", i % 12, x + 16, y + 16, a, 0.5, 0.5 );
+				x += 40;
+				if( x > 320 ) {
+					x = 5;
+					y += 40;
+				}
+				a += 45;
+			}
 		} );
 	</script>
 </body>

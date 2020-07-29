@@ -90,11 +90,12 @@ function loadSpritesheet( args ) {
 	src = args[ 0 ];
 	spriteWidth = args[ 1 ];
 	spriteHeight = args[ 2 ];
+	margin = args[ 3 ];
+	name = args[ 4 ];
+
 	if( margin == null ) {
 		margin = 0;
 	}
-	margin = args[ 3 ];
-	name = args[ 4 ];
 
 	// Validate spriteWidth and spriteHeight
 	if(
@@ -155,12 +156,12 @@ function loadSpritesheet( args ) {
 					"width": imageData.spriteWidth,
 					"height": imageData.spriteHeight
 				} );
-				x1 += imageData.spriteWidth;
+				x1 += imageData.spriteWidth + imageData.margin;
 				x2 = x1 + imageData.spriteWidth;
 			}
 			x1 = imageData.margin;
 			x2 = x1 + imageData.spriteWidth;
-			y1 += imageData.spriteHeight;
+			y1 += imageData.spriteHeight + imageData.margin;
 			y2 = y1 + imageData.spriteHeight;
 		}
 	};
@@ -235,7 +236,7 @@ function drawSprite( screenData, args ) {
 	// Validate frame
 	if(
 		! qbs.util.isInteger( frame ) ||
-		frame > m_qbData.images[ name ].imageCount ||
+		frame >= m_qbData.images[ name ].frames.length ||
 		frame < 0
 	) {
 		m_qbData.log( "drawSprite: frame number is not valid" );
