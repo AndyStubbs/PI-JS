@@ -148,8 +148,8 @@ function loadSpritesheet( args ) {
 		y2 = y1 + imageData.spriteHeight;
 
 		// Loop through all the frames
-		while( y2 < height ) {
-			while( x2 < width - imageData.margin ) {
+		while( y2 <= height - imageData.margin ) {
+			while( x2 <= width - imageData.margin ) {
 				imageData.frames.push( {
 					"x": x1,
 					"y": y1,
