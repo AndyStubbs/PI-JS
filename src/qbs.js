@@ -214,6 +214,7 @@ window.qbs = ( function () {
 
 	function startReadyList() {
 		var i, temp;
+
 		if( document.readyState !== "loading" ) {
 			m_waiting = false;
 			temp = m_readyList.slice();
