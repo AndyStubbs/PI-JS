@@ -38,6 +38,7 @@ function processFiles(build) {
 	// Write output to file
 	writeFile( "build/" + fileFull, result );
 	writeFile( "../qbs-pixel/qbs/" + fileFull, result );
+	writeFile( "../thief/qbs/" + fileFull, result );
 
 	// Minify the code
 	result = ug.minify(build.fileData, {warnings: true, sourceMap: {filename: fileOut, url: fileMap, root: "../"}});
