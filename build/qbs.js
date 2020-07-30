@@ -4191,6 +4191,14 @@ function removeScreen( screenData ) {
 
 	screenId = screenData.id;
 
+	if( screenData === m_qbData.activeScreen ) {
+		for( i in m_qbData.screens ) {
+			if( m_qbData.screens[ i ] !== screenData ) {
+				m_qbData.activeScreen = m_qbData.screens[ i ];
+			}
+		}
+	}
+
 	// Remove all commands from screen object
 	for( i in screenData.screenObj ) {
 		delete screenData.screenObj[ i ];
