@@ -7208,14 +7208,14 @@ function getPosPx( screenData ) {
 	);
 	function printTable( screenData, args ) {
 
-		var items, width, tableFormat, borderStyle, isCentered, isFormatted;
+		var items, width, tableFormat, borderStyle, isCentered, isFormatted, i;
 
 		items = args[ 0 ];
 		tableFormat = args[ 1 ];
 		borderStyle = args[ 2 ];
 		isCentered = !!( args[ 3 ] );
 		if( ! qbs.util.isArray( items ) ) {
-			m_qbData.log( "formatTable: items must be an array" );
+			m_qbData.log( "printTable: items must be an array" );
 			return;
 		}
 
@@ -7226,10 +7226,18 @@ function getPosPx( screenData ) {
 		if( tableFormat == null ) {
 			isFormatted = false;
 		} else if( qbs.util.isArray( tableFormat ) ) {
+			for( i = 0; i < tableFormat.length; i++ ) {
+				if( typeof tableFormat[ i ] !== "string" ) {
+					m_qbData.log(
+						"printTable: tableFormat must be an array of strings"
+					);
+					return;
+				}
+			}
 			isFormatted = true;
 		} else {
 			m_qbData.log(
-				"formatTable: tableFormat must be an array"
+				"printTable: tableFormat must be an array"
 			);
 			return;
 		}
@@ -7238,7 +7246,7 @@ function getPosPx( screenData ) {
 			borderStyle = m_borderStyles[ borderStyle ];
 		} else if( ! qbs.util.isArray( borderStyle ) ) {
 			m_qbData.log(
-				"formatTable: borderStyle must be an integer or array"
+				"printTable: borderStyle must be an integer or array"
 			);
 			return;
 		}
