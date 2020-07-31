@@ -8563,9 +8563,8 @@ function setVolume( args ) {
 	];
 	m_tracks = [];
 
-	qbs._.addCommand( "play", play, false, false, [ "playString" ] );
-	function play( args ) {
-	
+	qbs._.addCommand( "createTrack", createTrack, false, false, [ "playString" ] );
+	function createTrack( args ) {
 		var tracksStrings, playString, regString, reg, trackParts, i, j, k,
 			trackId, index, trackIds, waveTables, start, end;
 	
@@ -8707,11 +8706,51 @@ function setVolume( args ) {
 					);
 				}
 			}
-			playTrack( trackId );
 
 		}
 
 		return trackId;
+	}
+
+	function setTrackDefaults( track ) {
+		track.noteId = 0;
+		track.decayRate = 0.2;
+		track.sustainRate = 0.65;
+		track.fullNote = false;
+		track.extra = 1;
+		track.space = "normal";
+		track.interval = 0;
+		track.tempo = 60 / 120;
+		track.noteLength = 0.25;
+		track.pace = 0.875;
+		track.octave = 4;
+		track.octaveExtra = 0;
+		track.timeout = null;
+		track.volume = 1;
+		track.type = "triangle";
+	}
+
+	qbs._.addCommand( "play", play, false, false, [ "playString" ] );
+	function play( args ) {
+		var playString, trackId;
+	
+		playString = args[ 0 ];
+
+		if( typeof playString === "string" ) {
+			trackId = createTrack( [ playString ] );
+		} else if( qbs.util.isInteger( playString ) ) {
+			trackId = playString;
+			setTrackDefaults( m_tracks[ trackId ] );
+		}
+
+		if( m_tracks[ trackId ] ) {
+			m_tracks[ trackId ].noteId = 0;
+			playTrack( trackId );
+		} else {
+			m_qbData.log( "Playstring needs to be a string or a integer" );
+		}
+
+		return trackId
 	}
 
 	qbs._.addCommand( "stopPlay", stopPlay, false, false, [ "trackId" ] );
