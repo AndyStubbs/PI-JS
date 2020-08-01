@@ -7481,6 +7481,7 @@ function getPosPx( screenData ) {
 		posAfter = m_qbData.commands.getPos( screenData );
 		completeBoxes( boxes, tableFormat, font, pos );
 
+		msg = msg.substr( 0, msg.length - 1 );
 		m_qbData.commands.print( screenData, [ msg ] );
 		//m_qbData.commands.setPos( screenData, [ pos.col, pos.row ] );
 
@@ -7515,6 +7516,8 @@ function getPosPx( screenData ) {
 		if( ! box ) {
 			return;
 		}
+
+		msg = "" + msg;
 
 		// Calculate dimensions
 		width = box.pos.width;
