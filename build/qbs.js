@@ -7483,7 +7483,6 @@ function getPosPx( screenData ) {
 
 		msg = msg.substr( 0, msg.length - 1 );
 		m_qbData.commands.print( screenData, [ msg ] );
-		//m_qbData.commands.setPos( screenData, [ pos.col, pos.row ] );
 
 		i = 0;
 		for( row = 0; row < items.length; row += 1 ) {
@@ -8743,7 +8742,7 @@ function setVolume( args ) {
 
 	qbs._.addCommand( "play", play, false, false, [ "playString" ] );
 	function play( args ) {
-		var playString, trackId;
+		var playString, trackId, trackId2, i;
 	
 		playString = args[ 0 ];
 
@@ -8755,8 +8754,11 @@ function setVolume( args ) {
 		}
 
 		if( m_tracks[ trackId ] ) {
-			m_tracks[ trackId ].noteId = 0;
-			playTrack( trackId );
+			for( i = 0; i < m_tracks[ trackId ].trackIds.length; i++ ) {
+				trackId2 = m_tracks[ trackId ].trackIds[ i ];
+				m_tracks[ trackId2 ].noteId = 0;
+				playTrack( trackId2 );
+			}
 		} else {
 			m_qbData.log( "Playstring needs to be a string or a integer" );
 		}
@@ -8803,6 +8805,7 @@ function setVolume( args ) {
 		if( track.noteId >= track.notes.length ) {
 			return;
 		}
+
 		cmd = track.notes[ track.noteId ];
 		wait = false;
 		track.extra = 0;

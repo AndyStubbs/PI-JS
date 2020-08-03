@@ -249,7 +249,7 @@
 
 	qbs._.addCommand( "play", play, false, false, [ "playString" ] );
 	function play( args ) {
-		var playString, trackId;
+		var playString, trackId, trackId2, i;
 	
 		playString = args[ 0 ];
 
@@ -261,8 +261,11 @@
 		}
 
 		if( m_tracks[ trackId ] ) {
-			m_tracks[ trackId ].noteId = 0;
-			playTrack( trackId );
+			for( i = 0; i < m_tracks[ trackId ].trackIds.length; i++ ) {
+				trackId2 = m_tracks[ trackId ].trackIds[ i ];
+				m_tracks[ trackId2 ].noteId = 0;
+				playTrack( trackId2 );
+			}
 		} else {
 			m_qbData.log( "Playstring needs to be a string or a integer" );
 		}
@@ -309,6 +312,7 @@
 		if( track.noteId >= track.notes.length ) {
 			return;
 		}
+
 		cmd = track.notes[ track.noteId ];
 		wait = false;
 		track.extra = 0;
