@@ -202,15 +202,8 @@ function playAudioPool( args ) {
 	audio.volume = m_qbData.volume * volume;
 	poolItem.volume = volume;
 
-	// If the audio is playing then reset the start time
-	if( ! audio.paused && startTime === 0 ) {
-		audio.currentTime = 0;
-	}
-
 	// Set the start time of the audio
-	if( startTime > 0 ) {
-		audio.currentTime = startTime;
-	}
+	audio.currentTime = startTime;
 
 	// Stop the audio if duration specified
 	if( duration > 0 ) {
