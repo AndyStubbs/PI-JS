@@ -156,7 +156,7 @@ function findColor( screenData, args ) {
 		screenData.cache[ "findColor" ][ color.s ] = pal.length - 1;
 		return pal.length - 1;
 	}
-	return false;
+	return 0;
 }
 
 qbs._.addCommand( "setPixelMode", setPixelMode, false, true, [ "isEnabled" ] );

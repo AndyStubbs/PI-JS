@@ -139,6 +139,7 @@
 						waveTables[ i ][ j ][ k ] = 0;
 					}
 				}
+				waveTables[ i ][ j ] = new Float32Array( waveTables[ i ][ j ] );
 			}
 		}
 

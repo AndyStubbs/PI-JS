@@ -4329,7 +4329,7 @@ function findColor( screenData, args ) {
 		screenData.cache[ "findColor" ][ color.s ] = pal.length - 1;
 		return pal.length - 1;
 	}
-	return false;
+	return 0;
 }
 
 qbs._.addCommand( "setPixelMode", setPixelMode, false, true, [ "isEnabled" ] );
@@ -8171,7 +8171,7 @@ qbs._.addCommand( "sound", sound, false, false, [
 ] );
 function sound( args ) {
 	var frequency, duration, volume, oType, delay, attack, decay, stopTime,
-		types, waveTables, i, j, k;
+		types, waveTables, i, j;
 
 	frequency = args[ 0 ];
 	duration = args[ 1 ];
@@ -8251,9 +8251,7 @@ function sound( args ) {
 	// Check for custom oType
 	if( qbs.util.isArray( oType ) ) {
 		if(
-			oType.length !== 2 || 
-			! qbs.util.isArray( oType[ 0 ] ) || 
-			! qbs.util.isArray( oType[ 1 ] ) ||
+			oType.length !== 2 ||
 			oType[ 0 ].length === 0 ||
 			oType[ 1 ].length === 0 ||
 			oType[ 0 ].length != oType[ 1 ].length
@@ -8265,21 +8263,21 @@ function sound( args ) {
 			return;
 		}
 
+		waveTables = [];
+
 		// Look for invalid waveTable values
 		for( i = 0; i < oType.length; i++ ) {
 			for( j = 0; j < oType[ i ].length; j++ ) {
-				for( k = 0; k < oType[ i ][ j ].length; k++ ) {
-					if( isNaN( oType[ i ][ j ][ k ] ) ) {
-						m_qbData.log(
-							"sound: oType array must only contain numbers."
-						);
-						return;
-					}
+				if( isNaN( oType[ i ][ j ] ) ) {
+					m_qbData.log(
+						"sound: oType array must only contain numbers."
+					);
+					return;
 				}
 			}
+			waveTables.push( new Float32Array( oType[ i ] ) );
 		}
 
-		waveTables = oType;
 		oType = "custom";
 	} else {
 
@@ -8625,6 +8623,7 @@ function setVolume( args ) {
 						waveTables[ i ][ j ][ k ] = 0;
 					}
 				}
+				waveTables[ i ][ j ] = new Float32Array( waveTables[ i ][ j ] );
 			}
 		}
 
