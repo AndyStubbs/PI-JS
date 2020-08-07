@@ -162,6 +162,7 @@ function getMouse( screenData ) {
 	mouse.lastY = screenData.mouse.lastY;
 	mouse.buttons = screenData.mouse.buttons;
 	mouse.action = screenData.mouse.action;
+	mouse.type = "mouse";
 
 	return mouse;
 }

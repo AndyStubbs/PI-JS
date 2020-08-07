@@ -168,7 +168,8 @@ function getTouch( screenData ) {
 			"id": touch.id,
 			"lastX": touch.lastX,
 			"lastY": touch.lastY,
-			"action": touch.action
+			"action": touch.action,
+			"type": "touch"
 		};
 		touchArr.push( touchData );
 	}
@@ -188,9 +189,10 @@ function getTouchPress( screenData ) {
 				"id": touch.id,
 				"lastX": touch.lastX,
 				"lastY": touch.lastY,
-				"action": touch.action
+				"action": touch.action,
+				"type": "touch"
 			};
-			if( action !== null ) {
+			if( action !== undefined ) {
 				touch.action = action;
 			}
 			touchArr.push( touchData );
@@ -225,7 +227,8 @@ function getTouchPress( screenData ) {
 			"lastX": -1,
 			"lastY": -1,
 			"action": "none",
-			"buttons": 0
+			"buttons": 0,
+			"type": "touch"
 		};
 	}
 }

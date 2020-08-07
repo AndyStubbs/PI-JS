@@ -3664,6 +3664,7 @@ function getMouse( screenData ) {
 	mouse.lastY = screenData.mouse.lastY;
 	mouse.buttons = screenData.mouse.buttons;
 	mouse.action = screenData.mouse.action;
+	mouse.type = "mouse";
 
 	return mouse;
 }
@@ -4033,7 +4034,8 @@ function getTouch( screenData ) {
 			"id": touch.id,
 			"lastX": touch.lastX,
 			"lastY": touch.lastY,
-			"action": touch.action
+			"action": touch.action,
+			"type": "touch"
 		};
 		touchArr.push( touchData );
 	}
@@ -4053,9 +4055,10 @@ function getTouchPress( screenData ) {
 				"id": touch.id,
 				"lastX": touch.lastX,
 				"lastY": touch.lastY,
-				"action": touch.action
+				"action": touch.action,
+				"type": "touch"
 			};
-			if( action !== null ) {
+			if( action !== undefined ) {
 				touch.action = action;
 			}
 			touchArr.push( touchData );
@@ -4090,7 +4093,8 @@ function getTouchPress( screenData ) {
 			"lastX": -1,
 			"lastY": -1,
 			"action": "none",
-			"buttons": 0
+			"buttons": 0,
+			"type": "touch"
 		};
 	}
 }
@@ -8614,7 +8618,6 @@ function setVolume( args ) {
 			// Loop through all the values and make sure they are a number
 			for( j = 0; j < 2; j += 1 ) {
 				for( k = 0; k < waveTables[ i ][ j ].length; k++ ) {
-
 					// Make sure value is a number
 					waveTables[ i ][ j ][ k ] = parseFloat(
 						waveTables[ i ][ j ][ k ]

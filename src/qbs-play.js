@@ -130,7 +130,6 @@
 			// Loop through all the values and make sure they are a number
 			for( j = 0; j < 2; j += 1 ) {
 				for( k = 0; k < waveTables[ i ][ j ].length; k++ ) {
-
 					// Make sure value is a number
 					waveTables[ i ][ j ][ k ] = parseFloat(
 						waveTables[ i ][ j ][ k ]
