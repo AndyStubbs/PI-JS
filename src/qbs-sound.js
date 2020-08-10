@@ -258,7 +258,7 @@ qbs._.addCommand( "sound", sound, false, false, [
 ] );
 function sound( args ) {
 	var frequency, duration, volume, oType, delay, attack, decay, stopTime,
-		types, waveTables, i, j;
+		types, waveTables, i, j, context;
 
 	frequency = args[ 0 ];
 	duration = args[ 1 ];
@@ -389,7 +389,8 @@ function sound( args ) {
 
 	// Create an audio context if none exist
 	if( ! m_audioContext ) {
-		m_audioContext = new AudioContext();
+		context = window.AudioContext || window.webkitAudioContext;
+		m_audioContext = new context();
 	}
 
 	// Calculate the stopTime
@@ -436,7 +437,6 @@ function createSound(
 	oscillator.connect( envelope );
 	envelope.connect( master );
 	master.connect( audioContext.destination );
-	// console.log( context.currentTime );
 
 	try {
 
@@ -445,7 +445,7 @@ function createSound(
 		// Set the attack
 		if( attackTime > 0 ) {
 			envelope.gain.setValueCurveAtTime(
-				[ 0, volume ],
+				new Float32Array( [ 0, volume ] ),
 				currentTime,
 				attackTime
 			);
@@ -457,7 +457,7 @@ function createSound(
 		// Set the sustain
 		if( sustainTime > 0 ) {
 			envelope.gain.setValueCurveAtTime(
-				[ volume, 0.8 * volume ],
+				new Float32Array( [ volume, 0.8 * volume ] ),
 				currentTime + attackTime,
 				sustainTime
 			);
@@ -469,7 +469,7 @@ function createSound(
 		// Set the decay
 		if( decayTime > 0 ) {
 			envelope.gain.setValueCurveAtTime(
-				[ 0.8 * volume, 0.1 * volume, 0 ],
+				new Float32Array( [ 0.8 * volume, 0.1 * volume, 0 ] ),
 				currentTime + attackTime + sustainTime,
 				decayTime
 			);
