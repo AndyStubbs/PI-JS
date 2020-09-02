@@ -128,8 +128,9 @@ function RunExample( index ) {
 	code = commands[ index ].example;
 	start = code.indexOf( ".screen(" );
 	end = code.indexOf( ")", start );
-	code = code.substring( 0, end ) + ", 'exampleBox'" + code.substring( end );
+	code = code.substring( 0, end ) + ", 'canvasContainer'" + code.substring( end );
 	document.getElementById( "exampleBox" ).style.display = "block";
+	document.getElementById( "clearFocus" ).focus();
 	eval( code );
 }
 

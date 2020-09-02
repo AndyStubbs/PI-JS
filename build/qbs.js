@@ -1162,7 +1162,7 @@ function keydown( event ) {
 	// If we are collecting any inputs
 	if( m_inputs.length > 0 ) {
 		collectInput( event );
-		return;
+		//return;
 	}
 
 	// Lookup the key

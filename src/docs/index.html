@@ -48,7 +48,7 @@
 			color: white;
 		}
 		a:visited {
-			color: #AAAAAA;
+			color: white;
 		}
 		a:hover {
 			color: yellow;
@@ -92,6 +92,9 @@
 			left: 0px;
 			padding: 5px;
 			margin-top: 0px;
+			background-color: gray;
+			width: 116px;
+			height: 100%;
 		}
 		section {
 			margin-top: 28px;
@@ -101,6 +104,9 @@
 		}
 		.tabbed {
 			padding-left: 48px;
+		}
+		canvas {
+			background-color: rgba(0,0,0,0.75) !important;
 		}
 		.example {
 			white-space: pre;
@@ -118,6 +124,13 @@
 			width: 100%;
 			height: 100%;
 			background-color: rgba(255,255,255,0.5);
+		}
+		#canvasContainer {
+			position: absolute;
+			left: 0;
+			top: 0;
+			width: 100%;
+			height: 100%;
 		}
 	</style>
 	<script src="../../build/qbs.js"></script>
@@ -147,7 +160,9 @@
 		<section id="allCommands"></section>
 	</div>
 	<div id="exampleBox" style="display: none;">
-		&nbsp;<input type="button" value="Close" onclick="CloseExample()" />
+		<div id="canvasContainer"></div>
+		<input type="button" value="Close" onclick="CloseExample()" style="position: absolute;left:36px;" />
+		<input type="button" id="clearFocus" value="" style="line-height: 0px; height:0px;" />
 	</div>
 	<script src="commands.js"></script>
 	<script src="help.js"></script>

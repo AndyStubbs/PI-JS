@@ -30,19 +30,30 @@ var commands = [{
 		"seeAlso": [ "arc", "circle", "draw", "ellipse", "line", "paint", "pset", ],
 		"example": `$.screen("300x200");
 $.bezier({
-	"xStart": 150,
-	"yStart": 100,
+	"xStart": 15,
+	"yStart": 10,
 	"x1": 45,
-	"y1": 90,
-	"x2": 35,
+	"y1": 135,
+	"x2": 195,
 	"y2": 75,
-	"xEnd": 25,
-	"yEnd": 25
+	"xEnd": 280,
+	"yEnd": 185
 });`
 	}, {
 		"name": "cancelInput",
+		"description": "Cancels an input command.",
 		"isScreen": true,
-		"parameters": ["name"]
+		"parameters": [ "name" ],
+		"pdata": [ "The name provided to the input command." ],
+		"seeAlso": [ "input" ],
+		"example": `$.screen("300x200");
+$.print("\\n");
+$.input("What is your name?", null, "name");
+$.onkey( "Escape", "down", function () {
+	$.print("\\nInput Canceled");
+	$.cancelInput("name");
+});
+`
 	}, {
 		"name": "canvas",
 		"isScreen": true,

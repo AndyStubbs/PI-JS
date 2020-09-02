@@ -422,25 +422,25 @@ window.qbs = ( function () {
 	function noError() {}
 
 	//[NO_BUILD]
-	setTimeout( function () {
-		var blob = new Blob(
-			[ JSON.stringify( m_commandList ) ],
-			{ "type": "application/json" }
-		);
-		saveData( blob, "Commands" );
-	}, 1000 );
+	// setTimeout( function () {
+	// 	var blob = new Blob(
+	// 		[ JSON.stringify( m_commandList ) ],
+	// 		{ "type": "application/json" }
+	// 	);
+	// 	saveData( blob, "Commands" );
+	// }, 1000 );
 
-	function saveData( blob, filename ) {
-		var a;
+	// function saveData( blob, filename ) {
+	// 	var a;
 
-		a = document.createElement( "a" );
-		a.href = URL.createObjectURL( blob );
-		a.download = filename;
-		document.body.appendChild( a );
-		a.click();
-		a.parentElement.removeChild( a );
-		URL.revokeObjectURL( a.href );
-	}
+	// 	a = document.createElement( "a" );
+	// 	a.href = URL.createObjectURL( blob );
+	// 	a.download = filename;
+	// 	document.body.appendChild( a );
+	// 	a.click();
+	// 	a.parentElement.removeChild( a );
+	// 	URL.revokeObjectURL( a.href );
+	// }
 	//[/NO_BUILD]
 
 	return m_api;
