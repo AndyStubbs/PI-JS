@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>QBS - Library</title>
+	<style>
+		@font-face {
+			font-family: "IBM_FONT";
+			src: url( "Web_IBM_EGA_8x14.woff" ) format( "woff" );
+			font-weight: normal;
+			font-style: normal;
+		}
+		@font-face {
+			font-family: "VERITE";
+			src: url( "Web_IBM_EGA_8x14.woff" ) format( "woff" );
+			font-weight: normal;
+			font-style: normal;
+		}
+		body {
+			font-family: IBM_FONT, VERITE, monospace;
+			font-size: 28px;
+			line-height: 28px;
+			color: white;
+			background-color: #0000FF;
+			margin-left: 124px;
+		}
+		h1 {
+			font-weight: normal;
+			font-size: 42px;
+			line-height: 42px;
+			margin: 0px;
+		}
+		span {
+			width: 360px;
+			display: inline-block;
+			overflow: hidden;
+		}
+		.border {
+			display: block;
+			white-space: pre;
+		}
+		.contents-letter {
+			margin: 0 48px;
+		}
+		a:link {
+			color: white;
+		}
+		a:visited {
+			color: #AAAAAA;
+		}
+		a:hover {
+			color: yellow;
+		}
+		a:active {
+			color: #555555;
+		}
+		input {
+			font-family: IBM_FONT, VERITE, monospace;
+			font-size: 28px;
+			line-height: 28px;
+			background-color: rgba(0,0,0,0);
+			border: 2px solid gray;
+			color: white;
+			padding: 5px;
+		}
+		input[type=button] {
+			color: #fff;
+			text-align: center;
+			width: 102px;
+			background-color: #a00;
+			border-width: 0;
+			padding: 0 8px;
+			margin-top: 14px;
+			margin-right: 14px;
+			box-shadow: 8px 8px 0 0 #000;
+			outline: none;
+		}
+		input[type=button]:enabled:hover {
+			background-color: #aaa;
+			color: #000;
+			cursor: pointer;
+		}
+		input[type=button]:active {
+			transform: translate(3px, 3px);
+			box-shadow: 4px 4px 0 0 #000;
+		}
+		#menu {
+			position:fixed;
+			top: 0px;
+			left: 0px;
+			padding: 5px;
+			margin-top: 0px;
+		}
+		section {
+			margin-top: 28px;
+		}
+		.sectionTitle {
+			padding-left: 16px;
+		}
+		.tabbed {
+			padding-left: 48px;
+		}
+		.example {
+			white-space: pre;
+			background-color: black;
+			padding: 16px;
+			margin-left: 36px;
+			margin-right: 36px;
+			margin-top: 14px;
+			tab-size: 36px;
+		}
+		#exampleBox {
+			position: fixed;
+			left: 0;
+			top: 0;
+			width: 100%;
+			height: 100%;
+			background-color: rgba(255,255,255,0.5);
+		}
+	</style>
+	<script src="../../build/qbs.js"></script>
+</head>
+<body>
+	<section id="menu">
+		<div><a href="#header">Top</a></div>
+		<div><a href="#intro">Intro</a></div>
+		<div><a href="#index">Index</a></div>
+	</section>
+	<section id="header">
+		<h1>(Q)uick (B)asic (S)cript</h1>
+		<div>Graphics, Sound, and Input Library</div>
+	</section>
+	<section id="intro">
+		<h1>Introduction</h1>
+		QBS is a javascript library that is inspired by QBasic and is intended to help make
+		pixel-perfect retro games and demos in the web browser. QBS uses an API that is inspired by
+		QBasic and is easy to use and get started.
+	</section>
+	<section id="index">
+		<h1>Commands Index</h1>
+		<div id="index-list"></div>
+		<div id="contents"></div>
+	</section>
+	<section id="allCommands"></section>
+	<div id="exampleBox" style="display: none;">
+		&nbsp;<input type="button" value="Close" onclick="CloseExample()" />
+	</div>
+	<script src="commands.js"></script>
+	<script src="help.js"></script>
+</body>
+</html>

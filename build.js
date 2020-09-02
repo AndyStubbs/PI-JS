@@ -19,10 +19,10 @@ function readBuilds() {
 }
 
 // Combine and minify all files
-function processFiles(build) {
+function processFiles( build ) {
 
-	console.log("");
-	console.log("* Minifying Code *");
+	console.log( "" );
+	console.log( "* Minifying Code *" );
 
 	let fileFull = build.name + ".js";
 	let fileOut = build.name + ".min.js";
@@ -31,8 +31,20 @@ function processFiles(build) {
 	// Minify the code
 	let result = "";
 
-	for(let i = 0; i < build.files.length; i++) {
-		result += build.fileData[build.files[i]];
+	for( let i = 0; i < build.files.length; i++ ) {
+		let start = 0;
+		let cnt = 100;
+		do {
+			let start = result.indexOf( "//[NO_BUILD]" );
+			let end = result.indexOf( "//[/NO_BUILD]" );
+			if( start !== -1 && end !== -1 ) {
+				let result1 = result.substring( 0, start );
+				let result2 = result.substring( end + "//[/NO_BUILD]".length );
+				result = result1 + result2;
+			}
+		} while ( start != -1 && cnt-- > 0 );
+
+		result += build.fileData[ build.files[ i ] ];
 	}
 
 	// Write output to file
@@ -41,7 +53,9 @@ function processFiles(build) {
 	writeFile( "../thief/qbs/" + fileFull, result );
 
 	// Minify the code
-	result = ug.minify(build.fileData, {warnings: true, sourceMap: {filename: fileOut, url: fileMap, root: "../"}});
+	result = ug.minify( build.fileData, {
+		"warnings": true, "sourceMap": { "filename": fileOut, "url": fileMap, "root": "../" }
+	} );
 
 	// Throw an error if not successful
 	if(result.error) {
