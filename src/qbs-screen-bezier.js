@@ -13,30 +13,29 @@ m_qbData = qbs._.data;
 
 
 // Bezier curve
-qbs._.addCommands( "bezier", pxBezier, aaBezier, [ "xStart", "yStart",
-	"xControlPoint1", "yControlPoint1", "xControlPoint2", "yControlPoint2",
-	"xEnd", "yEnd" ] );
+qbs._.addCommands( "bezier", pxBezier, aaBezier, [
+	"xStart", "yStart", "x1", "y1", "x2", "y2", "xEnd", "yEnd"
+] );
 function pxBezier( screenData, args ) {
-	var xStart, yStart, xControlPoint1, yControlPoint1, xControlPoint2,
-		yControlPoint2, xEnd, yEnd, color, points, t, dt, point, lastPoint,
+	var xStart, yStart, x1, y1, x2,
+		y2, xEnd, yEnd, color, points, t, dt, point, lastPoint,
 		distance, minDistance;
 
 	xStart = parseInt( args[ 0 ] );
 	yStart = parseInt( args[ 1 ] );
-	xControlPoint1 = parseInt( args[ 2 ] );
-	yControlPoint1 = parseInt( args[ 3 ] );
-	xControlPoint2 = parseInt( args[ 4 ] );
-	yControlPoint2 = parseInt( args[ 5 ] );
+	x1 = parseInt( args[ 2 ] );
+	y1 = parseInt( args[ 3 ] );
+	x2 = parseInt( args[ 4 ] );
+	y2 = parseInt( args[ 5 ] );
 	xEnd = parseInt( args[ 6 ] );
 	yEnd = parseInt( args[ 7 ] );
 
 	// Make sure x and y are integers
 	if( isNaN( xStart ) || isNaN( yStart ) ||
-		isNaN( xControlPoint1 ) || isNaN( yControlPoint1 ) ||
-		isNaN( xControlPoint2 ) || isNaN( yControlPoint2 ) ||
+		isNaN( x1 ) || isNaN( y1 ) ||
+		isNaN( x2 ) || isNaN( y2 ) ||
 		isNaN( xEnd ) || isNaN( yEnd ) ) {
-		m_qbData.log( "pset: Argument's xStart, yStart, xControlPoint1," +
-			"yControlPoint1, xControlPoint2, yControlPoint2, xEnd, and yEnd" +
+		m_qbData.log( "bezier: Argument's xStart, yStart, x1, y1, x2, y2, xEnd, and yEnd" +
 			" must be numbers." );
 		return;
 	}
@@ -48,8 +47,8 @@ function pxBezier( screenData, args ) {
 	minDistance = screenData.pen.size;
 	points = [
 		{ "x": xStart, "y": yStart },
-		{ "x": xControlPoint1, "y": yControlPoint1 },
-		{ "x": xControlPoint2, "y": yControlPoint2 },
+		{ "x": x1, "y": y1 },
+		{ "x": x2, "y": y2 },
 		{ "x": xEnd, "y": yEnd }
 	];
 
@@ -114,23 +113,23 @@ function calcStep( t, points ) {
 }
 
 function aaBezier( screenData, args ) {
-	var x, y, x2, y2, x3, y3, x4, y4;
+	var xStart, yStart, x1, y1, x2, y2, xEnd, yEnd;
 
-	x = args[ 0 ] + 0.5;
-	y = args[ 1 ] + 0.5;
-	x2 = args[ 2 ] + 0.5;
-	y2 = args[ 3 ] + 0.5;
-	x3 = args[ 4 ] + 0.5;
-	y3 = args[ 5 ] + 0.5;
-	x4 = args[ 6 ] + 0.5;
-	y4 = args[ 7 ] + 0.5;
+	xStart = args[ 0 ] + 0.5;
+	yStart = args[ 1 ] + 0.5;
+	x1 = args[ 2 ] + 0.5;
+	y1 = args[ 3 ] + 0.5;
+	x2 = args[ 4 ] + 0.5;
+	y2 = args[ 5 ] + 0.5;
+	xEnd = args[ 6 ] + 0.5;
+	yEnd = args[ 7 ] + 0.5;
 
 	if(
-		isNaN( x ) || isNaN( y ) || isNaN( x2 ) || isNaN( y2 ) ||
-		isNaN( x3 ) || isNaN( y3 ) || isNaN( x4 ) || isNaN( y4 )
+		isNaN( xStart ) || isNaN( yStart ) || isNaN( x1 ) || isNaN( y1 ) ||
+		isNaN( x2 ) || isNaN( y2 ) || isNaN( xEnd ) || isNaN( yEnd )
 	) {
 		m_qbData.log(
-			"bezier: parameters x, y, x2, y2, x3, y3, x4, and y4 must " +
+			"bezier: parameters xStart, yStart, x1, y1, x2, y2, xEnd, and yEnd must " +
 			"be numbers."
 		);
 		return;
@@ -140,8 +139,8 @@ function aaBezier( screenData, args ) {
 
 	screenData.context.strokeStyle = screenData.fColor.s;
 	screenData.context.beginPath();
-	screenData.context.moveTo( x, y );
-	screenData.context.bezierCurveTo( x2, y2, x3, y3, x4, y4 );
+	screenData.context.moveTo( xStart, yStart );
+	screenData.context.bezierCurveTo( x1, y1, x2, y2, xEnd, yEnd );
 	screenData.context.stroke();
 }
 

@@ -21,6 +21,9 @@
 			line-height: 28px;
 			color: white;
 			background-color: #0000FF;
+			
+		}
+		.mainBody {
 			margin-left: 124px;
 		}
 		h1 {
@@ -125,22 +128,24 @@
 		<div><a href="#intro">Intro</a></div>
 		<div><a href="#index">Index</a></div>
 	</section>
-	<section id="header">
-		<h1>(Q)uick (B)asic (S)cript</h1>
-		<div>Graphics, Sound, and Input Library</div>
-	</section>
-	<section id="intro">
-		<h1>Introduction</h1>
-		QBS is a javascript library that is inspired by QBasic and is intended to help make
-		pixel-perfect retro games and demos in the web browser. QBS uses an API that is inspired by
-		QBasic and is easy to use and get started.
-	</section>
-	<section id="index">
-		<h1>Commands Index</h1>
-		<div id="index-list"></div>
-		<div id="contents"></div>
-	</section>
-	<section id="allCommands"></section>
+	<div class='mainBody'>
+		<section id="header">
+			<h1>(Q)uick (B)asic (S)cript</h1>
+			<div>Graphics, Sound, and Input Library</div>
+		</section>
+		<section id="intro">
+			<h1>Introduction</h1>
+			QBS is a javascript library that is inspired by QBasic and is intended to help make
+			pixel-perfect retro games and demos in the web browser. QBS uses an API that is inspired by
+			QBasic and is easy to use and get started.
+		</section>
+		<section id="index">
+			<h1>Commands Index</h1>
+			<div id="index-list"></div>
+			<div id="contents"></div>
+		</section>
+		<section id="allCommands"></section>
+	</div>
 	<div id="exampleBox" style="display: none;">
 		&nbsp;<input type="button" value="Close" onclick="CloseExample()" />
 	</div>

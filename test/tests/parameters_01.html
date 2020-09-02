@@ -13,7 +13,7 @@
 			[[TOML_END]]
 		</script>
 		<script src="../libs/seedrandom.js"></script>
-		<script src="../../build/qbs.min.js"></script>
+		<script src="../../build/qbs.js"></script>
 		<style>
 			html, body {
 				background-color: grey;
@@ -30,10 +30,10 @@ $.ready(function () {
 	$.bezier( {
 		"xStart": 5,
 		"yStart": 5,
-		"xControlPoint1": 10,
-		"yControlPoint1": 35,
-		"xControlPoint2": 55,
-		"yControlPoint2": 10,
+		"x1": 10,
+		"y1": 35,
+		"x2": 55,
+		"y2": 10,
 		"xEnd": 95,
 		"yEnd": 95
 	} );
@@ -47,10 +47,10 @@ $.ready(function () {
 	$.bezier( {
 		"xStart": 5,
 		"yStart": 95,
-		"xControlPoint1": 30,
-		"yControlPoint1": 35,
-		"xControlPoint2": 55,
-		"yControlPoint2": 90,
+		"x1": 30,
+		"y1": 35,
+		"x2": 55,
+		"y2": 90,
 		"xEnd": 95,
 		"yEnd": 5
 	} );

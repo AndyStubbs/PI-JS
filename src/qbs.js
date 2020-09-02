@@ -423,7 +423,7 @@ window.qbs = ( function () {
 
 	//[NO_BUILD]
 	setTimeout( function () {
-		let blob = new Blob(
+		var blob = new Blob(
 			[ JSON.stringify( m_commandList ) ],
 			{ "type": "application/json" }
 		);

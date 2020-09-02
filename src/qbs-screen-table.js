@@ -1,5 +1,5 @@
 /*
-* File: qbs-screen-bezier.js
+* File: qbs-screen-table.js
 */
 
 // Start of File Encapsulation

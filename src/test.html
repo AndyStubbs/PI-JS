@@ -55,6 +55,16 @@ Math.seedrandom( 'constant' );
 var width = 292;
 var height = 140;
 $.screen( { "aspect": width + "x" + height, "isMultiple": true } );
+$.bezier( {
+		"xStart": 5,
+		"yStart": 5,
+		"x1": 10,
+		"y1": 35,
+		"x2": 55,
+		"y2": 10,
+		"xEnd": 95,
+		"yEnd": 95
+	} );
 $.setFont( 4 );
 var msg = "";
 var x = 1;

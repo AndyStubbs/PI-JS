@@ -58,8 +58,9 @@ function processFiles( build ) {
 	} );
 
 	// Throw an error if not successful
-	if(result.error) {
-		throw result.error;
+	if( result.error ) {
+		console.log( result.error );
+		//throw result.error;
 	}
 
 	// Show any warnings
