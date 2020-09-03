@@ -80,7 +80,7 @@
 	];
 	m_tracks = [];
 
-	qbs._.addCommand( "createTrack", createTrack, false, false, [ "playString" ] );
+	//qbs._.addCommand( "createTrack", createTrack, false, false, [ "playString" ] );
 	function createTrack( args ) {
 		var tracksStrings, playString, regString, reg, trackParts, i, j, k,
 			trackId, index, trackIds, waveTables, start, end;

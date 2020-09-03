@@ -40,6 +40,20 @@ $.bezier({
 	"yEnd": 185
 });`
 	}, {
+		"name": "cancelAllInputs",
+		"description": "Cancels all previous input commands.",
+		"isScreen": true,
+		"parameters": [ "name" ],
+		"pdata": [ "The name provided to the input command." ],
+		"seeAlso": [ "input" ],
+		"example": `$.screen("300x200");
+$.print("\\n");
+$.input("What is your name?", null);
+$.onkey( "Escape", "down", function () {
+	$.print("\\nInput Canceled");
+	$.cancelAllInputs();
+}, true );`
+	}, {
 		"name": "cancelInput",
 		"description": "Cancels an input command.",
 		"isScreen": true,
@@ -52,40 +66,114 @@ $.input("What is your name?", null, "name");
 $.onkey( "Escape", "down", function () {
 	$.print("\\nInput Canceled");
 	$.cancelInput("name");
-});
-`
+}, true);`
 	}, {
 		"name": "canvas",
+		"description": "Returns the canvas element used by the screen.",
 		"isScreen": true,
-		"parameters": []
+		"parameters": [],
+		"example": `$.screen("300x200");
+$.canvas().className = "purple";
+$.print("\\n\\nThe background is now purple.")`
 	}, {
 		"name": "circle",
+		"description": "Draws a circle on the screen.",
 		"isScreen": true,
-		"parameters": ["x", "y", "radius", "fillColor"]
+		"parameters": [ "x", "y", "radius", "fillColor" ],
+		"pdata": [
+			"The x coordinate of the center of the circle.",
+			"The y coordinate of the center of the circle.",
+			"The radius of the circle.",
+			"[OPTIONAL]. The fill color for the circle."
+		],
+		"seeAlso": [ "arc", "bezier", "draw", "ellipse", "line", "paint", "pset" ],
+		"example": `$.screen("300x200");
+$.circle(150, 100, 50, "red");`
+	}, {
+		"name": "clearKeys",
+		"description": "Clears event handlers for keyboard events.",
+		"isScreen": false,
+		"parameters": [],
+		"seeAlso": [ "onkey" ],
+		"example": `$.screen("300x200");
+$.print("\\n");
+$.onkey( "any", "down", function (key) {
+	$.print(key.key + " pressed.");
+});
+$.onkey( "Escape", "down", function (key) {
+	$.print(key.key + " pressed.");
+	$.clearKeys();
+});`
 	}, {
 		"name": "cls",
+		"description": "Clears the screen.",
 		"isScreen": true,
-		"parameters": []
+		"parameters": [],
+		"example": `$.screen("300x200");
+$.line(0, 0, 300, 200);
+$.onkey("any", "down", function () {
+	$.cls();
+});`
 	}, {
 		"name": "createAudioPool",
+		"description": "Creates a group of audio players that can play sounds.",
 		"isScreen": false,
-		"parameters": ["src", "poolSize"]
-	}, {
+		"parameters": [ "src", "poolSize" ],
+		"pdata": [ "The source of the audio file.", "The number of audio players." ],
+		"example": `var bombPool = $.createAudioPool("bomb.wav", 1);
+$.ready(function () {
+	$.playAudioPool(bombPool);
+});`
+	},/* {
 		"name": "createTrack",
 		"isScreen": false,
 		"parameters": ["playString"]
-	}, {
+	}, */{
 		"name": "deleteAudioPool",
+		"description": "Deletes an audio pool.",
 		"isScreen": false,
-		"parameters": ["audioId"]
+		"parameters": [ "audioId" ],
+		"pdata": [ "The id of the audio pool." ],
+		"example": `var bombPool = $.createAudioPool("bomb.wav", 1);
+$.deleteAudioPool(bombPool);`
 	}, {
 		"name": "draw",
+		"description": "Draws lines on the screen defined by a string.",
 		"isScreen": true,
-		"parameters": ["drawString"]
+		"parameters": [ "drawString" ],
+		"pdata": [ `Case insensitive string that contains commands for drawing.
+	"B" (blind) before a line move designates that the line move will be hidden.
+	"C n" designates the color attribute.
+	"M x, y" can move to another coordinate area of the screen.
+	"N" Will return to the starting position after the line is drawn.
+	"P f" is used to paint enclosed objects.
+	"D n" draws a line vertically DOWN n pixels.
+	"E n" draws a diagonal / line going UP and RIGHT n pixels each direction.
+	"F n" draws a diagonal \ line going DOWN and RIGHT n pixels each direction.
+	"G n" draws a diagonal / LINE going DOWN and LEFT n pixels each direction.
+	"H n" draws a diagonal \ LINE going UP and LEFT n pixels each direction.
+	"L n" draws a line horizontally LEFT n pixels.
+	"R n" draws a line horizontally RIGHT n pixels.
+	"U n" draws a line vertically UP n pixels.
+	"A n" can use values of 1 to 3 to rotate up to 3 90 degree(270) angles.
+	"TA n" can use any n angle from -360 to 0 to 360 to rotate a DRAW (Turn Angle).`],
+		"example": `$.screen("300x200");
+$.pset(150, 100);
+$.draw("C9 U2 G2 L C15 NU4 BR3 C9 U2 R ");
+$.draw("D2 R U2 D C10 R D L R D R U R U L");
+$.draw("BU2 BL2 C6 L U L R3 L UC8 L BD6 ");
+$.draw("BL C9 D2 R C8 U2 C9 R D2");`
 	}, {
 		"name": "drawImage",
+		"description": "Draws an image on to the screen.",
 		"isScreen": true,
-		"parameters": ["name", "x", "y", "angle", "anchorX", "anchorY", "alpha"]
+		"parameters": ["name", "x", "y", "angle", "anchorX", "anchorY", "alpha"],
+		"pdata": [ "name", "x", "y", "angle", "anchorX", "anchorY", "alpha" ],
+		"example": `$.screen("300x200");
+var monkey = $.loadImage("monkey.png");
+$.ready(function () {
+	$.drawImage(monkey, 150, 100, 0, 0.5, 0.5);
+});`
 	}, {
 		"name": "drawSprite",
 		"isScreen": true,

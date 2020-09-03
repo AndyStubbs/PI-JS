@@ -50,7 +50,7 @@ function printCommands() {
 		msg += "<div class='sectionTitle'>Parameters:</div>";
 		for( j = 0; j < commands[ i ].parameters.length; j++ ) {
 			if( commands[ i ].pdata ) {
-				msg += "<div class='tabbed'>" + commands[ i ].parameters[ j ] + " - " +
+				msg += "<div class='parameter'>" + commands[ i ].parameters[ j ] + " - " +
 					commands[ i ].pdata[ j ] + "</div>";
 			}
 		}
@@ -135,11 +135,12 @@ function RunExample( index ) {
 }
 
 function CopyExample( index ) {
-
+	navigator.clipboard.writeText( commands[ index ].example );
 }
 
 function CloseExample() {
 	$.removeAllScreens();
+	$.clearKeys();
 	document.getElementById( "exampleBox" ).style.display = "none";
 }
 

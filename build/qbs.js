@@ -1088,7 +1088,7 @@ function startKeyboard() {
 	if( ! m_isKeyEventsActive ) {
 		document.addEventListener( "keyup", keyup );
 		document.addEventListener( "keydown", keydown );
-		window.addEventListener( "blur", clearKeys );
+		window.addEventListener( "blur", clearPressedKeys );
 		m_isKeyEventsActive = true;
 	}
 }
@@ -1099,7 +1099,7 @@ function stopKeyboard() {
 	if( m_isKeyEventsActive ) {
 		document.removeEventListener( "keyup", keyup );
 		document.removeEventListener( "keydown", keydown );
-		window.removeEventListener( "blur", blur );
+		window.removeEventListener( "blur", clearPressedKeys );
 		m_isKeyEventsActive = false;
 	}
 }
@@ -1208,7 +1208,27 @@ function keydown( event ) {
 }
 
 // Clear all keypresses in case we lose focus
+qbs._.addCommand( "clearKeys", clearKeys, false, false, [] );
 function clearKeys() {
+	var mode, i;
+
+	// Clear key downs
+	for( mode in m_onKeyEventListeners ) {
+		for( i = m_onKeyEventListeners[ mode ].length - 1; i >= 0; i-- ) {
+			m_onKeyEventListeners[ mode ].splice( i, 1 );
+		}
+	}
+
+	// Clear any key downs
+	for( mode in m_anyKeyEventListeners ) {
+		for( i = m_anyKeyEventListeners[ mode ].length - 1; i >= 0; i-- ) {
+			m_anyKeyEventListeners[ mode ].splice( i, 1 );
+		}
+	}
+
+}
+
+function clearPressedKeys() {
 	var i, j, k;
 	for( i in m_keys ) {
 		m_keys[ i ] = false;
@@ -1335,7 +1355,7 @@ function onkey( args ) {
 		if( once ) {
 			tempFn = fn;
 			fn = function () {
-				offkey( [ modeKey, fn ] );
+				offkey( [ key, mode, fn ] );
 				tempFn();
 			};
 		}
@@ -1980,6 +2000,19 @@ function cancelInput( screenData, args ) {
 			m_inputs.splice( i, 1 );
 		}
 	}
+	if( m_inputs.length === 0 ) {
+		clearInterval( m_promptInterval );
+	}
+}
+
+qbs._.addCommand( "cancelAllInputs", cancelAllInputs, false, true, [] );
+function cancelAllInputs( screenData, args ) {
+	var i;
+
+	for( i = m_inputs.length - 1; i >= 0; i-- ) {
+		m_inputs.splice( i, 1 );
+	}
+	clearInterval( m_promptInterval );
 }
 
 function collectInput( event ) {
@@ -4204,6 +4237,8 @@ function removeScreen( screenData ) {
 			}
 		}
 	}
+
+	screenData.screenObj.cancelAllInputs();
 
 	// Remove all commands from screen object
 	for( i in screenData.screenObj ) {
