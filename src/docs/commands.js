@@ -49,7 +49,7 @@ $.bezier({
 		"example": `$.screen("300x200");
 $.print("\\n");
 $.input("What is your name?", null);
-$.onkey( "Escape", "down", function () {
+$.onkey( "Escape", "down", function () {  
 	$.print("\\nInput Canceled");
 	$.cancelAllInputs();
 }, true );`
@@ -120,6 +120,7 @@ $.onkey("any", "down", function () {
 		"isScreen": false,
 		"parameters": [ "src", "poolSize" ],
 		"pdata": [ "The source of the audio file.", "The number of audio players." ],
+		"seeAlso": [ "deleteAudioPool", "playAudioPool", "setVolume", "stopAudioPool" ],
 		"example": `var bombPool = $.createAudioPool("bomb.wav", 1);
 $.ready(function () {
 	$.playAudioPool(bombPool);
@@ -134,6 +135,7 @@ $.ready(function () {
 		"isScreen": false,
 		"parameters": [ "audioId" ],
 		"pdata": [ "The id of the audio pool." ],
+		"seeAlso": [ "createAudioPool", "playAudioPool", "setVolume", "stopAudioPool" ],
 		"example": `var bombPool = $.createAudioPool("bomb.wav", 1);
 $.deleteAudioPool(bombPool);`
 	}, {
@@ -156,7 +158,9 @@ $.deleteAudioPool(bombPool);`
 	"R n" draws a line horizontally RIGHT n pixels.
 	"U n" draws a line vertically UP n pixels.
 	"A n" can use values of 1 to 3 to rotate up to 3 90 degree(270) angles.
-	"TA n" can use any n angle from -360 to 0 to 360 to rotate a DRAW (Turn Angle).`],
+	"TA n" can use any n angle from -360 to 0 to 360 to rotate a DRAW (Turn Angle).`
+		],
+		"seeAlso": [ "arc", "bezier", "circle", "ellipse", "line", "paint", "pset" ],
 		"example": `$.screen("300x200");
 $.pset(150, 100);
 $.draw("C9 U2 G2 L C15 NU4 BR3 C9 U2 R ");
@@ -168,7 +172,11 @@ $.draw("BL C9 D2 R C8 U2 C9 R D2");`
 		"description": "Draws an image on to the screen.",
 		"isScreen": true,
 		"parameters": ["name", "x", "y", "angle", "anchorX", "anchorY", "alpha"],
-		"pdata": [ "name", "x", "y", "angle", "anchorX", "anchorY", "alpha" ],
+		"pdata": [
+			"Name or id of the image.", "Horizontal coordiante.", "Vertical coordinate.",
+			"Rotate the image in degrees.", "Horizontal rotation coordinate.",
+			"Vertical rotation coordinate.", "Transparency amount number 0-100."
+		],
 		"example": `$.screen("300x200");
 var monkey = $.loadImage("monkey.png");
 $.ready(function () {
@@ -177,15 +185,55 @@ $.ready(function () {
 	}, {
 		"name": "drawSprite",
 		"isScreen": true,
-		"parameters": ["name", "frame", "x", "y", "angle", "anchorX", "anchorY", "img", "alpha"]
+		"parameters": [ "name", "frame", "x", "y", "angle", "anchorX", "anchorY", "img", "alpha" ],
+		"pdata": [
+			"Name or id of the image.", "Horizontal coordiante.", "Vertical coordinate.",
+			"Rotate the image in degrees.", "Horizontal rotation coordinate.",
+			"Vertical rotation coordinate.", "Transparency amount number 0-100."
+		],
+		"seeAlso": [ "loadSpritesheet" ],
+		"example": `$.screen("300x200");
+var monkey = $.loadSpritesheet("monkey.png", 32, 32, 1);
+$.ready(function () {
+	var frame = 0;
+	var interval = setInterval(run, 500);
+	function run() {
+		frame += 1;
+		$.cls();
+		$.drawSprite(monkey, frame % 2, 150, 100, 0, 0.5, 0.5);
+	}
+	run();
+	setTimeout(function () {
+		clearInterval(interval);
+	}, 2000);
+});`
 	}, {
 		"name": "ellipse",
 		"isScreen": true,
-		"parameters": ["x", "y", "radiusX", "radiusY", "fillColor"]
+		"parameters": ["x", "y", "radiusX", "radiusY", "fillColor"],
+		"pdata": [
+			"Horizontal coordiante.", "Vertical coordinate.",
+			"Horizontal radius.", "Vertical radius",
+			""
+			
+		],
+		"seeAlso": [ "arc", "bezier", "circle", "draw", "line", "paint", "pset" ],
+		"example": `$.screen("300x200");
+$.ellipse(150, 100, 50, 80, "blue");`
 	}, {
 		"name": "filterImg",
 		"isScreen": true,
-		"parameters": ["filter"]
+		"parameters": ["filter"],
+		"pdata": [ "Function to be called on each pixel."],
+		"seeAlso": [],
+		"example": `$.screen("300x200");
+$.circle(150, 100, 50, "red");
+$.filterImg( function ( color, x, y ) {
+	color.r = color.r - Math.round( Math.tan( ( x + y ) / 10 ) * 128 );
+	color.g = color.g + Math.round( Math.cos( x / 7 ) * 128 );
+	color.b = color.b + Math.round( Math.sin( y / 5 ) * 128 );
+	return color;
+} );`
 	}, {
 		"name": "findColor",
 		"isScreen": true,
