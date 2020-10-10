@@ -76,6 +76,10 @@ function printCommands() {
 	document.getElementById( "allCommands" ).innerHTML = msg;
 }
 
+function printExample() {
+
+}
+
 function printBorderItem( label ) {
 	var msg1, msg2, msg3, i;
 	msg1 = "&#x2554;";

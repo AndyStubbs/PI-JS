@@ -2,170 +2,15 @@
 <html>
 <head>
 	<title>QBS - Library</title>
+	<link rel="stylesheet" href="styles.css">
 	<link rel="stylesheet" href="highlights/styles/sunburst.css">
-	<style>
-		@font-face {
-			font-family: "IBM_FONT";
-			src: url( "Web_IBM_EGA_8x14.woff" ) format( "woff" );
-			font-weight: normal;
-			font-style: normal;
-		}
-		@font-face {
-			font-family: "VERITE";
-			src: url( "Web_IBM_EGA_8x14.woff" ) format( "woff" );
-			font-weight: normal;
-			font-style: normal;
-		}
-		body {
-			font-family: IBM_FONT, VERITE, monospace;
-			font-size: 28px;
-			line-height: 28px;
-			color: white;
-			background-color: #0000AA;
-			
-		}
-		code {
-			font-family: IBM_FONT, VERITE, monospace;
-		}
-		.mainBody {
-			margin-left: 124px;
-		}
-		h1 {
-			font-weight: normal;
-			font-size: 42px;
-			line-height: 42px;
-			margin: 0px;
-		}
-		.wide-span {
-			width: 360px;
-			display: inline-block;
-			overflow: hidden;
-		}
-		.border {
-			display: block;
-			white-space: pre;
-		}
-		.contents-letter {
-			margin: 0 48px;
-		}
-		a:link {
-			color: white;
-		}
-		a:visited {
-			color: white;
-		}
-		a:hover {
-			color: yellow;
-		}
-		a:active {
-			color: #555555;
-		}
-		input {
-			font-family: IBM_FONT, VERITE, monospace;
-			font-size: 28px;
-			line-height: 28px;
-			background-color: rgba(0,0,0,0);
-			border: 2px solid gray;
-			color: white;
-			padding: 5px;
-		}
-		input[type=button] {
-			color: #fff;
-			text-align: center;
-			width: 102px;
-			background-color: #a00;
-			border-width: 0;
-			padding: 0 8px;
-			margin-top: 14px;
-			margin-right: 14px;
-			box-shadow: 8px 8px 0 0 #000;
-			outline: none;
-		}
-		input[type=button]:enabled:hover {
-			background-color: #aaa;
-			color: #000;
-			cursor: pointer;
-		}
-		input[type=button]:active {
-			transform: translate(3px, 3px);
-			box-shadow: 4px 4px 0 0 #000;
-		}
-		#menu {
-			position:fixed;
-			top: 0px;
-			left: 0px;
-			padding: 5px;
-			margin-top: 0px;
-			background-color: #AAAAAA;
-			width: 116px;
-			height: 100%;
-			color: black;
-		}
-		#menu a:link {
-			color: black;
-		}
-		#menu a:visited {
-			color: black;
-		}
-		#menu a:hover {
-			color: white;
-			background-color: black;
-		}
-		#menu a:active {
-			color: #555555;
-		}
-		section {
-			margin-top: 28px;
-		}
-		.sectionTitle {
-			padding-left: 16px;
-		}
-		.tabbed {
-			padding-left: 48px;
-		}
-		canvas {
-			background-color: rgba(0,0,0,0.75) !important;
-		}
-		.example {
-			white-space: pre;
-			background-color: black;
-			padding: 16px;
-			margin-left: 36px;
-			margin-right: 36px;
-			margin-top: 14px;
-			tab-size: 36px;
-		}
-		.parameter {
-			white-space: pre;
-			margin-left: 36px;
-			margin-right: 36px;
-			tab-size: 36px;
-		}
-		#exampleBox {
-			position: fixed;
-			left: 0;
-			top: 0;
-			width: 100%;
-			height: 100%;
-			background-color: rgba(255,255,255,0.5);
-		}
-		#canvasContainer {
-			position: absolute;
-			left: 0;
-			top: 0;
-			width: 100%;
-			height: 100%;
-		}
-		.purple {
-			background-color: rgba(112,39,195,0.75) !important;
-		}
-	</style>
 	<script src="../build/qbs.js"></script>
 </head>
 <body>
 	<section id="menu">
 		<div><a href="#header">Top</a></div>
 		<div><a href="#intro">Intro</a></div>
+		<div><a href="#usage">Usage</a></div>
 		<div><a href="#index">Index</a></div>
 	</section>
 	<div class='mainBody'>
@@ -176,8 +21,49 @@
 		<section id="intro">
 			<h1>Introduction</h1>
 			QBS is a javascript library that is inspired by QBasic and is intended to help make
-			pixel-perfect retro games and demos in the web browser. QBS uses an API that is inspired by
-			QBasic and is easy to use and get started.
+			pixel-perfect retro games and demos in the web browser. QBS API is modelled after QBasic
+			and is easy to use for beginners.
+		</section>
+		<section id="usage">
+			<h1>Usage</h1>
+			<p>
+				QBS is a collection of graphics, input, and sound commands that are all stored in a
+				global variable container. QBS commands can be accessed by using the global
+				variable "qbs" or "$". If there is already a global variable set to "$" then the
+				QBS library will not override the "$".
+			</p>
+			<p>
+				Graphics commands require a <a href ="#command_screen">screen</a> to be created
+				before being called. When the screen command is called a screen object is returned.
+				Graphics commands can be called from either the global "$", "qbs", or the screen
+				object.
+			</p>
+			<div class="example"><pre><code class='lang-javascript'>$.screen("300x200");
+$.line(10, 10, 290, 190);</code></pre></div>
+			<div class="example"><pre><code class='lang-javascript'>qbs.screen("300x200");
+qbs.line(10, 10, 290, 190);</code></pre></div>
+			<div class="example"><pre><code class='lang-javascript'>var screen = $.screen("300x200");
+screen.line(10, 10, 290, 190);</code></pre></div>
+			<p>
+				The screen object comes in handy when working with multiple screens. If you are only
+				working with one screen the simpliest way to run the graphics commands is to use
+				the "$" variable. If you are working with multiple screens you can still use "$"
+				variable but you will have to call the <a href="#command_setScreen">setScreen</a>
+				command.
+			</p>
+			<p>
+				There are two ways to call commands, the first is to use a comma seperated list
+				of parameters and the second is to pass in an object that contains names of
+				the parameters as object properties.
+			</p>
+			<div class="example"><pre><code class='lang-javascript'>$.screen("300x200");
+$.line(10, 10, 290, 190);
+$.line({
+	"x1": 290, 
+	"y1": 10, 
+	"x2": 10, 
+	"y2": 190
+});</code></pre></div>
 		</section>
 		<section id="index">
 			<h1>Commands Index</h1>
