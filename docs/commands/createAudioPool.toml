@@ -1,0 +1,19 @@
+name = "createAudioPool"
+description = "Creates a group of audio players that can play sounds."
+isScreen = false
+parameters = [ "src", "poolSize" ]
+pdata = [
+  "The source of the audio file.",
+  "The number of audio players."
+]
+seeAlso = [
+  "deleteAudioPool",
+  "playAudioPool",
+  "setVolume",
+  "stopAudioPool"
+]
+example = """
+var bombPool = $.createAudioPool("bomb.wav", 1);
+$.ready(function () {
+\t$.playAudioPool(bombPool);
+});"""

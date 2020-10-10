@@ -1,0 +1,10 @@
+name = "screen"
+isScreen = false
+parameters = [
+  "aspect",
+  "container",
+  "isOffscreen",
+  "noStyles",
+  "isMultiple",
+  "resizeCallback"
+]

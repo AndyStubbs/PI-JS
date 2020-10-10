@@ -1,0 +1,3 @@
+name = "setDefaultFont"
+isScreen = false
+parameters = [ "fontId" ]

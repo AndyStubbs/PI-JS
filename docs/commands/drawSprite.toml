@@ -1,0 +1,39 @@
+name = "drawSprite"
+isScreen = true
+parameters = [
+  "name",
+  "frame",
+  "x",
+  "y",
+  "angle",
+  "anchorX",
+  "anchorY",
+  "img",
+  "alpha"
+]
+pdata = [
+  "Name or id of the image.",
+  "Horizontal coordiante.",
+  "Vertical coordinate.",
+  "Rotate the image in degrees.",
+  "Horizontal rotation coordinate.",
+  "Vertical rotation coordinate.",
+  "Transparency amount number 0-100."
+]
+seeAlso = [ "loadSpritesheet" ]
+example = """
+$.screen("300x200");
+var monkey = $.loadSpritesheet("monkey.png", 32, 32, 1);
+$.ready(function () {
+\tvar frame = 0;
+\tvar interval = setInterval(run, 500);
+\tfunction run() {
+\t\tframe += 1;
+\t\t$.cls();
+\t\t$.drawSprite(monkey, frame % 2, 150, 100, 0, 0.5, 0.5);
+\t}
+\trun();
+\tsetTimeout(function () {
+\t\tclearInterval(interval);
+\t}, 2000);
+});"""

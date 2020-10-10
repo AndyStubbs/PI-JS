@@ -1,0 +1,3 @@
+name = "inkey"
+isScreen = false
+parameters = [ "key" ]

@@ -1,0 +1,3 @@
+name = "getScreen"
+isScreen = false
+parameters = [ "screenId" ]

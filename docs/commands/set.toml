@@ -1,0 +1,27 @@
+name = "set"
+isScreen = true
+parameters = [
+  "screen",
+  "defaultPal",
+  "errorMode",
+  "actionKey",
+  "inputCursor",
+  "defaultFont",
+  "font",
+  "fontSize",
+  "enableContextMenu",
+  "pinchZoom",
+  "bgColor",
+  "containerBgColor",
+  "pixelMode",
+  "palColor",
+  "color",
+  "colors",
+  "pen",
+  "wordBreak",
+  "pos",
+  "posPx",
+  "volume"
+]
+isSet = true
+noParse = true

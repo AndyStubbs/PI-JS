@@ -31,6 +31,7 @@ function processFiles( build ) {
 	// Minify the code
 	let result = "";
 
+	// Remove NO Build Content
 	for( let i = 0; i < build.files.length; i++ ) {
 		let start = 0;
 		let cnt = 100;

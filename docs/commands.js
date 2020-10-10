@@ -711,3 +711,5 @@ $.filterImg( function ( color, x, y ) {
 		"parameters": []
 	}
 ]
+
+module.exports = commands;

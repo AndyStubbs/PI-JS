@@ -1,0 +1,10 @@
+name = "loadFont"
+isScreen = false
+parameters = [
+  "fontSrc",
+  "width",
+  "height",
+  "charSet",
+  "isBitmap",
+  "isEncoded"
+]

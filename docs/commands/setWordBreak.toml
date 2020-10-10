@@ -1,0 +1,3 @@
+name = "setWordBreak"
+isScreen = true
+parameters = [ "isEnabled" ]

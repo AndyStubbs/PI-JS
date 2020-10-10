@@ -1,0 +1,3 @@
+name = "setFontSize"
+isScreen = true
+parameters = [ "width", "height" ]

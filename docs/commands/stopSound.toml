@@ -1,0 +1,3 @@
+name = "stopSound"
+isScreen = false
+parameters = [ "soundId" ]

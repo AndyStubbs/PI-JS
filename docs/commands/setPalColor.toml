@@ -1,0 +1,3 @@
+name = "setPalColor"
+isScreen = true
+parameters = [ "index", "color" ]

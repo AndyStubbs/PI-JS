@@ -1,0 +1,23 @@
+name = "draw"
+description = "Draws lines on the screen defined by a string."
+isScreen = true
+parameters = [ "drawString" ]
+pdata = [
+  "Case insensitive string that contains commands for drawing.\n\t\"B\" (blind) before a line move designates that the line move will be hidden.\n\t\"C n\" designates the color attribute.\n\t\"M x, y\" can move to another coordinate area of the screen.\n\t\"N\" Will return to the starting position after the line is drawn.\n\t\"P f\" is used to paint enclosed objects.\n\t\"D n\" draws a line vertically DOWN n pixels.\n\t\"E n\" draws a diagonal / line going UP and RIGHT n pixels each direction.\n\t\"F n\" draws a diagonal  line going DOWN and RIGHT n pixels each direction.\n\t\"G n\" draws a diagonal / LINE going DOWN and LEFT n pixels each direction.\n\t\"H n\" draws a diagonal  LINE going UP and LEFT n pixels each direction.\n\t\"L n\" draws a line horizontally LEFT n pixels.\n\t\"R n\" draws a line horizontally RIGHT n pixels.\n\t\"U n\" draws a line vertically UP n pixels.\n\t\"A n\" can use values of 1 to 3 to rotate up to 3 90 degree(270) angles.\n\t\"TA n\" can use any n angle from -360 to 0 to 360 to rotate a DRAW (Turn Angle)."
+]
+seeAlso = [
+  "arc",
+  "bezier",
+  "circle",
+  "ellipse",
+  "line",
+  "paint",
+  "pset"
+]
+example = """
+$.screen("300x200");
+$.pset(150, 100);
+$.draw("C9 U2 G2 L C15 NU4 BR3 C9 U2 R ");
+$.draw("D2 R U2 D C10 R D L R D R U R U L");
+$.draw("BU2 BL2 C6 L U L R3 L UC8 L BD6 ");
+$.draw("BL C9 D2 R C8 U2 C9 R D2");"""

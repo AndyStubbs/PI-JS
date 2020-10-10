@@ -1,0 +1,3 @@
+name = "paint"
+isScreen = true
+parameters = [ "x", "y", "fillColor", "tolerance" ]

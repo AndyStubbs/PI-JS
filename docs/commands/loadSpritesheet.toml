@@ -1,0 +1,3 @@
+name = "loadSpritesheet"
+isScreen = false
+parameters = [ "src", "width", "height", "margin", "name" ]

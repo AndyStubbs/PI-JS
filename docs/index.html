@@ -2,6 +2,7 @@
 <html>
 <head>
 	<title>QBS - Library</title>
+	<link rel="stylesheet" href="highlights/styles/sunburst.css">
 	<style>
 		@font-face {
 			font-family: "IBM_FONT";
@@ -23,6 +24,9 @@
 			background-color: #0000AA;
 			
 		}
+		code {
+			font-family: IBM_FONT, VERITE, monospace;
+		}
 		.mainBody {
 			margin-left: 124px;
 		}
@@ -32,7 +36,7 @@
 			line-height: 42px;
 			margin: 0px;
 		}
-		span {
+		.wide-span {
 			width: 360px;
 			display: inline-block;
 			overflow: hidden;
@@ -156,7 +160,7 @@
 			background-color: rgba(112,39,195,0.75) !important;
 		}
 	</style>
-	<script src="../../build/qbs.js"></script>
+	<script src="../build/qbs.js"></script>
 </head>
 <body>
 	<section id="menu">
@@ -187,7 +191,9 @@
 		<input type="button" value="Close" onclick="CloseExample()" style="position: absolute;left:36px;" />
 		<input type="button" id="clearFocus" value="" style="line-height: 0px; height:0px;" />
 	</div>
-	<script src="commands.js"></script>
+	<script src="highlights/highlight.pack.js"></script>
+	<script src="commands2.js"></script>
+	<script src="examples.js"></script>
 	<script src="help.js"></script>
 </body>
 </html>

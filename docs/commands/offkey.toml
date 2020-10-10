@@ -1,0 +1,3 @@
+name = "offkey"
+isScreen = false
+parameters = [ "key", "mode", "fn" ]

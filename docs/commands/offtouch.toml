@@ -1,0 +1,3 @@
+name = "offtouch"
+isScreen = true
+parameters = [ "mode", "fn" ]

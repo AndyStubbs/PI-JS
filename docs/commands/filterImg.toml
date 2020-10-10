@@ -1,0 +1,14 @@
+name = "filterImg"
+isScreen = true
+parameters = [ "filter" ]
+pdata = [ "Function to be called on each pixel." ]
+seeAlso = [ ]
+example = """
+$.screen("300x200");
+$.circle(150, 100, 50, "red");
+$.filterImg( function ( color, x, y ) {
+\tcolor.r = color.r - Math.round( Math.tan( ( x + y ) / 10 ) * 128 );
+\tcolor.g = color.g + Math.round( Math.cos( x / 7 ) * 128 );
+\tcolor.b = color.b + Math.round( Math.sin( y / 5 ) * 128 );
+\treturn color;
+} );"""

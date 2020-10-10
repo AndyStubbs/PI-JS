@@ -16,7 +16,7 @@ function printIndex() {
 			strContents += printBorderLine( strLetter ) + "<div class='contents-letter'>";
 			isDivOpen = true;
 		}
-		strContents += "<span><a href='#command_" + name + "'>" + name + "</a></span>";
+		strContents += "<span class='wide-span'><a href='#command_" + name + "'>" + name + "</a></span>";
 	}
 	if( isDivOpen ) {
 		strContents += "</div>";
@@ -66,7 +66,7 @@ function printCommands() {
 		msg += "</div>";
 		msg += "<div>&nbsp;</div>";
 		msg += "<div class='sectionTitle'>Example:</div>";
-		msg += "<div class='example'>" + commands[ i ].example + "</div>";
+		msg += "<div class='example'><pre><code class='lang-javascript'>" + commands[ i ].example + "</pre></code></div>";
 		msg += "<div class='tabbed'>";
 		msg += "<input type='button' value='Run' onclick='RunExample(" + i + ")' />";
 		msg += "<input type='button' value='Copy' onclick='CopyExample(" + i +")' />";
@@ -124,14 +124,16 @@ function printBorderLine( label ) {
 }
 
 function RunExample( index ) {
-	var code, start, end;
-	code = commands[ index ].example;
-	start = code.indexOf( ".screen(" );
-	end = code.indexOf( ")", start );
-	code = code.substring( 0, end ) + ", 'canvasContainer'" + code.substring( end );
+	// var code, start, end;
+	// code = commands[ index ].example;
+	// start = code.indexOf( ".screen(" );
+	// end = code.indexOf( ")", start );
+	// code = code.substring( 0, end ) + ", 'canvasContainer'" + code.substring( end );
+	var name = commands[ index ].name.replace( ".", "_" );
 	document.getElementById( "exampleBox" ).style.display = "block";
 	document.getElementById( "clearFocus" ).focus();
-	eval( code );
+	examples[ name ]();
+	//eval( code );
 }
 
 function CopyExample( index ) {
@@ -146,3 +148,8 @@ function CloseExample() {
 
 printIndex();
 printCommands();
+setTimeout( function () {
+	document.querySelectorAll('pre code').forEach((block) => {
+		hljs.highlightBlock(block);
+	});
+} );

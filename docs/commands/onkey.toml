@@ -1,0 +1,3 @@
+name = "onkey"
+isScreen = false
+parameters = [ "key", "mode", "fn", "once" ]

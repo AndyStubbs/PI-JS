@@ -1,0 +1,3 @@
+name = "findColor"
+isScreen = true
+parameters = [ "color", "tolerance", "isAddToPalette" ]

@@ -1,0 +1,3 @@
+name = "printTable"
+isScreen = true
+parameters = [ "items", "tableFormat", "borderStyle", "isCentered" ]

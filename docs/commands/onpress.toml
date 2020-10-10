@@ -1,0 +1,3 @@
+name = "onpress"
+isScreen = true
+parameters = [ "mode", "fn", "once", "hitBox", "customData" ]

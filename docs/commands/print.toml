@@ -1,0 +1,3 @@
+name = "print"
+isScreen = true
+parameters = [ "msg", "inLine", "isCentered" ]

@@ -1,0 +1,11 @@
+name = "sound"
+isScreen = false
+parameters = [
+  "frequency",
+  "duration",
+  "volume",
+  "oType",
+  "delay",
+  "attack",
+  "decay"
+]

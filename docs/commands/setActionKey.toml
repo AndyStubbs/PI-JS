@@ -1,0 +1,3 @@
+name = "setActionKey"
+isScreen = false
+parameters = [ "key", "isEnabled" ]

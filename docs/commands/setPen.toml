@@ -1,0 +1,3 @@
+name = "setPen"
+isScreen = true
+parameters = [ "pen", "size", "noise" ]

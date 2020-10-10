@@ -1,0 +1,14 @@
+name = "ellipse"
+isScreen = true
+parameters = [ "x", "y", "radiusX", "radiusY", "fillColor" ]
+pdata = [
+  "Horizontal coordiante.",
+  "Vertical coordinate.",
+  "Horizontal radius.",
+  "Vertical radius",
+  ""
+]
+seeAlso = [ "arc", "bezier", "circle", "draw", "line", "paint", "pset" ]
+example = """
+$.screen("300x200");
+$.ellipse(150, 100, 50, 80, "blue");"""

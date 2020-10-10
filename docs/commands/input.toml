@@ -1,0 +1,11 @@
+name = "input"
+isScreen = true
+parameters = [
+  "prompt",
+  "callback",
+  "name",
+  "isNumber",
+  "isInteger",
+  "allowNegative",
+  "onscreenKeyboard"
+]

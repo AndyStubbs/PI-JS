@@ -1,0 +1,3 @@
+name = "setVolume"
+isScreen = false
+parameters = [ "volume" ]
