@@ -1,3 +1,11 @@
 name = "get"
+description="Gets an area of pixels from the screen and returns an array of color indices."
 isScreen = true
 parameters = [ "x1", "y1", "x2", "y2", "tolerance" ]
+pdata = [
+	"First horizontal coordiante.",
+	"First vertical coordinate.",
+	"Second horizontal coordiante.",
+	"Second vertical coordinate.",
+	"[OPTIONAL]. If the color is not in the color palette then attempt to find the closest fit color."
+]

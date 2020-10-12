@@ -3,17 +3,22 @@ description = "Draws an image on to the screen."
 isScreen = true
 parameters = [ "name", "x", "y", "angle", "anchorX", "anchorY", "alpha" ]
 pdata = [
-  "Name or id of the image.",
-  "Horizontal coordiante.",
-  "Vertical coordinate.",
-  "Rotate the image in degrees.",
-  "Horizontal rotation coordinate.",
-  "Vertical rotation coordinate.",
-  "Transparency amount number 0-100."
+	"Name or id of the image.",
+	"Horizontal coordiante.",
+	"Vertical coordinate.",
+	"[OPTIONAL]. Rotate the image in degrees.",
+	"[OPTIONAL]. Horizontal rotation coordinate.",
+	"[OPTIONAL]. Vertical rotation coordinate.",
+	"[OPTIONAL]. Transparency amount number 0-100."
+]
+seeAlso = [
+	"drawSprite",
+	"loadImage",
+	"ready"
 ]
 example = """
 $.screen("300x200");
 var monkey = $.loadImage("monkey.png");
 $.ready(function () {
-\t$.drawImage(monkey, 150, 100, 0, 0.5, 0.5);
+	$.drawImage(monkey, 150, 100, 0, 0.5, 0.5);
 });"""

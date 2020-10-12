@@ -7,9 +7,10 @@
 
 "use strict";
 
-var m_qbData;
+var m_qbData, m_maxDifference;
 
 m_qbData = qbs._.data;
+m_maxDifference = ( 255 * 255 ) * 3.25;
 
 // Remove the screen from the page and memory
 qbs._.addCommand( "removeScreen", removeScreen, false, true, [] );
@@ -120,24 +121,29 @@ function canvas( screenData ) {
 qbs._.addCommand( "findColor", findColor, false, true,
 	[ "color", "tolerance", "isAddToPalette" ] );
 function findColor( screenData, args ) {
-	var color, tolerance, isAddToPalette, i, pal, dr, dg, db, da, difference;
+	var color, tolerance, isAddToPalette, i, pal, dr, dg, db, da, difference, simularity;
 
 	color = args[ 0 ];
 	tolerance = args[ 1 ];
 	isAddToPalette = !!( args[ 2 ] );
 
 	if(tolerance === undefined) {
-		tolerance = 0;
+		tolerance = 1;
 	}
 
+	tolerance = tolerance * ( 2 - tolerance ) * m_maxDifference;
 	pal = screenData.pal;
 
 	if( screenData.cache[ "findColor" ][ color.s ] ) {
 		return screenData.cache[ "findColor" ][ color.s ];
 	}
 
+	color = m_qbData.commands.findColorValue(
+		screenData, color, "color"
+	);
+
 	for( i = 0; i < pal.length; i++ ) {
-		if(tolerance === 0 && pal[ i ].s === color.s) {
+		if( pal[ i ].s === color.s ) {
 			screenData.cache[ "findColor" ][ color.s ] = i;
 			return i;
 		} else {
@@ -146,8 +152,10 @@ function findColor( screenData, args ) {
 			db = pal[ i ].b - color.b;
 			da = pal[ i ].a - color.a;
 
-			difference = dr * dr + dg * dg + db * db + da * da;
-			if(difference <= tolerance) {
+			difference = ( dr * dr + dg * dg + db * db + da * da * 0.25 );
+			simularity = m_maxDifference - difference;
+
+			if( simularity >= tolerance ) {
 				screenData.cache[ "findColor" ][ color.s ] = i;
 				return i;
 			}

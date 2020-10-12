@@ -2,7 +2,6 @@ var examples = {};
 examples['arc'] = function() {
 $.screen("300x200", 'canvasContainer');
 $.arc(150, 100, 50, 45, 270);
-
 }
 examples['bezier'] = function() {
 $.screen("300x200", 'canvasContainer');
@@ -111,15 +110,19 @@ $.ellipse(150, 100, 50, 80, "blue");
 examples['filterImg'] = function() {
 $.screen("300x200", 'canvasContainer');
 $.circle(150, 100, 50, "red");
-$.filterImg( function ( color, x, y ) {
+$.filterImg(function (color, x, y) {
 	color.r = color.r - Math.round( Math.tan( ( x + y ) / 10 ) * 128 );
 	color.g = color.g + Math.round( Math.cos( x / 7 ) * 128 );
 	color.b = color.b + Math.round( Math.sin( y / 5 ) * 128 );
 	return color;
-} );
+});
 }
 examples['findColor'] = function() {
-undefined
+$.screen("300x200", 'canvasContainer');
+var color = $.findColor("red");
+$.setColor(color);
+$.print("The index of red is " + color + ".");
+
 }
 examples['get'] = function() {
 undefined

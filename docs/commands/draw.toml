@@ -12,7 +12,8 @@ seeAlso = [
   "ellipse",
   "line",
   "paint",
-  "pset"
+  "pset",
+  "setColor"
 ]
 example = """
 $.screen("300x200");

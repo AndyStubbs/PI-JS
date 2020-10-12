@@ -1,39 +1,44 @@
 name = "drawSprite"
 isScreen = true
+description = "Draws a sprite from a spritesheet on to the screen."
 parameters = [
-  "name",
-  "frame",
-  "x",
-  "y",
-  "angle",
-  "anchorX",
-  "anchorY",
-  "img",
-  "alpha"
+	"name",
+	"frame",
+	"x",
+	"y",
+	"angle",
+	"anchorX",
+	"anchorY",
+	"img",
+	"alpha"
 ]
 pdata = [
-  "Name or id of the image.",
-  "Horizontal coordiante.",
-  "Vertical coordinate.",
-  "Rotate the image in degrees.",
-  "Horizontal rotation coordinate.",
-  "Vertical rotation coordinate.",
-  "Transparency amount number 0-100."
+	"Name or id of the image.",
+	"Horizontal coordiante.",
+	"Vertical coordinate.",
+	"[OPTIONAL]. Rotate the image in degrees.",
+	"[OPTIONAL]. Horizontal rotation coordinate.",
+	"[OPTIONAL]. Vertical rotation coordinate.",
+	"[OPTIONAL]. Transparency amount number 0-100."
 ]
-seeAlso = [ "loadSpritesheet" ]
+seeAlso = [
+	"drawImage",
+	"loadSpritesheet",
+	"ready"
+]
 example = """
 $.screen("300x200");
 var monkey = $.loadSpritesheet("monkey.png", 32, 32, 1);
 $.ready(function () {
-\tvar frame = 0;
-\tvar interval = setInterval(run, 500);
-\tfunction run() {
-\t\tframe += 1;
-\t\t$.cls();
-\t\t$.drawSprite(monkey, frame % 2, 150, 100, 0, 0.5, 0.5);
-\t}
-\trun();
-\tsetTimeout(function () {
-\t\tclearInterval(interval);
-\t}, 2000);
+	var frame = 0;
+	var interval = setInterval(run, 500);
+	function run() {
+		frame += 1;
+		$.cls();
+		$.drawSprite(monkey, frame % 2, 150, 100, 0, 0.5, 0.5);
+	}
+	run();
+	setTimeout(function () {
+		clearInterval(interval);
+	}, 2000);
 });"""
