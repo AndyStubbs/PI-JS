@@ -1,4 +1,11 @@
 name = "screen"
+description = """
+When the screen command is called it will create a canvas element and when graphics
+commands are called they will manipulate the canvas created. There are three types
+of canvas styles that can be created a fullscreen canvas that gets appended to the
+body of the page, a canvas that gets appended to a container element supplied, or
+an offscreen canvas.
+"""
 isScreen = false
 parameters = [
   "aspect",

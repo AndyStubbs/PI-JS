@@ -125,7 +125,11 @@ $.print("The index of red is " + color + ".");
 
 }
 examples['get'] = function() {
-undefined
+$.screen("300x200", 'canvasContainer');
+$.circle(150, 100, 50, 4);
+var colors = $.get(105, 75, 110, 75);
+$.print(colors[0].join(","));
+
 }
 examples['getCols'] = function() {
 undefined

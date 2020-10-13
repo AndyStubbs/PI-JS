@@ -48,12 +48,14 @@ function printCommands() {
 		msg += msgParam + ");</div>";
 		msg += "<div>&nbsp;</div>";
 		msg += "<div class='sectionTitle'>Parameters:</div>";
+		//msg += "<ul>";
 		for( j = 0; j < commands[ i ].parameters.length; j++ ) {
 			if( commands[ i ].pdata ) {
 				msg += "<div class='parameter'>" + commands[ i ].parameters[ j ] + " - " +
 					commands[ i ].pdata[ j ] + "</div>";
 			}
 		}
+		//msg += "</ul>";
 		msg += "<div>&nbsp;</div>";
 		msg += "<div class='sectionTitle'>See Also:</div>";
 		msg += "<div class='tabbed'>";

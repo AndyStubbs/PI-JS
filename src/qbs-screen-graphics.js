@@ -673,7 +673,7 @@ qbs._.addCommand( "get", get, false, true,
 	[ "x1", "y1", "x2", "y2", "tolerance" ]
 );
 function get( screenData, args ) {
-	var x1, y1, x2, y2, tolerance, t, width, height, imageData, data, x, y, c, r,
+	var x1, y1, x2, y2, tolerance, t, imageData, data, x, y, c, r,
 		g, b, i, row, a;
 
 	x1 = args[ 0 ];
@@ -696,12 +696,6 @@ function get( screenData, args ) {
 		y1 = y2;
 		y2 = t;
 	}
-	width = x2 - x1;
-	height = y2 - y1;
-
-	if( width <= 0 || height <= 0 ) {
-		return [ [] ];
-	}
 
 	m_qbData.commands.getImageData( screenData );
 
@@ -709,9 +703,9 @@ function get( screenData, args ) {
 
 	data = [];
 	row = 0;
-	for( y = y1; y < y2; y++ ) {
+	for( y = y1; y <= y2; y++ ) {
 		data.push([]);
-		for( x = x1; x < x2; x++ ) {
+		for( x = x1; x <= x2; x++ ) {
 			// Calculate the index of the image data
 			i = ( ( screenData.width * y ) + x ) * 4;
 			r = imageData.data[ i ];

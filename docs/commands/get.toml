@@ -9,3 +9,9 @@ pdata = [
 	"Second vertical coordinate.",
 	"[OPTIONAL]. If the color is not in the color palette then attempt to find the closest fit color."
 ]
+example = """
+$.screen("300x200");
+$.circle(150, 100, 50, 4);
+var colors = $.get(105, 75, 110, 75);
+$.print(colors[0].join(","));
+"""
