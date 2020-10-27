@@ -1075,7 +1075,7 @@ qbs._.addCommand( "input", input, false, true, [
 function input( screenData, args ) {
 	var prompt, callback, name, isNumber, isInteger, onscreenKeyboard, 
 		readyList, inputData, onscreenKeyboardOptions, allowNegative,
-		min, max, isNegative, isPositive;
+		min, max, isNegative, isPositive, promise, promiseData;
 
 	prompt = args[ 0 ];
 	callback = args[ 1 ];
@@ -1084,6 +1084,17 @@ function input( screenData, args ) {
 	isInteger = !!( args[ 4 ] );
 	allowNegative = args[ 5 ];
 	onscreenKeyboard = args[ 6 ];
+	promiseData = {
+		"thenFun": [],
+		"catchFun": []
+	};
+	promise = {
+		"then": function ( f ) {
+			promiseData.thenFun = f;
+		}, "catch": function ( f ) {
+			promiseData.catchFun = f;
+		}
+	}; 
 
 	// Validate prompt
 	if( prompt == null ) {
@@ -1192,6 +1203,7 @@ function input( screenData, args ) {
 		"max": max,
 		"val": "",
 		"readyList": readyList,
+		"promiseData": promiseData,
 		"screenData": screenData,
 		"onscreenKeyboard": onscreenKeyboard,
 		"keyboardHidden": true,
@@ -1210,6 +1222,8 @@ function input( screenData, args ) {
 	m_promptInterval = setInterval( function() {
 		showPrompt( screenData, false );
 	}, 100 );
+
+	return promise;
 }
 
 function detectOnscreenKeyboard( input ) {
@@ -1336,6 +1350,9 @@ function triggerReady( input ) {
 	temp = input.readyList.slice();
 	for( i = 0; i < temp.length; i++ ) {
 		temp[ i ]( input.val );
+	}
+	if( qbs.util.isFunction( input.promiseData.thenFun ) ) {
+		input.promiseData.thenFun( input.val );
 	}
 }
 

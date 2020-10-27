@@ -54,39 +54,16 @@ Math.seedrandom( 'constant' );
 
 var width = 292;
 var height = 140;
-$.screen( { "aspect": width + "x" + height, "isMultiple": true } );
-$.print("\n");
-$.input("What is your name?", null, "name");
-$.onkey( "Escape", "down", function () {
-	console.log("Hello");
-	$.print("HEllo");
-	$.cancelInput("name");
-});
-$.bezier( {
-		"xStart": 5,
-		"yStart": 5,
-		"x1": 10,
-		"y1": 35,
-		"x2": 55,
-		"y2": 10,
-		"xEnd": 95,
-		"yEnd": 95
-	} );
-//$.setFont( 4 );
-// var msg = "";
-// var x = 1;
-// var y = 1;
 
-// $.setColor( 15 );
-// for( var i = 0; i < 256; i++ ) {
-// 	$.setPosPx( x, y );
-// 	$.print( String.fromCharCode( i ), true );
-// 	x += 9;
-// 	if( x >= width - 9 ) {
-// 		y += 17;
-// 		x = 1;
-// 	}
-// }
+$.screen( { "aspect": width + "x" + height, "isMultiple": true } );
+get_input();
+
+async function get_input() {
+	var name;
+	$.print( "\n" );
+	name = await $.input( "What is your name? " );
+	$.print( "Hello " + name );
+}
 
 </script>
 </body>
