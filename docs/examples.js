@@ -132,7 +132,14 @@ $.print(colors[0].join(","));
 
 }
 examples['getCols'] = function() {
-undefined
+$.screen("300x200", 'canvasContainer');
+var cols = $.getCols();
+var msg = "";
+for(var i = 0; i < cols; i++) {
+	msg += "*";
+}
+$.print(msg);
+
 }
 examples['getDefaultPal'] = function() {
 undefined

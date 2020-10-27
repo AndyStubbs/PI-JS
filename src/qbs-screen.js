@@ -310,8 +310,8 @@ function createScreenData(
 		"x": 0,
 		"y": 0,
 		"font": m_qbData.defaultFont,
-		"rows": Math.floor( canvas.width / m_qbData.defaultFont.width ),
-		"cols": Math.floor( canvas.height / m_qbData.defaultFont.height ),
+		"rows": Math.floor( canvas.height / m_qbData.defaultFont.height ),
+		"cols": Math.floor( canvas.width / m_qbData.defaultFont.width ),
 		"prompt": m_qbData.defaultPrompt,
 		"breakWord": true
 	};
