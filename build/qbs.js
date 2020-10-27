@@ -1842,17 +1842,19 @@ function input( screenData, args ) {
 	isInteger = !!( args[ 4 ] );
 	allowNegative = args[ 5 ];
 	onscreenKeyboard = args[ 6 ];
-	promiseData = {
-		"thenFun": [],
-		"catchFun": []
-	};
-	promise = {
-		"then": function ( f ) {
-			promiseData.thenFun = f;
-		}, "catch": function ( f ) {
-			promiseData.catchFun = f;
-		}
-	}; 
+	promiseData = {};
+	// promise = {
+	// 	"then": function ( f ) {
+	// 		promiseData.thenFun = f;
+	// 	},
+	// 	"catch": function ( f ) {
+	// 		promiseData.catchFun = f;
+	// 	}
+	// }; 
+	promise = new Promise( function( resolve, reject ) {
+		promiseData.resolve = resolve;
+		promiseData.reject = reject;
+	} );
 
 	// Validate prompt
 	if( prompt == null ) {
@@ -2109,9 +2111,10 @@ function triggerReady( input ) {
 	for( i = 0; i < temp.length; i++ ) {
 		temp[ i ]( input.val );
 	}
-	if( qbs.util.isFunction( input.promiseData.thenFun ) ) {
-		input.promiseData.thenFun( input.val );
-	}
+	// if( qbs.util.isFunction( input.promiseData.thenFun ) ) {
+	// 	input.promiseData.thenFun( input.val );
+	// }
+	input.promiseData.resolve( input.val );
 }
 
 // Process the input for numbers and if a number makes sure it meets the
