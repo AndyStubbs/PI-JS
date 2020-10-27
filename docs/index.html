@@ -36,7 +36,8 @@
 			</p>
 			<p>
 				Graphics commands require a <a href ="#command_screen">screen</a> to be created
-				before being called. When the screen command is called a screen object is returned.
+				before being called. The screen command creates a canvas object and adds it to the
+				page by default. When the screen command is called a screen object is returned.
 				Graphics commands can be called from either the global "$", "qbs", or the screen
 				object.
 			</p>
@@ -65,9 +66,9 @@ $.line(10, 10, 290, 190);
 
 // Object properties call
 $.line({
-	"x1": 290, 
+	"x1": 10, 
 	"y1": 10, 
-	"x2": 10, 
+	"x2": 290, 
 	"y2": 190
 });</code></pre></div>
 		</section>
