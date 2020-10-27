@@ -12,6 +12,7 @@
 		<div><a href="#intro">Intro</a></div>
 		<div><a href="#usage">Usage</a></div>
 		<div><a href="#index">Index</a></div>
+		<div><a href="#allCommands">Commands</a></div>
 	</section>
 	<div class='mainBody'>
 		<section id="header">
@@ -30,7 +31,8 @@
 				QBS is a collection of graphics, input, and sound commands that are all stored in a
 				global variable container. QBS commands can be accessed by using the global
 				variable "qbs" or "$". If there is already a global variable set to "$" then the
-				QBS library will not override the "$".
+				QBS library will not override the "$". This is in case you want to use other
+				libraries such as jQuery that use the "$" global.
 			</p>
 			<p>
 				Graphics commands require a <a href ="#command_screen">screen</a> to be created
@@ -49,7 +51,7 @@ screen.line(10, 10, 290, 190);</code></pre></div>
 				working with one screen the simpliest way to run the graphics commands is to use
 				the "$" variable. If you are working with multiple screens you can still use "$"
 				variable but you will have to call the <a href="#command_setScreen">setScreen</a>
-				command.
+				command if you want to change drawing screens.
 			</p>
 			<p>
 				There are two ways to call commands, the first is to use a comma seperated list
@@ -57,7 +59,11 @@ screen.line(10, 10, 290, 190);</code></pre></div>
 				the parameters as object properties.
 			</p>
 			<div class="example"><pre><code class='lang-javascript'>$.screen("300x200");
+
+// Comma seperated list call
 $.line(10, 10, 290, 190);
+
+// Object properties call
 $.line({
 	"x1": 290, 
 	"y1": 10, 

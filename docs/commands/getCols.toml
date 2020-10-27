@@ -4,6 +4,7 @@ isScreen = true
 parameters = [ ]
 seeAlso = [ "getPos", "getPosPx", "getRows", "print", "setFont", "setFontSize", "setPos", "setPosPx" ]
 example = """
+// Print a line of *'s on the top of the screen
 $.screen("300x200");
 var cols = $.getCols();
 var msg = "";

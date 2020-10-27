@@ -132,6 +132,7 @@ $.print(colors[0].join(","));
 
 }
 examples['getCols'] = function() {
+// Print a line of *'s on the top of the screen
 $.screen("300x200", 'canvasContainer');
 var cols = $.getCols();
 var msg = "";

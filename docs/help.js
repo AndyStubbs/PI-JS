@@ -28,7 +28,7 @@ function printIndex() {
 
 function printCommands() {
 	var msg, i, j, msgParam, name;
-	msg = "";
+	msg = "<h1>Commands</h1>";
 	for( i = 0; i < commands.length; i++ ) {
 		name = commands[ i ].name;
 		msg += "<section id='command_" + name + "'>";
@@ -154,4 +154,15 @@ setTimeout( function () {
 	document.querySelectorAll('pre code').forEach((block) => {
 		hljs.highlightBlock(block);
 	});
+} );
+
+var resizeTimeout;
+window.addEventListener( "resize", function () {
+	window.clearTimeout( resizeTimeout );
+	resizeTimeout = window.setTimeout( function () {
+		document.querySelectorAll( ".border" ).forEach( function ( block ) {
+			var name = block.id.substr( block.id.indexOf( "_" ) + 1 );
+			block.innerHTML = printBorderLine( name );
+		} );
+	}, 100 );
 } );

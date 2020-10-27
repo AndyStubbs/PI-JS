@@ -21,7 +21,7 @@ code {
 	font-family: IBM_FONT, VERITE, monospace;
 }
 .mainBody {
-	margin-left: 124px;
+	margin-left: 150px;
 }
 h1 {
 	font-weight: normal;
@@ -90,7 +90,7 @@ input[type=button]:active {
 	padding: 5px;
 	margin-top: 0px;
 	background-color: #AAAAAA;
-	width: 116px;
+	width: 136px;
 	height: 100%;
 	color: black;
 }
