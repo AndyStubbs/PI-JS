@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Input 04</title>
+		<script type="text/toml">
+			[[TOML_START]]
+			file = "input_04"
+			name = "input 04"
+			width = 300
+			height = 210
+			commands = """
+				KT "Andy Stubbs"
+				KD "Enter"
+				KT "37"
+				KD "Enter"
+			"""
+			[[TOML_END]]
+		</script>
+		<script src="../../build/qbs.min.js"></script>
+		<style>
+			html, body {
+				background-color: grey;
+			}
+		</style>
+	</head>
+<body>
+<script>
+
+var width = 292;
+var height = 140;
+
+$.screen( { "aspect": width + "x" + height, "isMultiple": true } );
+get_input();
+
+async function get_input() {
+	var name, age;
+
+	$.print( "\n" );
+	name = await $.input( "What is your name? " );
+	$.print( "Hello " + name );
+	age = await $.input( "What is your age? " );
+	$.print( "You are " + age + " years old." );
+}
+
+</script>
+</body>
+</html>
