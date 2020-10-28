@@ -52,19 +52,10 @@
 
 Math.seedrandom( 'constant' );
 
-var width = 292;
-var height = 140;
-
-$.screen( { "aspect": width + "x" + height, "isMultiple": true } );
-get_input();
-
-async function get_input() {
-	var name;
-	$.print( "\n" );
-	name = await $.input( "What is your name? " );
-	$.print( "Hello " + name );
-}
-
+$.screen("300x200");
+var pal = $.getDefaultPal();
+$.setColor( 4 );
+$.print( pal[ 4 ].s );
 </script>
 </body>
 </html>

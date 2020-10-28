@@ -1,3 +1,15 @@
 name = "getRows"
+description="Gets the max number of printable characters in a column on the screen."
 isScreen = true
 parameters = [ ]
+seeAlso = [ "getPos", "getPosPx", "getCols", "print", "setFont", "setFontSize", "setPos", "setPosPx" ]
+example = """
+// Print a line of *'s on the left of the screen
+$.screen("300x200");
+var rows = $.getRows();
+var msg = "";
+for(var i = 0; i < rows; i++) {
+	msg += "*\\n";
+}
+$.print(msg);
+"""

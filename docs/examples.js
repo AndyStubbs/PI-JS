@@ -143,25 +143,57 @@ $.print(msg);
 
 }
 examples['getDefaultPal'] = function() {
-undefined
+$.screen("300x200", 'canvasContainer');
+var pal = $.getDefaultPal();
+$.setColor( 4 );
+$.print( pal[ 4 ].s );
+
 }
 examples['getPal'] = function() {
-undefined
+$.screen("300x200", 'canvasContainer');
+var pal = $.getPal();
+$.setColor( 2 );
+$.print( pal[ 2 ].s );
+
 }
 examples['getPixel'] = function() {
-undefined
+$.screen("300x200", 'canvasContainer');
+$.setColor(5);
+$.pset(5, 5);
+var pixel = $.getPixel(5, 5);
+$.print( pixel.s );
+
 }
 examples['getPos'] = function() {
-undefined
+$.screen("300x200", 'canvasContainer');
+$.setPos(5, 5);
+var pos = $.getPos();
+$.print(pos.row + ", " + pos.col);
+
 }
 examples['getPosPx'] = function() {
-undefined
+$.screen("300x200", 'canvasContainer');
+$.setPosPx(15, 15);
+var pos = $.getPosPx();
+$.print(pos.x + ", " + pos.y);
+
 }
 examples['getRows'] = function() {
-undefined
+// Print a line of *'s on the left of the screen
+$.screen("300x200", 'canvasContainer');
+var rows = $.getRows();
+var msg = "";
+for(var i = 0; i < rows; i++) {
+	msg += "*\n";
+}
+$.print(msg);
+
 }
 examples['getScreen'] = function() {
-undefined
+$.screen("300x200", 'canvasContainer');
+var $screen = $.getScreen(0);
+$screen.print("This is screen 0.");
+
 }
 examples['getTouchPress'] = function() {
 undefined
