@@ -1,3 +1,20 @@
 name = "intouch"
+description = "Gets the most recent touch information."
 isScreen = true
 parameters = [ ]
+seeAlso = [ "ontouch", "setPinchZoom", "startTouch", "stopTouch" ]
+example = """
+$.screen( "4x4" );
+$.startTouch();
+$.setPinchZoom( false );
+var interval = setInterval( function () {
+	var touches = $.intouch();
+	if( touches.length > 0 ) {
+		$.setColor( Math.floor( Math.random() * 9 ) + 1 );
+		$.pset( touches[ 0 ].x, touches[ 0 ].y );
+	}
+}, 50 );
+"""
+onclose = """
+clearInterval( interval );
+"""

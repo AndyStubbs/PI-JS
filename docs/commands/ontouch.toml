@@ -1,3 +1,17 @@
 name = "ontouch"
+description = """
+Create a touch event
+"""
 isScreen = true
-parameters = [ "mode", "fn", "once", "hitBox", "customData" ]
+parameters = [ "mode", "fn" ]
+pdata = [ "The type of touch event. Must be a string value set to \"start\", \"end\", or \"move\".", "The function to called when touch occurs. The first parameter will contain the touches data." ]
+seeAlso = [ "intouch", "setPinchZoom", "startTouch", "stopTouch" ]
+example = """
+$.screen( "4x4" );
+$.setPinchZoom( false );
+$.ontouch( "start", function ( touches ) {
+	var touch = touches[ 0 ];
+	$.setColor( Math.floor( Math.random() * 9 ) + 1 );
+	$.pset( touch.x, touch.y );
+} );
+"""

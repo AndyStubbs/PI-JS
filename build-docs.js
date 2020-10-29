@@ -21,14 +21,23 @@ for( let i = 0; i < files.length; i++ ) {
 	commands.push( command );
 	console.log( command.name );
 	let name = command.name.replace( ".", "_" );
-	var code, start, end;
+	var code, start, end, codeClose;
 	code = command.example;
+	if( code === undefined ) {
+		continue;
+	}
 	if( typeof code === "string" ) {
 		start = code.indexOf( ".screen(" );
 		end = code.indexOf( ")", start );
 		code = code.substring( 0, end ) + ", 'canvasContainer'" + code.substring( end );
 	}
-	examples += "examples['" + name + "'] = function() {\n" + code + "\n}\n";
+	codeClose = command.onclose;
+	if( codeClose === undefined ) {
+		codeClose = "onExampleClose = function () {};"
+	} else {
+		codeClose = "onExampleClose = function () {" + codeClose + "}"
+	}
+	examples += "examples['" + name + "'] = function() {\n" + code + codeClose + "\n}\n";
 	//examples[ name ] = command.example;
 }
 fs.writeFileSync( "docs/examples.js", examples );

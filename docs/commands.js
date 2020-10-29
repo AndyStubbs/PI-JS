@@ -275,10 +275,6 @@ $.filterImg( function ( color, x, y ) {
 		"isScreen": false,
 		"parameters": ["screenId"]
 	}, {
-		"name": "getTouchPress",
-		"isScreen": true,
-		"parameters": []
-	}, {
 		"name": "height",
 		"isScreen": true,
 		"parameters": []

@@ -1,3 +1,4 @@
+var onExampleClose = function () {};
 
 function printIndex() {
 	var i, strContents, strLetter, isDivOpen, strIndex, name;
@@ -146,6 +147,7 @@ function CloseExample() {
 	$.removeAllScreens();
 	$.clearKeys();
 	document.getElementById( "exampleBox" ).style.display = "none";
+	onExampleClose();
 }
 
 printIndex();

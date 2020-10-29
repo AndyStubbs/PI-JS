@@ -150,3 +150,9 @@ canvas {
 .purple {
 	background-color: rgba(112,39,195,0.75) !important;
 }
+.hljs-literal {
+	color: #a0a0a0;
+}
+.hljs-built_in {
+	color: #a09489;
+}

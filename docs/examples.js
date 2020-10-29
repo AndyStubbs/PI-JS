@@ -1,7 +1,7 @@
 var examples = {};
 examples['arc'] = function() {
 $.screen("300x200", 'canvasContainer');
-$.arc(150, 100, 50, 45, 270);
+$.arc(150, 100, 50, 45, 270);onExampleClose = function () {};
 }
 examples['bezier'] = function() {
 $.screen("300x200", 'canvasContainer');
@@ -14,7 +14,7 @@ $.bezier({
 	"y2": 75,
 	"xEnd": 280,
 	"yEnd": 185
-});
+});onExampleClose = function () {};
 }
 examples['cancelAllInputs'] = function() {
 $.screen("300x200", 'canvasContainer');
@@ -23,7 +23,7 @@ $.input("What is your name?", null);
 $.onkey( "Escape", "down", function () {  
 	$.print("\nInput Canceled");
 	$.cancelAllInputs();
-}, true );
+}, true );onExampleClose = function () {};
 }
 examples['cancelInput'] = function() {
 $.screen("300x200", 'canvasContainer');
@@ -32,16 +32,16 @@ $.input("What is your name?", null, "name");
 $.onkey( "Escape", "down", function () {
 	$.print("\nInput Canceled");
 	$.cancelInput("name");
-}, true);
+}, true);onExampleClose = function () {};
 }
 examples['canvas'] = function() {
 $.screen("300x200", 'canvasContainer');
 $.canvas().className = "purple";
-$.print("\n\nThe background is now purple.");
+$.print("\n\nThe background is now purple.");onExampleClose = function () {};
 }
 examples['circle'] = function() {
 $.screen("300x200", 'canvasContainer');
-$.circle(150, 100, 50, "red");
+$.circle(150, 100, 50, "red");onExampleClose = function () {};
 }
 examples['clearKeys'] = function() {
 $.screen("300x200", 'canvasContainer');
@@ -52,24 +52,24 @@ $.onkey( "any", "down", function (key) {
 $.onkey( "Escape", "down", function (key) {
 	$.print(key.key + " pressed.");
 	$.clearKeys();
-});
+});onExampleClose = function () {};
 }
 examples['cls'] = function() {
 $.screen("300x200", 'canvasContainer');
 $.line(0, 0, 300, 200);
 $.onkey("any", "down", function () {
 	$.cls();
-});
+});onExampleClose = function () {};
 }
 examples['createAudioPool'] = function() {
 var bombPool = $.createAudioPool("bomb.wav", 1, 'canvasContainer');
 $.ready(function () {
 	$.playAudioPool(bombPool);
-});
+});onExampleClose = function () {};
 }
 examples['deleteAudioPool'] = function() {
 var bombPool = $.createAudioPool("bomb.wav", 1, 'canvasContainer');
-$.deleteAudioPool(bombPool);
+$.deleteAudioPool(bombPool);onExampleClose = function () {};
 }
 examples['draw'] = function() {
 $.screen("300x200", 'canvasContainer');
@@ -77,35 +77,34 @@ $.pset(150, 100);
 $.draw("C9 U2 G2 L C15 NU4 BR3 C9 U2 R ");
 $.draw("D2 R U2 D C10 R D L R D R U R U L");
 $.draw("BU2 BL2 C6 L U L R3 L UC8 L BD6 ");
-$.draw("BL C9 D2 R C8 U2 C9 R D2");
+$.draw("BL C9 D2 R C8 U2 C9 R D2");onExampleClose = function () {};
 }
 examples['drawImage'] = function() {
 $.screen("300x200", 'canvasContainer');
 var monkey = $.loadImage("monkey.png");
 $.ready(function () {
 	$.drawImage(monkey, 150, 100, 0, 0.5, 0.5);
-});
+});onExampleClose = function () {};
 }
 examples['drawSprite'] = function() {
-$.screen("300x200", 'canvasContainer');
-var monkey = $.loadSpritesheet("monkey.png", 32, 32, 1);
-$.ready(function () {
-	var frame = 0;
-	var interval = setInterval(run, 500);
+var monkey, frame, interval;
+$.screen( "300x200" , 'canvasContainer');
+monkey = $.loadSpritesheet( "monkey.png", 32, 32, 1 );
+$.ready( function () {
+	frame = 0;
+	interval = setInterval( run, 500 );
 	function run() {
 		frame += 1;
 		$.cls();
-		$.drawSprite(monkey, frame % 2, 150, 100, 0, 0.5, 0.5);
+		$.drawSprite( monkey, frame % 2, 150, 100, 0, 0.5, 0.5 );
 	}
 	run();
-	setTimeout(function () {
-		clearInterval(interval);
-	}, 2000);
-});
+} );onExampleClose = function () {clearInterval( interval );
+}
 }
 examples['ellipse'] = function() {
 $.screen("300x200", 'canvasContainer');
-$.ellipse(150, 100, 50, 80, "blue");
+$.ellipse(150, 100, 50, 80, "blue");onExampleClose = function () {};
 }
 examples['filterImg'] = function() {
 $.screen("300x200", 'canvasContainer');
@@ -115,21 +114,21 @@ $.filterImg(function (color, x, y) {
 	color.g = color.g + Math.round( Math.cos( x / 7 ) * 128 );
 	color.b = color.b + Math.round( Math.sin( y / 5 ) * 128 );
 	return color;
-});
+});onExampleClose = function () {};
 }
 examples['findColor'] = function() {
 $.screen("300x200", 'canvasContainer');
 var color = $.findColor("red");
 $.setColor(color);
 $.print("The index of red is " + color + ".");
-
+onExampleClose = function () {};
 }
 examples['get'] = function() {
 $.screen("300x200", 'canvasContainer');
 $.circle(150, 100, 50, 4);
 var colors = $.get(105, 75, 110, 75);
 $.print(colors[0].join(","));
-
+onExampleClose = function () {};
 }
 examples['getCols'] = function() {
 // Print a line of *'s on the top of the screen
@@ -140,21 +139,21 @@ for(var i = 0; i < cols; i++) {
 	msg += "*";
 }
 $.print(msg);
-
+onExampleClose = function () {};
 }
 examples['getDefaultPal'] = function() {
 $.screen("300x200", 'canvasContainer');
 var pal = $.getDefaultPal();
 $.setColor( 4 );
 $.print( pal[ 4 ].s );
-
+onExampleClose = function () {};
 }
 examples['getPal'] = function() {
 $.screen("300x200", 'canvasContainer');
 var pal = $.getPal();
 $.setColor( 2 );
 $.print( pal[ 2 ].s );
-
+onExampleClose = function () {};
 }
 examples['getPixel'] = function() {
 $.screen("300x200", 'canvasContainer');
@@ -162,21 +161,21 @@ $.setColor(5);
 $.pset(5, 5);
 var pixel = $.getPixel(5, 5);
 $.print( pixel.s );
-
+onExampleClose = function () {};
 }
 examples['getPos'] = function() {
 $.screen("300x200", 'canvasContainer');
 $.setPos(5, 5);
 var pos = $.getPos();
 $.print(pos.row + ", " + pos.col);
-
+onExampleClose = function () {};
 }
 examples['getPosPx'] = function() {
 $.screen("300x200", 'canvasContainer');
 $.setPosPx(15, 15);
 var pos = $.getPosPx();
 $.print(pos.x + ", " + pos.y);
-
+onExampleClose = function () {};
 }
 examples['getRows'] = function() {
 // Print a line of *'s on the left of the screen
@@ -187,317 +186,73 @@ for(var i = 0; i < rows; i++) {
 	msg += "*\n";
 }
 $.print(msg);
-
+onExampleClose = function () {};
 }
 examples['getScreen'] = function() {
 $.screen("300x200", 'canvasContainer');
 var $screen = $.getScreen(0);
 $screen.print("This is screen 0.");
-
-}
-examples['getTouchPress'] = function() {
-undefined
-}
-examples['height'] = function() {
-undefined
-}
-examples['ingamepads'] = function() {
-undefined
-}
-examples['inkey'] = function() {
-undefined
-}
-examples['inmouse'] = function() {
-undefined
-}
-examples['inpress'] = function() {
-undefined
-}
-examples['input'] = function() {
-undefined
-}
-examples['inputReady'] = function() {
-undefined
+onExampleClose = function () {};
 }
 examples['intouch'] = function() {
-undefined
+$.screen( "4x4" , 'canvasContainer');
+$.startTouch();
+$.setPinchZoom( false );
+var interval = setInterval( function () {
+	var touches = $.intouch();
+	if( touches.length > 0 ) {
+		$.setColor( Math.floor( Math.random() * 9 ) + 1 );
+		$.pset( touches[ 0 ].x, touches[ 0 ].y );
+	}
+}, 50 );
+onExampleClose = function () {clearInterval( interval );
 }
-examples['isDomElement'] = function() {
-undefined
-}
-examples['isFunction'] = function() {
-undefined
-}
-examples['line'] = function() {
-undefined
-}
-examples['loadFont'] = function() {
-undefined
-}
-examples['loadImage'] = function() {
-undefined
-}
-examples['loadSpritesheet'] = function() {
-undefined
-}
-examples['offclick'] = function() {
-undefined
-}
-examples['offgamepad'] = function() {
-undefined
-}
-examples['offkey'] = function() {
-undefined
-}
-examples['offmouse'] = function() {
-undefined
-}
-examples['offpress'] = function() {
-undefined
-}
-examples['offtouch'] = function() {
-undefined
-}
-examples['onclick'] = function() {
-undefined
-}
-examples['ongamepad'] = function() {
-undefined
-}
-examples['onkey'] = function() {
-undefined
-}
-examples['onmouse'] = function() {
-undefined
-}
-examples['onpress'] = function() {
-undefined
 }
 examples['ontouch'] = function() {
-undefined
-}
-examples['paint'] = function() {
-undefined
-}
-examples['play'] = function() {
-undefined
-}
-examples['playAudioPool'] = function() {
-undefined
-}
-examples['point'] = function() {
-undefined
-}
-examples['print'] = function() {
-undefined
-}
-examples['printTable'] = function() {
-undefined
-}
-examples['pset'] = function() {
-undefined
-}
-examples['put'] = function() {
-undefined
-}
-examples['ready'] = function() {
-undefined
-}
-examples['rect'] = function() {
-undefined
-}
-examples['removeAllScreens'] = function() {
-undefined
-}
-examples['removeScreen'] = function() {
-undefined
-}
-examples['render'] = function() {
-undefined
-}
-examples['screen'] = function() {
-undefined
-}
-examples['set'] = function() {
-undefined
-}
-examples['setActionKey'] = function() {
-undefined
-}
-examples['setAutoRender'] = function() {
-undefined
-}
-examples['setBgColor'] = function() {
-undefined
-}
-examples['setColor'] = function() {
-undefined
-}
-examples['setColors'] = function() {
-undefined
-}
-examples['setContainerBgColor'] = function() {
-undefined
-}
-examples['setDefaultFont'] = function() {
-undefined
-}
-examples['setDefaultPal'] = function() {
-undefined
-}
-examples['setEnableContextMenu'] = function() {
-undefined
-}
-examples['setErrorMode'] = function() {
-undefined
-}
-examples['setFont'] = function() {
-undefined
-}
-examples['setFontSize'] = function() {
-undefined
-}
-examples['setInputCursor'] = function() {
-undefined
-}
-examples['setPalColor'] = function() {
-undefined
-}
-examples['setPen'] = function() {
-undefined
+$.screen( "4x4" , 'canvasContainer');
+$.setPinchZoom( false );
+$.ontouch( "start", function ( touches ) {
+	var touch = touches[ 0 ];
+	$.setColor( Math.floor( Math.random() * 9 ) + 1 );
+	$.pset( touch.x, touch.y );
+} );
+onExampleClose = function () {};
 }
 examples['setPinchZoom'] = function() {
-undefined
-}
-examples['setPixelMode'] = function() {
-undefined
-}
-examples['setPos'] = function() {
-undefined
-}
-examples['setPosPx'] = function() {
-undefined
-}
-examples['setScreen'] = function() {
-undefined
-}
-examples['setVolume'] = function() {
-undefined
-}
-examples['setWordBreak'] = function() {
-undefined
-}
-examples['sound'] = function() {
-undefined
-}
-examples['startKeyboard'] = function() {
-undefined
-}
-examples['startMouse'] = function() {
-undefined
+$.screen( "4x4" , 'canvasContainer');
+$.setPinchZoom( false );
+$.ontouch( "start", function ( touches ) {
+	var touch = touches[ 0 ];
+	$.setColor( Math.floor( Math.random() * 9 ) + 1 );
+	$.pset( touch.x, touch.y );
+} );
+onExampleClose = function () {};
 }
 examples['startTouch'] = function() {
-undefined
-}
-examples['stopAudioPool'] = function() {
-undefined
-}
-examples['stopGamepads'] = function() {
-undefined
-}
-examples['stopKeyboard'] = function() {
-undefined
-}
-examples['stopMouse'] = function() {
-undefined
-}
-examples['stopPlay'] = function() {
-undefined
-}
-examples['stopSound'] = function() {
-undefined
+$.screen( "4x4" , 'canvasContainer');
+$.startTouch();
+$.setPinchZoom( false );
+$.ontouch( "start", function ( touches ) {
+	var touch = touches[ 0 ];
+	$.setColor( Math.floor( Math.random() * 9 ) + 1 );
+	$.pset( touch.x, touch.y );
+} );
+onExampleClose = function () {};
 }
 examples['stopTouch'] = function() {
-undefined
-}
-examples['swapColor'] = function() {
-undefined
-}
-examples['util_checkColor'] = function() {
-undefined
-}
-examples['util_clamp'] = function() {
-undefined
-}
-examples['util_colorStringToHex'] = function() {
-undefined
-}
-examples['util_compareColors'] = function() {
-undefined
-}
-examples['util_convertToArray'] = function() {
-undefined
-}
-examples['util_convertToColor'] = function() {
-undefined
-}
-examples['util_copyProperties'] = function() {
-undefined
-}
-examples['util_cToHex'] = function() {
-undefined
-}
-examples['util_degreesToRadian'] = function() {
-undefined
-}
-examples['util_deleteProperties'] = function() {
-undefined
-}
-examples['util_getWindowSize'] = function() {
-undefined
-}
-examples['util_hexToColor'] = function() {
-undefined
-}
-examples['util_inRange'] = function() {
-undefined
-}
-examples['util_inRange2'] = function() {
-undefined
-}
-examples['util_isArray'] = function() {
-undefined
-}
-examples['util_isInteger'] = function() {
-undefined
-}
-examples['util_math'] = function() {
-undefined
-}
-examples['util_pad'] = function() {
-undefined
-}
-examples['util_padL'] = function() {
-undefined
-}
-examples['util_padR'] = function() {
-undefined
-}
-examples['util_queueMicrotask'] = function() {
-undefined
-}
-examples['util_radiansToDegrees'] = function() {
-undefined
-}
-examples['util_rgbToColor'] = function() {
-undefined
-}
-examples['util_rgbToHex'] = function() {
-undefined
-}
-examples['util_rndRange'] = function() {
-undefined
-}
-examples['width'] = function() {
-undefined
+$.screen( "100x100" , 'canvasContainer');
+$.startTouch();
+$.setPinchZoom( false );
+var count = 5;
+$.print( count + " touches left" );
+$.ontouch( "start", function ( touches ) {
+	$.setColor( Math.floor( Math.random() * 9 ) + 1 );
+	$.print( --count + " touches left" );
+	var touch = touches[ 0 ];
+	$.pset( touch.x, touch.y );
+	if( count === 0 ) {
+		$.stopTouch();
+	}
+} );
+onExampleClose = function () {};
 }

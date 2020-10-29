@@ -4053,10 +4053,10 @@ function updateTouch( screenData, e, action ) {
 			touch = e.touches[ j ];
 			touchData = {};
 			touchData.x = Math.floor(
-				( touch.pageX - rect.left ) / rect.width * screenData.width
+				( touch.clientX - rect.left ) / rect.width * screenData.width
 			);
 			touchData.y = Math.floor(
-				( touch.pageY - rect.top ) / rect.height * screenData.height
+				( touch.clientY - rect.top ) / rect.height * screenData.height
 			);
 			touchData.id = touch.identifier;
 			if( screenData.touches[ touchData.id ] ) {
@@ -4098,7 +4098,7 @@ function getTouch( screenData ) {
 	return touchArr;
 }
 
-qbs._.addCommand( "getTouchPress", getTouchPress, false, true, [] );
+qbs._.addCommand( "getTouchPress", getTouchPress, true, true, [] );
 function getTouchPress( screenData ) {
 
 	function copyTouches( touches, touchArr, action ) {
