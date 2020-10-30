@@ -1,5 +1,5 @@
 name = "intouch"
-description = "Gets the most recent touch information."
+description = "Gets the most recent touch status."
 isScreen = true
 parameters = [ ]
 seeAlso = [ "ontouch", "setPinchZoom", "startTouch", "stopTouch" ]

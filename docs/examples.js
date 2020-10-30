@@ -194,6 +194,54 @@ var $screen = $.getScreen(0);
 $screen.print("This is screen 0.");
 onExampleClose = function () {};
 }
+examples['height'] = function() {
+$.screen( "300x200" , 'canvasContainer');
+$.print( "Height: " + $.height() );
+onExampleClose = function () {};
+}
+examples['ingamepads'] = function() {
+var x, y, frame;
+$.screen( "300x200" , 'canvasContainer');
+$.setColor( 15 );
+x = 150;
+y = 100;
+requestAnimationFrame( run );
+function run( dt ) {
+	var pads, factor;
+	factor = dt / 2500;
+	pads = $.ingamepads( 0 );
+	$.cls();
+	if( pads.length > 0 ) {
+		x = qbs.util.clamp( x + pads[ 0 ].axes[ 0 ] * factor, 0, 299 );
+		y = qbs.util.clamp( y + pads[ 0 ].axes[ 1 ] * factor, 0, 199 );
+		$.circle( Math.floor( x ), Math.floor( y ) , 10 );
+		$.pset( Math.floor( x ), Math.floor( y ) );
+	}
+	frame = requestAnimationFrame( run );
+}
+onExampleClose = function () {cancelAnimationFrame( frame );
+}
+}
+examples['inkey'] = function() {
+$.screen( "300x200" , 'canvasContainer');
+var frame = requestAnimationFrame( run );
+function run() {
+	var keys, key;
+	keys = $.inkey();
+	$.cls();
+	$.print( "Press any key" );
+	for( key in $.inkey() ) {
+		$.print( "--------------------------" );
+		$.print( "key:      " + keys[ key ].key );
+		$.print( "location: " + keys[ key ].location );
+		$.print( "code:     " + keys[ key ].code );
+		$.print( "keyCode:  " + keys[ key ].keyCode );
+	}
+	frame = requestAnimationFrame( run );
+}
+onExampleClose = function () {cancelAnimationFrame( frame );
+}
+}
 examples['intouch'] = function() {
 $.screen( "4x4" , 'canvasContainer');
 $.startTouch();
@@ -254,5 +302,10 @@ $.ontouch( "start", function ( touches ) {
 		$.stopTouch();
 	}
 } );
+onExampleClose = function () {};
+}
+examples['width'] = function() {
+$.screen( "300x200" , 'canvasContainer');
+$.print( "Width: " + $.width() );
 onExampleClose = function () {};
 }

@@ -58,7 +58,7 @@ function stopGamepads() {
 	cancelAnimationFrame( m_gamepadLoopId );
 }
 
-qbs._.addCommand( "ingamepads", ingamepads, false, false, [ "gamePad" ] );
+qbs._.addCommand( "ingamepads", ingamepads, false, false, [] );
 function ingamepads() {
 	if( m_controllers ) {
 		updateControllers();

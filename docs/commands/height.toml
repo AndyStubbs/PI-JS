@@ -1,3 +1,9 @@
 name = "height"
+description = "Returns the height of the screen."
 isScreen = true
 parameters = [ ]
+seeAlso = [ "screen", "width" ]
+example = """
+$.screen( "300x200" );
+$.print( "Height: " + $.height() );
+"""
