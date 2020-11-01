@@ -242,6 +242,20 @@ function run() {
 onExampleClose = function () {cancelAnimationFrame( frame );
 }
 }
+examples['inmouse'] = function() {
+$.screen( "4x4" , 'canvasContainer');
+$.startTouch();
+$.setPinchZoom( false );
+var interval = setInterval( function () {
+	var mouse = $.inmouse();
+	if( mouse.buttons > 0 ) {
+		$.setColor( Math.floor( Math.random() * 9 ) + 1 );
+		$.pset( mouse.x, mouse.y );
+	}
+}, 50 );
+onExampleClose = function () {clearInterval( interval );
+}
+}
 examples['intouch'] = function() {
 $.screen( "4x4" , 'canvasContainer');
 $.startTouch();

@@ -1,7 +1,7 @@
 name = "inkey"
-description = """Gets the most recent status of keys. If the first parameter is
-left blank then it will return an array of key data. If not then it returns the
-data for a single key."""
+description = """Gets the most recent status of keys."""
+returns = """If the first parameter is left blank then it will return an array of key data objects. If not then it returns the
+an object containing data for a single key."""
 isScreen = false
 parameters = [ "key" ]
 pdata = [ "Name (string) or keyCode (integer) of key to return the status. Leave blank for the status of all keys that have been pressed." ]

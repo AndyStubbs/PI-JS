@@ -58,6 +58,12 @@ function printCommands() {
 		}
 		//msg += "</ul>";
 		msg += "<div>&nbsp;</div>";
+		msg += "<div class='sectionTitle'>Return Data</div>";
+		if( ! commands[ i ].returns ) {
+			commands[ i ].returns = "";
+		}
+		msg += "<div class='tabbed'>" + commands[ i ].returns + "</div>";
+		msg += "<div>&nbsp;</div>";
 		msg += "<div class='sectionTitle'>See Also:</div>";
 		msg += "<div class='tabbed'>";
 		if( commands[ i ].seeAlso ) {

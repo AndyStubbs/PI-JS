@@ -3,6 +3,9 @@ description = "Gets the most recent gamepad status."
 isScreen = false
 parameters = [ ]
 seeAlso = [ "ongamepad" ]
+returns = """
+An array of gamepad objects.
+"""
 example = """
 var x, y, frame;
 $.screen( "300x200" );
