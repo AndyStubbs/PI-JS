@@ -416,7 +416,7 @@ function createSound(
 	master = audioContext.createGain();
 	master.gain.value = m_qbData.volume;
 
-	overlap = 0.0000001;
+	overlap = 0.0001;
 
 	oscillator.frequency.value = frequency;
 	if( oType === "custom" ) {
@@ -440,10 +440,11 @@ function createSound(
 
 	try {
 
-		currentTime = audioContext.currentTime + delay;
+		currentTime = audioContext.currentTime + delay + 0.01;
 
 		// Set the attack
 		if( attackTime > 0 ) {
+			attackTime = Math.floor( attackTime * 10000 ) / 10000;
 			envelope.gain.setValueCurveAtTime(
 				new Float32Array( [ 0, volume ] ),
 				currentTime,
@@ -456,6 +457,7 @@ function createSound(
 
 		// Set the sustain
 		if( sustainTime > 0 ) {
+			sustainTime = Math.floor( sustainTime * 10000 ) / 10000;
 			envelope.gain.setValueCurveAtTime(
 				new Float32Array( [ volume, 0.8 * volume ] ),
 				currentTime + attackTime,
@@ -468,6 +470,7 @@ function createSound(
 
 		// Set the decay
 		if( decayTime > 0 ) {
+			decayTime = Math.floor( decayTime * 10000 ) / 10000;
 			envelope.gain.setValueCurveAtTime(
 				new Float32Array( [ 0.8 * volume, 0.1 * volume, 0 ] ),
 				currentTime + attackTime + sustainTime,
@@ -495,6 +498,8 @@ function createSound(
 
 	} catch( ex ) {
 		console.log( cmdName, ex );
+		//           498        174.614 1           0.009375000000000001 0.16875 0.018750000000000003 0.19687500000000002 "triangle" null 0
+		console.log( frequency, volume, attackTime, sustainTime, decayTime, stopTime, oType, waveTables, delay );
 	}
 }
 
