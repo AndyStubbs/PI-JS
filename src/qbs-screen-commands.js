@@ -27,7 +27,7 @@ function removeScreen( screenData ) {
 		}
 	}
 
-	screenData.screenObj.cancelAllInputs();
+	screenData.screenObj.cancelInput();
 
 	// Remove all commands from screen object
 	for( i in screenData.screenObj ) {

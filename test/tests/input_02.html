@@ -7,10 +7,20 @@
 			file = "input_02"
 			name = "input 02"
 			width = 300
-			height = 200
+			height = 210
 			commands = """
 				KT "Andy Stubbs"
 				KD "Enter"
+				SL "canvas"
+				TS 150, 105
+				TE
+				TS 45, 37
+				TE
+				TS 8, 37
+				TE
+				TS 119, 54
+				TE
+				KT "-800"
 			"""
 			[[TOML_END]]
 		</script>
@@ -24,17 +34,34 @@
 <body>
 <script>
 
-	var $screen = $.screen( "300x200" );
-	$screen.setContainerBgColor( "#000000" );
-	$screen.paint( 1, 1, 1 );
-	$screen.setColor( 15 );
-	$screen.render();
-	$.setInputCursor( "<:>" );
-	$screen.input( "What is your name? ", null, "name" );
-	$.inputReady( function ( data ) {
-		$.print( "Your name is " + data.name + "." );
-		$.render();
-	} );
+$.screen( { "aspect": "300x210", "isMultiple": true } );
+
+$.input( {
+	"prompt": "What is your name? ", 
+	"callback": function ( name ) {
+		$.print( "Hello " + name );
+	},
+	"onscreenKeyboard": "always"
+} );
+$.input( {
+	"prompt": "What is your age? ", 
+	"callback": function ( age ) {
+		$.print( "You are " + age + " years old." );
+	},
+	"onscreenKeyboard": "auto",
+	"isNumber": true,
+	"isInteger": true,
+	"allowNegative": false
+} );
+$.input( {
+	"prompt": "How much money do you have? ", 
+	"callback": function ( money ) {
+		$.print( "You have $" + money + "." );
+	},
+	"onscreenKeyboard": "auto",
+	"isNumber": true,
+	"allowNegative": true
+} );
 
 </script>
 </body>

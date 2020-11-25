@@ -3,5 +3,5 @@ $.print("\n");
 $.input("What is your name?", null);
 $.onkey( "Escape", "down", function () {  
 	$.print("\nInput Canceled");
-	$.cancelAllInputs();
+	$.cancelInput();
 }, true );

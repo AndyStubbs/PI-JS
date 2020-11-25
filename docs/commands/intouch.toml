@@ -2,7 +2,7 @@ name = "intouch"
 description = "Gets the most recent touch status."
 isScreen = true
 parameters = [ ]
-seeAlso = [ "ontouch", "setPinchZoom", "startTouch", "stopTouch" ]
+seeAlso = [ "inpress", "ontouch", "setPinchZoom", "startTouch", "stopTouch" ]
 example = """
 $.screen( "4x4" );
 $.startTouch();

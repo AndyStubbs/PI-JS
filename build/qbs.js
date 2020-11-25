@@ -942,7 +942,7 @@ m_keyKeys = {};
 m_preventKeys = {};
 m_inputs = [];
 m_inputIndex = 0;
-m_inputReadyList = [];
+//m_inputReadyList = [];
 m_onKeyEventListeners = {};
 m_anyKeyEventListeners = {
 	"down": [],
@@ -1827,21 +1827,19 @@ function onscreenKeyboardOnPress( data, keyData ) {
 
 // Prompts the user to enter input through the keyboard.
 qbs._.addCommand( "input", input, false, true, [
-	"prompt", "callback", "name", "isNumber", "isInteger", "allowNegative",
-	"onscreenKeyboard"
+	"prompt", "callback", "isNumber", "isInteger", "allowNegative", "onscreenKeyboard"
 ] );
 function input( screenData, args ) {
-	var prompt, callback, name, isNumber, isInteger, onscreenKeyboard, 
+	var prompt, callback, isNumber, isInteger, onscreenKeyboard, 
 		readyList, inputData, onscreenKeyboardOptions, allowNegative,
 		min, max, isNegative, isPositive, promise, promiseData;
 
 	prompt = args[ 0 ];
 	callback = args[ 1 ];
-	name = args[ 2 ];
-	isNumber = !!( args[ 3 ] );
-	isInteger = !!( args[ 4 ] );
-	allowNegative = args[ 5 ];
-	onscreenKeyboard = args[ 6 ];
+	isNumber = !!( args[ 2 ] );
+	isInteger = !!( args[ 3 ] );
+	allowNegative = args[ 4 ];
+	onscreenKeyboard = args[ 5 ];
 	promiseData = {};
 	// promise = {
 	// 	"then": function ( f ) {
@@ -1869,16 +1867,6 @@ function input( screenData, args ) {
 	// Validate callback
 	if( callback != null && ! qbs.util.isFunction( callback ) ) {
 		m_qbData.log( "input: callback must be a function." );
-		return;
-	}
-
-	// Validate name
-	if( name == null ) {
-		name = "input_" + m_inputs.length;
-	}
-
-	if( typeof name !== "string" ) {
-		m_qbData.log( "input: name must be a string." );
 		return;
 	}
 
@@ -1954,7 +1942,6 @@ function input( screenData, args ) {
 
 	inputData = {
 		"prompt": prompt,
-		"name": name,
 		"isNumber": isNumber,
 		"isInteger": isInteger,
 		"isPositive": isPositive,
@@ -1997,32 +1984,8 @@ function detectOnscreenKeyboard( input ) {
 	}
 }
 
-qbs._.addCommand( "cancelInput", cancelInput, false, true, [ "name" ] );
+qbs._.addCommand( "cancelInput", cancelInput, false, true, [] );
 function cancelInput( screenData, args ) {
-	var name, i;
-
-	name = args[ 0 ];
-
-	if( name == null ) {
-		name = "";
-	}
-
-	if( typeof name !== "string" ) {
-		m_qbData.log( "cancelInput: name must be a string." );
-	}
-
-	for( i = m_inputs.length - 1; i >= 0; i-- ) {
-		if( m_inputs[ i ].name === name || name === "" ) {
-			m_inputs.splice( i, 1 );
-		}
-	}
-	if( m_inputs.length === 0 ) {
-		clearInterval( m_promptInterval );
-	}
-}
-
-qbs._.addCommand( "cancelAllInputs", cancelAllInputs, false, true, [] );
-function cancelAllInputs( screenData, args ) {
 	var i;
 
 	for( i = m_inputs.length - 1; i >= 0; i-- ) {
@@ -2049,7 +2012,8 @@ function collectInput( event ) {
 		triggerReady( input );
 		m_inputIndex += 1;
 		if( m_inputIndex >= m_inputs.length ) {
-			closeInputs();
+			m_inputs = [];
+			m_inputIndex = 0;
 		}
 	} else if( event.keyCode === 8 ) {
 
@@ -2133,43 +2097,43 @@ function processInput( input ) {
 	}
 }
 
-// If the last of the inputs then close out and trigger all ready functions
-function closeInputs() {
-	var data, i, input, temp;
-	data = {};
+// // If the last of the inputs then close out and trigger all ready functions
+// function closeInputs() {
+// 	// var data, i, input;//, temp;
+// 	// data = {};
 
-	// Loop through all inputs and process the values
-	for( i = 0; i < m_inputs.length; i++ ) {
-		input = m_inputs[ i ];
-		processInput( input );
-		data[ input.name ] = input.val;
-	}
+// 	// // Loop through all inputs and process the values
+// 	// for( i = 0; i < m_inputs.length; i++ ) {
+// 	// 	input = m_inputs[ i ];
+// 	// 	processInput( input );
+// 	// 	data[ input.name ] = input.val;
+// 	// }
 
-	m_inputs = [];
-	m_inputIndex = 0;
+// 	m_inputs = [];
+// 	m_inputIndex = 0;
 
-	// Make a copy of the input ready list for triggering ready functions
-	temp = m_inputReadyList.slice();
+// 	// // Make a copy of the input ready list for triggering ready functions
+// 	// temp = m_inputReadyList.slice();
 
-	// Reset the input ready list in case new inputs are created while
-	// triggering ready functions
-	m_inputReadyList = [];
-	for( i = 0; i < temp.length; i++ ) {
-		temp[ i ]( data );
-	}
-}
+// 	// // Reset the input ready list in case new inputs are created while
+// 	// // triggering ready functions
+// 	// m_inputReadyList = [];
+// 	// for( i = 0; i < temp.length; i++ ) {
+// 	// 	temp[ i ]( data );
+// 	// }
+// }
 
-// Register function for when input is ready
-qbs._.addCommand( "inputReady", inputReady, false, false, [ "fn" ] );
-function inputReady( args ) {
-	var fn;
+// // Register function for when input is ready
+// qbs._.addCommand( "inputReady", inputReady, false, false, [ "fn" ] );
+// function inputReady( args ) {
+// 	var fn;
 
-	fn = args[ 0 ];
+// 	fn = args[ 0 ];
 
-	if( qbs.util.isFunction( fn ) ) {
-		m_inputReadyList.push( fn );
-	}
-}
+// 	if( qbs.util.isFunction( fn ) ) {
+// 		m_inputReadyList.push( fn );
+// 	}
+// }
 
 // Set the charcode for the input prompt
 qbs._.addCommand( "setInputCursor", setInputCursor, false, true,
@@ -4259,7 +4223,7 @@ function removeScreen( screenData ) {
 		}
 	}
 
-	screenData.screenObj.cancelAllInputs();
+	screenData.screenObj.cancelInput();
 
 	// Remove all commands from screen object
 	for( i in screenData.screenObj ) {

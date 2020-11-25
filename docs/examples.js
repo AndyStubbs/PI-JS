@@ -16,23 +16,14 @@ $.bezier({
 	"yEnd": 185
 });onExampleClose = function () {};
 }
-examples['cancelAllInputs'] = function() {
+examples['cancelInput'] = function() {
 $.screen("300x200", 'canvasContainer');
 $.print("\n");
 $.input("What is your name?", null);
 $.onkey( "Escape", "down", function () {  
 	$.print("\nInput Canceled");
-	$.cancelAllInputs();
+	$.cancelInput();
 }, true );onExampleClose = function () {};
-}
-examples['cancelInput'] = function() {
-$.screen("300x200", 'canvasContainer');
-$.print("\n");
-$.input("What is your name?", null, "name");
-$.onkey( "Escape", "down", function () {
-	$.print("\nInput Canceled");
-	$.cancelInput("name");
-}, true);onExampleClose = function () {};
 }
 examples['canvas'] = function() {
 $.screen("300x200", 'canvasContainer');
@@ -244,8 +235,6 @@ onExampleClose = function () {cancelAnimationFrame( frame );
 }
 examples['inmouse'] = function() {
 $.screen( "4x4" , 'canvasContainer');
-$.startTouch();
-$.setPinchZoom( false );
 var interval = setInterval( function () {
 	var mouse = $.inmouse();
 	if( mouse.buttons > 0 ) {
@@ -255,6 +244,30 @@ var interval = setInterval( function () {
 }, 50 );
 onExampleClose = function () {clearInterval( interval );
 }
+}
+examples['inpress'] = function() {
+$.screen( "4x4" , 'canvasContainer');
+$.startTouch();
+$.setPinchZoom( false );
+var interval = setInterval( function () {
+	var press = $.inpress();
+	if( press.buttons > 0 ) {
+		$.setColor( Math.floor( Math.random() * 9 ) + 1 );
+		$.pset( press.x, press.y );
+	}
+}, 50 );
+onExampleClose = function () {clearInterval( interval );
+}
+}
+examples['input'] = function() {
+$.screen( "300x200" , 'canvasContainer');
+askQuestions();
+async function askQuestions() {
+	var name = await $.input( "What is your name? " );
+	var age = await $.input( "How old are you? ", null, null, true, true, false, "always" );
+	$.print( "Your name is " + name + " you are " + age + " years old." );
+}
+onExampleClose = function () {};
 }
 examples['intouch'] = function() {
 $.screen( "4x4" , 'canvasContainer');

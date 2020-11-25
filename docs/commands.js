@@ -40,7 +40,7 @@ $.bezier({
 	"yEnd": 185
 });`
 	}, {
-		"name": "cancelAllInputs",
+		"name": "cancelInput",
 		"description": "Cancels all previous input commands.",
 		"isScreen": true,
 		"parameters": [ "name" ],
@@ -51,7 +51,7 @@ $.print("\\n");
 $.input("What is your name?", null);
 $.onkey( "Escape", "down", function () {  
 	$.print("\\nInput Canceled");
-	$.cancelAllInputs();
+	$.cancelInput();
 }, true );`
 	}, {
 		"name": "cancelInput",
