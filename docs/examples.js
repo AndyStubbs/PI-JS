@@ -283,6 +283,14 @@ var interval = setInterval( function () {
 onExampleClose = function () {clearInterval( interval );
 }
 }
+examples['line'] = function() {
+$.screen( "300x200" , 'canvasContainer');
+$.setColor( 4 );
+$.line( 15, 15, 285, 185 );
+$.setColor( 2 );
+$.line( 15, 185, 285, 15 );
+onExampleClose = function () {};
+}
 examples['ontouch'] = function() {
 $.screen( "4x4" , 'canvasContainer');
 $.setPinchZoom( false );
