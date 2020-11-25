@@ -307,14 +307,6 @@ $.filterImg( function ( color, x, y ) {
 		"isScreen": true,
 		"parameters": []
 	}, {
-		"name": "isDomElement",
-		"isScreen": true,
-		"parameters": []
-	}, {
-		"name": "isFunction",
-		"isScreen": true,
-		"parameters": []
-	}, {
 		"name": "line",
 		"isScreen": true,
 		"parameters": ["x1", "y1", "x2", "y2"]

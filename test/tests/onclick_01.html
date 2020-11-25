@@ -77,10 +77,10 @@ $.onclick( clickFour, true, hitbox4, "button4" );
 
 $.input( "Enter your name: ", function ( data ) {
 	$.print( data );
-}, "name" );
+} );
 $.input( "Enter your age: ", function ( data ) {
 	$.print( data );
-}, "age", true, true );
+}, true, true );
 
 function clickOne( data, customData ) {
 	console.log( data, customData );
@@ -108,10 +108,9 @@ function clickThree( data, customData ) {
 	$.offclick( clickTwo, false, hitbox2 );
 	$.setColor( 4 );
 	drawBox( hitbox3 );
-	$.cancelInput( "name" );
+	$.cancelInput();
 	$.print( "" );
 	$.print( "Click boxes are turned off!" );
-	$.print( "Name input has been cancelled" );
 }
 
 function clickFour( data, customData ) {

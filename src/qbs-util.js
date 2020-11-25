@@ -4,9 +4,9 @@
 window.qbs.util = ( function () {
 	"use strict";
 
-	function isFunction( functionToCheck ) {
-		return functionToCheck &&
-			{}.toString.call( functionToCheck ) === '[object Function]';
+	function isFunction( fn ) {
+		return fn &&
+			{}.toString.call( fn ) === '[object Function]';
 	}
 
 	function isDomElement( el ) {

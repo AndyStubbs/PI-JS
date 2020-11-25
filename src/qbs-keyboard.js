@@ -9,8 +9,8 @@
 
 var m_qbData, m_keys, m_keyKeys, m_keyLookup, m_keyCodes, m_preventKeys,
 	m_inputs, m_inputIndex, m_t, m_promptInterval, m_blink, m_promptBackground,
-	m_promptBackgroundWidth, m_inputReadyList, m_onKeyEventListeners,
-	m_anyKeyEventListeners, m_keyboard, m_isKeyEventsActive, m_onKeyCombos;
+	m_promptBackgroundWidth, m_onKeyEventListeners, m_anyKeyEventListeners, m_keyboard,
+	m_isKeyEventsActive, m_onKeyCombos;
 
 m_qbData = qbs._.data;
 m_keyLookup = {
@@ -184,7 +184,6 @@ m_keyKeys = {};
 m_preventKeys = {};
 m_inputs = [];
 m_inputIndex = 0;
-//m_inputReadyList = [];
 m_onKeyEventListeners = {};
 m_anyKeyEventListeners = {
 	"down": [],
@@ -404,7 +403,6 @@ function keydown( event ) {
 	// If we are collecting any inputs
 	if( m_inputs.length > 0 ) {
 		collectInput( event );
-		//return;
 	}
 
 	// Lookup the key
@@ -1083,14 +1081,6 @@ function input( screenData, args ) {
 	allowNegative = args[ 4 ];
 	onscreenKeyboard = args[ 5 ];
 	promiseData = {};
-	// promise = {
-	// 	"then": function ( f ) {
-	// 		promiseData.thenFun = f;
-	// 	},
-	// 	"catch": function ( f ) {
-	// 		promiseData.catchFun = f;
-	// 	}
-	// }; 
 	promise = new Promise( function( resolve, reject ) {
 		promiseData.resolve = resolve;
 		promiseData.reject = reject;
@@ -1161,11 +1151,6 @@ function input( screenData, args ) {
 
 	// Check if positive numbers are allowed
 	isPositive = true;
-	// if( max === null || max > 0 ) {
-	// 	isPositive = true;
-	// } else {
-	// 	isPositive = false;
-	// }
 
 	// Turn on touch to detect if we need to use onscreen keyboard
 	if( onscreenKeyboard === "auto" ) {
@@ -1317,9 +1302,6 @@ function triggerReady( input ) {
 	for( i = 0; i < temp.length; i++ ) {
 		temp[ i ]( input.val );
 	}
-	// if( qbs.util.isFunction( input.promiseData.thenFun ) ) {
-	// 	input.promiseData.thenFun( input.val );
-	// }
 	input.promiseData.resolve( input.val );
 }
 
@@ -1338,44 +1320,6 @@ function processInput( input ) {
 		}
 	}
 }
-
-// // If the last of the inputs then close out and trigger all ready functions
-// function closeInputs() {
-// 	// var data, i, input;//, temp;
-// 	// data = {};
-
-// 	// // Loop through all inputs and process the values
-// 	// for( i = 0; i < m_inputs.length; i++ ) {
-// 	// 	input = m_inputs[ i ];
-// 	// 	processInput( input );
-// 	// 	data[ input.name ] = input.val;
-// 	// }
-
-// 	m_inputs = [];
-// 	m_inputIndex = 0;
-
-// 	// // Make a copy of the input ready list for triggering ready functions
-// 	// temp = m_inputReadyList.slice();
-
-// 	// // Reset the input ready list in case new inputs are created while
-// 	// // triggering ready functions
-// 	// m_inputReadyList = [];
-// 	// for( i = 0; i < temp.length; i++ ) {
-// 	// 	temp[ i ]( data );
-// 	// }
-// }
-
-// // Register function for when input is ready
-// qbs._.addCommand( "inputReady", inputReady, false, false, [ "fn" ] );
-// function inputReady( args ) {
-// 	var fn;
-
-// 	fn = args[ 0 ];
-
-// 	if( qbs.util.isFunction( fn ) ) {
-// 		m_inputReadyList.push( fn );
-// 	}
-// }
 
 // Set the charcode for the input prompt
 qbs._.addCommand( "setInputCursor", setInputCursor, false, true,

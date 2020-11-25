@@ -264,7 +264,7 @@ $.screen( "300x200" , 'canvasContainer');
 askQuestions();
 async function askQuestions() {
 	var name = await $.input( "What is your name? " );
-	var age = await $.input( "How old are you? ", null, null, true, true, false, "always" );
+	var age = await $.input( "How old are you? ", null, true, true, false, "always" );
 	$.print( "Your name is " + name + " you are " + age + " years old." );
 }
 onExampleClose = function () {};
