@@ -293,6 +293,15 @@ $.setColor( 2 );
 $.line( 15, 185, 285, 15 );
 onExampleClose = function () {};
 }
+examples['loadFont'] = function() {
+var font = $.loadFont( "font-block2.png", 10, 10, [ 65, 66, 67, 68 ] );
+$.ready( function () {
+	$.screen( "300x200" , 'canvasContainer');
+	$.setFont( font );
+	$.print( "AAABBBCCCDDD" );
+} );
+onExampleClose = function () {};
+}
 examples['ontouch'] = function() {
 $.screen( "4x4" , 'canvasContainer');
 $.setPinchZoom( false );

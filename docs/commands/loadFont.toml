@@ -5,6 +5,23 @@ parameters = [
   "width",
   "height",
   "charSet",
-  "isBitmap",
-  "isEncoded"
+  "isBitmap"
 ]
+description = "Loads a font from an image or encoded string."
+pdata = [
+  "The source location of the image or the encoded string location.",
+  "The width of each character in the font.",
+  "The height of each character in the font.",
+  "[OPTIONAL] An array of integers containing the ascii value for each font character in order.",
+  "[OPTIONAL] Boolean to use the font as a bitmap font versus a pixel font. Pixel fonts (default) are slower but can change colors."
+]
+returns = "The id of the font."
+seeAlso = [ "print", "setDefaultFont", "setFont" ]
+example = """
+var font = $.loadFont( "font-block2.png", 10, 10, [ 65, 66, 67, 68 ] );
+$.ready( function () {
+	$.screen( "300x200" );
+	$.setFont( font );
+	$.print( "AAABBBCCCDDD" );
+} );
+"""
