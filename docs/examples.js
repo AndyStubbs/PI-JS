@@ -63,12 +63,14 @@ var bombPool = $.createAudioPool("bomb.wav", 1, 'canvasContainer');
 $.deleteAudioPool(bombPool);onExampleClose = function () {};
 }
 examples['draw'] = function() {
-$.screen("300x200", 'canvasContainer');
-$.pset(150, 100);
-$.draw("C9 U2 G2 L C15 NU4 BR3 C9 U2 R ");
-$.draw("D2 R U2 D C10 R D L R D R U R U L");
-$.draw("BU2 BL2 C6 L U L R3 L UC8 L BD6 ");
-$.draw("BL C9 D2 R C8 U2 C9 R D2");onExampleClose = function () {};
+$.screen( "300x200" , 'canvasContainer');
+$.pset( 150, 100 );
+$.draw( "C2 R15 D15 L30 U15 R15" );						// Draw House
+$.draw( "B G4 C1 L6 D6 R6 U6 BG3 P1" ); 				// Draw Window
+$.draw( "B E3 B R14 C1 L6 D6 R6 U6 BG3 P1" ); 	// Draw Window
+$.draw( "B E3 B R1 P2" );										// Paint House
+$.draw( "B E4 B U C6 H15 G15 B R5 P6" );				// Draw Roof
+onExampleClose = function () {};
 }
 examples['drawImage'] = function() {
 $.screen("300x200", 'canvasContainer');

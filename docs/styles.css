@@ -156,3 +156,11 @@ canvas {
 .hljs-built_in {
 	color: #a09489;
 }
+.param-name {
+	color: yellow;
+	width: 180px;
+	vertical-align: top;
+}
+.gray {
+	color: #ACACAC;
+}

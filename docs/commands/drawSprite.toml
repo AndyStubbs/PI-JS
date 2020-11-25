@@ -9,11 +9,11 @@ parameters = [
 	"angle",
 	"anchorX",
 	"anchorY",
-	"img",
 	"alpha"
 ]
 pdata = [
-	"Name or id of the image.",
+	"Name or id of the spritesheet.",
+	"Frame number of the specific sprite on the spritesheet.",
 	"Horizontal coordiante.",
 	"Vertical coordinate.",
 	"[OPTIONAL]. Rotate the image in degrees.",

@@ -46,21 +46,28 @@ function printCommands() {
 			msgParam = msgParam.substr( 0, msgParam.length - 2 );
 			msgParam;
 		}
+		if( msgParam !== "" ) {
+			msgParam = " " + msgParam + " ";
+		}
 		msg += msgParam + ");</div>";
 		msg += "<div>&nbsp;</div>";
 		msg += "<div class='sectionTitle'>Parameters:</div>";
-		//msg += "<ul>";
+		msg += "<table class='tabbed'>";
 		for( j = 0; j < commands[ i ].parameters.length; j++ ) {
 			if( commands[ i ].pdata ) {
-				msg += "<div class='parameter'>" + commands[ i ].parameters[ j ] + " - " +
-					commands[ i ].pdata[ j ] + "</div>";
+				msg += "<tr><td class='param-name'>" +
+					commands[ i ].parameters[ j ] + "</td><td>" + commands[ i ].pdata[ j ] +
+					"</td></tr>";
 			}
 		}
-		//msg += "</ul>";
+		if( commands[ i ].pdata && commands[ i ].pdata.length > j ) {
+			msg += "<tr><td colspan='2'>" + commands[ i ].pdata[ j ] + "</td></tr>";
+		}
+		msg += "</table>";
 		msg += "<div>&nbsp;</div>";
-		msg += "<div class='sectionTitle'>Return Data</div>";
+		msg += "<div class='sectionTitle'>Return Data:</div>";
 		if( ! commands[ i ].returns ) {
-			commands[ i ].returns = "";
+			commands[ i ].returns = "null";
 		}
 		msg += "<div class='tabbed'>" + commands[ i ].returns + "</div>";
 		msg += "<div>&nbsp;</div>";
