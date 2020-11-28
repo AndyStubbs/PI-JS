@@ -336,7 +336,7 @@ function onclick( screenData, args ) {
 }
 
 qbs._.addCommand( "offclick", offclick, false, true,
-	[ "fn", "once", "hitBox" ]
+	[ "fn" ]
 );
 function offclick( screenData, args ) {
 	var fn, isValid;

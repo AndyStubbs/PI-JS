@@ -73,11 +73,12 @@ $.draw( "B E4 B U C6 H15 G15 B R5 P6" );				// Draw Roof
 onExampleClose = function () {};
 }
 examples['drawImage'] = function() {
-$.screen("300x200", 'canvasContainer');
-var monkey = $.loadImage("monkey.png");
-$.ready(function () {
-	$.drawImage(monkey, 150, 100, 0, 0.5, 0.5);
-});onExampleClose = function () {};
+$.screen( "300x200" , 'canvasContainer');
+var monkey = $.loadImage( "monkey.png" );
+$.ready( function () {
+	$.drawImage( monkey, 150, 100, 0, 0.5, 0.5 );
+} );
+onExampleClose = function () {};
 }
 examples['drawSprite'] = function() {
 var monkey, frame, interval;
@@ -300,6 +301,93 @@ $.ready( function () {
 	$.setFont( font );
 	$.print( "AAABBBCCCDDD" );
 } );
+onExampleClose = function () {};
+}
+examples['loadImage'] = function() {
+$.screen( "300x200" , 'canvasContainer');
+$.loadImage( "monkey.png", "monkey" );
+$.ready( function () {
+	$.drawImage( "monkey", 150, 100, 0, 0.5, 0.5 );
+} );
+onExampleClose = function () {};
+}
+examples['loadSpritesheet'] = function() {
+var frame, interval;
+$.screen( "300x200" , 'canvasContainer');
+$.loadSpritesheet( "monkey.png", 32, 32, 1, "monkey" );
+$.ready( function () {
+	frame = 0;
+	interval = setInterval( run, 500 );
+	function run() {
+		frame += 1;
+		$.cls();
+		$.drawSprite( "monkey", frame % 2, 150, 100, 0, 0.5, 0.5 );
+	}
+	run();
+} );onExampleClose = function () {clearInterval( interval );
+}
+}
+examples['offclick'] = function() {
+$.screen( "300x200" , 'canvasContainer');
+var hitBox = {
+	"x": 25,
+	"y": 25,
+	"width": 100,
+	"height": 100
+};
+
+// Draw a green box
+$.setColor( 2 );
+$.rect( hitBox );
+
+// Setup the onclick function for the hitBox
+$.onclick( clickBox, false, hitBox );
+
+// Click function
+function clickBox() {
+
+	// Draw a red box
+	$.setColor( 4 );
+	$.rect( hitBox );
+	$.offclick( clickBox );
+
+	// Wait a second then clear the box
+	setTimeout( function () {
+		$.setColor( 0 );
+		$.rect( hitBox );
+	}, 1000 );
+}
+onExampleClose = function () {};
+}
+examples['onclick'] = function() {
+$.screen( "300x200" , 'canvasContainer');
+var hitBox = {
+	"x": 25,
+	"y": 25,
+	"width": 100,
+	"height": 100
+};
+
+// Draw a green box
+$.setColor( 2 );
+$.rect( hitBox );
+
+// Setup the onclick function for the hitBox
+$.onclick( clickBox, true, hitBox );
+
+// Click function
+function clickBox() {
+
+	// Draw a red box
+	$.setColor( 4 );
+	$.rect( hitBox );
+
+	// Wait a second then clear the box
+	setTimeout( function () {
+		$.setColor( 0 );
+		$.rect( hitBox );
+	}, 1000 );
+}
 onExampleClose = function () {};
 }
 examples['ontouch'] = function() {

@@ -4,7 +4,7 @@ isScreen = true
 parameters = [ "name", "x", "y", "angle", "anchorX", "anchorY", "alpha" ]
 pdata = [
 	"Name or id of the image.",
-	"Horizontal coordiante.",
+	"Horizontal coordinate.",
 	"Vertical coordinate.",
 	"[OPTIONAL]. Rotate the image in degrees.",
 	"[OPTIONAL]. Horizontal rotation coordinate.",
@@ -17,8 +17,9 @@ seeAlso = [
 	"ready"
 ]
 example = """
-$.screen("300x200");
-var monkey = $.loadImage("monkey.png");
-$.ready(function () {
-	$.drawImage(monkey, 150, 100, 0, 0.5, 0.5);
-});"""
+$.screen( "300x200" );
+var monkey = $.loadImage( "monkey.png" );
+$.ready( function () {
+	$.drawImage( monkey, 150, 100, 0, 0.5, 0.5 );
+} );
+"""
