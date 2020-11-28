@@ -359,6 +359,26 @@ function clickBox() {
 }
 onExampleClose = function () {};
 }
+examples['offgamepad'] = function() {
+$.screen( "300x300" , 'canvasContainer');
+$.print( "Press button 3 to stop" );
+$.ongamepad( 0, "pressed", "any", pressButton );
+$.ongamepad( 0, "pressed", 3, stop );
+
+// Press button function
+function pressButton( btn ) {
+	console.log( btn );
+	$.print( "Button " + btn.index + " pressed" );
+}
+
+// Stop function
+function stop() {
+	$.offgamepad( 0, "pressed", "any", pressButton );
+	$.offgamepad( 0, "pressed", 3, stop );
+	$.print( "Stopped" );
+}
+onExampleClose = function () {};
+}
 examples['onclick'] = function() {
 $.screen( "300x200" , 'canvasContainer');
 var hitBox = {
@@ -387,6 +407,26 @@ function clickBox() {
 		$.setColor( 0 );
 		$.rect( hitBox );
 	}, 1000 );
+}
+onExampleClose = function () {};
+}
+examples['ongamepad'] = function() {
+$.screen( "300x300" , 'canvasContainer');
+$.print( "Press button 3 to stop" );
+$.ongamepad( 0, "pressed", "any", pressButton );
+$.ongamepad( 0, "pressed", 3, stop );
+
+// Press button function
+function pressButton( btn ) {
+	console.log( btn );
+	$.print( "Button " + btn.index + " pressed" );
+}
+
+// Stop function
+function stop() {
+	$.offgamepad( 0, "pressed", "any", pressButton );
+	$.offgamepad( 0, "pressed", 3, stop );
+	$.print( "Stopped" );
 }
 onExampleClose = function () {};
 }
