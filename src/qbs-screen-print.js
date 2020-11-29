@@ -261,7 +261,7 @@ function bitmapPrint( screenData, msg, x, y ) {
 	}
 }
 
-// Locate Command
+// Set Pos Command
 qbs._.addCommand( "setPos", setPos, false, true, [ "col", "row" ] );
 qbs._.addSetting( "pos", setPos, true, [ "col", "row" ] );
 function setPos( screenData, args ) {
@@ -273,7 +273,7 @@ function setPos( screenData, args ) {
 	// Set the x value
 	if( col !== null ) {
 		x = Math.floor( col * screenData.printCursor.font.width );
-		if(x > screenData.width) {
+		if( x > screenData.width ) {
 			x = screenData.width - screenData.printCursor.font.width;
 		}
 		screenData.printCursor.x = x;

@@ -399,6 +399,31 @@ function stopPress() {
 }
 onExampleClose = function () {};
 }
+examples['offmouse'] = function() {
+$.screen( "300x200" , 'canvasContainer');
+$.print( "Move mouse to paint screen, click to stop." );
+$.onmouse( "move", mouseMove );
+$.onmouse( "up", mouseStop, true );
+
+// Mouse move function
+function mouseMove( data ) {
+	$.setPosPx( data.x, data.y );
+	var pos = $.getPos();
+	$.setPos( pos.col, pos.row );
+	$.setColor( 8 );
+	$.print( "+", true );
+}
+
+// Mouse stop function
+function mouseStop() {
+	$.setColor( 14 );
+	var pos = $.getPos();
+	$.setPos( pos.col - 4, pos.row );
+	$.print( "Stopped!", true );
+	$.offmouse( "move", mouseMove );
+}
+onExampleClose = function () {};
+}
 examples['onclick'] = function() {
 $.screen( "300x200" , 'canvasContainer');
 var hitBox = {
@@ -465,6 +490,31 @@ function keyPress( key ) {
 function stopPress() {
 	$.print( "You pressed Q! Stopping." );
 	$.offkey( "any", "down", keyPress );
+}
+onExampleClose = function () {};
+}
+examples['onmouse'] = function() {
+$.screen( "300x200" , 'canvasContainer');
+$.print( "Move mouse to paint screen, click to stop." );
+$.onmouse( "move", mouseMove );
+$.onmouse( "up", mouseStop, true );
+
+// Mouse move function
+function mouseMove( data ) {
+	$.setPosPx( data.x, data.y );
+	var pos = $.getPos();
+	$.setPos( pos.col, pos.row );
+	$.setColor( 8 );
+	$.print( "+", true );
+}
+
+// Mouse stop function
+function mouseStop() {
+	$.setColor( 14 );
+	var pos = $.getPos();
+	$.setPos( pos.col - 4, pos.row );
+	$.print( "Stopped!", true );
+	$.offmouse( "move", mouseMove );
 }
 onExampleClose = function () {};
 }
