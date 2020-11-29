@@ -379,6 +379,26 @@ function stop() {
 }
 onExampleClose = function () {};
 }
+examples['offkey'] = function() {
+$.screen( "300x200" , 'canvasContainer');
+$.print( "Press any key." );
+$.print( "Press q to stop" );
+$.onkey( "any", "down", keyPress );
+$.onkey( "Q", "down", stopPress );
+
+// Key press function
+function keyPress( key ) {
+	$.print( "You pressed " + key.key + "!" );
+}
+
+// Stop key press function
+function stopPress() {
+	$.print( "You pressed Q! Stopping." );
+	$.offkey( "any", "down", keyPress );
+	$.offkey( "Q", "down", keyPress );
+}
+onExampleClose = function () {};
+}
 examples['onclick'] = function() {
 $.screen( "300x200" , 'canvasContainer');
 var hitBox = {
@@ -427,6 +447,25 @@ function stop() {
 	$.offgamepad( 0, "pressed", "any", pressButton );
 	$.offgamepad( 0, "pressed", 3, stop );
 	$.print( "Stopped" );
+}
+onExampleClose = function () {};
+}
+examples['onkey'] = function() {
+$.screen( "300x200" , 'canvasContainer');
+$.print( "Press any key." );
+$.print( "Press q to stop" );
+$.onkey( "any", "down", keyPress );
+$.onkey( "Q", "down", stopPress, true );
+
+// Key press function
+function keyPress( key ) {
+	$.print( "You pressed " + key.key + "!" );
+}
+
+// Stop key press function
+function stopPress() {
+	$.print( "You pressed Q! Stopping." );
+	$.offkey( "any", "down", keyPress );
 }
 onExampleClose = function () {};
 }

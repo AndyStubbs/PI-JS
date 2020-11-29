@@ -1,3 +1,33 @@
 name = "onkey"
 isScreen = false
 parameters = [ "key", "mode", "fn", "once" ]
+description = """
+Creates an onkey event.
+"""
+pdata = [
+	"The key that was used in the onkey command.",
+	"The mode can be up or down.",
+	"The function that was used to create the hitbox by the onclick command.",
+	"[OPTIONAL]. Boolean if true will delete event after the first time it is triggered."
+]
+seeAlso = [
+	"offkey"
+]
+example = """
+$.screen( "300x200" );
+$.print( "Press any key." );
+$.print( "Press q to stop" );
+$.onkey( "any", "down", keyPress );
+$.onkey( "Q", "down", stopPress, true );
+
+// Key press function
+function keyPress( key ) {
+	$.print( "You pressed " + key.key + "!" );
+}
+
+// Stop key press function
+function stopPress() {
+	$.print( "You pressed Q! Stopping." );
+	$.offkey( "any", "down", keyPress );
+}
+"""

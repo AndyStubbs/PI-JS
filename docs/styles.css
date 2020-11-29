@@ -158,8 +158,8 @@ canvas {
 }
 .param-name {
 	color: yellow;
-	width: 180px;
 	vertical-align: top;
+	padding-right: 30px;
 }
 .gray {
 	color: #ACACAC;
