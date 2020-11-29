@@ -438,7 +438,6 @@ $.ongamepad( 0, "pressed", 3, stop );
 
 // Press button function
 function pressButton( btn ) {
-	console.log( btn );
 	$.print( "Button " + btn.index + " pressed" );
 }
 
