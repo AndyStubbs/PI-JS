@@ -8,7 +8,9 @@ pdata = [
   "The second x coordinate of the line.",
   "The second y coordinate of the line."
 ]
-seeAlso = [ "arc", "bezier", "circle", "draw", "ellipse", "paint", "pset", "setColor" ]
+seeAlso = [
+	"arc", "bezier", "circle", "draw", "ellipse", "rect", "paint", "point", "pset", "setColor"
+]
 example = """
 $.screen( "300x200" );
 $.setColor( 4 );

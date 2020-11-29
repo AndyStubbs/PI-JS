@@ -10,14 +10,7 @@ pdata = [
   "The ending angle."
 ]
 seeAlso = [
-  "bezier",
-  "circle",
-  "draw",
-  "ellipse",
-  "line",
-  "paint",
-  "pset",
-  "setColor"
+	"bezier", "circle", "draw", "ellipse", "line", "rect", "paint", "point", "pset", "setColor"
 ]
 example = """
 $.screen("300x200");

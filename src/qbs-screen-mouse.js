@@ -265,7 +265,7 @@ function onpress( screenData, args ) {
 }
 
 qbs._.addCommand( "offpress", offpress, false, true,
-	[ "mode", "fn", "once", "hitBox" ]
+	[ "mode", "fn" ]
 );
 function offpress( screenData, args ) {
 	var mode, fn, isValid;
@@ -316,12 +316,19 @@ function onclick( screenData, args ) {
 	customData = args[ 3 ];
 
 	if( hitBox == null ) {
-		m_qbData.log(
-			"onclick: hitBox is required and must contain x, y," +
-			" width, and height."
-		);
-		return;
+		hitBox = {
+			x: 0,
+			y: 0,
+			width: m_qbData.commands.width( screenData ),
+			height: m_qbData.commands.height( screenData )
+		};
+		// m_qbData.log(
+		// 	"onclick: hitBox is required and must contain x, y," +
+		// 	" width, and height."
+		// );
+		// return;
 	}
+	
 	isValid = m_qbData.commands.onevent(
 		"click", fn, once, hitBox, [ "click" ], "onclick",
 		screenData.onClickEventListeners, null, null, customData

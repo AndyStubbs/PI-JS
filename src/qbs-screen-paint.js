@@ -37,8 +37,8 @@ function paint( screenData, args ) {
 		tolerance = 1;
 	}
 
-	if( isNaN( tolerance ) ) {
-		m_qbData.log( "paint: Argument tolerance must be a number." );
+	if( isNaN( tolerance ) || tolerance < 0 || tolerance > 1 ) {
+		m_qbData.log( "paint: Argument tolerance must be a number between 0 and 1." );
 		return;
 	}
 

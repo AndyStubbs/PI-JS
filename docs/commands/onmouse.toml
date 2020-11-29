@@ -2,7 +2,7 @@ name = "onmouse"
 isScreen = true
 parameters = [ "mode", "fn", "once", "hitBox", "customData" ]
 description = """
-Removes an onmouse event.
+Creates a onmouse event.
 """
 pdata = [
 	"The mode must be a string and can be up, down, or move.",
@@ -13,7 +13,7 @@ pdata = [
 		This is useful if you have multiple onmouse commands that use the same callback function."""
 ]
 seeAlso = [
-	"offmouse"
+	"inmouse", "offmouse", "startMouse", "stopMouse"
 ]
 example = """
 $.screen( "300x200" );

@@ -424,6 +424,56 @@ function mouseStop() {
 }
 onExampleClose = function () {};
 }
+examples['offpress'] = function() {
+$.screen( "300x200" , 'canvasContainer');
+$.print( "Move mouse or touch to paint screen, click/touch up to stop." );
+$.onpress( "move", pressMove );
+$.onpress( "up", pressStop, true );
+
+// Press move function
+function pressMove( data ) {
+	$.setPosPx( data.x, data.y );
+	var pos = $.getPos();
+	$.setPos( pos.col, pos.row );
+	$.setColor( 8 );
+	$.print( "+", true );
+}
+
+// Press stop function
+function pressStop() {
+	$.setColor( 14 );
+	var pos = $.getPos();
+	$.setPos( pos.col - 4, pos.row );
+	$.print( "Stopped!", true );
+	$.offpress( "move", pressMove );
+}
+onExampleClose = function () {};
+}
+examples['offtouch'] = function() {
+$.screen( "300x200" , 'canvasContainer');
+$.print( "Touch and drag to paint screen, touch up to stop." );
+$.ontouch( "move", touchMove );
+$.ontouch( "end", touchStop, true );
+
+// Touch move function
+function touchMove( touches ) {
+	$.setPosPx( touches[ 0 ].x, touches[ 0 ].y );
+	var pos = $.getPos();
+	$.setPos( pos.col, pos.row );
+	$.setColor( 8 );
+	$.print( "+", true );
+}
+
+// Touch stop function
+function touchStop() {
+	$.setColor( 14 );
+	var pos = $.getPos();
+	$.setPos( pos.col - 4, pos.row );
+	$.print( "Stopped!", true );
+	$.offtouch( "move", touchMove );
+}
+onExampleClose = function () {};
+}
 examples['onclick'] = function() {
 $.screen( "300x200" , 'canvasContainer');
 var hitBox = {
@@ -518,6 +568,31 @@ function mouseStop() {
 }
 onExampleClose = function () {};
 }
+examples['onpress'] = function() {
+$.screen( "300x200" , 'canvasContainer');
+$.print( "Move mouse or touch to paint screen, click/touch up to stop." );
+$.onpress( "move", pressMove );
+$.onpress( "up", pressStop, true );
+
+// Press move function
+function pressMove( data ) {
+	$.setPosPx( data.x, data.y );
+	var pos = $.getPos();
+	$.setPos( pos.col, pos.row );
+	$.setColor( 8 );
+	$.print( "+", true );
+}
+
+// Press stop function
+function pressStop() {
+	$.setColor( 14 );
+	var pos = $.getPos();
+	$.setPos( pos.col - 4, pos.row );
+	$.print( "Stopped!", true );
+	$.offpress( "move", pressMove );
+}
+onExampleClose = function () {};
+}
 examples['ontouch'] = function() {
 $.screen( "4x4" , 'canvasContainer');
 $.setPinchZoom( false );
@@ -525,6 +600,26 @@ $.ontouch( "start", function ( touches ) {
 	var touch = touches[ 0 ];
 	$.setColor( Math.floor( Math.random() * 9 ) + 1 );
 	$.pset( touch.x, touch.y );
+} );
+onExampleClose = function () {};
+}
+examples['paint'] = function() {
+var color = [ 255, 255, 255 ];
+var color2 = [ 25, 85, 125 ];
+$.screen( "256x256" , 'canvasContainer');
+$.setColor( 15 );
+$.setPen( "pixel", 1, 100 );
+for( i = 0; i < 128; i++ ) {
+	color[ 0 ] -= 2;
+	color[ 1 ] -= 2;
+	color[ 2 ] -= 2;
+	$.setColor( color );
+	$.rect( i, i, 255 - i * 2 + 1, 255 - i * 2 + 1 );
+}
+$.setPen( "pixel", 1 );
+$.print( "Click screen to paint" );
+$.onclick( function ( mouse ) {
+	$.paint( mouse.x, mouse.y, color2, 0.75 );
 } );
 onExampleClose = function () {};
 }

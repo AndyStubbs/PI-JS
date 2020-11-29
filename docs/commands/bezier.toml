@@ -12,7 +12,9 @@ pdata = [
   "The x coordinate of the ending point of the line.",
   "The y coordinate of the ending point of the line."
 ]
-seeAlso = [ "arc", "circle", "draw", "ellipse", "line", "paint", "pset", "setColor" ]
+seeAlso = [
+	"arc", "circle", "draw", "ellipse", "line", "rect", "paint", "point", "pset", "setColor"
+]
 example = """
 $.screen("300x200");
 $.bezier({

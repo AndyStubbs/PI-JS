@@ -8,7 +8,9 @@ pdata = [
   "The radius of the circle.",
   "[OPTIONAL]. The fill color for the circle."
 ]
-seeAlso = [ "arc", "bezier", "draw", "ellipse", "line", "paint", "pset", "setColor" ]
+seeAlso = [
+	"arc", "bezier", "draw", "ellipse", "line", "rect", "paint", "point", "pset", "setColor"
+]
 example = """
 $.screen("300x200");
 $.circle(150, 100, 50, "red");"""

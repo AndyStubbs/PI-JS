@@ -3730,7 +3730,7 @@ function onpress( screenData, args ) {
 }
 
 qbs._.addCommand( "offpress", offpress, false, true,
-	[ "mode", "fn", "once", "hitBox" ]
+	[ "mode", "fn" ]
 );
 function offpress( screenData, args ) {
 	var mode, fn, isValid;
@@ -3781,12 +3781,19 @@ function onclick( screenData, args ) {
 	customData = args[ 3 ];
 
 	if( hitBox == null ) {
-		m_qbData.log(
-			"onclick: hitBox is required and must contain x, y," +
-			" width, and height."
-		);
-		return;
+		hitBox = {
+			x: 0,
+			y: 0,
+			width: m_qbData.commands.width( screenData ),
+			height: m_qbData.commands.height( screenData )
+		};
+		// m_qbData.log(
+		// 	"onclick: hitBox is required and must contain x, y," +
+		// 	" width, and height."
+		// );
+		// return;
 	}
+	
 	isValid = m_qbData.commands.onevent(
 		"click", fn, once, hitBox, [ "click" ], "onclick",
 		screenData.onClickEventListeners, null, null, customData
@@ -6207,8 +6214,8 @@ function paint( screenData, args ) {
 		tolerance = 1;
 	}
 
-	if( isNaN( tolerance ) ) {
-		m_qbData.log( "paint: Argument tolerance must be a number." );
+	if( isNaN( tolerance ) || tolerance < 0 || tolerance > 1 ) {
+		m_qbData.log( "paint: Argument tolerance must be a number between 0 and 1." );
 		return;
 	}
 
@@ -7050,7 +7057,7 @@ function bitmapPrint( screenData, msg, x, y ) {
 	}
 }
 
-// Locate Command
+// Set Pos Command
 qbs._.addCommand( "setPos", setPos, false, true, [ "col", "row" ] );
 qbs._.addSetting( "pos", setPos, true, [ "col", "row" ] );
 function setPos( screenData, args ) {
@@ -7062,7 +7069,7 @@ function setPos( screenData, args ) {
 	// Set the x value
 	if( col !== null ) {
 		x = Math.floor( col * screenData.printCursor.font.width );
-		if(x > screenData.width) {
+		if( x > screenData.width ) {
 			x = screenData.width - screenData.printCursor.font.width;
 		}
 		screenData.printCursor.x = x;

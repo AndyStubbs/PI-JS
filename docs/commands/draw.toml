@@ -24,14 +24,7 @@ pdata = [
 </ul>"""
 ]
 seeAlso = [
-  "arc",
-  "bezier",
-  "circle",
-  "ellipse",
-  "line",
-  "paint",
-  "pset",
-  "setColor"
+	"arc", "bezier", "circle", "ellipse", "line", "rect", "paint", "point", "pset", "setColor"
 ]
 example = """
 $.screen( "300x200" );
