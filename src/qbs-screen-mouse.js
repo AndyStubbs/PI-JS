@@ -202,15 +202,15 @@ function onmouse( screenData, args ) {
 }
 
 // Removes an event trigger for a mouse event
-qbs._.addCommand( "offmouse", offmouse, false, true, [ "eventName", "fn" ] );
+qbs._.addCommand( "offmouse", offmouse, false, true, [ "mode", "fn" ] );
 function offmouse( screenData, args ) {
-	var eventName, fn, isValid;
+	var mode, fn, isValid;
 
-	eventName = args[ 0 ];
+	mode = args[ 0 ];
 	fn = args[ 1 ];
 
 	isValid = m_qbData.commands.offevent(
-		eventName, fn, [ "down", "up", "move" ], "offmouse",
+		mode, fn, [ "down", "up", "move" ], "offmouse",
 		screenData.onMouseEventListeners
 	);
 
