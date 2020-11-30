@@ -118,10 +118,10 @@ $.print("The index of red is " + color + ".");
 onExampleClose = function () {};
 }
 examples['get'] = function() {
-$.screen("300x200", 'canvasContainer');
-$.circle(150, 100, 50, 4);
-var colors = $.get(105, 75, 110, 75);
-$.print(colors[0].join(","));
+$.screen( "300x200" , 'canvasContainer');
+$.circle( 150, 100, 50, 4 );
+var colors = $.get( 105, 75, 110, 75 );
+$.print( colors[ 0 ].join( "," ) );
 onExampleClose = function () {};
 }
 examples['getCols'] = function() {
@@ -150,10 +150,10 @@ $.print( pal[ 2 ].s );
 onExampleClose = function () {};
 }
 examples['getPixel'] = function() {
-$.screen("300x200", 'canvasContainer');
-$.setColor(5);
-$.pset(5, 5);
-var pixel = $.getPixel(5, 5);
+$.screen( "300x200" , 'canvasContainer');
+$.setColor( 5 );
+$.pset( 55, 55 );
+var pixel = $.getPixel( 55, 55 );
 $.print( pixel.s );
 onExampleClose = function () {};
 }
@@ -621,6 +621,14 @@ $.print( "Click screen to paint" );
 $.onclick( function ( mouse ) {
 	$.paint( mouse.x, mouse.y, color2, 0.75 );
 } );
+onExampleClose = function () {};
+}
+examples['point'] = function() {
+$.screen( "300x200" , 'canvasContainer');
+$.setColor( 5 );
+$.pset( 55, 55 );
+var pixel = $.point( 55, 55 );
+$.print( pixel );
 onExampleClose = function () {};
 }
 examples['setPinchZoom'] = function() {
