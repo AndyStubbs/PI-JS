@@ -623,6 +623,35 @@ $.onclick( function ( mouse ) {
 } );
 onExampleClose = function () {};
 }
+examples['play'] = function() {
+$.play( `
+	triangle
+	ma5	mt90 md10
+	mo1 t140 o2 p4 g2 e4. f8 g4 o3 c2 o2 b8 o3 c8 d4 c4 o2 b4 a8 g2.
+	o2 b8 o3 c8 d4 c4 o2 b4 a8 a8 g8 o3 c4 o2 e8 e4 g8 a8 g4 f4 e4 f4 g2.
+	g2 e4. f8 g4 o3 c2 o2 b8 o3 c8 d4 c4 o2 b4 a8 g2.
+	square
+	v30
+	o2 b8 o3 c8 d4 c4 o2 b4 a8 a8 g8 o3 c4 o2 e8 e4 g8 a8 g4 f4 e4 d4 c2.
+	c4 a4 a4 o3 c4 c4 o2 b4 a4 g4 e4 f4 a4 g4 f4 e2.
+	ma10 mt80 md10
+	mo-1
+	sawtooth
+	v35
+	e8 e8 d4 d4 g4 g4 b4 b4 o3 d4 d8 o2 b8 o3 d4 c4 o2 b4 a4 g4 p4
+	g2 g2 e4. f8 g4 o3 c2 o2 b8 o3 c8 d4 c4 o2 b4 a8 g8 g2.
+	o2 b8 o3 c8 d4 c4 o2 b4 a8 a8 g8 o3 c4 o2 e8 e4 g8 a8 g4 f4 e4 d4 c2. p4
+	[
+		[   0, 0.4, 0.4,   1,   1,   1, 0.3, 0.7, 0.6, 0.5, 0.9, 0.8 ],
+		[   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0 ]
+	]
+	v80
+	ma20 md20
+	t180 g8 g8 g4 g4 g4 a8 g8 g4 g4 g4 a4 g4 e4 g4 d1
+	t180 g8 g8 g4 g4 g4 a8 g8 g4 g4 g4 g8 g8 g4 a4 b4 o3 c2 c4 p1
+` , 'canvasContainer');
+onExampleClose = function () {};
+}
 examples['point'] = function() {
 $.screen( "300x200" , 'canvasContainer');
 $.setColor( 5 );
