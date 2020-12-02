@@ -1,8 +1,9 @@
 name = "width"
-description = "Returns the width of the screen."
+description = "Gets the width of the screen."
 isScreen = true
 parameters = [ ]
 seeAlso = [ "height", "screen" ]
+returns = "The width of the screen."
 example = """
 $.screen( "300x200" );
 $.print( "Width: " + $.width() );

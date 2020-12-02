@@ -53,10 +53,11 @@ $.onkey("any", "down", function () {
 });onExampleClose = function () {};
 }
 examples['createAudioPool'] = function() {
-var bombPool = $.createAudioPool("bomb.wav", 1, 'canvasContainer');
-$.ready(function () {
-	$.playAudioPool(bombPool);
-});onExampleClose = function () {};
+var bombPool = $.createAudioPool( "bomb.wav", 1 , 'canvasContainer');
+$.ready( function () {
+	$.playAudioPool( bombPool );
+} );
+onExampleClose = function () {};
 }
 examples['deleteAudioPool'] = function() {
 var bombPool = $.createAudioPool("bomb.wav", 1, 'canvasContainer');
@@ -126,13 +127,13 @@ onExampleClose = function () {};
 }
 examples['getCols'] = function() {
 // Print a line of *'s on the top of the screen
-$.screen("300x200", 'canvasContainer');
+$.screen( "300x200" , 'canvasContainer');
 var cols = $.getCols();
 var msg = "";
-for(var i = 0; i < cols; i++) {
+for( var i = 0; i < cols; i++ ) {
 	msg += "*";
 }
-$.print(msg);
+$.print( msg );
 onExampleClose = function () {};
 }
 examples['getDefaultPal'] = function() {
@@ -158,10 +159,10 @@ $.print( pixel.s );
 onExampleClose = function () {};
 }
 examples['getPos'] = function() {
-$.screen("300x200", 'canvasContainer');
-$.setPos(5, 5);
+$.screen( "300x200" , 'canvasContainer');
+$.setPos( 5, 5 );
 var pos = $.getPos();
-$.print(pos.row + ", " + pos.col);
+$.print( pos.row + ", " + pos.col );
 onExampleClose = function () {};
 }
 examples['getPosPx'] = function() {
@@ -183,9 +184,9 @@ $.print(msg);
 onExampleClose = function () {};
 }
 examples['getScreen'] = function() {
-$.screen("300x200", 'canvasContainer');
-var $screen = $.getScreen(0);
-$screen.print("This is screen 0.");
+$.screen( "300x200" , 'canvasContainer');
+var $screen = $.getScreen( 0 );
+$screen.print( "This is screen 0." );
 onExampleClose = function () {};
 }
 examples['height'] = function() {
@@ -295,11 +296,13 @@ $.line( 15, 185, 285, 15 );
 onExampleClose = function () {};
 }
 examples['loadFont'] = function() {
-var font = $.loadFont( "font-block2.png", 10, 10, [ 65, 66, 67, 68 ] );
+var fontBlock = $.loadFont( "font-block.png", 10, 10, [ 65, 66, 67, 68, 70, 71, 72, 73 ], true );
 $.ready( function () {
 	$.screen( "300x200" , 'canvasContainer');
-	$.setFont( font );
-	$.print( "AAABBBCCCDDD" );
+	$.setFont( fontBlock );
+	$.print( "AABBCC" );
+	$.print( "DD  FF" );
+	$.print( "GGHHII" );
 } );
 onExampleClose = function () {};
 }
@@ -650,6 +653,14 @@ $.play( `
 	t180 g8 g8 g4 g4 g4 a8 g8 g4 g4 g4 a4 g4 e4 g4 d1
 	t180 g8 g8 g4 g4 g4 a8 g8 g4 g4 g4 g8 g8 g4 a4 b4 o3 c2 c4 p1
 ` , 'canvasContainer');
+onExampleClose = function () {$.stopPlay();
+}
+}
+examples['playAudioPool'] = function() {
+var bombPool = $.createAudioPool( "bomb.wav", 1 , 'canvasContainer');
+$.ready( function () {
+	$.playAudioPool( bombPool );
+} );
 onExampleClose = function () {};
 }
 examples['point'] = function() {
@@ -658,6 +669,43 @@ $.setColor( 5 );
 $.pset( 55, 55 );
 var pixel = $.point( 55, 55 );
 $.print( pixel );
+onExampleClose = function () {};
+}
+examples['print'] = function() {
+$.screen( "300x200" , 'canvasContainer');
+$.print( "Welcome to QBS", false, true );
+$.print();
+$.print( "This is a line of text." );
+$.print( "This is inline text", true );
+$.print( ". Some more inline text.", true );
+$.print();
+$.print( "The End" );
+onExampleClose = function () {};
+}
+examples['printTable'] = function() {
+var data = [
+	[ "One", "2", "3", "FourSandwhiches", "EggMcMuffins", "6a" ],
+	[ "Hotdogs", "Five", "Six", "7", "8", "9" ],
+	[ "Seven", "Eight", "Nine", "a", "b", "c" ]
+];
+var format = [
+	"*-----------*---*---*---*----*",
+	"|           |   |   |V  |V   |",
+	"*----*------*---*---*   |    |",
+	"|    |      |       |   |    |",
+	"|    *------*       |   |    |",
+	"*----*      |       |   |    |",
+	"|    |      |       |   |    |",
+	"*----*------*-------*---*----*"
+];
+$.screen( "300x210" , 'canvasContainer');
+$.setColor( 2 );
+$.setFont( 1 );
+$.print( "12345678901234567890123456789012345678901234567890" );
+$.setPos( 18, 2 );
+$.printTable( data, format, null, false );
+$.printTable( data, format, null, true );
+$.printTable( data, null, null );
 onExampleClose = function () {};
 }
 examples['setPinchZoom'] = function() {

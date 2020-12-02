@@ -11,13 +11,11 @@ pdata = [
 	"The number of audio players."
 ]
 seeAlso = [
-	"deleteAudioPool",
-	"playAudioPool",
-	"setVolume",
-	"stopAudioPool"
+	"deleteAudioPool", "playAudioPool", "setVolume", "stopAudioPool"
 ]
 example = """
-var bombPool = $.createAudioPool("bomb.wav", 1);
-$.ready(function () {
-	$.playAudioPool(bombPool);
-});"""
+var bombPool = $.createAudioPool( "bomb.wav", 1 );
+$.ready( function () {
+	$.playAudioPool( bombPool );
+} );
+"""

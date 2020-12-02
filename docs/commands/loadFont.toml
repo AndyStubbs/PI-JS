@@ -18,10 +18,12 @@ pdata = [
 returns = "The id of the font."
 seeAlso = [ "print", "setDefaultFont", "setFont" ]
 example = """
-var font = $.loadFont( "font-block2.png", 10, 10, [ 65, 66, 67, 68 ] );
+var fontBlock = $.loadFont( "font-block.png", 10, 10, [ 65, 66, 67, 68, 70, 71, 72, 73 ], true );
 $.ready( function () {
 	$.screen( "300x200" );
-	$.setFont( font );
-	$.print( "AAABBBCCCDDD" );
+	$.setFont( fontBlock );
+	$.print( "AABBCC" );
+	$.print( "DD  FF" );
+	$.print( "GGHHII" );
 } );
 """

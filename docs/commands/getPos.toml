@@ -6,8 +6,8 @@ isScreen = true
 parameters = [ ]
 seeAlso = [ "getPosPx", "print", "setPos", "setPosPx" ]
 example = """
-$.screen("300x200");
-$.setPos(5, 5);
+$.screen( "300x200" );
+$.setPos( 5, 5 );
 var pos = $.getPos();
-$.print(pos.row + ", " + pos.col);
+$.print( pos.row + ", " + pos.col );
 """

@@ -4,7 +4,7 @@ isScreen = false
 parameters = [ "screenId" ]
 seeAlso = [ "screen" ]
 example = """
-$.screen("300x200");
-var $screen = $.getScreen(0);
-$screen.print("This is screen 0.");
+$.screen( "300x200" );
+var $screen = $.getScreen( 0 );
+$screen.print( "This is screen 0." );
 """
