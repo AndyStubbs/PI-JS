@@ -681,8 +681,27 @@ window.qbs.util = ( function () {
 		};
 	}
 
+	function binarySearch( data, search, compareFn ) {
+		var m, n, k, result;
+		m = 0;
+		n = data.length - 1;
+		while( m <= n ) {
+			k = ( n + m ) >> 1;
+			result = compareFn( search, data[ k ] );
+			if( result > 0 ) {
+				m = k + 1;
+			} else if( result < 0 ) {
+				n = k - 1;
+			} else {
+				return k;
+			}
+		}
+		return -m - 1;
+	}
+
 	// Setup commands that will run only in the qbs api
 	var api = {
+		"binarySearch": binarySearch,
 		"checkColor": checkColor,
 		"clamp": clamp,
 		"colorStringToHex": colorStringToHex,
