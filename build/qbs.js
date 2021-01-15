@@ -687,7 +687,7 @@ window.qbs.util = ( function () {
 		n = data.length - 1;
 		while( m <= n ) {
 			k = ( n + m ) >> 1;
-			result = compareFn( search, data[ k ] );
+			result = compareFn( search, data[ k ], k );
 			if( result > 0 ) {
 				m = k + 1;
 			} else if( result < 0 ) {
