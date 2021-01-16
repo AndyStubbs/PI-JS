@@ -18,7 +18,7 @@
     "url": "git+https://gitlab.com/astubbs50/qbs.git"
   },
   "author": "Andy Stubbs",
-  "license": "ISC",
+  "license": "Apache-2.0",
   "bugs": {
     "url": "https://gitlab.com/astubbs50/qbs/issues"
   },
