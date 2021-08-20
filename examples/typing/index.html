@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Typing Skill</title>
+		<script src="../../build/qbs.min.js"></script>		
+		<style>
+			html, body {
+				background-color: white;
+			}
+		</style>
+	</head>
+<body>
+<script>
+$.ready( function () {   
+	$.screen( {
+		"aspect": "300x200",
+		"isMultiple": true
+	} );
+    showIntro();
+} );
+
+async function showIntro() {
+    var midX, midY, answer, first;
+
+    midX = Math.round($.getCols() / 2);
+    midY = Math.round($.getRows() / 2);
+    $.setBgColor("white");
+    $.setColor("red");
+    $.setPos(midX - 9, midY - 4);
+    $.printTable(
+        [[""]],
+        [
+            // TYPING SKILL //
+            "*--------------*",
+            "|              |",            
+            "*--------------*"
+        ], "double", false
+    );
+    $.setPos(0, midY - 3);
+    $.setColor("black");
+    $.print("TYPING SKILL", false, true);
+    $.print("\n\n");
+    $.print("DO YOU NEED INSTRUCTIONS? ", true, true);
+    first = true;
+    while(answer !== "Y" && answer !== "N") {
+        if(first) {
+            answer = (await $.input(""));
+            if(typeof answer === "string" && answer.length > 0) {
+                answer = answer[0].toUpperCase();
+            }
+            first = false;
+        } else {
+            answer = (await $.input("DO YOU NEED INSTRUCTIONS? (Y/N) ")).toUpperCase();
+        }
+    }
+    if(answer === "Y") {
+        $.print("\n\n");
+        $.print(
+            " This is a fast action game. The purpose of this game is to test your typing skill. " +
+            "Letters will be passing through a small screen from left to right. The faster " +
+            "you eliminate them, the better your score! " +
+            "To destroy the letters, you must press the corresponding key. " +
+            "The speed of the letters is set by you.\n\n" +
+            "0 is the fastest speed.\n" +
+            "10 is the slowest speed.\n\n" +
+            "A negative value will move the letters two spaces at a time. " +
+            "Good luck and beware of the \"invisible character\" (space)."
+        );
+    }
+}
+
+async function startGame() {
+    
+}
+</script>
+</body>
+</html>
