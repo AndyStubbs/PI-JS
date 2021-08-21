@@ -1,21 +1,26 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<title>Typing Skill</title>
-		<script src="../../build/qbs.js"></script>		
-		<style>
-			html, body {
-				background-color: gray;
-			}
-		</style>
-	</head>
+    <head>
+        <title>Typing Skill</title>
+        <script src="../../build/qbs.js"></script>		
+        <style>
+            html, body {
+                background-color: gray;
+            }
+        </style>
+    </head>
 <body>
 <script>
+
+var g_speed, g_score, g_pos, g_letters, g_letter, g_volume;
+
+g_volume = 0.25;
+
 $.ready( function () {   
-	$.screen( {
-		"aspect": "300x200",
-		"isMultiple": true
-	} );
+    $.screen( {
+        "aspect": "300x200",
+        "isMultiple": true
+    } );
     showIntro();
 } );
 
@@ -68,16 +73,112 @@ async function showIntro() {
         );
     }
 
-    setTimeout(startGame, 1000);
+    setTimeout(startGame, 150);
 }
 
 async function startGame() {
     var speed, difficulty;
     $.print("\n");
 
+    $.sound( 400, 0.25, g_volume );
     while(isNaN(speed) || speed < -1 || speed > 10 ) {
-        speed = await $.input("SPEED? ", null, true, true, true, "none");
+        speed = await $.input( "SPEED? ", null, true, true, true, "none" );
     }
+    g_speed = speed;
+
+    g_score = 0;
+    g_letters = 30;
+
+    $.cls();
+    $.print("\n\n\n\n");
+    $.print("0123456789", false, true);
+    $.print("[==========]", false, true);
+    $.print("[          ]", false, true);
+    $.print("[==========]", false, true);
+
+    printScore();
+    setDelay();
+}
+
+function runGame() {
+
+    if( g_letters === 0 ) {
+        return;
+    }
+
+    // Move or init letter
+    if(g_pos == null) {
+        g_pos = {
+            "x": Math.round($.getCols() / 2) + 5,
+            "y": 7
+        };
+        //(RND*43+48)
+        g_letter = String.fromCharCode(Math.floor(Math.random() * 43) + 48);
+
+        // A hit
+        $.onkey( g_letter, "down", hit );
+
+        // Delay a bit
+        setDelay();
+        return;
+    } else {
+        eraseLetter();
+        g_pos.x -= 1;
+    }
+
+    // A miss
+    if( g_pos.x < Math.round( $.getCols() / 2) - 5 ) {
+        $.offkey( g_letter, "down", hit );
+        $.sound( 90, 0.5, g_volume, "sawtooth" );
+        g_pos = null;
+        g_letters -= 1;
+        g_score -= 5;
+        printScore();
+        runGame();
+        return;
+    }
+
+    // Print Letter
+    $.setColor("black");
+    $.setPos(g_pos.x, g_pos.y);
+    $.print(g_letter, true);
+
+    setDelay();
+}
+
+function hit() {
+    // Remove the event listener
+    $.offkey( g_letter, "down", hit );
+
+    $.sound( 550, 0.15, g_volume );
+    $.sound( 600, 0.10, g_volume, null, 0.15 );
+    $.setPos( g_pos.x, g_pos.y );
+    g_letter = String.fromCharCode( 219 );
+    $.setColor( "red" );
+    $.print( g_letter, true );
+    g_score += g_pos.x - 20;
+    g_pos = null;
+    g_letters -= 1;
+    printScore();
+}
+
+function eraseLetter() {
+    $.setColor( "white" );
+    $.rect( 120, 55, 60, 9, "white");
+}
+
+function printScore() {
+    $.setColor( "white" );
+    $.rect( 30, 80, 80, 16, "white" );
+    $.setPos( 5, 10 );
+    $.setColor( "black" );
+    $.print( "Score: " + g_score );
+    $.setPos( 5, 11 );
+    $.print( "Count: " + g_letters );
+}
+
+function setDelay() {
+    setTimeout( runGame, ( g_speed * 50 ) + 100 );
 }
 
 </script>
