@@ -2,10 +2,10 @@
 <html>
 	<head>
 		<title>Typing Skill</title>
-		<script src="../../build/qbs.min.js"></script>		
+		<script src="../../build/qbs.js"></script>		
 		<style>
 			html, body {
-				background-color: white;
+				background-color: gray;
 			}
 		</style>
 	</head>
@@ -26,7 +26,7 @@ async function showIntro() {
     midY = Math.round($.getRows() / 2);
     $.setBgColor("white");
     $.setColor("red");
-    $.setPos(midX - 9, midY - 4);
+    $.setPos(midX - 8, midY - 4);
     $.printTable(
         [[""]],
         [
@@ -67,11 +67,19 @@ async function showIntro() {
             "Good luck and beware of the \"invisible character\" (space)."
         );
     }
+
+    setTimeout(startGame, 1000);
 }
 
 async function startGame() {
-    
+    var speed, difficulty;
+    $.print("\n");
+
+    while(isNaN(speed) || speed < -1 || speed > 10 ) {
+        speed = await $.input("SPEED? ", null, true, true, true, "none");
+    }
 }
+
 </script>
 </body>
 </html>
