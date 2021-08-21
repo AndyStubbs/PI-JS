@@ -12,7 +12,7 @@ const CMD = require( "node-cmd" );
 const userEvents = require( "./user-events-mock.js" );
 
 // CONSTANTS
-const BROWSER1 = "\"C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe\"";
+const BROWSER1 = "\"C:\\Program Files\\Google\\Chrome\\Application\"";
 const BROWSER2 = "chromium-browser";
 const HOME = "http://localhost:8080/";
 const TESTS_FOLDER = "test/tests/";

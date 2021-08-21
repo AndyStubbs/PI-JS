@@ -1634,6 +1634,14 @@ function showPrompt( screenData, hideCursor ) {
 			msg += screenData.printCursor.prompt;
 		}
 
+		// Check if need to scroll first
+		pos = m_qbData.commands.getPos( input.screenData );
+		if(pos.row >= m_qbData.commands.getRows( input.screenData ) ) {			
+			m_qbData.commands.print( input.screenData, [ "", false ] );	
+			m_qbData.commands.setPos( input.screenData, [ pos.col, pos.row - 1] );
+			pos = m_qbData.commands.getPos( input.screenData );
+		}
+		
 		// Get the background pixels
 		posPx = m_qbData.commands.getPosPx( input.screenData );
 		width = ( msg.length + 1 ) * screenData.printCursor.font.width;
@@ -1662,9 +1670,8 @@ function showPrompt( screenData, hideCursor ) {
 		// Store the background width for later use
 		m_promptBackgroundWidth = width;
 
-		// Print the prompt
-		pos = m_qbData.commands.getPos( input.screenData );
-		m_qbData.commands.print( input.screenData, [ msg, true ] );
+		// Print the prompt		
+		m_qbData.commands.print( input.screenData, [ msg, true ] );		
 		m_qbData.commands.setPos( input.screenData, [ pos.col, pos.row ] );
 		m_qbData.commands.render( input.screenData );
 

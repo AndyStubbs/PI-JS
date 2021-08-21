@@ -10,8 +10,8 @@
     "test": "node test/run-tests.js",
     "server": "start node server.js",
     "server2": "node server.js",
-	"build": "node build.js",
-	"build-docs": "node build-docs.js"
+    "build": "node build.js",
+    "build-docs": "node build-docs.js"
   },
   "repository": {
     "type": "git",
