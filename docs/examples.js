@@ -708,6 +708,15 @@ $.printTable( data, format, null, true );
 $.printTable( data, null, null );
 onExampleClose = function () {};
 }
+examples['pset'] = function() {
+$.screen("300x200", 'canvasContainer');
+$.setColor(2);
+$.pset(148, 101);
+$.pset(149, 100);
+$.pset(150, 101);
+$.pset(151, 100);
+$.pset(152, 101);onExampleClose = function () {};
+}
 examples['setPinchZoom'] = function() {
 $.screen( "4x4" , 'canvasContainer');
 $.setPinchZoom( false );
