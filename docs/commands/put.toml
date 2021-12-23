@@ -1,12 +1,16 @@
 name = "put"
-description = "Writes a 2-dimensional array of color values onto the screen. It's counterpart the get statement"
+description = """
+Writes a 2-dimensional array of color values onto the screen. It's counterpart the get statement
+will create an array of color values that you can use with the put statement. Or you can create
+your own array to use.
+"""
 isScreen = true
 parameters = [ "data", "x", "y", "includeZero" ]
 pdata = [
 	"The 2d array of color values.",
 	"The horizontal coordinate of the starting position to write the pixels.",
 	"The vertical coordinate of the starting position to write the pixels.",
-	"If set to false then it won't copy 0 (transparent) pixels."
+	"If set to true then it will copy 0 (transparent) pixels."
 ]
 seeAlso = [
 	"get"

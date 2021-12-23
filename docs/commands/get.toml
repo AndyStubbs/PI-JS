@@ -1,7 +1,7 @@
 name = "get"
 description = """
-Gets an area of pixels from the screen and returns an array of color indices. /
-It's counterpart, the put method, copies the contents of the array back onto /
+Gets an area of pixels from the screen and returns an array of color indices.
+It's counterpart, the put method, copies the contents of the array back onto
 the screen.
 """
 isScreen = true

@@ -732,6 +732,54 @@ $.screen( "30x20" , 'canvasContainer');
 $.put( data, 1, 1 );
 onExampleClose = function () {};
 }
+examples['ready'] = function() {
+$.screen( "300x200" , 'canvasContainer');
+$.loadImage( "monkey.png", "monkey" );
+$.ready( function () {
+	$.drawImage( "monkey", 150, 100, 0, 0.5, 0.5 );
+} );
+onExampleClose = function () {};
+}
+examples['rect'] = function() {
+$.screen( "300x200" , 'canvasContainer');
+$.setColor( 5 );
+$.rect( 15, 15, 150, 100 );
+$.rect( 25, 25, 150, 100, 6 );
+$.rect( 35, 35, 150, 100, 2 );
+onExampleClose = function () {};
+}
+examples['removeAllScreens'] = function() {
+$.screen( "300x200" , 'canvasContainer');
+$.setColor( 5 );
+$.rect( 25, 25, 150, 100, 2 );
+$.removeAllScreens();
+onExampleClose = function () {};
+}
+examples['removeScreen'] = function() {
+$.screen( "300x200" , 'canvasContainer');
+$.setColor( 5 );
+$.rect( 25, 25, 150, 100, 2 );
+$.removeScreen();
+onExampleClose = function () {};
+}
+examples['render'] = function() {
+// Create a main screen.
+var screen1 = $.screen( "320x200" , 'canvasContainer');
+
+// Create an offscreen buffer.
+var screen2 = $.screen( "32x32", null, true );
+
+// Draw circle to offscreen buffer.
+screen2.circle( 15, 15, 15, 1 );
+
+// Without this render the subsequent drawImage
+// method would not show the circle.
+screen2.render();
+
+// Draw the image
+screen1.drawImage( screen2, 100, 100 );
+onExampleClose = function () {};
+}
 examples['setPinchZoom'] = function() {
 $.screen( "4x4" , 'canvasContainer');
 $.setPinchZoom( false );
