@@ -120,9 +120,14 @@ onExampleClose = function () {};
 }
 examples['get'] = function() {
 $.screen( "300x200" , 'canvasContainer');
-$.circle( 150, 100, 50, 4 );
-var colors = $.get( 105, 75, 110, 75 );
-$.print( colors[ 0 ].join( "," ) );
+$.circle( 150, 110, 50, 4 );
+var colors = $.get( 105, 85, 110, 90 );
+$.print( "[" );
+for( var i = 0; i < colors.length; i++ ) {
+	$.print( "    [ " + colors[ i ].join( ", " ) + " ]," );
+}
+$.print( "]" );
+$.put( colors, 20, 80 );
 onExampleClose = function () {};
 }
 examples['getCols'] = function() {
@@ -716,6 +721,16 @@ $.pset(149, 100);
 $.pset(150, 101);
 $.pset(151, 100);
 $.pset(152, 101);onExampleClose = function () {};
+}
+examples['put'] = function() {
+var data = [
+	[  1,  2,  3,  4,  5,  6 ],
+	[  7,  8,  9, 10, 11, 12 ],
+	[ 13, 14, 15, 16, 17, 18 ]
+]
+$.screen( "30x20" , 'canvasContainer');
+$.put( data, 1, 1 );
+onExampleClose = function () {};
 }
 examples['setPinchZoom'] = function() {
 $.screen( "4x4" , 'canvasContainer');

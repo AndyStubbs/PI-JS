@@ -1,5 +1,9 @@
 name = "get"
-description="Gets an area of pixels from the screen and returns an array of color indices."
+description = """
+Gets an area of pixels from the screen and returns an array of color indices. /
+It's counterpart, the put method, copies the contents of the array back onto /
+the screen.
+"""
 isScreen = true
 parameters = [ "x1", "y1", "x2", "y2", "tolerance" ]
 pdata = [
@@ -9,12 +13,18 @@ pdata = [
 	"Second vertical coordinate.",
 	"[OPTIONAL]. If the color is not in the color palette then attempt to find the closest fit color."
 ]
+returns = "A 2-dimensional array of color indices."
 seeAlso = [
-	"getPixel", "findColor", "point", "pset", "put", "setColor", "setColors"
+	"put"
 ]
 example = """
 $.screen( "300x200" );
-$.circle( 150, 100, 50, 4 );
-var colors = $.get( 105, 75, 110, 75 );
-$.print( colors[ 0 ].join( "," ) );
+$.circle( 150, 110, 50, 4 );
+var colors = $.get( 105, 85, 110, 90 );
+$.print( "[" );
+for( var i = 0; i < colors.length; i++ ) {
+	$.print( "    [ " + colors[ i ].join( ", " ) + " ]," );
+}
+$.print( "]" );
+$.put( colors, 20, 80 );
 """
