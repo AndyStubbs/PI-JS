@@ -780,6 +780,12 @@ screen2.render();
 screen1.drawImage( screen2, 100, 100 );
 onExampleClose = function () {};
 }
+examples['screen'] = function() {
+$.screen( "300e200" , 'canvasContainer');
+$.line( 0, 0, 299, 199 );
+$.line( 0, 199, 299, 0 );
+onExampleClose = function () {};
+}
 examples['setPinchZoom'] = function() {
 $.screen( "4x4" , 'canvasContainer');
 $.setPinchZoom( false );
