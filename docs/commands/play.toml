@@ -14,8 +14,8 @@ pdata = [
 <li><span class='gray'>"An", "Bn", "Cn", "Dn", "En", "Fn", "Gn"</span> Plays the specified note. Length is optional.</li>
 <li><span class='gray'>"+", "#"</span> Makes the preceding note sharp.</li>
 <li><span class='gray'>"-"</span> Makes the preceding note flat.</li>
-<li><span class='gray'>"."</span> Period after a note plays 1½ times the note length determined by L * T.</li>
-<li><span class='gray'>".."</span> Two periods plays 1-3/4 times the note length determined by L * T.</li>
+<li><span class='gray'>"."</span> Period after a note plays 1 1/2 times the note length determined by L * T.</li>
+<li><span class='gray'>".."</span> Two periods plays 1 3/4 times the note length determined by L * T.</li>
 <li><span class='gray'>"Nn"</span> Plays a note by number, 0 is a rest.</li>
 <li><span class='gray'>"Ln"</span> Sets length of a note from 1 to 64. A whole note is 1 and a quarter note is 4.</li>
 <li><span class='gray'>"MS"</span> Staccato, each note plays 3/4 of length set by L.</li>
@@ -34,7 +34,7 @@ pdata = [
 <li><span class='gray'>"triangle"</span> Sets the oscillator type to a triangle wave.</li>
 <li><span class='gray'>"sawtooth"</span> Sets the oscillator type to a sawtooth wave.</li>
 <li><span class='gray'>"[[n,n],[n,n]]"</span> Setup a custom wave table example: [[0,0.8,0.2,1],[1,0,1,0]]. There must be two sets of numbers of equal length.</li>
-<ul>
+</ul>
 """
 
 ]

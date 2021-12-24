@@ -12,6 +12,7 @@ pdata = [
 	"A margin in pixels around each sprite.",
 	"[OPTIONAL]. The name of the sprite for use in the drawSprite command."
 ]
+returns = "The name of the spritesheet."
 seeAlso = [
 	"drawSprite",
 	"loadSpritesheet",

@@ -6,9 +6,9 @@ vertically scroll the text and screen image up when text cursor reaches the bott
 """
 parameters = [ "msg", "inLine", "isCentered" ]
 pdata = [
-	"The text message to print on the screen.",
-	"Does not move the text cursor to the next line.",
-	"Centers the text horizontally on the screen."
+	"[OPTIONAL] The text message to print on the screen.",
+	"[OPTIONAL] Does not move the text cursor to the next line.",
+	"[OPTIONAL] Centers the text horizontally on the screen."
 ]
 seeAlso = [
 	"cls", "getCols", "getPos", "getPosPx", "getRows", "setFont", "setFontSize", "setPos",

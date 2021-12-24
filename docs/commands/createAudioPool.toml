@@ -8,7 +8,7 @@ isScreen = false
 parameters = [ "src", "poolSize" ]
 pdata = [
 	"The source of the audio file.",
-	"The number of audio players."
+	"[OPTIONAL] The number of audio players."
 ]
 seeAlso = [
 	"deleteAudioPool", "playAudioPool", "setVolume", "stopAudioPool"

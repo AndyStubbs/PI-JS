@@ -2,7 +2,7 @@ name = "cancelInput"
 description = "Cancels all previous input commands."
 isScreen = true
 parameters = [ "name" ]
-pdata = [ "The name provided to the input command." ]
+pdata = [ "[OPTIONAL] The name provided to the input command." ]
 seeAlso = [ "input" ]
 example = """
 $.screen("300x200");

@@ -15,12 +15,12 @@ promise that will pass the response data. You can also pass a callback function 
 called when the enter key is pressed.
 """
 pdata = [
-	"The text that will display when the user is entering text.",
-	"A function you can pass which will get called when the user presses the return key.",
-	"Limit the data to numeric data only.",
-	"Limit the data to integer values only.",
-	"A boolean that indicates if negative numbers are allowed.",
-	"A string value that can specify an onscreen keyboard valid values include: \"auto\", \"always\", \"none\"."
+	"[OPTIONAL] The text that will display when the user is entering text.",
+	"[OPTIONAL] A function you can pass which will get called when the user presses the return key.",
+	"[OPTIONAL] Limit the data to numeric data only.",
+	"[OPTIONAL] Limit the data to integer values only.",
+	"[OPTIONAL] A boolean that indicates if negative numbers are allowed.",
+	"[OPTIONAL] A string value that can specify an onscreen keyboard valid values include: \"auto\", \"always\", \"none\"."
 ]
 seeAlso = [ "inkey" ]
 returns = "A promise that will return the users response."

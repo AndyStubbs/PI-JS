@@ -5,6 +5,7 @@ and y coordinates are based on top left corner pixel position of the print curso
 isScreen = true
 parameters = [ ]
 seeAlso = [ "getPos", "print", "setPos", "setPosPx" ]
+returns = "An object containing the pixel coordinates of the print cursor."
 example = """
 $.screen("300x200");
 $.setPosPx(15, 15);

@@ -2,7 +2,10 @@ name = "getPixel"
 description = "Gets the pixel color from the screen and returns the color data."
 isScreen = true
 parameters = [ "x", "y" ]
-pdata = [ "The horizontal coordinate for the pixel", "The vertical coordinate for the pixel" ]
+pdata = [ 
+	"The horizontal coordinate for the pixel",
+	"The vertical coordinate for the pixel"
+]
 seeAlso = [
 	"get", "findColor", "point", "put", "setColor", "setColors"
 ]

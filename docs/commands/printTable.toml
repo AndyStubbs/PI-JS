@@ -4,7 +4,7 @@ parameters = [ "items", "tableFormat", "borderStyle", "isCentered" ]
 description = "Prints a table on the screen."
 pdata = [
 	"An array of strings that get put into the table from top-left to bottom-right order.",
-	"""An array of strings that creates the table shape.
+	"""[OPTIONAL] An array of strings that creates the table shape.
 		<ul style='margin:0'>
 			<li><span class='gray'>"*"</span> Indicates a table corner.</li>
 			<li><span class='gray'>"-"</span> Indicates a table horiztontal line.</li>
@@ -12,8 +12,8 @@ pdata = [
 			<li><span class='gray'>"V"</span> Inside a cell for vertical orientation of the cell.</li>
 		</ul>
 		""",
-	"The style of borders. Must be one of the following strings single, double, singleDouble, doubleSingle, or thick.",
-	"Horizontally centers the table."
+	"[OPTIONAL] The style of borders. Must be one of the following strings single, double, singleDouble, doubleSingle, or thick.",
+	"[OPTIONAL] Horizontally centers the table."
 ]
 seeAlso = [ "print" ]
 returns = "An array of data with information on each cell. Includes the position of each cell in the table."
