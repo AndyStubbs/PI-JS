@@ -117,7 +117,7 @@ section {
 	padding-left: 48px;
 }
 canvas {
-	background-color: rgba(0,0,0,0.75) !important;
+	background-color: rgba(0,0,0,0.75);
 }
 .example {
 	white-space: pre;

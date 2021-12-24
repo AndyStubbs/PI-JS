@@ -786,6 +786,32 @@ $.line( 0, 0, 299, 199 );
 $.line( 0, 199, 299, 0 );
 onExampleClose = function () {};
 }
+examples['set'] = function() {
+$.screen( "300x200" , 'canvasContainer');
+
+// First Set
+$.set( {
+  "bgColor": 10,
+  "color": 1,
+  "pos": { "row": 15, "col": 8 },
+  "font": 0
+} );
+$.print( "Hello World 1!" );
+
+// Second Set
+$.set( {
+  "pos": { "row": 16, "col": 8 },
+  "font": 1
+} );
+
+// Note that Hello World 2 is a larger font so
+// it's row and col position should be lower than
+// the above print statement, but because the
+// pos setting gets called first it's using the
+// row size of font 0 instead of font 1
+$.print( "Hello World 2!" );
+onExampleClose = function () {};
+}
 examples['setPinchZoom'] = function() {
 $.screen( "4x4" , 'canvasContainer');
 $.setPinchZoom( false );
