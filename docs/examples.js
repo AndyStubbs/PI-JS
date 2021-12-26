@@ -812,6 +812,40 @@ $.set( {
 $.print( "Hello World 2!" );
 onExampleClose = function () {};
 }
+examples['setActionKey'] = function() {
+$.screen( "200x200" , 'canvasContainer');
+$.setActionKey( 17 );
+$.setActionKey( "KeyS" );
+var interval = setInterval( function () {
+	var keys, key;
+	keys = $.inkey();
+	$.cls();
+	$.print( "Press Ctrl+S." );	
+	key = $.inkey( 17 );
+	if( key ) {
+		$.print( "Control key is pressed." );
+	} else {
+		$.print( "Control key is not pressed." );
+	}
+	for( key in keys ) {
+		$.print( "--------------------------" );
+		$.print( "key:      " + keys[ key ].key );
+		$.print( "location: " + keys[ key ].location );
+		$.print( "code:     " + keys[ key ].code );
+		$.print( "keyCode:  " + keys[ key ].keyCode );
+	}
+	$.render();
+}, 60 );
+onExampleClose = function () {clearInterval( interval );
+}
+}
+examples['setAutoRender'] = function() {
+$.screen( "300x200" , 'canvasContainer');
+$.setAutoRender( false );
+$.line( 1, 1, 299, 199 );
+// Note nothing will render because auto render is disabled
+onExampleClose = function () {};
+}
 examples['setPinchZoom'] = function() {
 $.screen( "4x4" , 'canvasContainer');
 $.setPinchZoom( false );
