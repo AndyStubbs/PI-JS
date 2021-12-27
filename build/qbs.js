@@ -5,12 +5,13 @@
 window.qbs = ( function () {
 	"use strict";
 
-	var m_qbData, m_api, m_waiting, m_waitCount, m_readyList, m_commandList;
+	var m_qbData, m_api, m_waiting, m_waitCount, m_readyList, m_commandList, m_startReadyListTimeout;
 
 	m_waitCount = 0;
 	m_waiting = false;
 	m_readyList = [];
 	m_commandList = [];
+	m_startReadyListTimeout = 0;
 
 	// Initilize data
 	m_qbData = {
@@ -223,7 +224,8 @@ window.qbs = ( function () {
 				temp[ i ]();
 			}
 		} else {
-			setTimeout( startReadyList, 10 );
+			clearTimeout( m_startReadyListTimeout );
+			m_startReadyListTimeout = setTimeout( startReadyList, 10 );
 		}
 	}
 
@@ -244,7 +246,8 @@ window.qbs = ( function () {
 				m_readyList.push( fn );
 			} else if ( document.readyState === "loading" ) {
 				m_readyList.push( fn );
-				setTimeout( startReadyList, 10 );
+				clearTimeout( m_startReadyListTimeout );
+				m_startReadyListTimeout = setTimeout( startReadyList, 10 );
 			} else {
 				fn();
 			}
@@ -4611,7 +4614,7 @@ function setImageDirty( screenData ) {
 		) {
 			screenData.autoRenderMicrotaskScheduled = true;
 			qbs.util.queueMicrotask( function () {
-				if( screenData.screenObj ) {
+				if( screenData.screenObj && screenData.isAutoRender ) {
 					screenData.screenObj.render();
 				}
 				screenData.autoRenderMicrotaskScheduled = false;

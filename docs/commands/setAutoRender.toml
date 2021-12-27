@@ -10,7 +10,7 @@ parameters = [ "isAutoRender" ]
 pdata = [ "If set to true then autorender will run" ]
 example = """
 $.screen( "300x200" );
-$.setAutoRender( false );
 $.line( 1, 1, 299, 199 );
+$.setAutoRender( false );
 // Note nothing will render because auto render is disabled
 """

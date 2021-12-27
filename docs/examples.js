@@ -834,15 +834,14 @@ var interval = setInterval( function () {
 		$.print( "code:     " + keys[ key ].code );
 		$.print( "keyCode:  " + keys[ key ].keyCode );
 	}
-	$.render();
 }, 60 );
 onExampleClose = function () {clearInterval( interval );
 }
 }
 examples['setAutoRender'] = function() {
 $.screen( "300x200" , 'canvasContainer');
-$.setAutoRender( false );
 $.line( 1, 1, 299, 199 );
+$.setAutoRender( false );
 // Note nothing will render because auto render is disabled
 onExampleClose = function () {};
 }

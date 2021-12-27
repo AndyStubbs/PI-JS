@@ -34,7 +34,6 @@ var interval = setInterval( function () {
 		$.print( "code:     " + keys[ key ].code );
 		$.print( "keyCode:  " + keys[ key ].keyCode );
 	}
-	$.render();
 }, 60 );
 """
 onclose = """
