@@ -25,6 +25,7 @@ window.qbs = ( function () {
 		"nextFontId": 0,
 		"fonts": {},
 		"defaultPalette": [],
+		"defaultColor": 7,
 		"commands": {},
 		"screenCommands": {},
 		"defaultPenDraw": null,
@@ -294,6 +295,25 @@ window.qbs = ( function () {
 	}
 
 	// Set the default palette
+	addCommand( "setDefaultColor", setDefaultColor, false, false, [ "color" ] );
+	addSetting( "defaultColor", setDefaultColor, false, [ "color" ] );
+	function setDefaultColor( args ) {
+		var c;
+
+		c = args[ 0 ];
+		if( !isNaN( Number( c ) ) && m_qbData.defaultPalette.length > c ) {
+			m_qbData.defaultColor = c;
+		} else {
+			c = qbs.util.convertToColor( c );
+			if( c === null ) {
+				m_qbData.log(
+					"setDefaultColor: invalid color value for parameter color."
+				);
+			}
+		}
+	}
+
+	// Set the default palette
 	addCommand( "setDefaultPal", setDefaultPal, false, false, [ "pal" ] );
 	addSetting( "defaultPal", setDefaultPal, false, [ "pal" ] );
 	function setDefaultPal( args ) {
@@ -305,7 +325,17 @@ window.qbs = ( function () {
 			return;
 		}
 
+		if( pal.length < 1 ) {
+			m_qbData.log( "setDefaultPal: parameter pal must have at least one color value." );
+		}
+
 		m_qbData.defaultPalette = [];
+		
+		if( pal.length > 1 ) {
+			m_qbData.defaultColor = 1;
+		} else {
+			m_qbData.defaultColor = 0;
+		}
 
 		for( i = 0; i < pal.length; i++ ) {
 			c = qbs.util.convertToColor( pal[ i ] );

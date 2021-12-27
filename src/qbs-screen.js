@@ -300,7 +300,7 @@ function createScreenData(
 	screenData.y = 0;
 	screenData.angle = 0;
 	screenData.pal = m_qbData.defaultPalette.slice();
-	screenData.fColor = screenData.pal[ 7 ];
+	screenData.fColor = screenData.pal[ m_qbData.defaultColor ];
 	screenData.colors = [ screenData.fColor ];
 	screenData.context.fillStyle = screenData.fColor.s;
 	screenData.context.strokeStyle = screenData.fColor.s;

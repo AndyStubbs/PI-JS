@@ -42,5 +42,6 @@ qbs._.data.commands.setDefaultPal( [ [
 	"#000000","#000000","#000000","#000000","#000000"
 ] ] );
 
+qbs._.data.commands.setDefaultColor( [ 7 ] );
 
 } )();
