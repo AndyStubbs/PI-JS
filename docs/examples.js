@@ -845,6 +845,56 @@ $.setAutoRender( false );
 // Note nothing will render because auto render is disabled
 onExampleClose = function () {};
 }
+examples['setBgColor'] = function() {
+$.screen( "300x200" , 'canvasContainer');
+$.setColor( "white" );
+$.line( 0, 0, 300, 200 );
+$.setBgColor( "blue" );
+onExampleClose = function () {};
+}
+examples['setColor'] = function() {
+$.screen( "300x200" , 'canvasContainer');
+$.setColor( "green" );
+$.line( 300, 0, 0, 200 );
+onExampleClose = function () {};
+}
+examples['setColors'] = function() {
+var font = $.loadFont( "font-goofy-2.png", 8, 14 );
+$.ready( function () {
+	$.screen( "300x200" , 'canvasContainer');
+	$.setFont( font );
+	$.print( "Hello World" );
+	$.setColors( [ 1, 2, 3, 4 ] );
+	$.print( "Hello World" );
+} );
+onExampleClose = function () {};
+}
+examples['setContainerBgColor'] = function() {
+$.screen( "300x200" , 'canvasContainer');
+$.print( "Hello" );
+$.setContainerBgColor( 5 );
+onExampleClose = function () {};
+}
+examples['setDefaultFont'] = function() {
+$.setDefaultFont( 3 );
+$.screen( "300x200" , 'canvasContainer');
+$.print( "Hello World" );
+onExampleClose = function () {};
+}
+examples['setDefaultPal'] = function() {
+var colors = [
+	"black", "red", "green", "blue", 
+	"navy", "orange", "purple", "gray",
+	"white", "pink", "brown", "cyan"
+];
+$.setDefaultPal( colors );
+$.screen( "300x200" , 'canvasContainer');
+for( var i = 0; i < colors.length; i++ ) {
+	$.setColor( i );
+	$.print( i + " = " + colors[ i ] );
+}
+onExampleClose = function () {};
+}
 examples['setPinchZoom'] = function() {
 $.screen( "4x4" , 'canvasContainer');
 $.setPinchZoom( false );

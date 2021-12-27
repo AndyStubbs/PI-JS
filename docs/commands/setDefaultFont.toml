@@ -1,3 +1,10 @@
 name = "setDefaultFont"
+description = "Sets the default font for a new screen."
 isScreen = false
 parameters = [ "fontId" ]
+pdata = [ "Font id for the new default " ]
+example = """
+$.setDefaultFont( 3 );
+$.screen( "300x200" );
+$.print( "Hello World" );
+"""
