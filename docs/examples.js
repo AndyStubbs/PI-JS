@@ -895,6 +895,36 @@ for( var i = 0; i < colors.length; i++ ) {
 }
 onExampleClose = function () {};
 }
+examples['setEnableContextMenu'] = function() {
+$.screen( "300x200" , 'canvasContainer');
+$.print( "Try right click to see if context menu appears." );
+$.setEnableContextMenu( false );
+onExampleClose = function () {};
+}
+examples['setErrorMode'] = function() {
+$.setErrorMode( "throw" );
+$.screen( "23514235" , 'canvasContainer');
+onExampleClose = function () {};
+}
+examples['setFont'] = function() {
+$.screen( "300x200" , 'canvasContainer');
+for( var i = 0; i < 4; i++ ) {
+	$.setFont( i );
+	$.print( "Font - " + i );
+}
+onExampleClose = function () {};
+}
+examples['setFontSize'] = function() {
+var font = $.loadFont( "font-block.png", 10, 10, "ABCDFGHI", true );
+$.ready( function () {
+	$.screen( "100x100" , 'canvasContainer');
+	$.setFont( font );
+	$.print( "ABCD" );
+	$.setFontSize( 20, 20 );
+	$.print( "ABCD" );
+} );
+onExampleClose = function () {};
+}
 examples['setPinchZoom'] = function() {
 $.screen( "4x4" , 'canvasContainer');
 $.setPinchZoom( false );

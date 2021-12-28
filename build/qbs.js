@@ -2999,6 +2999,12 @@ function screen( args ) {
 	if( typeof aspect === "string" && aspect !== "" ) {
 		aspect = aspect.toLowerCase();
 		aspectData = parseAspect( aspect );
+		if( ! aspectData ) {
+			m_qbData.log(
+				"screen: invalid value for aspect."
+			);
+			return;
+		}
 		aspectData.isMultiple = !!( isMultiple );
 	}
 
