@@ -16,6 +16,9 @@ let files = fs.readdirSync( DOCS_FOLDER );
 let commands = [];
 let examples = "var examples = {};\n";
 for( let i = 0; i < files.length; i++ ) {
+	if( files[ i ].indexOf( "util." ) === 0 ) {
+		continue;
+	}
 	var data = fs.readFileSync( DOCS_FOLDER + files[ i ] ).toString();
 	let command = toml.parse( data );
 	commands.push( command );
