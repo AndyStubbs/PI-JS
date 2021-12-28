@@ -925,6 +925,28 @@ $.ready( function () {
 } );
 onExampleClose = function () {};
 }
+examples['setInputCursor'] = function() {
+$.screen( "300x200" , 'canvasContainer');
+$.setInputCursor( "_" );
+$.input( "What is your name? " );
+onExampleClose = function () {};
+}
+examples['setPalColor'] = function() {
+$.screen( "300x200" , 'canvasContainer');
+$.setColor( 2 );
+$.print( "Hello" );
+$.setPalColor( 2, "purple" );
+$.print( "Hello" );
+onExampleClose = function () {};
+}
+examples['setPen'] = function() {
+$.screen( "300x200" , 'canvasContainer');
+$.setPen( "circle", 5, [ 32, 16, 8, 0 ] );
+$.line( 30, 80, 270, 50 );
+$.pset( 150, 100 );
+$.draw( "BR15 D15 R100 D30 L15" );
+onExampleClose = function () {};
+}
 examples['setPinchZoom'] = function() {
 $.screen( "4x4" , 'canvasContainer');
 $.setPinchZoom( false );
@@ -933,6 +955,43 @@ $.ontouch( "start", function ( touches ) {
 	$.setColor( Math.floor( Math.random() * 9 ) + 1 );
 	$.pset( touch.x, touch.y );
 } );
+onExampleClose = function () {};
+}
+examples['setPixelMode'] = function() {
+$.screen( "300x200" , 'canvasContainer');
+$.setColor( 4 );
+$.line( 30, 80, 270, 50 );
+$.setPixelMode( false );
+$.line( 30, 120, 270, 90 );
+onExampleClose = function () {};
+}
+examples['setPos'] = function() {
+$.screen( "300x200" , 'canvasContainer');
+$.setPos( 5, 10 );
+$.print( "X" );
+$.setPos( 10, 15 );
+$.print( "Y" );
+onExampleClose = function () {};
+}
+examples['setPosPx'] = function() {
+$.screen( "300x200" , 'canvasContainer');
+$.setPosPx( 5, 10 );
+$.print( "X" );
+$.setPosPx( 10, 15 );
+$.print( "Y" );
+onExampleClose = function () {};
+}
+examples['setScreen'] = function() {
+$.screen( "300x200" , 'canvasContainer');
+var spriteScreen = $.screen( "32x32", null, true );
+$.setScreen( 0 );
+$.setColor( 2 );
+$.rect( 134, 84, 33, 33 );
+$.setScreen( spriteScreen );
+$.circle( 16, 16, 16, 9 );
+$.render();
+$.setScreen( 0 );
+$.drawImage( spriteScreen, 134, 84 );
 onExampleClose = function () {};
 }
 examples['startTouch'] = function() {

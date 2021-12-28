@@ -6,6 +6,7 @@ pdata = [
 	"The width of the font.",
 	"The height of the font."
 ]
+seeAlso = [ "loadFont", "print", "setFont" ]
 example = """
 var font = $.loadFont( "font-block.png", 10, 10, "ABCDFGHI", true );
 $.ready( function () {

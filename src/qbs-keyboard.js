@@ -1359,7 +1359,7 @@ function setInputCursor( screenData, args ) {
 		}
 		if( badChar ) {
 			m_qbData.log( 
-				"setInputCursor: font does not contain the cursor character"
+				"setInputCursor: font does not contain the cursor character."
 			);
 			return;
 		}

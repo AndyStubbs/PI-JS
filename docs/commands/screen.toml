@@ -38,7 +38,7 @@ pdata = [
   "[OPTIONAL] Set the auto size of the canvas to only expand to exact multiples of the target resolution.",
   "[OPTIONAL] A function that will get called after any time the canvas gets resized."
 ]
-seeAlso = [ "getScreen" ]
+seeAlso = [ "getScreen", "setScreen" ]
 example = """
 $.screen( "300e200" );
 $.line( 0, 0, 299, 199 );
