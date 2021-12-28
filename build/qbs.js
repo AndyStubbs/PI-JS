@@ -283,6 +283,7 @@ window.qbs = ( function () {
 			screenData = m_qbData.screens[ i ];
 			screenData.screenObj.removeScreen();
 		}
+		m_qbData.nextScreenId = 0;
 	}
 
 	addCommand( "getScreen", getScreen, false, false, [ "screenId" ] );
@@ -2169,7 +2170,7 @@ function setInputCursor( screenData, args ) {
 		}
 		if( badChar ) {
 			m_qbData.log( 
-				"setInputCursor: font does not contain the cursor character"
+				"setInputCursor: font does not contain the cursor character."
 			);
 			return;
 		}

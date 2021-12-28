@@ -283,6 +283,7 @@ window.qbs = ( function () {
 			screenData = m_qbData.screens[ i ];
 			screenData.screenObj.removeScreen();
 		}
+		m_qbData.nextScreenId = 0;
 	}
 
 	addCommand( "getScreen", getScreen, false, false, [ "screenId" ] );
