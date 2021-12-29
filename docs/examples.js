@@ -994,6 +994,67 @@ $.setScreen( 0 );
 $.drawImage( spriteScreen, 134, 84 );
 onExampleClose = function () {};
 }
+examples['setVolume'] = function() {
+$.setVolume( 0.75 , 'canvasContainer');
+$.play( "Q1o3L8ED+ED+Eo2Bo3DCL2o2A" );
+onExampleClose = function () {};
+}
+examples['setWordBreak'] = function() {
+var msg = "abcdefghijklmnopqrstuvwxyz " +
+	"abcdefghijklmnopqrstuvwxyz " +
+	"abcdefghijklmnopqrstuvwxyz";
+$.screen( "300x200" , 'canvasContainer');
+$.print( msg );
+$.setWordBreak( false );
+$.print();
+$.print( msg );
+onExampleClose = function () {};
+}
+examples['sound'] = function() {
+var data = [
+  392, 8, "My ", 659, 8, "Bon-", 587, 8, "nie ", 523, 8, "lies ", 587, 8,
+  "o-", 523, 8, "ver ", 440, 8, "the ", 392, 8, "o-", 330, 32, "cean\n",
+  392, 8, "My ", 659, 8, "Bon-", 587, 8, "nie ", 523, 8, "lies ", 523, 8,
+  "o-", 494, 8, "ver ", 523, 8, "the ", 587, 40, "sea\n", 392, 8, "My ",
+  659, 8, "Bon-", 587, 8, "nie", 523, 8, " lies ", 587, 8, "o-", 523, 8,
+  "ver ", 440, 8, "the ", 392, 8, "o-", 330, 32, "cean\n", 392, 8, "Oh ",
+  440, 8, "bring ", 587, 8, "back ", 523, 8, "my ", 494, 8, "Bon-", 440,
+  8, "nie ", 494, 8, "to ", 523, 32, "me"
+];
+var i;
+var totalDuration = 0;
+var volume = 0.15;
+var attackRate = 0.01;
+var decayRate = 0.1;
+var sustainRate = 0.89;
+var printTimeouts = [];
+
+$.screen( "300x200" , 'canvasContainer');
+for( i = 0; i < data.length; i += 3 ) {
+  var freq = data[ i ];
+  var duration = data[ i + 1 ] / 18.2;
+  var sustain = duration * sustainRate;
+  var attack = duration * attackRate;
+  var decay = duration * decayRate;
+  var word = data[ i + 2 ];
+  $.sound(
+    freq, sustain, volume, "sawtooth", totalDuration, attack, decay
+  );
+  printWord( word, totalDuration );
+  totalDuration += duration;
+}
+
+function printWord( word, delay ) {
+	printTimeouts.push( setTimeout( function () {
+		$.print( word, word.indexOf( "\n" ) === -1 );
+	}, delay * 1000 ) );
+}
+onExampleClose = function () {$.stopSound();
+for( var i = 0; i < printTimeouts.length; i++ ) {
+  clearTimeout( printTimeouts[ i ] );
+}
+}
+}
 examples['startTouch'] = function() {
 $.screen( "4x4" , 'canvasContainer');
 $.startTouch();
