@@ -51,13 +51,13 @@ function gamepadDisconnected( e ) {
 	delete m_controllers[ e.gamepad.index ];
 }
 
-qbs._.addCommand( "stopGamepads", stopGamepads, false, false, [] );
-function stopGamepads() {
-	m_events = {};
-	m_controllers = {};
-	m_controllerArr = [];
-	cancelAnimationFrame( m_gamepadLoopId );
-}
+// qbs._.addCommand( "stopGamepads", stopGamepads, false, false, [] );
+// function stopGamepads() {
+// 	m_events = {};
+// 	m_controllers = {};
+// 	m_controllerArr = [];
+// 	cancelAnimationFrame( m_gamepadLoopId );
+// }
 
 qbs._.addCommand( "ingamepads", ingamepads, false, false, [] );
 function ingamepads() {

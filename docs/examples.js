@@ -212,8 +212,8 @@ function run( dt ) {
 	pads = $.ingamepads();
 	$.cls();
 	if( pads.length > 0 ) {
-		x = qbs.util.clamp( x + pads[ 0 ].axes[ 0 ] * factor, 0, 299 );
-		y = qbs.util.clamp( y + pads[ 0 ].axes[ 1 ] * factor, 0, 199 );
+		x = qbs.util.clamp( x + pads[ 0 ].axes2[ 0 ] * factor, 0, 299 );
+		y = qbs.util.clamp( y + pads[ 0 ].axes2[ 1 ] * factor, 0, 199 );
 		$.circle( Math.floor( x ), Math.floor( y ) , 10 );
 		$.pset( Math.floor( x ), Math.floor( y ) );
 	}
