@@ -2215,7 +2215,7 @@ m_Modes = [
 ];
 m_isLooping = false;
 m_loopInterval = 8;
-m_axesSensitivity = 0.01;
+m_axesSensitivity = 0.2;
 
 window.addEventListener( "gamepadconnected", gamepadConnected );
 window.addEventListener( "gamepaddisconnected", gamepadDisconnected );
@@ -2224,6 +2224,7 @@ function gamepadConnected( e ) {
 	m_controllers[ e.gamepad.index ] = e.gamepad;
 	e.gamepad.controllerIndex = m_controllerArr.length;
 	m_controllerArr.push( e.gamepad );
+	updateController( e.gamepad );
 }
 
 function gamepadDisconnected( e ) {
@@ -2402,7 +2403,7 @@ function triggerAxes( gamepadIndex, axis, eventName ) {
 	var axes;
 
 	// Get reference to the axes in the gamepad
-	axes = m_controllerArr[ gamepadIndex ].axes;
+	axes = m_controllerArr[ gamepadIndex ].axes2;
 
 	if( axes.length > axis ) {
 		if(
@@ -2458,7 +2459,7 @@ function triggerButtons( gamepadIndex, items, mode, eventName ) {
 }
 
 function updateControllers() {
-	var i, j, gamepads, controllerIndex, controller, buttons, button1, button2;
+	var i, gamepads;
 
 	if( "getGamepads" in navigator ) {
 		gamepads = navigator.getGamepads();
@@ -2470,37 +2471,57 @@ function updateControllers() {
 
 	for( i = 0; i < gamepads.length; i++ ) {
 		if( gamepads[ i ] && gamepads[ i ].index in m_controllers ) {
-
-			controller = m_controllers[ gamepads[ i ].index ];
-
-			// Get the index of the controller in the controller array
-			controllerIndex = controller.controllerIndex;
-			gamepads[ i ].controllerIndex = controllerIndex;
-
-			// Update pressReleased and touchReleased for all buttons
-			buttons = controller.buttons;
-			for( j = 0; j < buttons.length; j++ ) {
-				button1 = buttons[ j ];
-				button2 = gamepads[ i ].buttons[ j ];
-				if( button1.pressed && ! button2.pressed ) {
-					button2.pressReleased = true;
-				} else {
-					button2.pressReleased = false;
-				}
-				if( button1.touched && ! button2.touched ) {
-					button2.touchReleased = true;
-				} else {
-					button2.touchReleased = false;
-				}
-			}
-
-			// Update the controller object
-			m_controllers[ gamepads[ i ].index ] = gamepads[ i ];
-
-			// Update the controller array
-			m_controllerArr[ controllerIndex ] = gamepads[ i ];
+			updateController( gamepads[ i ] );
 		}
 	}
+}
+
+function updateController( gamepad ) {
+	var i, controllerIndex, controller, buttons, button1, button2;
+
+	controller = m_controllers[ gamepad.index ];
+
+	// Get the index of the controller in the controller array
+	controllerIndex = controller.controllerIndex;
+	gamepad.controllerIndex = controllerIndex;
+
+	// Update pressReleased and touchReleased for all buttons
+	buttons = controller.buttons;
+	for( i = 0; i < buttons.length; i++ ) {
+		button1 = buttons[ i ];
+		button2 = gamepad.buttons[ i ];
+		if( button1.pressed && ! button2.pressed ) {
+			button2.pressReleased = true;
+		} else {
+			button2.pressReleased = false;
+		}
+		if( button1.touched && ! button2.touched ) {
+			button2.touchReleased = true;
+		} else {
+			button2.touchReleased = false;
+		}
+	}
+
+	// Calibrate the axis sensitivity
+	gamepad.axes2 = [];
+	for( i = 0; i < gamepad.axes.length; i++ ) {
+		gamepad.axes2.push( smoothAxis( gamepad.axes[ i ] ) );
+	}
+
+	// Update the controller object
+	m_controllers[ gamepad.index ] = gamepad;
+
+	// Update the controller array
+	m_controllerArr[ controllerIndex ] = gamepad;
+}
+
+function smoothAxis( axis ) {
+	if( Math.abs( axis ) < m_axesSensitivity ) {
+		return 0;
+	}
+	axis = axis - Math.sign( axis ) * m_axesSensitivity;
+	axis = axis / ( 1 - m_axesSensitivity );
+	return axis;
 }
 
 // End of File Encapsulation

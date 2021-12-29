@@ -66,8 +66,8 @@ var Input = ( function () {
 
 		var gamepads = $.ingamepads();
 		if( gamepads[ keyData[ "gamepad" ] ] ) {
-			var dx = gamepads[ keyData[ "gamepad" ] ].axes[ 0 ];
-			var dy = gamepads[ keyData[ "gamepad" ] ].axes[ 1 ];
+			var dx = gamepads[ keyData[ "gamepad" ] ].axes2[ 0 ];
+			var dy = gamepads[ keyData[ "gamepad" ] ].axes2[ 1 ];
 			if( Math.abs( dx ) > player.gamepadTolerance || Math.abs( dy ) > player.gamepadTolerance ) {
 				//player.pos.x = player.pos.x + dx * player.speed * g_Dt;
 				//player.pos.y = player.pos.y + dy * player.speed * g_Dt;
