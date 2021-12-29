@@ -519,7 +519,7 @@ function stopSound( args ) {
 
 	// Validate soundId
 	if( ! m_soundPool[ soundId ] ) {
-		m_qbData.log( "stopSound: sound ID " + soundId + " not found." );
+		//m_qbData.log( "stopSound: sound ID " + soundId + " not found." );
 		return;
 	}
 

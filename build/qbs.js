@@ -8496,7 +8496,7 @@ function stopSound( args ) {
 
 	// Validate soundId
 	if( ! m_soundPool[ soundId ] ) {
-		m_qbData.log( "stopSound: sound ID " + soundId + " not found." );
+		//m_qbData.log( "stopSound: sound ID " + soundId + " not found." );
 		return;
 	}
 
@@ -8745,16 +8745,17 @@ function setVolume( args ) {
 				"extra": 1,
 				"space": "normal",
 				"interval": 0,
+				"time": 0,
 				"tempo": 60 / 120,
 				"noteLength": 0.25,
 				"pace": 0.875,
 				"octave": 4,
 				"octaveExtra": 0,
-				"timeout": null,
 				"volume": 1,
 				"trackIds": trackIds,
 				"type": "triangle",
-				"waveTables": waveTables
+				"waveTables": waveTables,
+				"sounds": []
 			} );
 			trackId = m_tracks.length - 1;
 			trackIds.push( trackId );
@@ -8790,12 +8791,12 @@ function setVolume( args ) {
 		track.extra = 1;
 		track.space = "normal";
 		track.interval = 0;
+		track.time = 0;
 		track.tempo = 60 / 120;
 		track.noteLength = 0.25;
 		track.pace = 0.875;
 		track.octave = 4;
 		track.octaveExtra = 0;
-		track.timeout = null;
 		track.volume = 1;
 		track.type = "triangle";
 	}
@@ -8828,14 +8829,16 @@ function setVolume( args ) {
 
 	qbs._.addCommand( "stopPlay", stopPlay, false, false, [ "trackId" ] );
 	function stopPlay( args ) {
-		var trackId, i, trackIds;
+		var trackId, i, trackIds, j;
 
 		trackId = args[ 0 ];
 
 		// Stop all tracks and substracks
 		if( trackId == null ) {
 			for( i = 0; i < m_tracks.length; i++ ) {
-				clearTimeout( m_tracks[ i ].timeout );
+				for( j = 0; j < m_tracks[ i ].sounds.length; j++ ) {
+					m_qbData.commands.stopSound( [ m_tracks[ i ].sounds[ j ] ] );
+				}
 			}
 			m_tracks = [];
 
@@ -8851,10 +8854,11 @@ function setVolume( args ) {
 		// Need to stop all sub tracks as well as main track
 		trackIds = m_tracks[ trackId ].trackIds;
 		for( i = 0; i < trackIds.length; i++ ) {
-			clearTimeout( m_tracks[ trackIds[ i ] ].timeout );
+			for( j = 0; j < m_tracks[ trackIds[ i ] ].sounds.length; j++ ) {
+				m_qbData.commands.stopSound( [ m_tracks[ trackIds[ i ] ].sounds[ j ] ] );
+			}
 			m_tracks[ trackIds[ i ] ] = null;
 		}
-
 	}
 
 	function playTrack( trackId ) {
@@ -9047,12 +9051,25 @@ function setVolume( args ) {
 		// Check if we are done playing track
 		if( track.noteId < track.notes.length ) {
 			if( wait ) {
-				track.timeout = setTimeout( function () {
-					playTrack( trackId );
-				}, ( track.interval ) * 1000 );
-			} else {
-				playTrack( trackId );
+				track.time += track.interval;
 			}
+			playTrack( trackId );
+		} else {
+			setTimeout( function () {
+				if( m_tracks[ trackId ] ) {
+					removeTrack( trackId );
+				}
+			}, ( track.time + track.interval ) * 1000 );
+		}
+	}
+
+	function removeTrack( trackId ) {
+		var i;
+		
+		// Need to stop all sub tracks as well as main track
+		trackIds = m_tracks[ trackId ].trackIds;
+		for( i = trackIds.length; i >= 0; i-- ) {
+			m_tracks.splice( trackIds[ i ], 1 );
 		}
 	}
 
@@ -9094,9 +9111,11 @@ function setVolume( args ) {
 			}
 		}
 
-		m_qbData.commands.createSound(
-			"play", track.audioContext, frequency, volume, attackTime,
-			sustainTime, decayTime, stopTime, oType, waveTables, 0
+		track.sounds.push(
+			m_qbData.commands.createSound(
+				"play", track.audioContext, frequency, volume, attackTime,
+				sustainTime, decayTime, stopTime, oType, waveTables, track.time 
+			) 
 		);
 	}
 
