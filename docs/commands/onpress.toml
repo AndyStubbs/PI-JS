@@ -17,7 +17,10 @@ seeAlso = [
 ]
 example = """
 $.screen( "300x200" );
-$.print( "Move mouse or touch to paint screen, click/touch up to stop." );
+$.print( 
+	"Move mouse or touch to paint screen," +
+	" click/touch up to stop."
+);
 $.onpress( "move", pressMove );
 $.onpress( "up", pressStop, true );
 

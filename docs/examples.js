@@ -301,7 +301,10 @@ $.line( 15, 185, 285, 15 );
 onExampleClose = function () {};
 }
 examples['loadFont'] = function() {
-var fontBlock = $.loadFont( "font-block.png", 10, 10, [ 65, 66, 67, 68, 70, 71, 72, 73 ], true );
+var fontBlock = $.loadFont( 
+  "font-block.png", 10, 10, 
+  [ 65, 66, 67, 68, 70, 71, 72, 73 ], true
+);
 $.ready( function () {
 	$.screen( "300x200" , 'canvasContainer');
 	$.setFont( fontBlock );
@@ -578,7 +581,10 @@ onExampleClose = function () {};
 }
 examples['onpress'] = function() {
 $.screen( "300x200" , 'canvasContainer');
-$.print( "Move mouse or touch to paint screen, click/touch up to stop." );
+$.print( 
+	"Move mouse or touch to paint screen," +
+	" click/touch up to stop."
+);
 $.onpress( "move", pressMove );
 $.onpress( "up", pressStop, true );
 
