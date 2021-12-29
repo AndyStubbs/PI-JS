@@ -40,5 +40,4 @@ function drawScreen() {
 	$.setColor( isMouseEnabled ? 2 : 4 );
 	$.rect( 0, 0, 300, 200 );	
 }
-
 """

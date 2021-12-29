@@ -1101,7 +1101,6 @@ function clickBox() {
 	}
 	drawScreen();
 }
-
 onExampleClose = function () {};
 }
 examples['startMouse'] = function() {
@@ -1136,7 +1135,6 @@ function drawScreen() {
 	$.setColor( isMouseEnabled ? 2 : 4 );
 	$.rect( 0, 0, 300, 200 );	
 }
-
 onExampleClose = function () {};
 }
 examples['startTouch'] = function() {
@@ -1162,6 +1160,119 @@ $.ready( function () {
 onExampleClose = function () {clearTimeout( timeout );
 }
 }
+examples['stopKeyboard'] = function() {
+$.screen( "300x200" , 'canvasContainer');
+
+var hitbox = {
+	"x": 175,
+	"y": 75,
+	"width": 100,
+	"height": 100
+};
+var msg = "";
+var isGreen = true;
+
+$.onclick( clickBox, false, hitbox );
+$.onkey( "any", "down", function ( key ) {
+	msg = "You pressed " + key.key + ".";
+	drawScreen();
+} );
+$.onkey( "any", "up", function ( key ) {
+	msg = "";
+	drawScreen();
+} );
+
+drawScreen();
+
+function drawScreen() {
+	$.cls();
+	$.setColor( 7 );
+	$.print( "Press any key" );
+	$.print( "Click the box to toggle keyboard." );
+	$.print( isGreen ? "Keyboard enabled" : "Keyboard disabled" );
+	$.print( msg );
+	$.setColor( isGreen ? 2 : 4 );
+	$.rect( hitbox );
+}
+
+function clickBox() {
+	isGreen = !isGreen;
+	if( isGreen ) {
+		$.startKeyboard();
+	} else {
+		$.stopKeyboard();
+	}
+	drawScreen();
+}
+onExampleClose = function () {};
+}
+examples['stopMouse'] = function() {
+var isMouseEnabled = true;
+$.screen( "300x200" , 'canvasContainer');
+$.onkey( "m", "down", function () {
+	isMouseEnabled = !isMouseEnabled;
+	if( isMouseEnabled ) {
+		$.startMouse();
+	} else {
+		$.stopMouse();
+	}
+	drawScreen();
+} );
+$.onmouse( "move", function ( data ) {
+	$.setPosPx( data.x, data.y );
+	var pos = $.getPos();
+	$.setPos( pos.col, pos.row );
+	$.setColor( pos.col );
+	$.print( "+", true );
+} );
+
+drawScreen();
+
+function drawScreen() {
+	$.cls();
+	$.setColor( 7 );
+	$.print();
+	$.print( " Press 'm' key to toggle mouse" );
+	$.print( isMouseEnabled ? " Mouse Enabled" : " Mouse Disabled" );
+	$.setPen( "square", 2 );
+	$.setColor( isMouseEnabled ? 2 : 4 );
+	$.rect( 0, 0, 300, 200 );	
+}
+onExampleClose = function () {};
+}
+examples['stopPlay'] = function() {
+var song = "sawtooth v80 MO1" + 
+	"t200l4o2mneel2el4eel2el4egl3cl8dl1el4ffl3fl8fl4fel2el8eel4edde" +
+	"l2dgl4eel2el4eel2el4egl3cl8dl1el4ffl3fl8fl4fel2el8efl4ggfdl2c";
+$.play( song , 'canvasContainer');
+var timeout = setTimeout( function () {
+	$.stopPlay();
+}, 3500 );
+onExampleClose = function () {$.stopPlay();
+clearTimeout( timeout );
+}
+}
+examples['stopSound'] = function() {
+var duration = 0.05;
+var volume = 0.5;
+var decay = 0.03;
+var totalDuration = 0;
+var i;
+for( i = 0; i < 30; i++ , 'canvasContainer') {
+	$.sound(
+		240 + i * 8, duration, volume, "sawtooth", totalDuration, 0,
+		decay
+	);
+	totalDuration += duration + decay;
+}
+
+var timeout = setTimeout( function () {
+	$.stopSound();
+}, 750 );
+onExampleClose = function () {$.stopSound();
+clearTimeout( timeout );
+}
+}
 examples['stopTouch'] = function() {
 $.screen( "100x100" , 'canvasContainer');
 $.startTouch();
@@ -1177,6 +1288,13 @@ $.ontouch( "start", function ( touches ) {
 		$.stopTouch();
 	}
 } );
+onExampleClose = function () {};
+}
+examples['swapColor'] = function() {
+$.screen( "300x200" , 'canvasContainer');
+$.setColor( 2 );
+$.print( "HELLO" );
+$.swapColor( 2, "red" );
 onExampleClose = function () {};
 }
 examples['width'] = function() {
