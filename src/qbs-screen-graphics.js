@@ -1129,7 +1129,7 @@ qbs._.addCommand( "swapColor", swapColor, false, true,
 	[ "oldColor", "newColor" ]
 );
 function swapColor( screenData, args ) {
-	var oldColor, newColor, index, x, y, i;
+	var oldColor, newColor, index, x, y, i, data;
 
 	oldColor = args[ 0 ];
 	newColor = args[ 1 ];
