@@ -16,7 +16,7 @@ requestAnimationFrame( run );
 function run( dt ) {
 	var pads, factor;
 	factor = dt / 2500;
-	pads = $.ingamepads( 0 );
+	pads = $.ingamepads();
 	$.cls();
 	if( pads.length > 0 ) {
 		x = qbs.util.clamp( x + pads[ 0 ].axes[ 0 ] * factor, 0, 299 );

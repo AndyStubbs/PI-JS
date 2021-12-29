@@ -209,7 +209,7 @@ requestAnimationFrame( run );
 function run( dt ) {
 	var pads, factor;
 	factor = dt / 2500;
-	pads = $.ingamepads( 0 );
+	pads = $.ingamepads();
 	$.cls();
 	if( pads.length > 0 ) {
 		x = qbs.util.clamp( x + pads[ 0 ].axes[ 0 ] * factor, 0, 299 );
@@ -1055,6 +1055,90 @@ for( var i = 0; i < printTimeouts.length; i++ ) {
 }
 }
 }
+examples['startKeyboard'] = function() {
+$.screen( "300x200" , 'canvasContainer');
+
+var hitboxColor = 2;
+var hitbox = {
+	"x": 175,
+	"y": 75,
+	"width": 100,
+	"height": 100
+};
+var msg = "";
+var isGreen = true;
+
+$.onclick( clickBox, false, hitbox );
+$.onkey( "any", "down", function ( key ) {
+	msg = "You pressed " + key.key + ".";
+	drawScreen();
+} );
+$.onkey( "any", "up", function ( key ) {
+	msg = "";
+	drawScreen();
+} );
+
+drawScreen();
+
+function drawScreen() {
+	$.cls();
+	$.setColor( 7 );
+	$.print( "Press any key" );
+	$.print( "Click the box to toggle keyboard." );
+	$.print( msg );
+	$.setColor( hitboxColor );
+	$.rect( hitbox );
+}
+
+function clickBox() {
+	isGreen = !isGreen;
+	if( isGreen ) {
+		hitboxColor = 2;
+		$.startKeyboard();
+	} else {
+		$.stopKeyboard();
+		hitboxColor = 4;
+	}
+	drawScreen();
+}
+
+onExampleClose = function () {};
+}
+examples['startMouse'] = function() {
+var isMouseEnabled = true;
+$.screen( "300x200" , 'canvasContainer');
+$.onkey( "m", "down", function () {
+	isMouseEnabled = !isMouseEnabled;
+	if( isMouseEnabled ) {
+		$.startMouse();
+	} else {
+		$.stopMouse();
+	}
+	drawScreen();
+} );
+$.onmouse( "move", function ( data ) {
+	$.setPosPx( data.x, data.y );
+	var pos = $.getPos();
+	$.setPos( pos.col, pos.row );
+	$.setColor( 1 );
+	$.print( "+", true );
+} );
+
+drawScreen();
+
+function drawScreen() {
+	$.cls();
+	$.setColor( 7 );
+	$.print();
+	$.print( " Press 'm' key to toggle mouse" );
+	$.print( isMouseEnabled ? " Mouse Enabled" : " Mouse Disabled" );
+	$.setPen( "square", 2 );
+	$.setColor( isMouseEnabled ? 2 : 4 );
+	$.rect( 0, 0, 300, 200 );	
+}
+
+onExampleClose = function () {};
+}
 examples['startTouch'] = function() {
 $.screen( "4x4" , 'canvasContainer');
 $.startTouch();
@@ -1065,6 +1149,18 @@ $.ontouch( "start", function ( touches ) {
 	$.pset( touch.x, touch.y );
 } );
 onExampleClose = function () {};
+}
+examples['stopAudioPool'] = function() {
+var bombPool = $.createAudioPool( "bomb.wav", 1 , 'canvasContainer');
+var timeout = 0;
+$.ready( function () {
+	$.playAudioPool( bombPool );
+	timeout = setTimeout( function () {
+		$.stopAudioPool( bombPool );
+	}, 500 );
+} );
+onExampleClose = function () {clearTimeout( timeout );
+}
 }
 examples['stopTouch'] = function() {
 $.screen( "100x100" , 'canvasContainer');
