@@ -8414,70 +8414,61 @@ function createSound(
 	oscillator.connect( envelope );
 	envelope.connect( master );
 	master.connect( audioContext.destination );
+	currentTime = audioContext.currentTime + delay + 0.01;
 
-	try {
+	// Set the attack
+	if( attackTime > 0 ) {
+		attackTime = Math.floor( attackTime * 10000 ) / 10000;
+		envelope.gain.setValueCurveAtTime(
+			new Float32Array( [ 0, volume ] ),
+			currentTime,
+			attackTime
+		);
 
-		currentTime = audioContext.currentTime + delay + 0.01;
-
-		// Set the attack
-		if( attackTime > 0 ) {
-			attackTime = Math.floor( attackTime * 10000 ) / 10000;
-			envelope.gain.setValueCurveAtTime(
-				new Float32Array( [ 0, volume ] ),
-				currentTime,
-				attackTime
-			);
-
-			// Add value to current time to prevent overlap of time curves
-			currentTime += overlap;
-		}
-
-		// Set the sustain
-		if( sustainTime > 0 ) {
-			sustainTime = Math.floor( sustainTime * 10000 ) / 10000;
-			envelope.gain.setValueCurveAtTime(
-				new Float32Array( [ volume, 0.8 * volume ] ),
-				currentTime + attackTime,
-				sustainTime
-			);
-
-			// Add value to current time to prevent overlap of time curves
-			currentTime += overlap;
-		}
-
-		// Set the decay
-		if( decayTime > 0 ) {
-			decayTime = Math.floor( decayTime * 10000 ) / 10000;
-			envelope.gain.setValueCurveAtTime(
-				new Float32Array( [ 0.8 * volume, 0.1 * volume, 0 ] ),
-				currentTime + attackTime + sustainTime,
-				decayTime
-			);
-		}
-
-		oscillator.start( currentTime );
-		oscillator.stop( currentTime + stopTime );
-
-		soundId = "sound_" + m_nextSoundId;
-		m_nextSoundId += 1;
-		m_soundPool[ soundId ] = {
-			"oscillator": oscillator,
-			"master": master,
-			"audioContext": audioContext
-		};
-
-		// delete sound when done
-		setTimeout( function () {
-			delete m_soundPool[ soundId ];
-		}, ( currentTime + stopTime ) * 1000 );
-
-		return soundId;
-
-	} catch( ex ) {
-		console.log( cmdName, ex );
-		//           498        174.614 1           0.009375000000000001 0.16875 0.018750000000000003 0.19687500000000002 "triangle" null 0
-		console.log( frequency, volume, attackTime, sustainTime, decayTime, stopTime, oType, waveTables, delay );
+		// Add value to current time to prevent overlap of time curves
+		currentTime += overlap;
 	}
+
+	// Set the sustain
+	if( sustainTime > 0 ) {
+		sustainTime = Math.floor( sustainTime * 10000 ) / 10000;
+		envelope.gain.setValueCurveAtTime(
+			new Float32Array( [ volume, 0.8 * volume ] ),
+			currentTime + attackTime,
+			sustainTime
+		);
+
+		// Add value to current time to prevent overlap of time curves
+		currentTime += overlap;
+	}
+
+	// Set the decay
+	if( decayTime > 0 ) {
+		decayTime = Math.floor( decayTime * 10000 ) / 10000;
+		envelope.gain.setValueCurveAtTime(
+			new Float32Array( [ 0.8 * volume, 0.1 * volume, 0 ] ),
+			currentTime + attackTime + sustainTime,
+			decayTime
+		);
+	}
+
+	oscillator.start( currentTime );
+	oscillator.stop( currentTime + stopTime );
+
+	soundId = "sound_" + m_nextSoundId;
+	m_nextSoundId += 1;
+	m_soundPool[ soundId ] = {
+		"oscillator": oscillator,
+		"master": master,
+		"audioContext": audioContext
+	};
+
+	// delete sound when done
+	setTimeout( function () {
+		delete m_soundPool[ soundId ];
+	}, ( currentTime + stopTime ) * 1000 );
+
+	return soundId;
 }
 
 qbs._.addCommand( "stopSound", stopSound, false, false, [ "soundId" ] );
@@ -9064,7 +9055,7 @@ function setVolume( args ) {
 	}
 
 	function removeTrack( trackId ) {
-		var i;
+		var i, trackIds;
 		
 		// Need to stop all sub tracks as well as main track
 		trackIds = m_tracks[ trackId ].trackIds;

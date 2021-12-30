@@ -511,7 +511,7 @@
 	}
 
 	function removeTrack( trackId ) {
-		var i;
+		var i, trackIds;
 		
 		// Need to stop all sub tracks as well as main track
 		trackIds = m_tracks[ trackId ].trackIds;
