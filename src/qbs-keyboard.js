@@ -383,7 +383,7 @@ function keyup( event ) {
 	if( m_onKeyEventListeners[ modeKey ] ) {
 		temp = m_onKeyEventListeners[ modeKey ].slice();
 		for( i = 0; i < temp.length; i++ ) {
-			temp[ i ]( keyVal );
+			temp[ i ].fn( keyVal );
 		}
 	}
 
@@ -391,7 +391,7 @@ function keyup( event ) {
 	if( m_anyKeyEventListeners[ "up" ] ) {
 		temp = m_anyKeyEventListeners[ "up" ].slice();
 		for( i = 0; i < temp.length; i++ ) {
-			temp[ i ]( keyVal );
+			temp[ i ].fn( keyVal );
 		}
 	}
 }
@@ -434,7 +434,7 @@ function keydown( event ) {
 	if( m_onKeyEventListeners[ modeKey ] ) {
 		temp = m_onKeyEventListeners[ modeKey ].slice();
 		for( i = 0; i < temp.length; i++ ) {
-			temp[ i ]( keyVal );
+			temp[ i ].fn( keyVal );
 		}
 	}
 
@@ -442,7 +442,7 @@ function keydown( event ) {
 	if( m_anyKeyEventListeners[ "down" ] ) {
 		temp = m_anyKeyEventListeners[ "down" ].slice();
 		for( i = 0; i < temp.length; i++ ) {
-			temp[ i ]( keyVal );
+			temp[ i ].fn( keyVal );
 		}
 	}
 }
@@ -585,18 +585,25 @@ function onkey( args ) {
 	// Prevent key from being triggered in case onkey is called in a
 	// keydown event
 	setTimeout( function () {
-		var tempFn;
+		var tempFn, origFn;
 
 		key = lookupKey( key );
 
 		modeKey = mode + "_" + key;
-
+		origFn = fn;
 		// If it's a one time function
 		if( once ) {
 			tempFn = fn;
-			fn = function () {
-				offkey( [ key, mode, fn ] );
-				tempFn();
+			fn = {
+				"fn": function () {
+					offkey( [ key, mode, origFn ] );
+					tempFn();
+				},
+				"tempFn": tempFn
+			};
+		} else {
+			fn = {
+				"fn": origFn
 			};
 		}
 
@@ -745,7 +752,9 @@ function offkey( args ) {
 			m_anyKeyEventListeners[ mode ] = [];
 		} else {
 			for( i = m_anyKeyEventListeners[ mode ].length - 1; i >= 0; i-- ) {
-				if( m_anyKeyEventListeners[ mode ][ i ] === fn ) {
+				if( m_anyKeyEventListeners[ mode ][ i ].fn === fn ||
+					m_anyKeyEventListeners[ mode ][ i ].tempFn === fn
+				) {
 					m_anyKeyEventListeners[ mode ].splice( i, 1 );
 				}
 			}
@@ -757,7 +766,10 @@ function offkey( args ) {
 				m_onKeyEventListeners[ modeKey ] = [];
 			} else {
 				for( i = eventListeners.length - 1; i >= 0; i-- ) {
-					if( eventListeners[ i ] === fn ) {
+					if( 
+						eventListeners[ i ].fn === fn || 
+						eventListeners[ i ].tempFn === fn
+					) {
 						eventListeners.splice( i, 1 );
 					}
 				}
