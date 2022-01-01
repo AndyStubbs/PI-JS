@@ -868,7 +868,6 @@ $.setChar( 100, "00183c667e5a42c3" );
 $.setChar( 101, "008199FFDBFFBD18" );
 
 $.print( " abcde f" );
-//$.print( " ^ ___`~\"' " );
 onExampleClose = function () {};
 }
 examples['setColor'] = function() {

@@ -5,8 +5,8 @@ description = """
 Creates an onkey event.
 """
 pdata = [
-	"The key that was used in the onkey command.",
-	"The mode can be up or down.",
+	"A string, ascii value, or array of keys to register for an event.",
+	"The mode can be up or down. The mode must be down if using an array for key combination",
 	"The function that was used to create the hitbox by the onclick command.",
 	"[OPTIONAL]. Boolean if true will delete event after the first time it is triggered."
 ]

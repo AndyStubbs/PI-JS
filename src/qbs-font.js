@@ -465,8 +465,12 @@ function setChar( screenData, args ) {
 		return;
 	}
 
+	if( typeof( code ) === "string" ) {
+		code = code.charCodeAt( code );
+	}
+
 	if( ! qbs.util.isInteger( code ) ) {
-		m_qbData.log( "setChar: code must be an integer." );
+		m_qbData.log( "setChar: code must be an integer or a string." );
 		return;
 	}
 

@@ -533,6 +533,20 @@ window.qbs.util = ( function () {
 		return data;
 	}
 
+	function dataToHex( data ) {
+		var x, y, digits, padding;
+
+		digits = "";
+		for( y = 0; y < data.length; y++ ) {
+			for( x = 0; x < data[ i ].length; x++ ) {
+				digits += data[ y ][ x ];
+			}
+		}
+
+		padding = Math.ceil( digits.length / 8 );
+		return padL( parseInt( digits, 2 ).toString( 16 ) );
+	}
+
 	function cToHex( c ) {
 		if( ! qbs.util.isInteger( c ) ) {
 			c = Math.round( c );
@@ -777,6 +791,7 @@ window.qbs.util = ( function () {
 		"getWindowSize": getWindowSize,
 		"hexToColor": hexToColor,
 		"hexToData": hexToData,
+		"dataToHex": dataToHex,
 		"inRange": inRange,
 		"inRange2": inRange2,
 		"isArray": Array.isArray,
@@ -3034,8 +3049,12 @@ function setChar( screenData, args ) {
 		return;
 	}
 
+	if( typeof( code ) === "string" ) {
+		code = code.charCodeAt( code );
+	}
+
 	if( ! qbs.util.isInteger( code ) ) {
-		m_qbData.log( "setChar: code must be an integer." );
+		m_qbData.log( "setChar: code must be an integer or a string." );
 		return;
 	}
 
