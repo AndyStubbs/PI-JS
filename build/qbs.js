@@ -505,6 +505,34 @@ window.qbs.util = ( function () {
 		};
 	}
 
+	function hexToData( hex, width, height ) {
+		var x, y, data, digits, hexPart, i, digitIndex;
+
+		hex = hex.toUpperCase();
+		data = [];
+		i = 0;
+		digits = "";
+		digitIndex = 0;
+		for( y = 0; y < height; y++ ) {
+			data.push( [] );
+			for( x = 0; x < width; x++ ) {
+				if( digitIndex >= digits.length ) {
+					hexPart = parseInt( hex[ i ], 16 );
+					if( isNaN( hexPart ) ) {
+						hexPart = "0000";
+					}
+					digits = padL( hexPart.toString( 2 ), 4, "0" );
+					
+					i += 1;
+					digitIndex = 0;
+				}
+				data[ y ].push( parseInt( digits[ digitIndex ] ) );
+				digitIndex += 1;
+			}
+		}
+		return data;
+	}
+
 	function cToHex( c ) {
 		if( ! qbs.util.isInteger( c ) ) {
 			c = Math.round( c );
@@ -748,6 +776,7 @@ window.qbs.util = ( function () {
 		"deleteProperties": deleteProperties,
 		"getWindowSize": getWindowSize,
 		"hexToColor": hexToColor,
+		"hexToData": hexToData,
 		"inRange": inRange,
 		"inRange2": inRange2,
 		"isArray": Array.isArray,
@@ -2986,6 +3015,61 @@ function setFontSize( screenData, args ) {
 
 	screenData.printCursor.font.width = width;
 	screenData.printCursor.font.height = height;
+}
+
+qbs._.addCommand(
+	"setChar", setChar, false, true, [ "code", "data" ]
+);
+qbs._.addSetting(
+	"char", setChar, true, [ "code", "data" ]
+);
+function setChar( screenData, args ) {
+	var code, data, i, j;
+
+	code = args[ 0 ];
+	data = args[ 1 ];
+
+	if( screenData.printCursor.font.mode !== "pixel" ) {
+		m_qbData.log( "setChar: only pixel fonts can change characters." );
+		return;
+	}
+
+	if( ! qbs.util.isInteger( code ) ) {
+		m_qbData.log( "setChar: code must be an integer." );
+		return;
+	}
+
+	// Validate data
+	if( typeof data === "string" ) {
+		data = qbs.util.hexToData(
+			data, 
+			screenData.printCursor.font.width,
+			screenData.printCursor.font.height
+		);
+	} else if( qbs.util.isArray( data ) ) {
+		if( data.length !== screenData.printCursor.font.height ) {
+			m_qbData.log( "setChar: data array is the wrong length." );
+			return;
+		}
+		for( i = 0; i < data.length; i++ ) {
+			if( data[ i ].length !== screenData.printCursor.font.width ) {
+				m_qbData.log( "setChar: data array is the wrong length." );
+				return;
+			}
+			for( j = 0; j < data[ i ].length; j++ ) {
+				if( ! qbs.util.isInteger( data[ i ][ j ] ) ) {
+					m_qbData.log( "setChar: data array contians the wrong data." );
+					return;
+				}
+			}
+		}
+	} else {
+		m_qbData.log( "setChar: data must either be a string or an array." );
+		return;
+	}
+
+	// Set font data
+	screenData.printCursor.font.data[ code ] = data;
 }
 
 // End of File Encapsulation

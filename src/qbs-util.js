@@ -43,6 +43,34 @@ window.qbs.util = ( function () {
 		};
 	}
 
+	function hexToData( hex, width, height ) {
+		var x, y, data, digits, hexPart, i, digitIndex;
+
+		hex = hex.toUpperCase();
+		data = [];
+		i = 0;
+		digits = "";
+		digitIndex = 0;
+		for( y = 0; y < height; y++ ) {
+			data.push( [] );
+			for( x = 0; x < width; x++ ) {
+				if( digitIndex >= digits.length ) {
+					hexPart = parseInt( hex[ i ], 16 );
+					if( isNaN( hexPart ) ) {
+						hexPart = "0000";
+					}
+					digits = padL( hexPart.toString( 2 ), 4, "0" );
+					
+					i += 1;
+					digitIndex = 0;
+				}
+				data[ y ].push( parseInt( digits[ digitIndex ] ) );
+				digitIndex += 1;
+			}
+		}
+		return data;
+	}
+
 	function cToHex( c ) {
 		if( ! qbs.util.isInteger( c ) ) {
 			c = Math.round( c );
@@ -286,6 +314,7 @@ window.qbs.util = ( function () {
 		"deleteProperties": deleteProperties,
 		"getWindowSize": getWindowSize,
 		"hexToColor": hexToColor,
+		"hexToData": hexToData,
 		"inRange": inRange,
 		"inRange2": inRange2,
 		"isArray": Array.isArray,

@@ -858,6 +858,19 @@ $.line( 0, 0, 300, 200 );
 $.setBgColor( "blue" );
 onExampleClose = function () {};
 }
+examples['setChar'] = function() {
+$.screen( "300x200" , 'canvasContainer');
+$.setFont( 2 );
+$.setChar( 97, "1092ba547cc6fe92" );
+$.setChar( 98, "423c2418187e1818" );
+$.setChar( 99, "7cd67cfec6aafe00" );
+$.setChar( 100, "00183c667e5a42c3" );
+$.setChar( 101, "008199FFDBFFBD18" );
+
+$.print( " abcde f" );
+//$.print( " ^ ___`~\"' " );
+onExampleClose = function () {};
+}
 examples['setColor'] = function() {
 $.screen( "300x200" , 'canvasContainer');
 $.setColor( "green" );
