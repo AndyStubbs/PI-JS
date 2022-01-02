@@ -417,6 +417,21 @@ function calcFontSize( context ) {
 	return size;
 }
 
+qbs._.addCommand( "getAvailableFonts", getAvailableFonts, false, false, [] );
+function getAvailableFonts( args ) {
+	var i, data;
+
+	data = [];
+	for( i in m_qbData.fonts ) {
+		data.push( {
+			"id": m_qbData.fonts[ i ].id,
+			"width": m_qbData.fonts[ i ].width,
+			"height": m_qbData.fonts[ i ].height
+		} );
+	}
+	return data;
+}
+
 qbs._.addCommand(
 	"setFontSize", setFontSize, false, true, [ "width", "height" ]
 );

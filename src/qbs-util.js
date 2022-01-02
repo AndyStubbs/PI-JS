@@ -72,17 +72,21 @@ window.qbs.util = ( function () {
 	}
 
 	function dataToHex( data ) {
-		var x, y, digits, padding;
+		var x, y, digits, hex;
 
+		hex = "";
 		digits = "";
 		for( y = 0; y < data.length; y++ ) {
-			for( x = 0; x < data[ i ].length; x++ ) {
+			for( x = 0; x < data[ y ].length; x++ ) {
 				digits += data[ y ][ x ];
-			}
+				if( digits.length === 4 ) {
+					hex += parseInt( digits, 2 ).toString( 16 );
+					digits = "";
+				}
+			}			
 		}
-
-		padding = Math.ceil( digits.length / 8 );
-		return padL( parseInt( digits, 2 ).toString( 16 ) );
+		
+		return hex;
 	}
 
 	function cToHex( c ) {
