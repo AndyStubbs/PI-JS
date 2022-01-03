@@ -91,7 +91,7 @@ $.ready( function () {
 	function run() {
 		frame += 1;
 		$.cls();
-		$.drawSprite( monkey, frame % 2, 150, 100, 0, 0.5, 0.5 );
+		$.drawSprite( monkey, frame % 2, 150, 100, 0, 0.5, 0.5, null, 2, 2 );
 	}
 	run();
 } );onExampleClose = function () {clearInterval( interval );
@@ -871,9 +871,24 @@ $.print( " abcde f" );
 onExampleClose = function () {};
 }
 examples['setColor'] = function() {
-$.screen( "300x200" , 'canvasContainer');
-$.setColor( "green" );
-$.line( 300, 0, 0, 200 );
+var i, colors, x, y, size;
+
+$.screen( "360x300" , 'canvasContainer');
+colors = $.getPal();
+x = 0;
+y = 0;
+size = 20;
+for( i = 0; i < colors.length; i++ ) {
+	$.setColor( i );
+	$.rect( x, y, size, size );
+	$.setPosPx( x + 1, y + 4 );
+	$.print( i, true );
+	x += size;
+	if( x >= $.width() ) {
+		x = 0;
+		y += size;
+	}
+}
 onExampleClose = function () {};
 }
 examples['setColors'] = function() {

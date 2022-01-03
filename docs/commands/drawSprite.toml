@@ -9,17 +9,21 @@ parameters = [
 	"angle",
 	"anchorX",
 	"anchorY",
-	"alpha"
+	"alpha",
+	"scaleX",
+	"scaleY"
 ]
 pdata = [
 	"Name or id of the spritesheet.",
 	"Frame number of the specific sprite on the spritesheet.",
 	"Horizontal coordiante.",
 	"Vertical coordinate.",
-	"[OPTIONAL]. Rotate the image in degrees.",
-	"[OPTIONAL]. Horizontal rotation coordinate.",
-	"[OPTIONAL]. Vertical rotation coordinate.",
-	"[OPTIONAL]. Transparency amount number 0-100."
+	"[OPTIONAL] Rotate the image in degrees.",
+	"[OPTIONAL] Horizontal rotation coordinate.",
+	"[OPTIONAL] Vertical rotation coordinate.",
+	"[OPTIONAL] Transparency amount number 0-100.",
+	"[OPTIONAL] Horizontal scaling amount.",
+	"[OPTIONAL] Vertical scaling amount."
 ]
 seeAlso = [
 	"drawImage",
@@ -36,7 +40,7 @@ $.ready( function () {
 	function run() {
 		frame += 1;
 		$.cls();
-		$.drawSprite( monkey, frame % 2, 150, 100, 0, 0.5, 0.5 );
+		$.drawSprite( monkey, frame % 2, 150, 100, 0, 0.5, 0.5, null, 2, 2 );
 	}
 	run();
 } );"""

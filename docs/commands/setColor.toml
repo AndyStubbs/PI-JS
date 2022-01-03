@@ -8,7 +8,22 @@ pdata = [
 ]
 seeAlso = [ "setBgColor", "setColors" ]
 example = """
-$.screen( "300x200" );
-$.setColor( "green" );
-$.line( 300, 0, 0, 200 );
+var i, colors, x, y, size;
+
+$.screen( "360x300" );
+colors = $.getPal();
+x = 0;
+y = 0;
+size = 20;
+for( i = 0; i < colors.length; i++ ) {
+	$.setColor( i );
+	$.rect( x, y, size, size );
+	$.setPosPx( x + 1, y + 4 );
+	$.print( i, true );
+	x += size;
+	if( x >= $.width() ) {
+		x = 0;
+		y += size;
+	}
+}
 """
