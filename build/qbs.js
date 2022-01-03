@@ -6880,10 +6880,10 @@ function loadSpritesheet( args ) {
 }
 
 qbs._.addCommand( "drawImage", drawImage, false, true,
-	[ "name", "x", "y", "angle", "anchorX", "anchorY", "alpha" ]
+	[ "name", "x", "y", "angle", "anchorX", "anchorY", "alpha", "scaleX", "scaleY" ]
 );
 function drawImage( screenData, args ) {
-	var name, x, y, angle, anchorX, anchorY, alpha, img;
+	var name, x, y, angle, anchorX, anchorY, alpha, img, scaleX, scaleY;
 
 	name = args[ 0 ];
 	x = args[ 1 ];
@@ -6892,6 +6892,8 @@ function drawImage( screenData, args ) {
 	anchorX = args[ 4 ];
 	anchorY = args[ 5 ];
 	alpha = args[ 6 ];
+	scaleX = args[ 7 ];
+	scaleY = args[ 8 ];
 
 	if( typeof name === "string" ) {
 		if( ! m_qbData.images[ name ] ) {
@@ -6914,17 +6916,17 @@ function drawImage( screenData, args ) {
 		}
 	}
 
-	drawItem( screenData, img, x, y, angle, anchorX, anchorY, alpha );
+	drawItem( screenData, img, x, y, angle, anchorX, anchorY, alpha, null, scaleX, scaleY );
 }
 
 qbs._.addCommand( "drawSprite", drawSprite, false, true,
 	[
 		"name", "frame", "x", "y", "angle", "anchorX", "anchorY", "img",
-		"alpha"
+		"alpha", "scaleX", "scaleY"
 	]
 );
 function drawSprite( screenData, args ) {
-	var name, frame, x, y, angle, anchorX, anchorY, alpha, img;
+	var name, frame, x, y, angle, anchorX, anchorY, alpha, img, scaleX, scaleY;
 
 	name = args[ 0 ];
 	frame = args[ 1 ];
@@ -6934,6 +6936,8 @@ function drawSprite( screenData, args ) {
 	anchorX = args[ 5 ];
 	anchorY = args[ 6 ];
 	alpha = args[ 7 ];
+	scaleX = args[ 8 ];
+	scaleY = args[ 9 ];
 
 	// Validate name
 	if( ! m_qbData.images[ name ] ) {
@@ -6955,14 +6959,22 @@ function drawSprite( screenData, args ) {
 
 	drawItem(
 		screenData, img, x, y, angle, anchorX, anchorY, alpha,
-		m_qbData.images[ name ].frames[ frame ]
+		m_qbData.images[ name ].frames[ frame ], scaleX, scaleY
 	);
 }
 
 function drawItem(
-	screenData, img, x, y, angle, anchorX, anchorY, alpha, spriteData
+	screenData, img, x, y, angle, anchorX, anchorY, alpha, spriteData, scaleX, scaleY
 ) {
 	var context, oldAlpha;
+
+	if( scaleX === undefined || isNaN( Number( scaleX ) ) ) {
+		scaleX = 1;
+	}
+
+	if( scaleY === undefined || isNaN( Number( scaleY ) ) ) {
+		scaleY = 1;
+	}
 
 	if( ! angle ) {
 		angle = 0;
@@ -6999,6 +7011,7 @@ function drawItem(
 
 	context.translate( x, y );
 	context.rotate( angle );
+	context.scale( scaleX, scaleY );
 	if( spriteData == null ) {
 		context.drawImage( img, -anchorX, -anchorY );
 	} else {
@@ -7008,6 +7021,7 @@ function drawItem(
 			-anchorX, -anchorY, spriteData.width, spriteData.height
 		);
 	}
+	context.scale( 1 / scaleX, 1 / scaleY );
 	context.rotate( -angle );
 	context.translate( -x, -y );
 	context.globalAlpha = oldAlpha;
