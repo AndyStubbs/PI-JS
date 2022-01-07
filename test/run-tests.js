@@ -48,6 +48,7 @@ let g_BrowserUrl = BROWSER2;
 let g_imgUrlRoot = IMG_URL_ROOT;
 let g_lastTest = "";
 let g_lastTestScreenshotFiles = {};
+let g_imagePrefix = "";
 
 startTests();
 
@@ -65,6 +66,8 @@ async function startTests() {
 
 	if( process.platform === "win32" ) {
 		g_BrowserUrl = BROWSER1;
+	} else {
+		g_imagePrefix = "L_";
 	}
 
 	// Remove non-html files
@@ -94,21 +97,21 @@ async function runTest( file, i ) {
 	let test = getTestInfo( file );
 
 	//Set the name of the image file
-	test.img_file = SCREENSHOTS_FOLDER + test.file + ".png";
+	test.img_file = SCREENSHOTS_FOLDER + g_imagePrefix + test.file + ".png";
 
 	let saveFile = "";
 	if( FS.existsSync( test.img_file ) ) {
-		saveFile = SCREENSHOTS_FOLDER + test.file + "_new.png";
+		saveFile = SCREENSHOTS_FOLDER + g_imagePrefix + test.file + "_new.png";
 		test.new_img_file = saveFile;
 	} else {
-		saveFile = SCREENSHOTS_FOLDER + test.file + ".png";
+		saveFile = SCREENSHOTS_FOLDER + g_imagePrefix + test.file + ".png";
 		test.new_img_file = false;
 	}
 
 	if( g_lastTest !== "" ) {
 		g_lastTestScreenshotFiles = {
-			"new": SCREENSHOTS_FOLDER_WIN + test.file + "_new.png",
-			"old": SCREENSHOTS_FOLDER_WIN + test.file + ".png"
+			"new": SCREENSHOTS_FOLDER_WIN + g_imagePrefix + test.file + "_new.png",
+			"old": SCREENSHOTS_FOLDER_WIN + g_imagePrefix + test.file + ".png"
 		};
 	}
 
@@ -200,27 +203,30 @@ async function readImageFiles( test ) {
 			return;
 		}
 	
-		diff = compare_images( img1, img2 );
-		diffRounded = Math.round( diff * 100 ) / 100;
-		console.log( "Difference: " + diff );
-		if( diff > 0 ) {
-			console.log( "NOT MATCHED" );
-			g_ImgHtml[ test.id ] = g_ImgHtml[ test.id ]
-				.replace( "[" + test.file + "]",
-				"<span class='error'>NOT MATCHED - Difference: " +
-				diffRounded + "</span>"
-			);
-			g_Errors.push( {
-				"test": test,
-				"type": "Not Matched"
-			} );
-			g_MismatchCount += 1;
-		} else {
-			g_ImgHtml[ test.id ] = g_ImgHtml[ test.id ].replace( "[" + test.file + "]",
-				"<span class='good'>MATCHED</span>" );
-		}
-		updateCounts();
-		imgsResolved( "Parsed" );
+		setTimeout( function () {
+			diff = compare_images( img1, img2 );
+			diffRounded = Math.round( diff * 100 ) / 100;
+			console.log( "Difference: " + diff );
+			if( diff > 0 ) {
+				console.log( "NOT MATCHED" );
+				g_ImgHtml[ test.id ] = g_ImgHtml[ test.id ]
+					.replace( "[" + test.file + "]",
+					"<span class='error'>NOT MATCHED - Difference: " +
+					diffRounded + "</span>"
+				);
+				g_Errors.push( {
+					"test": test,
+					"type": "Not Matched"
+				} );
+				g_MismatchCount += 1;
+			} else {
+				g_ImgHtml[ test.id ] = g_ImgHtml[ test.id ].replace( "[" + test.file + "]",
+					"<span class='good'>MATCHED</span>" );
+			}
+			updateCounts();
+			imgsResolved( "Parsed" );
+		}, 100 );
+		
 		//run_test( i + 1 );
 	}
 }

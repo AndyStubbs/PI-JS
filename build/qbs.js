@@ -2947,19 +2947,12 @@ function setFont( screenData, args ) {
 }
 
 function calcFontSize( context ) {
-	var font, start, end, px, tCanvas, tContext, data, i, i2, size, x, y;
+	var font, px, tCanvas, tContext, data, i, i2, size, x, y;
 
 	font = context.font;
 
-	// Get the font size from the name of the font
-	end = font.indexOf( "px" );
-	font = font.substring( 0, end );
-	start = font.lastIndexOf( " " );
-	if( start === -1 ) {
-		start = 0;
-	}
-	px = parseInt( font.substring( start, end ) );
-
+	px = context.measureText( "M" ).width;
+	
 	// Add some padding to px just in case
 	px = Math.round( px * 1.5 );
 
