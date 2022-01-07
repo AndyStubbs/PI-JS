@@ -64,18 +64,21 @@ var g = {
         "virusCount": 3,
         "pills": {
             "15_24": { "x": 15, "y": 24, "c": 54, "id": "&" },
-            "16_24": { "x": 16, "y": 24, "c": 44, "id": "&" }
+            "16_24": { "x": 16, "y": 24, "c": 44, "id": "&" },
+            "15_21": { "x": 15, "y": 21, "c": 4, "id": "&" },
+            "15_20": { "x": 15, "y": 20, "c": 4, "id": "&" }
         },
-        "activePills": [
-            [
-                { "x": 15, "y": 8, "c": 4, "id": "(", "last": performance.now() },
-                { "x": 16, "y": 8, "c": 44, "id": ")" }
-            ]
-        ],
+        "activePills": [],
         "virusAngle": 0
     },
     "screens": []
 };
+
+let tPill = { "x": 15, "y": 8, "c": 4, "id": "(", "last": performance.now(), "status": "active", "order": 0 };
+tPill.partner = { "x": 16, "y": 8, "c": 44, "id": ")", "last": performance.now(), "status": "active", "order": 1 };
+tPill.partner.partner = tPill;
+g.game.activePills.push( tPill );
+g.game.activePills.push( tPill.partner );
 
 initGame();
 
@@ -109,7 +112,7 @@ function initGame() {
     g.time = performance.now();
     g.lastAnimationFrame = g.time;
     g.lastAnimationFrame2 = g.time;
-    drawGameScreen( g.time );
+    run( g.time );
 }
 
 function showIntroScreen() {
@@ -175,11 +178,17 @@ function startGame( key ) {
     $.print( key.key );
 }
 
-function drawGameScreen( timestamp ) {
-    var i, virus, pill, virusTypesDrawn, x, y, a, j, cacheIndex, pill1, pill2, dt;
-
-    dt = timestamp - g.time;
+function run( timestamp ) {
+    let dt = timestamp - g.time;
     g.time = timestamp;
+
+    drawGameScreen( timestamp, dt );
+    moveGameObjects( timestamp, dt );
+    requestAnimationFrame( run );
+}
+
+function drawGameScreen( timestamp, dt ) {
+    var i, virus, pill, virusTypesDrawn, x, y, a, j, cacheIndex;
 
     $.cls();
 
@@ -269,46 +278,66 @@ function drawGameScreen( timestamp ) {
         pill = g.game.pills[ i ];
         $.setColor( pill.c );
         $.setPos( pill.x, pill.y );
-        $.print( pill.id );
+        $.print( pill.id, true );
     }
 
     // Draw Active Pills
     for( i = 0; i < g.game.activePills.length; i++ ) {
-        for( j = 0; j < g.game.activePills[ i ].length; j++ ) {
-            pill = g.game.activePills[ i ][ j ];
-            $.setColor( pill.c );
-            $.setPos( pill.x, pill.y );
-            $.print( pill.id );
-        }
+        pill = g.game.activePills[ i ];
+        $.setColor( pill.c );
+        $.setPos( pill.x, pill.y );
+        $.print( pill.id, true );
     }
 
-    // Move Active Pills
+}
 
-    for( i = 0; i < g.game.activePills.length; i++ ) {
-        pill1 = g.game.activePills[ i ][ 0 ];
-        if( g.time > pill1.last + g.speeds[ g.game.speed ] ) {
-            pill1.last = g.time;
-            pill2 = g.game.activePills[ i ][ 1 ];
-            for( j = 0; j < g.game.activePills[ i ].length; j++ ) {
-                pill = g.game.activePills[ i ][ j ];
-                pill.y += 1;
-                cacheIndex = pill.x + "_" + pill.y;
-                if( g.game.pills[ cacheIndex ] || g.game.viruses[ cacheIndex ] ) {
-                    pill.y -= 1;
-                    if( j === 1 ) {
-                        g.game.activePills[ i ][ 0 ].y = pill.y;
+function moveGameObjects( timestamp, dt ) {
+    var i, pill, cacheIndex;
+
+    // Move Active Pills
+    for( i = g.game.activePills.length - 1; i >= 0; i-- ) {
+        pill = g.game.activePills[ i ];
+
+        // Check if ready to drop
+        if( g.time > pill.last + g.speeds[ g.game.speed ] ) {
+            pill.last = g.time;
+            pill.y += 1;
+            cacheIndex = pill.x + "_" + pill.y;
+            if( 
+                g.game.pills[ cacheIndex ] ||
+                g.game.viruses[ cacheIndex ] ||
+                pill.status === "stopped" ||
+                pill.y > 25
+            ) {
+                pill.status = "stopped";
+                pill.y -= 1;
+                g.game.pills[ pill.x + "_" + pill.y ] = pill;
+                g.game.activePills.splice( i, 1 );
+
+                // If partner is active flag it to be stopped
+                if( pill.partner ) {
+                    if( pill.partner.status === "active" ) {
+                        pill.partner.status = "stopped";
                     }
-                    g.game.pills[ pill1.x + "_" + pill1.y ] = pill1;
-                    g.game.pills[ pill2.x + "_" + pill2.y ] = pill2;
-                    g.game.activePills.splice( i, 1 );
-                    break;
+
+                    // If partner has already moved - then move it back up
+                    if( pill.order === 0 ) {
+                        pill.partner.y -= 1;
+                        g.game.pills[ pill.partner.x + "_" + pill.partner.y ] = pill.partner;
+                        g.game.activePills.splice( i, 1 );
+                    }
+
+                    // Decouple Pills
+                    pill.partner.partner = null;
+                    pill.partner = null;
                 }
+
+                break;
             }
         }
     }
-
-    requestAnimationFrame( drawGameScreen );
 }
+
 </script>
 </body>
 </html>
