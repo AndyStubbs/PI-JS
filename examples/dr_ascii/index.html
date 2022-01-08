@@ -2,6 +2,7 @@
 <html>
     <head>
         <title>Dr. Ascii</title>
+        <link rel="icon" type="image/x-icon" href="favicon.png">
         <script src="../../build/qbs.js"></script>
         <style>
             html, body {
@@ -13,6 +14,27 @@
 <script>
 "use strict";
 
+var drAscii1 = `
+                       ** o_
+                       ||/--\\ 
+                       \\\\<" |
+                        \\/' \\ 
+                         |\\/|\\ 
+                         \\  /\\; 
+                         ||||
+                        <=][=>
+`;
+
+var drAscii2 = `
+                          o_
+                         /--\\
+                         <" |
+                         /  \\ 
+                        /|\\/|\\
+                        /\\  /\\;
+                         ||||
+                        <=][=>
+`;
 var bottle = `
 
 
@@ -47,8 +69,12 @@ var g = {
     "lastAnimationFrame2": 0,
     "interval": 0,
     "top": 1000,
-    "speeds": { "LOW": 750, "MED": 450, "HIGH": 250 },
-    "viruses": [ "~!", "@#", "$%" ],
+    "speeds": { "LOW": 750, "MED": 450, "HIGH": 200 },
+    "scores": { "LOW": 100, "MED": 200, "HIGH": 300 },
+    "viruses": [ "~!", "#$", "%^" ],
+    "colors": [ 4, 54, 44 ],
+    "moveDelay": 200,
+    "rotateDelay": 200,
     "game": {
         "time": 0,
         "players": 1,
@@ -56,6 +82,7 @@ var g = {
         "speed": "HIGH",
         "virus": 4,
         "score": 0,
+        "pillScore": 0,
         "viruses": {
             "15_22": { "x": 15, "y": 22, "c": 4, "id": 0, "frame": 0 },
             "12_18": { "x": 12, "y": 18, "c": 54, "id": 1, "frame": 0 },
@@ -69,7 +96,13 @@ var g = {
             "15_20": { "x": 15, "y": 20, "c": 4, "id": "&" }
         },
         "activePills": [],
-        "virusAngle": 0
+        "movePill": null,
+        "virusAngle": 0,
+        "floor": 25,
+        "moveX": 0,
+        "rotate": 0,
+        "lastMove": performance.now(),
+        "lastRotate": performance.now()
     },
     "screens": []
 };
@@ -77,8 +110,9 @@ var g = {
 let tPill = { "x": 15, "y": 8, "c": 4, "id": "(", "last": performance.now(), "status": "active", "order": 0 };
 tPill.partner = { "x": 16, "y": 8, "c": 44, "id": ")", "last": performance.now(), "status": "active", "order": 1 };
 tPill.partner.partner = tPill;
-g.game.activePills.push( tPill );
-g.game.activePills.push( tPill.partner );
+addActivePill( tPill );
+addActivePill( tPill.partner );
+g.game.movePill = tPill;
 
 initGame();
 
@@ -94,10 +128,10 @@ function initGame() {
         $.setFont( 2 );
         $.setChar( "~", "00c33c4299663c42" );   // A0
         $.setChar( "!", "81423c425ae73c24" );   // A1
-        $.setChar( "@", "005a3c5aff663c42" );   // B0
-        $.setChar( "#", "00187e5a7ee73c24" );   // B1
-        $.setChar( "$", "c3ff425a7ec35a66" );   // C0
-        $.setChar( "%", "00ffc35aff427ee7" );   // C1
+        $.setChar( "#", "005a3c5aff663c42" );   // B0
+        $.setChar( "$", "00187e5a7ee73c24" );   // B1
+        $.setChar( "%", "c3ff425a7ec35a66" );   // C0
+        $.setChar( "^", "00ffc35aff427ee7" );   // C1
     }
 
     $.setScreen( g.screens[ 0 ] );
@@ -105,14 +139,40 @@ function initGame() {
     // Pills
     $.setChar( "(", "3f7fffffffff7f3f" );   // Left
     $.setChar( ")", "fcfefffffffffefc" );   // Right
-    $.setChar( "-", "3c7effffffffffff" );   // Top
-    $.setChar( "_", "ffffffffffff7e3c" );   // Bottom
+    $.setChar( "{", "3c7effffffffffff" );   // Top
+    $.setChar( "}", "ffffffffffff7e3c" );   // Bottom
     $.setChar( "&", "3c7effffffff7e3c" );   // Circle
 
     g.time = performance.now();
     g.lastAnimationFrame = g.time;
     g.lastAnimationFrame2 = g.time;
+
+    setupGameInput();
     run( g.time );
+}
+
+function setupGameInput() {
+    $.onkey( "ArrowLeft", "down", function () {
+        g.game.moveX = -1;
+    } );
+    $.onkey( "ArrowLeft", "up", function () {
+        g.game.moveX = 0;
+        g.game.lastMove = 0;
+    } );
+    $.onkey( "ArrowRight", "down", function () {
+        g.game.moveX = 1;
+    } );
+    $.onkey( "ArrowRight", "up", function () {
+        g.game.moveX = 0;
+        g.game.lastMove = 0;
+    } );
+    $.onkey( "ArrowUp", "down", function () {
+        g.game.rotate = true;
+    } );
+    $.onkey( "ArrowUp", "up", function () {
+        g.game.rotate = false;
+        g.game.lastRotate = 0;
+    } );
 }
 
 function showIntroScreen() {
@@ -211,6 +271,7 @@ function drawGameScreen( timestamp, dt ) {
     $.setColor( 7 );
     $.setPos( 22, 3 );
     $.print( "Dr. Ascii" );
+    $.print( drAscii2 );
 
     // Draw Stats
     $.setColor( 8 );
@@ -292,7 +353,9 @@ function drawGameScreen( timestamp, dt ) {
 }
 
 function moveGameObjects( timestamp, dt ) {
-    var i, pill, cacheIndex;
+    var i, pill, cacheIndex, pillDropped;
+
+    pillDropped = false;
 
     // Move Active Pills
     for( i = g.game.activePills.length - 1; i >= 0; i-- ) {
@@ -307,12 +370,16 @@ function moveGameObjects( timestamp, dt ) {
                 g.game.pills[ cacheIndex ] ||
                 g.game.viruses[ cacheIndex ] ||
                 pill.status === "stopped" ||
-                pill.y > 25
+                pill.y > g.game.floor
             ) {
                 pill.status = "stopped";
                 pill.y -= 1;
                 g.game.pills[ pill.x + "_" + pill.y ] = pill;
                 g.game.activePills.splice( i, 1 );
+
+                if( pill === g.game.movePill || pill.partner === g.game.movePill ) {
+                    g.game.movePill = null;
+                }
 
                 // If partner is active flag it to be stopped
                 if( pill.partner ) {
@@ -332,10 +399,178 @@ function moveGameObjects( timestamp, dt ) {
                     pill.partner = null;
                 }
 
-                break;
+                pillDropped = true;
             }
         }
     }
+
+    if( pillDropped ) {
+        findMatches();
+        freefall();
+    }
+
+    if( g.game.activePills.length == 0 ) {
+        g.game.score += g.game.pillScore;
+        g.game.pillScore = 0;
+        throwPill();
+    }
+
+    if( g.game.moveX !== 0 && timestamp > g.game.lastMove + g.moveDelay ) {
+        g.game.movePill.x += g.game.moveX;
+        g.game.movePill.partner.x += g.game.moveX;
+        g.game.lastMove = timestamp;
+    }
+}
+
+function throwPill() {
+    var nextPill;
+
+    nextPill = {
+        "x": 15, "y": 8, "c": g.colors[ Math.floor( Math.random() * g.colors.length ) ],
+        "id": "(", "last": performance.now(),
+        "status": "active", "order": 0
+    };
+    nextPill.partner = {
+        "x": 16, "y": 8, "c": g.colors[ Math.floor( Math.random() * g.colors.length ) ],
+        "id": ")", "last": performance.now(),
+        "status": "active", "order": 1
+    };
+    nextPill.partner.partner = nextPill;
+    addActivePill( nextPill );
+    addActivePill( nextPill.partner );
+    g.game.movePill = nextPill;
+}
+
+function findMatches() {
+    var i, pill, matches, j;
+
+    for( i in g.game.pills ) {
+        pill = g.game.pills[ i ];
+        matches = getMatches( pill.x, pill.y, pill.c );
+        if( matches.length >= 4 ) {
+            for( j = 0; j < matches.length; j++ ) {
+                if( g.game.pills[ matches[ j ] ] ) {
+                    delete g.game.pills[ matches[ j ] ];
+                } else if( g.game.viruses[ matches[ j ] ] ) {
+                    if( g.game.pillScore === 0 ) {
+                        g.game.pillScore = g.scores[ g.game.speed ];
+                    } else {
+                        g.game.pillScore *= 2;
+                    }
+                    delete g.game.viruses[ matches[ j ] ];
+                    g.game.virusCount -= 1;
+                }
+            }
+        }
+    }
+}
+
+function addActivePill( pill ) {
+    g.game.activePills.push( pill );
+    g.game.activePills.sort( function ( a, b ) {
+        return a.y > b.y;
+    } );
+}
+
+function getMatches( x, y, c ) {
+    var x2, y2, matches, found;
+
+    // Count Horizontal
+    matches = [];
+    found = true;
+    x2 = x;
+    while( found ) {
+        x2 -= 1;
+        found = checkMatch( x2 + "_" + y, c );
+    }
+    found = true;
+    while( found ) {
+        x2 += 1;
+        found = checkMatch( x2 + "_" + y, c );
+        if( found ) {
+            matches.push( x2 + "_" + y );
+        }
+    }
+
+    if( matches.length > 3 ) {
+        return matches;
+    }
+    
+    // Count Vertical
+    matches = [];
+    found = true;
+    y2 = y;
+    while( found ) {
+        y2 -= 1;
+        found = checkMatch( x + "_" + y2, c );
+    }
+    found = true;
+    while( found ) {
+        y2 += 1;
+        found = checkMatch( x + "_" + y2, c );
+        if( found ) {
+            matches.push( x + "_" + y2 );
+        }
+    }
+
+    return matches;
+}
+
+function checkMatch( index, c ) {
+    return (
+        ( g.game.pills[ index ] && g.game.pills[ index ].c === c ) ||
+        ( g.game.viruses[ index ] && g.game.viruses[ index ].c === c )
+    );
+}
+
+function freefall() {
+    var i, pill, fallers, j, isFreeFall;
+
+    // Move Active Pills
+    g.cache = {};
+    for( i in g.game.pills ) {
+        if( g.cache[ i ] ) {
+            continue;
+        }
+        pill = g.game.pills[ i ];
+        fallers = [];
+        isFreeFall = getFreeFallers( pill.x, pill.y, fallers );
+        if( isFreeFall ) {
+            for( j = 0; j < fallers.length; j++ ) {
+                pill = g.game.pills[ fallers[ j ] ];
+                pill.last = performance.now();
+                pill.status = "active";
+                pill.id = "&";
+                addActivePill( pill );
+
+                delete g.game.pills[ fallers[ j ] ];
+            }
+        }
+    }
+}
+
+function getFreeFallers( x, y, fallers ) {
+    var index, isFreeFall, checks, i, x2, y2;
+
+    checks = [ [ -1, 0 ], [ 1, 0 ], [ 0, -1 ], [ 0, 1 ] ];
+    isFreeFall = true;
+    index = x + "_" + y;
+    fallers.push( index );
+    g.cache[ index ] = true;
+
+    // Loop through all directions
+    for( i = 0; i < checks.length; i++ ) {
+        x2 = x + checks[ i ][ 0 ];
+        y2 = y + checks[ i ][ 1 ];
+        index = x2 + "_" + y2;
+        if( ! g.cache[ index ] && g.game.pills[ index ] ) {
+            isFreeFall &= getFreeFallers( x2, y2, fallers );
+        } else if( g.game.viruses[ index ] || y2 > g.game.floor ) {
+            isFreeFall = false;
+        }
+    }
+
+    return isFreeFall;
 }
 
 </script>
