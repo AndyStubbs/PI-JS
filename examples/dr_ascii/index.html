@@ -15,14 +15,14 @@
 "use strict";
 
 var drAscii1 = `
-                       ** o_
-                       ||/--\\ 
+                          o_
+                       ()/--\\ 
                        \\\\<" |
-                        \\/' \\ 
+                        \\/  \\ 
                          |\\/|\\ 
-                         \\  /\\; 
+                         \\  /\\ 
                          ||||
-                        <=][=>
+                        <=<=]
 `;
 
 var drAscii2 = `
@@ -30,11 +30,57 @@ var drAscii2 = `
                          /--\\
                          <" |
                          /  \\ 
-                        /|\\/|\\
-                        /\\  /\\;
+                       {/|\\/|\\
+                       }/\\  /\\
+                         ||||
+                        <=<=]
+`;
+
+var drAscii3 = `
+                          o_
+                         /--\\
+                         |''|
+                         /' \\ 
+                       {/|\\/|\\
+                       }/\\  /\\
                          ||||
                         <=][=>
 `;
+
+
+var drAscii4 = `
+                          o_
+                         /--\\
+                         |\`\`|
+                         / '\\ 
+                       {/|\\/|\\
+                       }/\\  /\\
+                         ||||
+                        <=][=>
+`;
+
+var drAscii5 = `
+                          o_
+                         /--\\
+                         |\`\`|
+                         / '\\/ 
+                       {/|\\/|/
+                       }/\\  /
+                         ||||
+                        <=][=>
+`;
+
+var drAscii6 = `
+                          o_
+                         /--\\
+                       ()<" |
+                       \\\\/  \\ 
+                        \\|\\/|\\
+                         \\  /\\
+                         ||||
+                        <=<=]
+`;
+
 var bottle = `
 
 
@@ -65,6 +111,9 @@ var bottle = `
 `;
 
 var g = {
+    "animations": [ drAscii2, drAscii3, drAscii4, drAscii5, drAscii6, drAscii1 ],
+    "animationFrame": 0,
+    "animationDelay": 1000,
     "lastAnimationFrame": 0,
     "lastAnimationFrame2": 0,
     "interval": 0,
@@ -72,10 +121,19 @@ var g = {
     "speeds": { "LOW": 750, "MED": 450, "HIGH": 200 },
     "scores": { "LOW": 100, "MED": 200, "HIGH": 300 },
     "viruses": [ "~!", "#$", "%^" ],
+    "pills": [ "(", ")", "{", "}" ],
+    "rotations": [
+        [  0,  0,  1,  0, "(", ")" ],
+        [  0, -1,  0,  0, "{", "}" ],
+        [  1,  0,  0,  0, ")", "(" ],
+        [  0,  0,  0, -1, "}", "{" ]
+    ],
     "colors": [ 4, 54, 44 ],
     "moveDelay": 200,
     "rotateDelay": 200,
     "game": {
+        "nextPill": null,
+        "throwingPill": true,
         "time": 0,
         "players": 1,
         "level": 0,
@@ -98,6 +156,8 @@ var g = {
         "activePills": [],
         "movePill": null,
         "virusAngle": 0,
+        "left": 10,
+        "right": 20,
         "floor": 25,
         "moveX": 0,
         "rotate": 0,
@@ -106,13 +166,6 @@ var g = {
     },
     "screens": []
 };
-
-let tPill = { "x": 15, "y": 8, "c": 4, "id": "(", "last": performance.now(), "status": "active", "order": 0 };
-tPill.partner = { "x": 16, "y": 8, "c": 44, "id": ")", "last": performance.now(), "status": "active", "order": 1 };
-tPill.partner.partner = tPill;
-addActivePill( tPill );
-addActivePill( tPill.partner );
-g.game.movePill = tPill;
 
 initGame();
 
@@ -148,6 +201,7 @@ function initGame() {
     g.lastAnimationFrame2 = g.time;
 
     setupGameInput();
+    getNextPill();
     run( g.time );
 }
 
@@ -271,7 +325,7 @@ function drawGameScreen( timestamp, dt ) {
     $.setColor( 7 );
     $.setPos( 22, 3 );
     $.print( "Dr. Ascii" );
-    $.print( drAscii2 );
+    $.print( g.animations[ g.animationFrame ] );
 
     // Draw Stats
     $.setColor( 8 );
@@ -365,6 +419,7 @@ function moveGameObjects( timestamp, dt ) {
         if( g.time > pill.last + g.speeds[ g.game.speed ] ) {
             pill.last = g.time;
             pill.y += 1;
+            pill.baseY += 1;
             cacheIndex = pill.x + "_" + pill.y;
             if( 
                 g.game.pills[ cacheIndex ] ||
@@ -374,6 +429,7 @@ function moveGameObjects( timestamp, dt ) {
             ) {
                 pill.status = "stopped";
                 pill.y -= 1;
+                pill.baseY -= 1;
                 g.game.pills[ pill.x + "_" + pill.y ] = pill;
                 g.game.activePills.splice( i, 1 );
 
@@ -409,36 +465,92 @@ function moveGameObjects( timestamp, dt ) {
         freefall();
     }
 
-    if( g.game.activePills.length == 0 ) {
+    if( g.game.activePills.length === 0 && ! g.game.throwingPill  ) {
         g.game.score += g.game.pillScore;
         g.game.pillScore = 0;
-        throwPill();
+        getNextPill();
+    }
+
+    if( timestamp > g.lastAnimationFrame + g.animationDelay ) {
+        if( g.game.throwingPill ) {
+            g.animationFrame = 0;
+            throwPill();
+        } else {
+            g.animationFrame = Math.floor( Math.random() * ( g.animations.length - 1 ) );
+        }
+        g.lastAnimationFrame = timestamp;
+    }
+
+    handleInput( timestamp );
+}
+
+function handleInput( timestamp ) {
+    var cacheIndex, cacheIndex2;
+
+    if( ! g.game.movePill ) {
+        return;
+    }
+    if( g.game.rotate && timestamp > g.game.lastRotate + g.rotateDelay ) {
+        g.game.movePill.rotation = ( g.game.movePill.rotation + 1 ) % 4;
+        g.game.movePill.x = g.game.movePill.baseX + g.rotations[ g.game.movePill.rotation ][ 0 ];
+        g.game.movePill.y = g.game.movePill.baseY + g.rotations[ g.game.movePill.rotation ][ 1 ];
+        g.game.movePill.partner.x = g.game.movePill.baseX + g.rotations[ g.game.movePill.rotation ][ 2 ];
+        g.game.movePill.partner.y = g.game.movePill.baseY + g.rotations[ g.game.movePill.rotation ][ 3 ];
+        g.game.movePill.id = g.rotations[ g.game.movePill.rotation ][ 4 ];
+        g.game.movePill.partner.id = g.rotations[ g.game.movePill.rotation ][ 5 ];
+        g.game.lastRotate = timestamp;
     }
 
     if( g.game.moveX !== 0 && timestamp > g.game.lastMove + g.moveDelay ) {
+        g.game.movePill.baseX += g.game.moveX;
         g.game.movePill.x += g.game.moveX;
         g.game.movePill.partner.x += g.game.moveX;
-        g.game.lastMove = timestamp;
+
+        cacheIndex = g.game.movePill.x + "_" + g.game.movePill.y;
+        cacheIndex2 = g.game.movePill.partner.x + "_" + g.game.movePill.partner.y;
+
+        if(
+            g.game.pills[ cacheIndex ] || g.game.pills[ cacheIndex2 ] ||
+            g.game.viruses[ cacheIndex ] || g.game.viruses[ cacheIndex2 ] ||
+            g.game.movePill.x <= g.game.left ||
+            g.game.movePill.x >= g.game.right ||
+            g.game.movePill.partner.x <= g.game.left ||
+            g.game.movePill.partner.x >= g.game.right
+        ) {
+            g.game.movePill.baseX -= g.game.moveX;
+            g.game.movePill.x -= g.game.moveX;
+            g.game.movePill.partner.x -= g.game.moveX;
+        } else {
+            g.game.lastMove = timestamp;
+        }
     }
 }
 
-function throwPill() {
-    var nextPill;
-
-    nextPill = {
-        "x": 15, "y": 8, "c": g.colors[ Math.floor( Math.random() * g.colors.length ) ],
+function getNextPill() {
+    g.animationFrame = g.animations.length - 1;
+    g.lastAnimationFrame = performance.now();
+    g.game.throwingPill = true;
+    g.game.nextPill = {
+        "x": 15, "y": 7, "c": g.colors[ Math.floor( Math.random() * g.colors.length ) ],
+        "baseX": 15, "baseY": 8,
         "id": "(", "last": performance.now(),
-        "status": "active", "order": 0
+        "status": "active", "order": 0, "rotation": 0
     };
-    nextPill.partner = {
-        "x": 16, "y": 8, "c": g.colors[ Math.floor( Math.random() * g.colors.length ) ],
+    g.game.nextPill.partner = {
+        "x": 16, "y": 7, "c": g.colors[ Math.floor( Math.random() * g.colors.length ) ],
         "id": ")", "last": performance.now(),
         "status": "active", "order": 1
     };
-    nextPill.partner.partner = nextPill;
-    addActivePill( nextPill );
-    addActivePill( nextPill.partner );
-    g.game.movePill = nextPill;
+    g.game.nextPill.partner.partner = g.game.nextPill;
+}
+
+function throwPill() {
+    g.animationFrame = 0;
+    g.lastAnimationFrame = performance.now();
+    g.game.throwingPill = false;
+    addActivePill( g.game.nextPill );
+    addActivePill( g.game.nextPill.partner );
+    g.game.movePill = g.game.nextPill;
 }
 
 function findMatches() {
