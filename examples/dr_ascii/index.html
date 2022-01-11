@@ -16,7 +16,7 @@
 
 var drAscii1 = `
                           o_
-                       ()/--\\ 
+                         /--\\ 
                        \\\\<" |
                         \\/  \\ 
                          |\\/|\\ 
@@ -24,28 +24,32 @@ var drAscii1 = `
                          ||||
                         <=<=]
 `;
+var drAscii1Pills = [ [ 22, 6, "(" ], [ 23, 6, ")" ] ];
 
 var drAscii2 = `
                           o_
                          /--\\
                          <" |
                          /  \\ 
-                       {/|\\/|\\
-                       }/\\  /\\
+                        /|\\/|\\
+                        /\\  /\\
                          ||||
                         <=<=]
 `;
+var drAscii2Pills = [ [ 23, 9, "{" ], [ 23, 10, "}" ] ];
+
 
 var drAscii3 = `
                           o_
                          /--\\
                          |''|
                          /' \\ 
-                       {/|\\/|\\
-                       }/\\  /\\
+                        /|\\/|\\
+                        /\\  /\\
                          ||||
                         <=][=>
 `;
+var drAscii3Pills = [ [ 23, 9, "{" ], [ 23, 10, "}" ] ];
 
 
 var drAscii4 = `
@@ -53,33 +57,36 @@ var drAscii4 = `
                          /--\\
                          |\`\`|
                          / '\\ 
-                       {/|\\/|\\
-                       }/\\  /\\
+                        /|\\/|\\
+                        /\\  /\\
                          ||||
                         <=][=>
 `;
+var drAscii4Pills = [ [ 23, 9, "{" ], [ 23, 10, "}" ] ];
 
 var drAscii5 = `
                           o_
                          /--\\
                          |\`\`|
                          / '\\/ 
-                       {/|\\/|/
-                       }/\\  /
+                        /|\\/|/
+                        /\\  /
                          ||||
                         <=][=>
 `;
+var drAscii5Pills = [ [ 23, 9, "{" ], [ 23, 10, "}" ] ];
 
 var drAscii6 = `
                           o_
                          /--\\
-                       ()<" |
+                         <" |
                        \\\\/  \\ 
                         \\|\\/|\\
                          \\  /\\
                          ||||
                         <=<=]
 `;
+var drAscii6Pills = [ [ 23, 6, "{" ], [ 23, 7, "}" ] ];
 
 var bottle = `
 
@@ -112,6 +119,7 @@ var bottle = `
 
 var g = {
     "animations": [ drAscii2, drAscii3, drAscii4, drAscii5, drAscii6, drAscii1 ],
+    "animationPills": [ drAscii2Pills, drAscii3Pills, drAscii4Pills, drAscii5Pills, drAscii6Pills, drAscii1Pills ],
     "animationFrame": 0,
     "animationDelay": 1000,
     "lastAnimationFrame": 0,
@@ -134,6 +142,7 @@ var g = {
     "game": {
         "nextPill": null,
         "throwingPill": true,
+        "finishedThrowing": false,
         "time": 0,
         "players": 1,
         "level": 0,
@@ -202,6 +211,7 @@ function initGame() {
 
     setupGameInput();
     getNextPill();
+    setupThrowAnimation();
     run( g.time );
 }
 
@@ -302,7 +312,7 @@ function run( timestamp ) {
 }
 
 function drawGameScreen( timestamp, dt ) {
-    var i, virus, pill, virusTypesDrawn, x, y, a, j, cacheIndex;
+    var i, virus, pill, virusTypesDrawn, x, y, a, j, cacheIndex, pillData;
 
     $.cls();
 
@@ -326,6 +336,17 @@ function drawGameScreen( timestamp, dt ) {
     $.setPos( 22, 3 );
     $.print( "Dr. Ascii" );
     $.print( g.animations[ g.animationFrame ] );
+
+    // Draw Next Pill
+    if( g.game.finishedThrowing ) {
+        pillData = g.animationPills[ g.animationFrame ]; 
+        $.setColor( g.game.nextPill.c );
+        $.setPos( pillData[ 0 ][ 0 ], pillData[ 0 ][ 1 ] );
+        $.print( pillData[ 0 ][ 2 ] );
+        $.setColor( g.game.nextPill.partner.c );
+        $.setPos( pillData[ 1 ][ 0 ], pillData[ 1 ][ 1 ] );
+        $.print( pillData[ 1 ][ 2 ] );
+    }
 
     // Draw Stats
     $.setColor( 8 );
@@ -468,15 +489,18 @@ function moveGameObjects( timestamp, dt ) {
     if( g.game.activePills.length === 0 && ! g.game.throwingPill  ) {
         g.game.score += g.game.pillScore;
         g.game.pillScore = 0;
-        getNextPill();
+        setupThrowAnimation();
     }
 
     if( timestamp > g.lastAnimationFrame + g.animationDelay ) {
         if( g.game.throwingPill ) {
             g.animationFrame = 0;
             throwPill();
+            getNextPill();
+            g.game.finishedThrowing = false;
         } else {
             g.animationFrame = Math.floor( Math.random() * ( g.animations.length - 1 ) );
+            g.game.finishedThrowing = true;
         }
         g.lastAnimationFrame = timestamp;
     }
@@ -527,9 +551,6 @@ function handleInput( timestamp ) {
 }
 
 function getNextPill() {
-    g.animationFrame = g.animations.length - 1;
-    g.lastAnimationFrame = performance.now();
-    g.game.throwingPill = true;
     g.game.nextPill = {
         "x": 15, "y": 7, "c": g.colors[ Math.floor( Math.random() * g.colors.length ) ],
         "baseX": 15, "baseY": 8,
@@ -542,6 +563,13 @@ function getNextPill() {
         "status": "active", "order": 1
     };
     g.game.nextPill.partner.partner = g.game.nextPill;
+}
+
+function setupThrowAnimation() {
+    g.animationFrame = g.animations.length - 1;
+    g.lastAnimationFrame = performance.now();
+    g.game.throwingPill = true;
+    g.game.finishedThrowing = true;
 }
 
 function throwPill() {
