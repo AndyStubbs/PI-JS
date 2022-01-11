@@ -523,6 +523,13 @@ function handleInput( timestamp ) {
         g.game.movePill.id = g.rotations[ g.game.movePill.rotation ][ 4 ];
         g.game.movePill.partner.id = g.rotations[ g.game.movePill.rotation ][ 5 ];
         g.game.lastRotate = timestamp;
+
+        // If up against right wall make sure to bounce back
+        if( g.game.movePill.x >= g.game.right || g.game.movePill.partner.x >= g.game.right ) {
+            g.game.movePill.x -= 1;
+            g.game.movePill.baseX -= 1;
+            g.game.movePill.partner.x -= 1;
+        }
     }
 
     if( g.game.moveX !== 0 && timestamp > g.game.lastMove + g.moveDelay ) {
