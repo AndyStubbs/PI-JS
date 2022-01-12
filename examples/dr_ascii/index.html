@@ -127,6 +127,7 @@ var g = {
     "interval": 0,
     "top": 1000,
     "speeds": { "LOW": 750, "MED": 450, "HIGH": 200 },
+    "fastFallSpeed": 25,
     "scores": { "LOW": 100, "MED": 200, "HIGH": 300 },
     "viruses": [ "~!", "#$", "%^" ],
     "pills": [ "(", ")", "{", "}" ],
@@ -170,6 +171,7 @@ var g = {
         "floor": 25,
         "moveX": 0,
         "rotate": 0,
+        "fastFall": false,
         "lastMove": performance.now(),
         "lastRotate": performance.now()
     },
@@ -236,6 +238,12 @@ function setupGameInput() {
     $.onkey( "ArrowUp", "up", function () {
         g.game.rotate = false;
         g.game.lastRotate = 0;
+    } );
+    $.onkey( "ArrowDown", "down", function () {
+        g.game.fastFall = true;
+    } );
+    $.onkey( "ArrowDown", "up", function () {
+        g.game.fastFall = false;
     } );
 }
 
@@ -428,7 +436,7 @@ function drawGameScreen( timestamp, dt ) {
 }
 
 function moveGameObjects( timestamp, dt ) {
-    var i, pill, cacheIndex, pillDropped;
+    var i, pill, cacheIndex, pillDropped, speed;
 
     pillDropped = false;
 
@@ -436,8 +444,16 @@ function moveGameObjects( timestamp, dt ) {
     for( i = g.game.activePills.length - 1; i >= 0; i-- ) {
         pill = g.game.activePills[ i ];
 
+        if(
+            g.game.fastFall && g.game.movePill &&
+            ( pill === g.game.movePill || pill === g.game.movePill.partner )
+        ) {
+            speed = g.fastFallSpeed;
+        } else {
+            speed = g.speeds[ g.game.speed ];
+        }
         // Check if ready to drop
-        if( g.time > pill.last + g.speeds[ g.game.speed ] ) {
+        if( g.time > pill.last + speed ) {
             pill.last = g.time;
             pill.y += 1;
             pill.baseY += 1;
