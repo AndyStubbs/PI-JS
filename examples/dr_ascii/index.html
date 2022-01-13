@@ -532,19 +532,30 @@ function handleInput( timestamp ) {
     }
     if( g.game.rotate && timestamp > g.game.lastRotate + g.rotateDelay ) {
         g.game.movePill.rotation = ( g.game.movePill.rotation + 1 ) % 4;
-        g.game.movePill.x = g.game.movePill.baseX + g.rotations[ g.game.movePill.rotation ][ 0 ];
-        g.game.movePill.y = g.game.movePill.baseY + g.rotations[ g.game.movePill.rotation ][ 1 ];
-        g.game.movePill.partner.x = g.game.movePill.baseX + g.rotations[ g.game.movePill.rotation ][ 2 ];
-        g.game.movePill.partner.y = g.game.movePill.baseY + g.rotations[ g.game.movePill.rotation ][ 3 ];
-        g.game.movePill.id = g.rotations[ g.game.movePill.rotation ][ 4 ];
-        g.game.movePill.partner.id = g.rotations[ g.game.movePill.rotation ][ 5 ];
-        g.game.lastRotate = timestamp;
+        updateRotation( timestamp );
 
         // If up against right wall make sure to bounce back
         if( g.game.movePill.x >= g.game.right || g.game.movePill.partner.x >= g.game.right ) {
             g.game.movePill.x -= 1;
             g.game.movePill.baseX -= 1;
             g.game.movePill.partner.x -= 1;
+
+            if( isPillCollision() ) {
+                g.game.movePill.x += 1;
+                g.game.movePill.baseX += 1;
+                g.game.movePill.partner.x += 1;
+                g.game.movePill.rotation -= 1;
+                if( g.game.movePill.rotation < 0 ) {
+                    g.game.movePill.rotation = 3;
+                }
+                updateRotation( timestamp );
+            }
+        } else if( isPillCollision() ) {
+            g.game.movePill.rotation -= 1;
+            if( g.game.movePill.rotation < 0 ) {
+                g.game.movePill.rotation = 3;
+            }
+            updateRotation( timestamp );
         }
     }
 
@@ -553,17 +564,7 @@ function handleInput( timestamp ) {
         g.game.movePill.x += g.game.moveX;
         g.game.movePill.partner.x += g.game.moveX;
 
-        cacheIndex = g.game.movePill.x + "_" + g.game.movePill.y;
-        cacheIndex2 = g.game.movePill.partner.x + "_" + g.game.movePill.partner.y;
-
-        if(
-            g.game.pills[ cacheIndex ] || g.game.pills[ cacheIndex2 ] ||
-            g.game.viruses[ cacheIndex ] || g.game.viruses[ cacheIndex2 ] ||
-            g.game.movePill.x <= g.game.left ||
-            g.game.movePill.x >= g.game.right ||
-            g.game.movePill.partner.x <= g.game.left ||
-            g.game.movePill.partner.x >= g.game.right
-        ) {
+        if( isPillCollision() ) {
             g.game.movePill.baseX -= g.game.moveX;
             g.game.movePill.x -= g.game.moveX;
             g.game.movePill.partner.x -= g.game.moveX;
@@ -571,6 +572,32 @@ function handleInput( timestamp ) {
             g.game.lastMove = timestamp;
         }
     }
+}
+
+function updateRotation( timestamp ) {
+    g.game.movePill.x = g.game.movePill.baseX + g.rotations[ g.game.movePill.rotation ][ 0 ];
+    g.game.movePill.y = g.game.movePill.baseY + g.rotations[ g.game.movePill.rotation ][ 1 ];
+    g.game.movePill.partner.x = g.game.movePill.baseX + g.rotations[ g.game.movePill.rotation ][ 2 ];
+    g.game.movePill.partner.y = g.game.movePill.baseY + g.rotations[ g.game.movePill.rotation ][ 3 ];
+    g.game.movePill.id = g.rotations[ g.game.movePill.rotation ][ 4 ];
+    g.game.movePill.partner.id = g.rotations[ g.game.movePill.rotation ][ 5 ];
+    g.game.lastRotate = timestamp;
+}
+
+function isPillCollision() {
+    var cacheIndex, cacheIndex2;
+
+    cacheIndex = g.game.movePill.x + "_" + g.game.movePill.y;
+    cacheIndex2 = g.game.movePill.partner.x + "_" + g.game.movePill.partner.y;
+
+    return (
+        g.game.pills[ cacheIndex ] || g.game.pills[ cacheIndex2 ] ||
+        g.game.viruses[ cacheIndex ] || g.game.viruses[ cacheIndex2 ] ||
+        g.game.movePill.x <= g.game.left ||
+        g.game.movePill.x >= g.game.right ||
+        g.game.movePill.partner.x <= g.game.left ||
+        g.game.movePill.partner.x >= g.game.right
+    );
 }
 
 function getNextPill() {
