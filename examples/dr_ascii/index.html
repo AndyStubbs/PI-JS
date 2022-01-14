@@ -456,7 +456,9 @@ function moveGameObjects( timestamp, dt ) {
         if( g.time > pill.last + speed ) {
             pill.last = g.time;
             pill.y += 1;
-            pill.baseY += 1;
+            if( pill.baseY ) {
+                pill.baseY += 1;
+            }
             cacheIndex = pill.x + "_" + pill.y;
             if( 
                 g.game.pills[ cacheIndex ] ||
@@ -466,7 +468,9 @@ function moveGameObjects( timestamp, dt ) {
             ) {
                 pill.status = "stopped";
                 pill.y -= 1;
-                pill.baseY -= 1;
+                if( pill.baseY ) {
+                    pill.baseY -= 1;
+                }
                 g.game.pills[ pill.x + "_" + pill.y ] = pill;
                 g.game.activePills.splice( i, 1 );
 
@@ -539,8 +543,10 @@ function handleInput( timestamp ) {
             g.game.movePill.x -= 1;
             g.game.movePill.baseX -= 1;
             g.game.movePill.partner.x -= 1;
+            console.log( "Bounce Back" );
 
             if( isPillCollision() ) {
+                console.log( "BB - Collided" );
                 g.game.movePill.x += 1;
                 g.game.movePill.baseX += 1;
                 g.game.movePill.partner.x += 1;
@@ -551,6 +557,7 @@ function handleInput( timestamp ) {
                 updateRotation( timestamp );
             }
         } else if( isPillCollision() ) {
+            console.log( "Rotated - Collided" );
             g.game.movePill.rotation -= 1;
             if( g.game.movePill.rotation < 0 ) {
                 g.game.movePill.rotation = 3;
@@ -603,7 +610,7 @@ function isPillCollision() {
 function getNextPill() {
     g.game.nextPill = {
         "x": 15, "y": 7, "c": g.colors[ Math.floor( Math.random() * g.colors.length ) ],
-        "baseX": 15, "baseY": 8,
+        "baseX": 15, "baseY": 7,
         "id": "(", "last": performance.now(),
         "status": "active", "order": 0, "rotation": 0
     };
