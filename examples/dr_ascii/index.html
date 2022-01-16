@@ -126,9 +126,10 @@ var g = {
     "lastAnimationFrame2": 0,
     "interval": 0,
     "top": 1000,
-    "speeds": { "LOW": 750, "MED": 450, "HIGH": 200 },
+    "speeds": [ 750, 450, 200 ],
+    "speedNames": [ "LOW", "MED", "HIGH" ],
     "fastFallSpeed": 25,
-    "scores": { "LOW": 100, "MED": 200, "HIGH": 300 },
+    "scores": [ 100, 200, 300 ],
     "viruses": [ "~!", "#$", "%^" ],
     "pills": [ "(", ")", "{", "}" ],
     "rotations": [
@@ -140,6 +141,30 @@ var g = {
     "colors": [ 4, 54, 44 ],
     "moveDelay": 200,
     "rotateDelay": 200,
+    "cnt": 0,
+    "cnt2": 0,
+    "maxVirusLevel": 20,
+    "settings": {
+        "players": 1,
+        "selected": 0,
+        "virusLevel": 5,
+        "speed": 0,
+        "speedSelected": 0,
+        "rects": [
+            // 25, 30, 190, 40
+            { "x": 25, "y": 30, "width": 190, "height": 40 },
+            // 25, 82, 190, 40 
+            { "x": 25, "y": 82, "width": 190, "height": 40 },
+            // 25, 135, 190, 32
+            { "x": 25, "y": 135, "width": 190, "height": 32 },
+            // 45, 102, 30, 12
+            { "x": 45, "y": 102, "width": 30, "height": 12 },
+            // 100, 102, 30, 12
+            { "x": 100, "y": 102, "width": 30, "height": 12 },
+            // 156, 102, 37, 12
+            { "x": 156, "y": 102, "width": 37, "height": 12 }
+        ]
+    },
     "game": {
         "nextPill": null,
         "throwingPill": true,
@@ -147,8 +172,7 @@ var g = {
         "time": 0,
         "players": 1,
         "level": 0,
-        "speed": "HIGH",
-        "virus": 4,
+        "speed": "2",
         "score": 0,
         "pillScore": 0,
         "viruses": {
@@ -211,10 +235,7 @@ function initGame() {
     g.lastAnimationFrame = g.time;
     g.lastAnimationFrame2 = g.time;
 
-    setupGameInput();
-    getNextPill();
-    setupThrowAnimation();
-    run( g.time );
+    showIntroScreen();
 }
 
 function setupGameInput() {
@@ -248,15 +269,15 @@ function setupGameInput() {
 }
 
 function showIntroScreen() {
-	var cols, rows, x, y, centerX, centerY, step, steps;
-
-    $.onkey( "1", "up", startGame );
-    $.onkey( "2", "up", startGame );
+    $.onkey( "1", "up", stopAnimationIntro );
+    $.onkey( "2", "up", stopAnimationIntro );
     animateIntro();
     g.interval = setInterval( animateIntro, 60 );
 }
 
 function animateIntro() {
+    var cols, rows, x, y, centerX, centerY, step, steps;
+
     cols = $.getCols();
     rows = $.getRows();
 
@@ -301,13 +322,120 @@ function animateIntro() {
     //requestAnimationFrame( animateIntro );
 }
 
-function startGame( key ) {
+function stopAnimationIntro( key ) {
     $.clearKeys();
     clearInterval( g.interval );
-    if( key.key === "1" ) {
-        g.game.draw = drawGameScreen;
+    g.game.players = parseInt( key.key );
+
+    $.onkey( "ArrowUp", "down", function () {
+        g.settings.selected -= 1;
+        if( g.settings.selected < 0 ) {
+            g.settings.selected = 2;
+        }
+        setupGame();
+    } );
+    $.onkey( "ArrowDown", "down", function () {
+        g.settings.selected += 1;
+        if( g.settings.selected > 2 ) {
+            g.settings.selected = 0;
+        }
+        setupGame();
+    } );
+    $.onkey( "ArrowLeft", "down", function () {
+        if( g.settings.selected === 0 ) {
+            g.settings.virusLevel -= 1;
+            if( g.settings.virusLevel < 0 ) {
+                g.settings.virusLevel = 0;
+            }
+        } else if( g.settings.selected === 1 ) {
+            g.settings.speedSelected -= 1;
+            if( g.settings.speedSelected < 0 ) {
+                g.settings.speedSelected = 0;
+            }
+        }
+        setupGame();       
+    } );
+    $.onkey( "ArrowRight", "down", function () {
+        if( g.settings.selected === 0 ) {
+            g.settings.virusLevel += 1;
+            if( g.settings.virusLevel >= g.maxVirusLevel ) {
+                g.settings.virusLevel = g.maxVirusLevel;
+            }
+        } else if( g.settings.selected === 1 ) {
+            g.settings.speedSelected += 1;
+            if( g.settings.speedSelected >= g.speeds.length - 1 ) {
+                g.settings.speedSelected = g.speeds.length - 1;
+            }
+        }
+        setupGame();
+    } );
+    setupGame();
+}
+
+function setupGame() {
+    var i;
+
+    $.cls();
+    $.setColor( 7 );
+    $.print();
+    $.print( g.settings.players + " Player Game", false, true );
+    $.print( "\n\n" );
+    $.print( "\tVirus Level\n" );
+
+    // Virus Level Settings
+    $.setColor( 15 );
+    if( g.settings.selected === 0 ) {
+        $.rect( g.settings.rects[ 0 ] );
     }
-    $.print( key.key );
+    $.setColor( 8 );
+    $.rect( 30, 53, g.maxVirusLevel * 9, 12, 8 );
+    $.setColor( 7 );
+    $.rect( 30, 53, g.settings.virusLevel * 9, 12, 7 );
+    $.setColor( 15 );
+    $.setPos( 14, 7 );
+    $.print( $.util.padL( g.settings.virusLevel, 2, "0" ) );
+    
+    // Speed Settings
+    $.setColor( 15 );
+    if( g.settings.selected === 1 ) {
+        $.rect( g.settings.rects[ 1 ] );
+    }
+    $.setColor( 7 );
+    $.setPos( 0, 11 );
+    $.print( "\tSpeed\n" );
+    $.setColor( 8 );
+    $.rect( g.settings.rects[ 3 ] );
+    $.rect( g.settings.rects[ 4 ] );
+    $.rect( g.settings.rects[ 5 ] );
+    $.setColor( 15 );
+    $.print( "\t  ", true );
+    for( i = 0; i < g.speedNames.length; i++ ) {
+        $.print( g.speedNames[ i ] + "\t", true );
+    }
+    $.rect( g.settings.rects[ 3 + g.settings.speedSelected ] );
+
+    // Begin Game
+    $.setColor( 15 );
+    if( g.settings.selected === 2 ) {
+        $.rect( g.settings.rects[ 2 ] );
+    }
+    $.setPosPx( 0, 148 );
+    $.print( "Begin Game", false, true );
+
+    // Settings Help
+    $.setColor( 7 );
+    $.setPos( 0, 23 );
+    $.print( "Use arrow keys/enter or mouse to select settings." );
+
+}
+
+function startGame() {
+    $.clearKeys();
+    
+    setupGameInput();
+    getNextPill();
+    setupThrowAnimation();
+    run( g.time );
 }
 
 function run( timestamp ) {
@@ -371,7 +499,7 @@ function drawGameScreen( timestamp, dt ) {
     $.setPos( 24, 19 );
     $.print( "SPEED" );
     $.setPos( 26, 20 );
-    $.print( g.game.speed );
+    $.print( g.speedNames[ g.game.speed ] );
 
     // Print Virus Count
     $.setPos( 24, 22 );
