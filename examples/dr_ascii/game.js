@@ -87,4 +87,11 @@ var Game = ( function () {
 		player.nextPill.partner.partner = player.nextPill;
 	}
 
+	function setupThrowAnimation( player ) {
+		player.animationFrame = g.animations.length - 1;
+		player.lastAnimationFrame = performance.now();
+		player.throwingPill = true;
+		g.game.finishedThrowing = true;
+	}
+
 } )();
