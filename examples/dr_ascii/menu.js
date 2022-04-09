@@ -121,6 +121,47 @@ var Menu = ( function () {
 		clearInterval( m.interval );
 		m.settings.players = parseInt( key.key );
 
+		$.onpress( "down", function( e ) {
+			console.log( e );
+			
+			// Click virusl level
+			if( e.y >= 52 && e.y <= 64 && e.x >= 29 && e.x <= 209 ) {
+				m.settings.virusLevel = Math.floor( ( e.x - 30 ) / 180 * 20 ) + 1;
+				if( e.x < 31 ) {
+					m.settings.virusLevel = 0;
+				} else if( m.settings.virusLevel > 20 ) {
+					m.settings.virusLevel = 20;
+				}
+				setupGame();
+			}
+
+			// Click low button
+			if( e.y >= 102 && e.x >= 45 && e.y <= 113 && e.x <= 74 ) {
+				m.settings.speedSelected = 0;
+				setupGame();
+			}
+
+			// Click Med button
+			if( e.y >= 102 && e.x >= 100 && e.y <= 113 && e.x <= 129 ) {
+				m.settings.speedSelected = 1;
+				setupGame();
+			}
+
+			// Click High button
+			if( e.y >= 102 && e.x >= 156 && e.y <= 113 && e.x <= 192 ) {
+				m.settings.speedSelected = 2;
+				setupGame();
+			}
+
+			// Click begin buggon
+			if( e.y >= 135 && e.x >= 25 && e.y <= 166 && e.x <= 214 ) {
+				$.rect( m.rects[ 2 ] );
+				setTimeout( function () {
+					Game.start( m.settings );
+				}, 500 );
+			}
+		} );
+
 		$.onkey( "ArrowUp", "down", function () {
 			m.settings.selected -= 1;
 			if( m.settings.selected < 0 ) {
