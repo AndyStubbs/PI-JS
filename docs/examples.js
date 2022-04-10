@@ -34,6 +34,33 @@ examples['circle'] = function() {
 $.screen("300x200", 'canvasContainer');
 $.circle(150, 100, 50, "red");onExampleClose = function () {};
 }
+examples['clearEvents'] = function() {
+$.screen( "300x200" , 'canvasContainer');
+$.print( 
+	"Move mouse or touch to paint screen," +
+	" click/touch up to stop."
+);
+$.onpress( "move", pressMove );
+$.onpress( "up", pressStop );
+
+// Press move function
+function pressMove( data ) {
+	$.setPosPx( data.x, data.y );
+	var pos = $.getPos();
+	$.setPos( pos.col, pos.row );
+	$.setColor( 8 );
+	$.print( "+", true );
+}
+
+// Press stop function
+function pressStop() {
+	$.setColor( 14 );
+	var pos = $.getPos();
+	$.setPos( pos.col - 4, pos.row );
+	$.print( "Stopped!", true );
+	$.clearEvents();
+}onExampleClose = function () {};
+}
 examples['clearKeys'] = function() {
 $.screen("300x200", 'canvasContainer');
 $.print("\n");

@@ -4753,6 +4753,21 @@ function offevent( mode, fn, modes, name, listenerArr, extraId ) {
 	}
 }
 
+// Remove the screen from the page and memory
+qbs._.addCommand( "clearEvents", clearEvents, false, true, [] );
+function clearEvents( screenData ) {
+	// Reset all event listeners
+	screenData.onMouseEventListeners = {};
+	screenData.onTouchEventListeners = {};
+	screenData.onPressEventListeners = {};
+	screenData.onClickEventListeners = {};
+	screenData.mouseEventListenersActive = 0;
+	screenData.touchEventListenersActive = 0;
+	screenData.pressEventListenersActive = 0;
+	screenData.clickEventListenersActive = 0;
+	screenData.lastEvent = null;	
+}
+
 qbs._.addCommand( "setAutoRender", setAutoRender, false, true,
 	[ "isAutoRender" ] );
 function setAutoRender( screenData, args ) {

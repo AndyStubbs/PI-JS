@@ -9,7 +9,7 @@ pdata = [
 	"The function that was used to create the hitbox by the onclick command."
 ]
 seeAlso = [
-	"inmouse", "onmouse", "startMouse", "stopMouse"
+	"clearEvents", "inmouse", "onmouse", "startMouse", "stopMouse"
 ]
 example = """
 $.screen( "300x200" );
