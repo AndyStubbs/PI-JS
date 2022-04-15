@@ -6,21 +6,12 @@ var Menu = ( function () {
 		"interval": 0,
 		"cnt": 0,
 		"cnt2": 0,
-		"maxVirusLevel": 20,
-		"speeds": [ 750, 450, 200 ],
-		"speedNames": [ "LOW", "MED", "HIGH" ],
 		"rects": [
-            // 25, 30, 190, 40
             { "x": 25, "y": 30, "width": 190, "height": 40 },
-            // 25, 82, 190, 40 
             { "x": 25, "y": 82, "width": 190, "height": 40 },
-            // 25, 135, 190, 32
             { "x": 25, "y": 135, "width": 190, "height": 32 },
-            // 45, 102, 30, 12
             { "x": 45, "y": 102, "width": 30, "height": 12 },
-            // 100, 102, 30, 12
             { "x": 100, "y": 102, "width": 30, "height": 12 },
-            // 156, 102, 37, 12
             { "x": 156, "y": 102, "width": 37, "height": 12 }
         ],
 		"settings": {
@@ -193,13 +184,13 @@ var Menu = ( function () {
 		$.onkey( "ArrowRight", "down", function () {
 			if( m.settings.selected === 0 ) {
 				m.settings.virusLevel += 1;
-				if( m.settings.virusLevel >= m.maxVirusLevel ) {
-					m.settings.virusLevel = m.maxVirusLevel;
+				if( m.settings.virusLevel >= g.maxVirusLevel ) {
+					m.settings.virusLevel = g.maxVirusLevel;
 				}
 			} else if( m.settings.selected === 1 ) {
 				m.settings.speedSelected += 1;
-				if( m.settings.speedSelected >= m.speeds.length - 1 ) {
-					m.settings.speedSelected = m.speeds.length - 1;
+				if( m.settings.speedSelected >= g.speeds.length - 1 ) {
+					m.settings.speedSelected = g.speeds.length - 1;
 				}
 			}
 			setupGame();
@@ -223,7 +214,7 @@ var Menu = ( function () {
 			$.rect( m.rects[ 0 ] );
 		}
 		$.setColor( 8 );
-		$.rect( 30, 53, m.maxVirusLevel * 9, 12, 8 );
+		$.rect( 30, 53, g.maxVirusLevel * 9, 12, 8 );
 		$.setColor( 7 );
 		$.rect( 30, 53, m.settings.virusLevel * 9, 12, 7 );
 		$.setColor( 15 );
@@ -244,8 +235,8 @@ var Menu = ( function () {
 		$.rect( m.rects[ 5 ] );
 		$.setColor( 15 );
 		$.print( "\t  ", true );
-		for( i = 0; i < m.speedNames.length; i++ ) {
-			$.print( m.speedNames[ i ] + "\t", true );
+		for( i = 0; i < g.speedNames.length; i++ ) {
+			$.print( g.speedNames[ i ] + "\t", true );
 		}
 		$.rect( m.rects[ 3 + m.settings.speedSelected ] );
 	
