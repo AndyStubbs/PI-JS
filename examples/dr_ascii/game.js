@@ -21,6 +21,10 @@ var Game = ( function () {
 			"finishedThrowing": false,
 			"score": 0,
 			"activePills": [],
+			"pills": {},
+			"viruses": {},
+			"virusCount": 0,
+			"cache": {},
 			"left": 10,
 			"right": 20,
 			"floor": 25,
@@ -37,6 +41,10 @@ var Game = ( function () {
 			"finishedThrowing": false,
 			"score": 0,
 			"activePills": [],
+			"pills": {},
+			"viruses": {},
+			"virusCount": 0,
+			"cache": {},
 			"left": 10,
 			"right": 20,
 			"floor": 25,
@@ -64,7 +72,7 @@ var Game = ( function () {
 		$.clearEvents();
 
 		m.game.level = settings.virusLevel;
-		m.game.speed = g.speeds[ settings.speedSelected ];
+		m.game.speed = settings.speedSelected;
 		m.time = performance.now();
 		m.player1.lastAnimationFrame = m.time;
 		m.player1.lastAnimationFrame2 = m.time;
@@ -194,7 +202,7 @@ var Game = ( function () {
 		$.setPos( 24, 22 );
 		$.print( "Virus" );
 		$.setPos( 27, 23 );
-		$.print( $.util.padL( m.game.virusCount, 2, "0" ) );
+		$.print( $.util.padL( m.player1.virusCount, 2, "0" ) );
 	
 		// Draw Big Viruses
 		$.setColor( 8 );
@@ -318,21 +326,21 @@ var Game = ( function () {
 		}
 	
 		if( pillDropped ) {
-			findMatches();
-			freefall();
+			findMatches( player );
+			freefall( player );
 		}
 	
 		if( player.activePills.length === 0 && ! player.throwingPill  ) {
 			player.score += player.pillScore;
 			player.pillScore = 0;
-			setupThrowAnimation();
+			setupThrowAnimation( player );
 		}
 	
 		if( timestamp > player.lastAnimationFrame + g.animationDelay ) {
 			if( player.throwingPill ) {
 				player.animationFrame = 0;
-				throwPill();
-				getNextPill();
+				throwPill( player );
+				getNextPill( player );
 				player.finishedThrowing = false;
 			} else {
 				player.animationFrame = Math.floor( Math.random() * ( g.animations.length - 1 ) );
@@ -341,7 +349,227 @@ var Game = ( function () {
 			player.lastAnimationFrame = timestamp;
 		}
 	
-		handleInput( timestamp );
+		handleInput( player, timestamp );
+	}
+
+	function handleInput( player, timestamp ) {
+		var cacheIndex, cacheIndex2;
+	
+		if( ! player.movePill ) {
+			return;
+		}
+		if( player.rotate && timestamp > player.lastRotate + player.rotateDelay ) {
+			player.movePill.rotation = ( player.movePill.rotation + 1 ) % 4;
+			updateRotation( player, timestamp );
+	
+			// If up against right wall make sure to bounce back
+			if( player.movePill.x >= player.right || player.movePill.partner.x >= player.right ) {
+				player.movePill.x -= 1;
+				player.movePill.baseX -= 1;
+				player.movePill.partner.x -= 1;
+				console.log( "Bounce Back" );
+	
+				if( isPillCollision( player ) ) {
+					console.log( "BB - Collided" );
+					player.movePill.x += 1;
+					player.movePill.baseX += 1;
+					player.movePill.partner.x += 1;
+					player.movePill.rotation -= 1;
+					if( player.movePill.rotation < 0 ) {
+						player.movePill.rotation = 3;
+					}
+					updateRotation( player, timestamp );
+				}
+			} else if( isPillCollision( player ) ) {
+				console.log( "Rotated - Collided" );
+				player.movePill.rotation -= 1;
+				if( player.movePill.rotation < 0 ) {
+					player.movePill.rotation = 3;
+				}
+				updateRotation( player, timestamp );
+			}
+		}
+	
+		if( player.moveX !== 0 && timestamp > player.lastMove + player.moveDelay ) {
+			player.movePill.baseX += player.moveX;
+			player.movePill.x += player.moveX;
+			player.movePill.partner.x += player.moveX;
+	
+			if( isPillCollision( player ) ) {
+				player.movePill.baseX -= player.moveX;
+				player.movePill.x -= player.moveX;
+				player.movePill.partner.x -= player.moveX;
+			} else {
+				player.lastMove = timestamp;
+			}
+		}
+	}
+
+	function updateRotation( player, timestamp ) {
+		player.movePill.x = player.movePill.baseX + g.rotations[ player.movePill.rotation ][ 0 ];
+		player.movePill.y = player.movePill.baseY + g.rotations[ player.movePill.rotation ][ 1 ];
+		player.movePill.partner.x = player.movePill.baseX + g.rotations[ player.movePill.rotation ][ 2 ];
+		player.movePill.partner.y = player.movePill.baseY + g.rotations[ player.movePill.rotation ][ 3 ];
+		player.movePill.id = g.rotations[ player.movePill.rotation ][ 4 ];
+		player.movePill.partner.id = g.rotations[ player.movePill.rotation ][ 5 ];
+		player.lastRotate = timestamp;
+	}
+
+	function isPillCollision( player ) {
+		var cacheIndex, cacheIndex2;
+	
+		cacheIndex = player.movePill.x + "_" + player.movePill.y;
+		cacheIndex2 = player.movePill.partner.x + "_" + player.movePill.partner.y;
+	
+		return (
+			player.pills[ cacheIndex ] || player.pills[ cacheIndex2 ] ||
+			player.viruses[ cacheIndex ] || player.viruses[ cacheIndex2 ] ||
+			player.movePill.x <= player.left ||
+			player.movePill.x >= player.right ||
+			player.movePill.partner.x <= player.left ||
+			player.movePill.partner.x >= player.right
+		);
+	}
+
+	function throwPill( player ) {
+		player.animationFrame = 0;
+		player.lastAnimationFrame = performance.now();
+		player.throwingPill = false;
+		addActivePill( player, player.nextPill );
+		addActivePill( player, player.nextPill.partner );
+		player.movePill = player.nextPill;
+	}
+
+	function addActivePill( player, pill ) {
+		player.activePills.push( pill );
+		player.activePills.sort( function ( a, b ) {
+			return a.y > b.y;
+		} );
+	}
+
+	function findMatches( player ) {
+		var i, pill, matches, j;
+	
+		for( i in player.pills ) {
+			pill = player.pills[ i ];
+			matches = getMatches( player, pill.x, pill.y, pill.c );
+			if( matches.length >= 4 ) {
+				for( j = 0; j < matches.length; j++ ) {
+					if( player.pills[ matches[ j ] ] ) {
+						delete player.pills[ matches[ j ] ];
+					} else if( player.viruses[ matches[ j ] ] ) {
+						if( player.pillScore === 0 ) {
+							player.pillScore = g.scores[ player.speed ];
+						} else {
+							player.pillScore *= 2;
+						}
+						delete player.viruses[ matches[ j ] ];
+						player.virusCount -= 1;
+					}
+				}
+			}
+		}
+	}
+
+	function freefall( player ) {
+		var i, pill, fallers, j, isFreeFall;
+	
+		// Move Active Pills
+		g.cache = {};
+		for( i in player.pills ) {
+			if( g.cache[ i ] ) {
+				continue;
+			}
+			pill = player.pills[ i ];
+			fallers = [];
+			isFreeFall = getFreeFallers( player, pill.x, pill.y, fallers );
+			if( isFreeFall ) {
+				for( j = 0; j < fallers.length; j++ ) {
+					pill = player.pills[ fallers[ j ] ];
+					pill.last = performance.now();
+					pill.status = "active";
+					pill.id = "&";
+					addActivePill( player, pill );
+	
+					delete player.pills[ fallers[ j ] ];
+				}
+			}
+		}
+	}
+	
+	function getFreeFallers( player, x, y, fallers ) {
+		var index, isFreeFall, checks, i, x2, y2;
+	
+		checks = [ [ -1, 0 ], [ 1, 0 ], [ 0, -1 ], [ 0, 1 ] ];
+		isFreeFall = true;
+		index = x + "_" + y;
+		fallers.push( index );
+		player.cache[ index ] = true;
+	
+		// Loop through all directions
+		for( i = 0; i < checks.length; i++ ) {
+			x2 = x + checks[ i ][ 0 ];
+			y2 = y + checks[ i ][ 1 ];
+			index = x2 + "_" + y2;
+			if( ! player.cache[ index ] && player.pills[ index ] ) {
+				isFreeFall &= getFreeFallers( player, x2, y2, fallers );
+			} else if( player.viruses[ index ] || y2 > player.floor ) {
+				isFreeFall = false;
+			}
+		}
+	
+		return isFreeFall;
+	}
+
+	function getMatches( player, x, y, c ) {
+		var x2, y2, matches, found;
+	
+		// Count Horizontal
+		matches = [];
+		found = true;
+		x2 = x;
+		while( found ) {
+			x2 -= 1;
+			found = checkMatch( player, x2 + "_" + y, c );
+		}
+		found = true;
+		while( found ) {
+			x2 += 1;
+			found = checkMatch( player, x2 + "_" + y, c );
+			if( found ) {
+				matches.push( x2 + "_" + y );
+			}
+		}
+	
+		if( matches.length > 3 ) {
+			return matches;
+		}
+		
+		// Count Vertical
+		matches = [];
+		found = true;
+		y2 = y;
+		while( found ) {
+			y2 -= 1;
+			found = checkMatch( player, x + "_" + y2, c );
+		}
+		found = true;
+		while( found ) {
+			y2 += 1;
+			found = checkMatch( player, x + "_" + y2, c );
+			if( found ) {
+				matches.push( x + "_" + y2 );
+			}
+		}
+	
+		return matches;
+	}
+
+	function checkMatch( player, index, c ) {
+		return (
+			( player.pills[ index ] && player.pills[ index ].c === c ) ||
+			( player.viruses[ index ] && player.viruses[ index ].c === c )
+		);
 	}
 
 } )();
