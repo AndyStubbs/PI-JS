@@ -6,39 +6,16 @@ var Game = ( function () {
 		"game": {
 			"level": 0,
 			"speed": 0,
-			"virusCount": 0,
 			"virusAngle": 0,
 			"moveDelay": 200,
 			"rotateDelay": 200,
 			"fastFallSpeed": 25,
-			"scores": [ 100, 200, 300 ]
+			"scores": [ 100, 200, 300 ],
+			"win": false,
+			"winner": null
 		},
 		"player1": {
-			"moveX": 0,
-			"lastMove": 0,
-			"rotate": false,
-			"lastRotate": 0,
-			"fastFall": 0,
-			"lastAnimationFrame": 0,
-			"lastAnimationFrame2": 0,
-			"nextPill": null,
-			"finishedThrowing": false,
-			"score": 0,
-			"activePills": [],
-			"pills": {},
-			"pillScore": 0,
-			"viruses": {
-				"15_22": { "x": 15, "y": 22, "c": 4, "id": 0, "frame": 0 },
-				"12_18": { "x": 12, "y": 18, "c": 54, "id": 1, "frame": 0 },
-				"18_15": { "x": 18, "y": 15, "c": 44, "id": 2, "frame": 0 },
-			},
-			"virusCount": 0,
-			"cache": {},
-			"left": 10,
-			"right": 20,
-			"floor": 25,
-		},
-		"player2": {
+			"name": "Player 1",
 			"moveX": 0,
 			"lastMove": 0,
 			"rotate": false,
@@ -58,6 +35,32 @@ var Game = ( function () {
 			"left": 10,
 			"right": 20,
 			"floor": 25,
+			"top": 7,
+			"centerX": 15
+		},
+		"player2": {
+			"name": "Player 2",
+			"moveX": 0,
+			"lastMove": 0,
+			"rotate": false,
+			"lastRotate": 0,
+			"fastFall": 0,
+			"lastAnimationFrame": 0,
+			"lastAnimationFrame2": 0,
+			"nextPill": null,
+			"finishedThrowing": false,
+			"score": 0,
+			"activePills": [],
+			"pills": {},
+			"pillScore": 0,
+			"viruses": {},
+			"virusCount": 0,
+			"cache": {},
+			"left": 10,
+			"right": 20,
+			"floor": 25,
+			"top": 7,
+			"centerX": 15
 		},
 		"keys1": {
 			"left": "ArrowLeft",
@@ -84,13 +87,39 @@ var Game = ( function () {
 		m.game.level = settings.virusLevel;
 		m.game.speed = settings.speedSelected;
 		m.time = performance.now();
+
+		m.player1.virusCount = 5 + m.game.level * 2;
 		m.player1.lastAnimationFrame = m.time;
 		m.player1.lastAnimationFrame2 = m.time;
 
+		generateViruses( m.player1 );
 		setupGameInput( m.player1, m.keys1 );
 		getNextPill( m.player1 );
 		setupThrowAnimation( m.player1 );
 		run( m.time );
+	}
+
+	function generateViruses( player ) {
+		var i, x, y, id, width, height, looping, c, virusId;
+		width = player.right - player.left - 1;
+		height = player.floor - player.top - 5;
+		for( i = 0; i < player.virusCount; i++ ) {
+			looping = true;
+			id = "";
+			while( looping ) {
+				x = Math.floor( Math.random() * width ) + player.left + 1;
+				y = player.floor - Math.floor( Math.random() * height );
+				virusId = Math.floor( Math.random() * g.viruses.length );
+				c = g.colors[ virusId ];				
+				id = x + "_" + y;
+				if( ! player.viruses[ id ] ) {
+					player.viruses[ id ] = {
+						"x": x, "y": y, "c": c, "id": virusId, "frame": 0
+					};
+					looping = false;
+				}
+			}
+		}
 	}
 
 	function setupGameInput( player, keys ) {
@@ -124,14 +153,22 @@ var Game = ( function () {
 	}
 
 	function getNextPill( player ) {
+		if( player.virusCount === 0 ) {
+			m.game.gameOver = true;
+			m.game.win = true;
+			m.game.winner = player;
+			return;
+		}
 		player.nextPill = {
-			"x": 15, "y": 7, "c": g.colors[ Math.floor( Math.random() * g.colors.length ) ],
-			"baseX": 15, "baseY": 7,
+			"x": player.centerX, "y": player.top,
+			"c": g.colors[ Math.floor( Math.random() * g.colors.length ) ],
+			"baseX": player.centerX, "baseY": player.top,
 			"id": "(", "last": performance.now(),
 			"status": "active", "order": 0, "rotation": 0
 		};
 		player.nextPill.partner = {
-			"x": 16, "y": 7, "c": g.colors[ Math.floor( Math.random() * g.colors.length ) ],
+			"x": player.centerX + 1, "y": player.top,
+			"c": g.colors[ Math.floor( Math.random() * g.colors.length ) ],
 			"id": ")", "last": performance.now(),
 			"status": "active", "order": 1
 		};
@@ -149,6 +186,14 @@ var Game = ( function () {
 		let dt = timestamp - m.time;
 		m.time = timestamp;
 	
+		if( m.game.gameOver ) {
+			Menu.GameOver( {
+				"win": m.game.win,
+				"winner": "Player 1",
+				"score": m.player1.score
+			} );
+			return;
+		}
 		drawGameScreen( timestamp, dt );
 		moveGameObjects( timestamp, m.player1 );
 		requestAnimationFrame( run );
@@ -280,7 +325,8 @@ var Game = ( function () {
 	
 			if(
 				player.fastFall && player.movePill &&
-				( pill === player.movePill || pill === player.movePill.partner )
+				( pill === player.movePill || pill === player.movePill.partner ) ||
+				pill.fastFall
 			) {
 				speed = m.game.fastFallSpeed;
 			} else {
@@ -377,10 +423,8 @@ var Game = ( function () {
 				player.movePill.x -= 1;
 				player.movePill.baseX -= 1;
 				player.movePill.partner.x -= 1;
-				console.log( "Bounce Back" );
 	
 				if( isPillCollision( player ) ) {
-					console.log( "BB - Collided" );
 					player.movePill.x += 1;
 					player.movePill.baseX += 1;
 					player.movePill.partner.x += 1;
@@ -391,7 +435,6 @@ var Game = ( function () {
 					updateRotation( player, timestamp );
 				}
 			} else if( isPillCollision( player ) ) {
-				console.log( "Rotated - Collided" );
 				player.movePill.rotation -= 1;
 				if( player.movePill.rotation < 0 ) {
 					player.movePill.rotation = 3;
@@ -499,6 +542,7 @@ var Game = ( function () {
 					pill.last = performance.now();
 					pill.status = "active";
 					pill.id = "&";
+					pill.fastFall = true;
 					addActivePill( player, pill );
 	
 					delete player.pills[ fallers[ j ] ];

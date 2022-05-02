@@ -24,6 +24,10 @@ var Menu = ( function () {
 
 	$.ready( initGame );
 
+	return {
+		"GameOver": gameOver
+	};
+
 	function initGame() {
 		var i;
 
@@ -252,6 +256,28 @@ var Menu = ( function () {
 		$.setColor( 7 );
 		$.setPos( 0, 23 );
 		$.print( "Use arrow keys/enter or mouse to select settings." );
+	}
+
+	function gameOver( status ) {
+		$.clearKeys();
+		$.clearEvents();
+		$.cls();
+		$.setColor( 15 );
+
+		$.setPos( 0, 8 );
+		$.print( "Game Over", false, true );
+		$.print( "\n" );
+		if( status.win ) {
+			$.print( status.winner + " wins.", false, true );
+			$.print( "\n" );
+		}
+		if( status.score ) {
+			$.print( "Final score: " + status.score, false, true );
+		}
+
+		$.setPos( 0, 23 );
+		$.print( "Press any key to continue.", true, true );
+		$.onkey( "any", "down", showPlayerSelect, true );
 	}
 
 } )();
