@@ -1,86 +1,91 @@
 "use strict";
 
 var Game = ( function () {
-	var m = {
-		"time": 0,
-		"game": {
-			"level": 0,
-			"speed": 0,
-			"virusAngle": 0,
-			"moveDelay": 200,
-			"rotateDelay": 200,
-			"fastFallSpeed": 25,
-			"scores": [ 100, 200, 300 ],
-			"win": false,
-			"winner": null
-		},
-		"player1": {
-			"name": "Player 1",
-			"moveX": 0,
-			"lastMove": 0,
-			"rotate": false,
-			"lastRotate": 0,
-			"fastFall": 0,
-			"lastAnimationFrame": 0,
-			"lastAnimationFrame2": 0,
-			"nextPill": null,
-			"finishedThrowing": false,
-			"score": 0,
-			"activePills": [],
-			"pills": {},
-			"pillScore": 0,
-			"viruses": {},
-			"virusCount": 0,
-			"cache": {},
-			"left": 10,
-			"right": 20,
-			"floor": 25,
-			"top": 7,
-			"centerX": 15
-		},
-		"player2": {
-			"name": "Player 2",
-			"moveX": 0,
-			"lastMove": 0,
-			"rotate": false,
-			"lastRotate": 0,
-			"fastFall": 0,
-			"lastAnimationFrame": 0,
-			"lastAnimationFrame2": 0,
-			"nextPill": null,
-			"finishedThrowing": false,
-			"score": 0,
-			"activePills": [],
-			"pills": {},
-			"pillScore": 0,
-			"viruses": {},
-			"virusCount": 0,
-			"cache": {},
-			"left": 10,
-			"right": 20,
-			"floor": 25,
-			"top": 7,
-			"centerX": 15
-		},
-		"keys1": {
-			"left": "ArrowLeft",
-			"up": "ArrowUp",
-			"right": "ArrowRight",
-			"down": "ArrowDown"
-		},
-		"keys2": {
-			"left": "a",
-			"up": "w",
-			"right": "d",
-			"down": "s"
-		}
-	};
+	var m = {};
 
 	return {
 		"start": start
 	};
 
+	function setup() {
+		m = {
+			"time": 0,
+			"game": {
+				"level": 0,
+				"speed": 0,
+				"virusAngle": 0,
+				"moveDelay": 200,
+				"rotateDelay": 200,
+				"fastFallSpeed": 25,
+				"scores": [ 100, 200, 300 ],
+				"win": false,
+				"winner": null
+			},
+			"player1": {
+				"name": "Player 1",
+				"moveX": 0,
+				"lastMove": 0,
+				"rotate": false,
+				"lastRotate": 0,
+				"fastFall": 0,
+				"lastAnimationFrame": 0,
+				"lastAnimationFrame2": 0,
+				"nextPill": null,
+				"finishedThrowing": false,
+				"score": 0,
+				"activePills": [],
+				"pills": {},
+				"pillScore": 0,
+				"viruses": {},
+				"virusCount": 0,
+				"cache": {},
+				"left": 10,
+				"right": 20,
+				"floor": 25,
+				"top": 7,
+				"centerX": 15
+			},
+			"player2": {
+				"name": "Player 2",
+				"moveX": 0,
+				"lastMove": 0,
+				"rotate": false,
+				"lastRotate": 0,
+				"fastFall": 0,
+				"lastAnimationFrame": 0,
+				"lastAnimationFrame2": 0,
+				"nextPill": null,
+				"finishedThrowing": false,
+				"score": 0,
+				"activePills": [],
+				"pills": {},
+				"pillScore": 0,
+				"viruses": {},
+				"virusCount": 0,
+				"cache": {},
+				"left": 10,
+				"right": 20,
+				"floor": 25,
+				"top": 7,
+				"centerX": 15
+			},
+			"keys1": {
+				"left": "ArrowLeft",
+				"up": "ArrowUp",
+				"right": "ArrowRight",
+				"down": "ArrowDown"
+			},
+			"keys2": {
+				"left": "a",
+				"up": "w",
+				"right": "d",
+				"down": "s"
+			}
+		};
+	}
+
 	function start( settings ) {
+		setup();
 		$.clearKeys();
 		$.clearEvents();
 
@@ -315,10 +320,11 @@ var Game = ( function () {
 	}
 
 	function moveGameObjects( timestamp, player ) {
-		var i, pill, cacheIndex, pillDropped, speed;
+		var i, pill, cacheIndex, pillDropped, speed, pillDroppedWithoutMoving;
 	
 		pillDropped = false;
-	
+		pillDroppedWithoutMoving = false;
+
 		// Move Active Pills
 		for( i = player.activePills.length - 1; i >= 0; i-- ) {
 			pill = player.activePills[ i ];
@@ -378,12 +384,21 @@ var Game = ( function () {
 	
 					pillDropped = true;
 				}
+
+				if( pillDropped && pill.moved === false ) {
+					pillDroppedWithoutMoving = true;
+				}
+				pill.moved = true;
 			}
 		}
 	
 		if( pillDropped ) {
 			findMatches( player );
-			freefall( player );
+
+			if( ! freefall( player ) && pillDroppedWithoutMoving ) {
+				m.game.gameOver = true;
+				m.game.win = false;
+			}
 		}
 	
 		if( player.activePills.length === 0 && ! player.throwingPill  ) {
@@ -494,6 +509,7 @@ var Game = ( function () {
 	}
 
 	function addActivePill( player, pill ) {
+		pill.moved = false;
 		player.activePills.push( pill );
 		player.activePills.sort( function ( a, b ) {
 			return a.y - b.y;
@@ -514,7 +530,7 @@ var Game = ( function () {
 						if( player.pillScore === 0 ) {
 							player.pillScore = m.game.scores[ m.game.speed ];
 						} else {
-							player.pillScore *= 2;
+							player.pillScore *= 2.5;
 						}
 						delete player.viruses[ matches[ j ] ];
 						player.virusCount -= 1;
@@ -525,7 +541,7 @@ var Game = ( function () {
 	}
 
 	function freefall( player ) {
-		var i, pill, fallers, j, isFreeFall;
+		var i, pill, fallers, j, isFreeFall, hasFreeFaller;
 	
 		// Move Active Pills
 		player.cache = {};
@@ -537,6 +553,7 @@ var Game = ( function () {
 			fallers = [];
 			isFreeFall = getFreeFallers( player, pill.x, pill.y, fallers );
 			if( isFreeFall ) {
+				hasFreeFaller = true;
 				for( j = 0; j < fallers.length; j++ ) {
 					pill = player.pills[ fallers[ j ] ];
 					pill.last = performance.now();
@@ -549,6 +566,8 @@ var Game = ( function () {
 				}
 			}
 		}
+
+		return hasFreeFaller;
 	}
 	
 	function getFreeFallers( player, x, y, fallers ) {

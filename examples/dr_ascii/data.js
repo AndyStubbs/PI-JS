@@ -96,7 +96,7 @@ var g = {
     `,
     "colors": [ 4, 54, 44 ],
     "screens": [],
-    "top": 1000,
+    "top": localStorage.getItem( "top" ),
     "maxVirusLevel": 20,
     "speeds": [ 750, 450, 200 ],
     "speedNames": [ "LOW", "MED", "HIGH" ],
@@ -113,3 +113,7 @@ var g = {
 
 g[ "animations" ] = [ g.drAscii2, g.drAscii3, g.drAscii4, g.drAscii5, g.drAscii6, g.drAscii1 ];
 g[ "animationPills" ] = [ g.drAscii2Pills, g.drAscii3Pills, g.drAscii4Pills, g.drAscii5Pills, g.drAscii6Pills, g.drAscii1Pills ];
+
+if( !g[ "top" ] ) {
+  g[ "top" ] = 0;
+}

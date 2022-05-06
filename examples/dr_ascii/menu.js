@@ -270,9 +270,19 @@ var Menu = ( function () {
 		if( status.win ) {
 			$.print( status.winner + " wins.", false, true );
 			$.print( "\n" );
+		} else {
+			$.print( "You lose.", false, true );
+			$.print( "\n" );
 		}
 		if( status.score ) {
 			$.print( "Final score: " + status.score, false, true );
+			$.print( "\n" );
+		}
+
+		if( status.score > g.top ) {
+			g.top = status.score;
+			localStorage.setItem( "top", g.top );
+			$.print( "You got a highscore.", false, true );
 		}
 
 		$.setPos( 0, 23 );
