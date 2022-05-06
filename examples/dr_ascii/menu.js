@@ -59,6 +59,8 @@ var Menu = ( function () {
 	}
 
 	function showPlayerSelect() {
+		$.clearKeys();
+		$.clearEvents();
 		$.onkey( "1", "up", stopAnimationIntro );
 		$.onkey( "2", "up", stopAnimationIntro );
 		animatePlayerSelect();
@@ -117,7 +119,6 @@ var Menu = ( function () {
 		m.settings.players = parseInt( key.key );
 
 		$.onpress( "down", function( e ) {
-			console.log( e );
 			
 			// Click virusl level
 			if( e.y >= 52 && e.y <= 64 && e.x >= 29 && e.x <= 209 ) {
@@ -148,7 +149,7 @@ var Menu = ( function () {
 				setupGame();
 			}
 
-			// Click begin buggon
+			// Click begin button
 			if( e.y >= 135 && e.x >= 25 && e.y <= 166 && e.x <= 214 ) {
 				$.rect( m.rects[ 2 ] );
 				setTimeout( function () {
@@ -198,6 +199,13 @@ var Menu = ( function () {
 				}
 			}
 			setupGame();
+		} );
+
+		$.onkey( "Enter", "down", function () {
+			$.rect( m.rects[ 2 ] );
+			setTimeout( function () {
+				Game.start( m.settings );
+			}, 500 );
 		} );
 		setupGame();
 	}
@@ -288,6 +296,7 @@ var Menu = ( function () {
 		$.setPos( 0, 23 );
 		$.print( "Press any key to continue.", true, true );
 		$.onkey( "any", "down", showPlayerSelect, true );
+		$.onmouse( "down", showPlayerSelect, true );
 	}
 
 } )();
