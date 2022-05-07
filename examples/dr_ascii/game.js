@@ -405,10 +405,12 @@ var Game = ( function () {
 				$.setColor( player.nextPill.partner.c );
 				$.setPos( player.centerX + 1, player.top - 1 );
 				$.print( player.nextPill.partner.id );
+				$.setPixelMode( false );
 				$.setPen( "pixel", 2, 200 );
 				$.setColor( "rgba(0, 0, 0, 0.5)" );
 				$.rect( player.centerX * 8, ( player.top - 1 ) * 8, 16, 8, "rgba(0, 0, 0, 0.5)" );
 				$.setPen( "pixel", 1 );
+				$.setPixelMode( true );
 			}
 
 		}
