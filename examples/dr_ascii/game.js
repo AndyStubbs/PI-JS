@@ -668,7 +668,7 @@ var Game = ( function () {
 						if( player.pillScore === 0 ) {
 							player.pillScore = m.game.scores[ m.game.speed ];
 						} else {
-							player.pillScore *= 2.5;
+							player.pillScore = Math.round( player.pillScore * 2.5 );
 						}
 						delete player.viruses[ matches[ j ] ];
 						player.virusCount -= 1;
