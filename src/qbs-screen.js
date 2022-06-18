@@ -336,6 +336,7 @@ function createScreenData(
 		"draw": m_qbData.defaultPenDraw,
 		"size": 1
 	};
+	screenData.blendPixelCmd = m_qbData.defaultBlendCmd;
 
 	// Disable anti aliasing
 	screenData.context.imageSmoothingEnabled = false;

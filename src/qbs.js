@@ -31,6 +31,9 @@ window.qbs = ( function () {
 		"defaultPenDraw": null,
 		"pens": {},
 		"penList": [],
+		"blendCommands": {},
+		"blendCommandsList": [],
+		"defaultBlendCmd": null,
 		"settings": {},
 		"settingsList": [],
 		"volume": 0.75,
@@ -46,6 +49,7 @@ window.qbs = ( function () {
 			"addSetting": addSetting,
 			"processCommands": processCommands,
 			"addPen": addPen,
+			"addBlendCommand": addBlendCommand,
 			"data": m_qbData,
 			"resume": resume,
 			"wait": wait
@@ -185,6 +189,11 @@ window.qbs = ( function () {
 			"cmd": fn,
 			"cap": cap
 		};
+	}
+
+	function addBlendCommand( name, fn ) {
+		m_qbData.blendCommandsList.push( name );
+		m_qbData.blendCommands[ name ] = fn;
 	}
 
 	// Gets the screen data

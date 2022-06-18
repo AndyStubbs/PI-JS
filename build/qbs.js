@@ -31,6 +31,9 @@ window.qbs = ( function () {
 		"defaultPenDraw": null,
 		"pens": {},
 		"penList": [],
+		"blendCommands": {},
+		"blendCommandsList": [],
+		"defaultBlendCmd": null,
 		"settings": {},
 		"settingsList": [],
 		"volume": 0.75,
@@ -46,6 +49,7 @@ window.qbs = ( function () {
 			"addSetting": addSetting,
 			"processCommands": processCommands,
 			"addPen": addPen,
+			"addBlendCommand": addBlendCommand,
 			"data": m_qbData,
 			"resume": resume,
 			"wait": wait
@@ -185,6 +189,11 @@ window.qbs = ( function () {
 			"cmd": fn,
 			"cap": cap
 		};
+	}
+
+	function addBlendCommand( name, fn ) {
+		m_qbData.blendCommandsList.push( name );
+		m_qbData.blendCommands[ name ] = fn;
 	}
 
 	// Gets the screen data
@@ -3443,6 +3452,7 @@ function createScreenData(
 		"draw": m_qbData.defaultPenDraw,
 		"size": 1
 	};
+	screenData.blendPixelCmd = m_qbData.defaultBlendCmd;
 
 	// Disable anti aliasing
 	screenData.context.imageSmoothingEnabled = false;
@@ -4546,6 +4556,95 @@ function setPixelMode( screenData, args ) {
 	}
 }
 
+// Set pen command
+qbs._.addCommand( "setPen", setPen, false, true, [ "pen", "size", "noise" ] );
+qbs._.addSetting( "pen", setPen, true, [ "pen", "size", "noise" ] );
+function setPen( screenData, args ) {
+	var pen, size, noise, i;
+
+	pen = args[ 0 ];
+	size = args[ 1 ];
+	noise = args[ 2 ];
+
+	if( ! m_qbData.pens[ pen ] ) {
+		m_qbData.log(
+			"setPen: Argument pen is not a valid pen. Valid pens: " +
+			m_qbData.penList.join(", " )
+		);
+		return;
+	}
+	if( ! qbs.util.isInteger( size ) ) {
+		m_qbData.log( "setPen: Argument size is not a valid number." );
+		return;
+	}
+	if( noise && ( ! qbs.util.isArray( noise ) && Number.isNaN( noise ) ) ) {
+		m_qbData.log( "setPen: Argument noise is not an array or number." );
+		return;
+	}
+	if( qbs.util.isArray( noise ) ) {
+		noise = noise.slice();
+		for( i = 0; i < noise.length; i++ ) {
+			if( Number.isNaN( noise[ i ] ) ) {
+				m_qbData.log(
+					"setPen: Argument noise array contains an invalid value."
+				);
+				return;
+			}
+		}
+		// Make sure that noise array contains at least 4 values
+//		for(; i < 4; i++ ) {
+//			noise.push( 0 );
+//		}
+	}
+
+	if( pen === "pixel" ) {
+		size = 1;
+	}
+
+	// Set the minimum pen size to 1;
+	if( size < 1 ) {
+		size = 1;
+	}
+
+	// Handle special case of size of one
+	if( size === 1 ) {
+
+		// Size is one so only draw one pixel
+		screenData.pen.draw = m_qbData.pens.pixel.cmd;
+
+		// Set the line width for context draw
+		screenData.context.lineWidth = 1;
+	} else {
+
+		// Set the draw mode for pixel draw
+		screenData.pen.draw = m_qbData.pens[ pen ].cmd;
+
+		// Set the line width for context draw
+		screenData.context.lineWidth = size * 2 - 1;
+	}
+
+	screenData.pen.noise = noise;
+	screenData.pen.size = size;
+	screenData.context.lineCap = m_qbData.pens[ pen ].cap;
+}
+
+qbs._.addCommand( "setBlendMode", setBlendMode, false, true, [ "mode" ] );
+qbs._.addSetting( "blendMode", setBlendMode, true, [ "mode" ] );
+function setBlendMode( screenData, args ) {
+	var mode;
+
+	mode = args[ 0 ];
+	if( ! m_qbData.blendCommands[ mode ] ) {
+		m_qbData.log(
+			"setBlendMode: Argument blend is not a valid blend mode. Valid modes: " +
+			m_qbData.blendCommandsList.join(", " )
+		);
+		return;
+	}
+
+	screenData.blendPixelCmd = m_qbData.blendCommands[ mode ];
+}
+
 qbs._.addCommand( "triggerEventListeners", triggerEventListeners, true, true,
 	[] );
 function triggerEventListeners( mode, data, listenerArr, clickStatus ) {
@@ -4795,6 +4894,41 @@ var m_qbData;
 
 m_qbData = qbs._.data;
 
+qbs._.addBlendCommand( "normal", normalBlend );
+function normalBlend( screenData, x, y, c ) {
+	var data, i;
+
+	// Get the image data
+	data = screenData.imageData.data
+
+	// Calculate the index
+	i = ( ( screenData.width * y ) + x ) * 4;
+
+	data[ i ] = c.r;
+	data[ i + 1 ] = c.g;
+	data[ i + 2 ] = c.b;
+	data[ i + 3 ] = c.a;
+}
+
+qbs._.addBlendCommand( "blended", blendPixel );
+function blendPixel( screenData, x, y, c ) {
+	var data, i, pct, pct2;
+
+	// Get the image data
+	data = screenData.imageData.data
+
+	// Calculate the index
+	i = ( ( screenData.width * y ) + x ) * 4;
+
+	// displayColor = sourceColor × alpha / 255 + backgroundColor × (255 – alpha) / 255
+	// blend = ( source * source_alpha) + desitination * ( 1 - source_alpha)
+	pct = c.a / 255;
+	pct2 = ( 255 - c.a ) / 255;
+	data[ i ] = ( c.r * pct ) + data[ i ] * pct2
+	data[ i + 1 ] = ( c.g * pct ) + data[ i + 1 ] * pct2;
+	data[ i + 2 ] = ( c.b * pct ) + data[ i + 2 ] * pct2;
+}
+
 qbs._.addCommand( "getImageData", getImageData, true, false );
 function getImageData( screenData ) {
 	if( screenData.dirty === false ) {
@@ -4825,45 +4959,19 @@ function setImageDirty( screenData ) {
 
 qbs._.addCommand( "setPixel", setPixel, true, false );
 function setPixel( screenData, x, y, c ) {
-	var data, i;
-
-	// Get the image data
-	data = screenData.imageData.data
-
-	// Calculate the index
-	i = ( ( screenData.width * y ) + x ) * 4;
-
-	data[ i ] = c.r;
-	data[ i + 1 ] = c.g;
-	data[ i + 2 ] = c.b;
-	data[ i + 3 ] = c.a;
-
+	screenData.blendPixelCmd( screenData, x, y, c );
 }
 
 qbs._.addCommand( "setPixelSafe", setPixelSafe, true, false );
 qbs._.addPen( "pixel", setPixelSafe, "square" );
 function setPixelSafe( screenData, x, y, c ) {
-	var data, i;
-
 	if( x < 0 || x >= screenData.width || y < 0 || y >= screenData.height ) {
 		return;
 	}
 
 	m_qbData.commands.getImageData( screenData );
-
-	// Get the image data
-	data = screenData.imageData.data;
-
-	// Calculate the index
-	i = ( ( screenData.width * y ) + x ) * 4;
-
 	c = getPixelColor( screenData, c );
-
-	data[ i ] = c.r;
-	data[ i + 1 ] = c.g;
-	data[ i + 2 ] = c.b;
-	data[ i + 3 ] = c.a;
-
+	screenData.blendPixelCmd( screenData, x, y, c );
 	m_qbData.commands.setImageDirty( screenData );
 }
 
@@ -5051,6 +5159,9 @@ function findColorValue( screenData, colorInput, commandName ) {
 // Set the default pen draw function
 m_qbData.defaultPenDraw = setPixelSafe;
 
+// Set the default set pixel mode function
+m_qbData.defaultBlendCmd = normalBlend;
+
 // End of File Encapsulation
 } )();
 /*
@@ -5156,73 +5267,6 @@ function pxCircle( screenData, args ) {
 			x2 -= 1;
 			midPoint = midPoint + 2 * y2 - 2 * x2 + 1;
 		}
-
-		// if( isFill ) {
-
-		// 	xFill = x2 + x;
-		// 	yFill = y2 + y;
-		// 	for( rFill = 1; rFill < x2; rFill += 1 ) {
-		// 		m_qbData.commands.setPixel(
-		// 			screenData, xFill - rFill, yFill, fillColor
-		// 		);
-		// 	}
-	
-		// 	xFill = y2 + x;
-		// 	yFill = x2 + y;
-		// 	for( rFill = 1; rFill < y2; rFill += 1 ) {
-		// 		m_qbData.commands.setPixel(
-		// 			screenData, xFill - rFill, yFill, fillColor
-		// 		);
-		// 	}
-
-		// 	xFill = -x2 + x;
-		// 	yFill = y2 + y;
-		// 	for( rFill = 1; rFill < x2; rFill += 1 ) {
-		// 		m_qbData.commands.setPixel(
-		// 			screenData, xFill + rFill, yFill, fillColor
-		// 		);
-		// 	}
-
-		// 	xFill = -y2 + x;
-		// 	yFill = x2 + y;
-		// 	for( rFill = 1; rFill < y2; rFill += 1 ) {
-		// 		m_qbData.commands.setPixel(
-		// 			screenData, xFill + rFill, yFill, fillColor
-		// 		);
-		// 	}
-
-		// 	xFill = x2 + x;
-		// 	yFill = -y2 + y;
-		// 	for( rFill = 1; rFill < x2; rFill += 1 ) {
-		// 		m_qbData.commands.setPixel(
-		// 			screenData, xFill - rFill, yFill, fillColor
-		// 		);
-		// 	}
-
-		// 	xFill = y2 + x;
-		// 	yFill = -x2 + y;
-		// 	for( rFill = 1; rFill < y2; rFill += 1 ) {
-		// 		m_qbData.commands.setPixel(
-		// 			screenData, xFill - rFill, yFill, fillColor
-		// 		);
-		// 	}
-
-		// 	xFill = -x2 + x;
-		// 	yFill = -y2 + y;
-		// 	for( rFill = 1; rFill < x2; rFill += 1 ) {
-		// 		m_qbData.commands.setPixel(
-		// 			screenData, xFill + rFill, yFill, fillColor
-		// 		);
-		// 	}
-
-		// 	xFill = -y2 + x;
-		// 	yFill = -x2 + y;
-		// 	for( rFill = 1; rFill < y2; rFill += 1 ) {
-		// 		m_qbData.commands.setPixel(
-		// 			screenData, xFill + rFill, yFill, fillColor
-		// 		);
-		// 	}
-		// }
 
 		// Set pixels around point and reflection in other octants
 		screenData.pen.draw( screenData, x2 + x, y2 + y, color );
@@ -6328,78 +6372,6 @@ function render( screenData ) {
 		screenData.context.putImageData( screenData.imageData, 0, 0 );
 	}
 	screenData.dirty = false;
-}
-
-// Set pen command
-qbs._.addCommand( "setPen", setPen, false, true, [ "pen", "size", "noise" ] );
-qbs._.addSetting( "pen", setPen, true, [ "pen", "size", "noise" ] );
-function setPen( screenData, args ) {
-	var pen, size, noise, i;
-
-	pen = args[ 0 ];
-	size = args[ 1 ];
-	noise = args[ 2 ];
-
-	if( ! m_qbData.pens[ pen ] ) {
-		m_qbData.log(
-			"setPen: Argument pen is not a valid pen. Valid pens: " +
-			m_qbData.penList.join(", " )
-		);
-		return;
-	}
-	if( ! qbs.util.isInteger( size ) ) {
-		m_qbData.log( "setPen: Argument size is not a valid number." );
-		return;
-	}
-	if( noise && ( ! qbs.util.isArray( noise ) && Number.isNaN( noise ) ) ) {
-		m_qbData.log( "setPen: Argument noise is not an array or number." );
-		return;
-	}
-	if( qbs.util.isArray( noise ) ) {
-		noise = noise.slice();
-		for( i = 0; i < noise.length; i++ ) {
-			if( Number.isNaN( noise[ i ] ) ) {
-				m_qbData.log(
-					"setPen: Argument noise array contains an invalid value."
-				);
-				return;
-			}
-		}
-		// Make sure that noise array contains at least 4 values
-//		for(; i < 4; i++ ) {
-//			noise.push( 0 );
-//		}
-	}
-
-	if( pen === "pixel" ) {
-		size = 1;
-	}
-
-	// Set the minimum pen size to 1;
-	if( size < 1 ) {
-		size = 1;
-	}
-
-	// Handle special case of size of one
-	if( size === 1 ) {
-
-		// Size is one so only draw one pixel
-		screenData.pen.draw = m_qbData.pens.pixel.cmd;
-
-		// Set the line width for context draw
-		screenData.context.lineWidth = 1;
-	} else {
-
-		// Set the draw mode for pixel draw
-		screenData.pen.draw = m_qbData.pens[ pen ].cmd;
-
-		// Set the line width for context draw
-		screenData.context.lineWidth = size * 2 - 1;
-	}
-
-	screenData.pen.noise = noise;
-	screenData.pen.size = size;
-	screenData.context.lineCap = m_qbData.pens[ pen ].cap;
 }
 
 // End of File Encapsulation

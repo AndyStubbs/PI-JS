@@ -1,5 +1,5 @@
 @echo off
-echo Deleting \test\tests\screenshots\L_paint_02.png
-del \test\tests\screenshots\L_paint_02_new.png
-echo Deleting \test\tests\screenshots\L_paint_02_new.png
-del \test\tests\screenshots\L_paint_02.png
+echo Deleting D:\src\qbs\test\tests\screenshots\blend_01.png
+del D:\src\qbs\test\tests\screenshots\blend_01_new.png
+echo Deleting D:\src\qbs\test\tests\screenshots\blend_01_new.png
+del D:\src\qbs\test\tests\screenshots\blend_01.png

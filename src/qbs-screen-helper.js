@@ -10,6 +10,41 @@ var m_qbData;
 
 m_qbData = qbs._.data;
 
+qbs._.addBlendCommand( "normal", normalBlend );
+function normalBlend( screenData, x, y, c ) {
+	var data, i;
+
+	// Get the image data
+	data = screenData.imageData.data
+
+	// Calculate the index
+	i = ( ( screenData.width * y ) + x ) * 4;
+
+	data[ i ] = c.r;
+	data[ i + 1 ] = c.g;
+	data[ i + 2 ] = c.b;
+	data[ i + 3 ] = c.a;
+}
+
+qbs._.addBlendCommand( "blended", blendPixel );
+function blendPixel( screenData, x, y, c ) {
+	var data, i, pct, pct2;
+
+	// Get the image data
+	data = screenData.imageData.data
+
+	// Calculate the index
+	i = ( ( screenData.width * y ) + x ) * 4;
+
+	// displayColor = sourceColor × alpha / 255 + backgroundColor × (255 – alpha) / 255
+	// blend = ( source * source_alpha) + desitination * ( 1 - source_alpha)
+	pct = c.a / 255;
+	pct2 = ( 255 - c.a ) / 255;
+	data[ i ] = ( c.r * pct ) + data[ i ] * pct2
+	data[ i + 1 ] = ( c.g * pct ) + data[ i + 1 ] * pct2;
+	data[ i + 2 ] = ( c.b * pct ) + data[ i + 2 ] * pct2;
+}
+
 qbs._.addCommand( "getImageData", getImageData, true, false );
 function getImageData( screenData ) {
 	if( screenData.dirty === false ) {
@@ -40,45 +75,19 @@ function setImageDirty( screenData ) {
 
 qbs._.addCommand( "setPixel", setPixel, true, false );
 function setPixel( screenData, x, y, c ) {
-	var data, i;
-
-	// Get the image data
-	data = screenData.imageData.data
-
-	// Calculate the index
-	i = ( ( screenData.width * y ) + x ) * 4;
-
-	data[ i ] = c.r;
-	data[ i + 1 ] = c.g;
-	data[ i + 2 ] = c.b;
-	data[ i + 3 ] = c.a;
-
+	screenData.blendPixelCmd( screenData, x, y, c );
 }
 
 qbs._.addCommand( "setPixelSafe", setPixelSafe, true, false );
 qbs._.addPen( "pixel", setPixelSafe, "square" );
 function setPixelSafe( screenData, x, y, c ) {
-	var data, i;
-
 	if( x < 0 || x >= screenData.width || y < 0 || y >= screenData.height ) {
 		return;
 	}
 
 	m_qbData.commands.getImageData( screenData );
-
-	// Get the image data
-	data = screenData.imageData.data;
-
-	// Calculate the index
-	i = ( ( screenData.width * y ) + x ) * 4;
-
 	c = getPixelColor( screenData, c );
-
-	data[ i ] = c.r;
-	data[ i + 1 ] = c.g;
-	data[ i + 2 ] = c.b;
-	data[ i + 3 ] = c.a;
-
+	screenData.blendPixelCmd( screenData, x, y, c );
 	m_qbData.commands.setImageDirty( screenData );
 }
 
@@ -265,6 +274,9 @@ function findColorValue( screenData, colorInput, commandName ) {
 
 // Set the default pen draw function
 m_qbData.defaultPenDraw = setPixelSafe;
+
+// Set the default set pixel mode function
+m_qbData.defaultBlendCmd = normalBlend;
 
 // End of File Encapsulation
 } )();

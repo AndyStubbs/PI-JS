@@ -185,6 +185,95 @@ function setPixelMode( screenData, args ) {
 	}
 }
 
+// Set pen command
+qbs._.addCommand( "setPen", setPen, false, true, [ "pen", "size", "noise" ] );
+qbs._.addSetting( "pen", setPen, true, [ "pen", "size", "noise" ] );
+function setPen( screenData, args ) {
+	var pen, size, noise, i;
+
+	pen = args[ 0 ];
+	size = args[ 1 ];
+	noise = args[ 2 ];
+
+	if( ! m_qbData.pens[ pen ] ) {
+		m_qbData.log(
+			"setPen: Argument pen is not a valid pen. Valid pens: " +
+			m_qbData.penList.join(", " )
+		);
+		return;
+	}
+	if( ! qbs.util.isInteger( size ) ) {
+		m_qbData.log( "setPen: Argument size is not a valid number." );
+		return;
+	}
+	if( noise && ( ! qbs.util.isArray( noise ) && Number.isNaN( noise ) ) ) {
+		m_qbData.log( "setPen: Argument noise is not an array or number." );
+		return;
+	}
+	if( qbs.util.isArray( noise ) ) {
+		noise = noise.slice();
+		for( i = 0; i < noise.length; i++ ) {
+			if( Number.isNaN( noise[ i ] ) ) {
+				m_qbData.log(
+					"setPen: Argument noise array contains an invalid value."
+				);
+				return;
+			}
+		}
+		// Make sure that noise array contains at least 4 values
+//		for(; i < 4; i++ ) {
+//			noise.push( 0 );
+//		}
+	}
+
+	if( pen === "pixel" ) {
+		size = 1;
+	}
+
+	// Set the minimum pen size to 1;
+	if( size < 1 ) {
+		size = 1;
+	}
+
+	// Handle special case of size of one
+	if( size === 1 ) {
+
+		// Size is one so only draw one pixel
+		screenData.pen.draw = m_qbData.pens.pixel.cmd;
+
+		// Set the line width for context draw
+		screenData.context.lineWidth = 1;
+	} else {
+
+		// Set the draw mode for pixel draw
+		screenData.pen.draw = m_qbData.pens[ pen ].cmd;
+
+		// Set the line width for context draw
+		screenData.context.lineWidth = size * 2 - 1;
+	}
+
+	screenData.pen.noise = noise;
+	screenData.pen.size = size;
+	screenData.context.lineCap = m_qbData.pens[ pen ].cap;
+}
+
+qbs._.addCommand( "setBlendMode", setBlendMode, false, true, [ "mode" ] );
+qbs._.addSetting( "blendMode", setBlendMode, true, [ "mode" ] );
+function setBlendMode( screenData, args ) {
+	var mode;
+
+	mode = args[ 0 ];
+	if( ! m_qbData.blendCommands[ mode ] ) {
+		m_qbData.log(
+			"setBlendMode: Argument blend is not a valid blend mode. Valid modes: " +
+			m_qbData.blendCommandsList.join(", " )
+		);
+		return;
+	}
+
+	screenData.blendPixelCmd = m_qbData.blendCommands[ mode ];
+}
+
 qbs._.addCommand( "triggerEventListeners", triggerEventListeners, true, true,
 	[] );
 function triggerEventListeners( mode, data, listenerArr, clickStatus ) {

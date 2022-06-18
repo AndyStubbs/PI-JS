@@ -1,5 +1,5 @@
 @echo off
-echo Deleting test\tests\screenshots\L_paint_02.png
-del \test\tests\screenshots\L_paint_02.png
-echo Renaming \test\tests\screenshots\L_paint_02_new.png
-move \test\tests\screenshots\L_paint_02_new.png \test\tests\screenshots\L_paint_02.png
+echo Deleting test\tests\screenshots\blend_01.png
+del D:\src\qbs\test\tests\screenshots\blend_01.png
+echo Renaming D:\src\qbs\test\tests\screenshots\blend_01_new.png
+move D:\src\qbs\test\tests\screenshots\blend_01_new.png D:\src\qbs\test\tests\screenshots\blend_01.png

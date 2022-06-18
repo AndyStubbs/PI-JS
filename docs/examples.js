@@ -885,6 +885,22 @@ $.line( 0, 0, 300, 200 );
 $.setBgColor( "blue" );
 onExampleClose = function () {};
 }
+examples['setBlendMode'] = function() {
+$.ready(function () {
+	$.screen( "5x5" , 'canvasContainer');
+	$.setColor( "rgba(255,0,0,1)" );
+	$.pset( 1, 2 );
+	$.pset( 2, 2 );
+	$.pset( 3, 2 );
+	$.render();
+	$.setBlendMode( "blended" );
+	$.setColor( "rgba(0,255,0,0.5)" );
+	$.pset( 2, 2 );
+	$.setColor( "rgba(0,0,255,0.5)" );
+	$.pset( 3, 2 );
+});
+onExampleClose = function () {};
+}
 examples['setChar'] = function() {
 $.screen( "300x200" , 'canvasContainer');
 $.setFont( 2 );
